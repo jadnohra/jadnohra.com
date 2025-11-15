@@ -14,6 +14,13 @@ minima:
     - { platform: linkedin,       user_url: "https://www.linkedin.com/in/jadnohra" }
     - { platform: youtube,        user_url: "https://www.youtube.com/@JadNohraPoly" }
 
+# Header navigation pages (will appear in top menu)
+header_pages:
+  - notes.md
+  - defdefqed.md
+  - tech-experience.md
+  - dabblings.md
+
 # Collections from submodules
 include:
   - "../repos/TheNotes/docs"
