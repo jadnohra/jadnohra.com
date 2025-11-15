@@ -7,3 +7,6 @@
 [submodule "repos/defdefqed"]
 	path = repos/defdefqed
 	url = https://github.com/jadnohra/defdefqed
+[submodule "repos/jad-pre-2015-dabblings"]
+	path = repos/jad-pre-2015-dabblings
+	url = https://github.com/jadnohra/jad-pre-2015-dabblings
