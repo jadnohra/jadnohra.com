@@ -1,0 +1,29 @@
+title: Jad Nohra
+description: Mathematics, Physics, Logic, Science and Code
+author: Jad Nohra
+markdown: kramdown
+show_downloads: false
+show_excerpts: true
+theme: minima
+
+minima:
+  date_format: "%Y-%m-%d"
+  social_links:
+    - { platform: github,         user_url: "https://github.com/jadnohra" }
+    - { platform: google_scholar, user_url: "https://scholar.google.com/citations?user=0pae59AAAAAJ" }
+    - { platform: linkedin,       user_url: "https://www.linkedin.com/in/jadnohra" }
+    - { platform: youtube,        user_url: "https://www.youtube.com/@JadNohraPoly" }
+
+# Header navigation pages (will appear in top menu)
+header_pages:
+  - notes.md
+  - defdefqed.md
+  - tech-experience.md
+  - dabblings.md
+
+# Collections from submodules
+include:
+  - "../repos/TheNotes/docs"
+  - "../repos/defdefqed"
+  - "../repos/old_tech_experience"
+  - "../repos/jad-pre-2015-dabblings"
