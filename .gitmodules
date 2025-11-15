@@ -1,0 +1,12 @@
+[submodule "repos/TheNotes"]
+	path = repos/TheNotes
+	url = https://github.com/jadnohra/TheNotes
+[submodule "repos/old_tech_experience"]
+	path = repos/old_tech_experience
+	url = https://github.com/jadnohra/old_tech_experience
+[submodule "repos/defdefqed"]
+	path = repos/defdefqed
+	url = https://github.com/jadnohra/defdefqed
+[submodule "repos/jad-pre-2015-dabblings"]
+	path = repos/jad-pre-2015-dabblings
+	url = https://github.com/jadnohra/jad-pre-2015-dabblings
