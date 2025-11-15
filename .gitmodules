@@ -4,3 +4,6 @@
 [submodule "repos/old_tech_experience"]
 	path = repos/old_tech_experience
 	url = https://github.com/jadnohra/old_tech_experience
+[submodule "repos/defdefqed"]
+	path = repos/defdefqed
+	url = https://github.com/jadnohra/defdefqed
