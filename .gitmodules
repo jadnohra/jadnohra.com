@@ -1,0 +1,6 @@
+[submodule "repos/TheNotes"]
+	path = repos/TheNotes
+	url = https://github.com/jadnohra/TheNotes
+[submodule "repos/old_tech_experience"]
+	path = repos/old_tech_experience
+	url = https://github.com/jadnohra/old_tech_experience
