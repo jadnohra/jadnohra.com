@@ -464,13 +464,12 @@ Interactive visualization of connections between career, projects, algorithms, a
 
 - **1998 - University Projects (AUB)** — Early graphics and systems programming
   - First explorations in 3D graphics and distributed computing during computer engineering degree at American University of Beirut — foundations for all subsequent graphics and systems work.
-  - <span class="algo">Tech: C++, Win32, software rendering, distributed computing.</span>
-  - **[GraphEdit](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/graphedit)** — 3D equation grapher with distributed computing for rendering mathematical surfaces across networked machines
-  - **[thrashit3d](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/thrashit3d)** — Software 3D renderer implementing rasterization, z-buffering, and texture mapping from scratch
-  - **[xu1](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/xu1)** — 3D racing game with collision detection and track rendering
-  - **[watereffect](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/watereffect)** — 2D water ripple effect simulation using wave propagation
-  - **[2dshooter](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/2dshooter)** — 2D arcade shooter game with sprite rendering
-  - **[RayTracer](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/RayTracer)** — Classic [ray tracing](https://en.wikipedia.org/wiki/Ray_tracing_(graphics)) implementation with reflections and shadows
+  - **[thrashit3d](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/thrashit3d)** — Software 3D renderer with full pipeline: projection, occlusion, [rasterization](https://en.wikipedia.org/wiki/Rasterisation) (flat/[Gouraud](https://en.wikipedia.org/wiki/Gouraud_shading)/wireframe), [z-buffering](https://en.wikipedia.org/wiki/Z-buffering), viewport clipping
+  - **[RayTracer](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/RayTracer)** — [Ray tracing](https://en.wikipedia.org/wiki/Ray_tracing_(graphics)) with [BVH](https://en.wikipedia.org/wiki/Bounding_volume_hierarchy) acceleration, [Blinn-Phong](https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model) shading, hard shadows, [supersampling](https://en.wikipedia.org/wiki/Supersampling), parallel rendering, multiple primitives (sphere, plane, triangle, quad, cone)
+  - **[xu1](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/xu1)** — 3D racing game engine with [ASE](https://en.wikipedia.org/wiki/ASE_(file_format)) model loading, [octree](https://en.wikipedia.org/wiki/Octree) spatial partitioning, static geometry builder
+  - **[watereffect](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/watereffect)** — Java [height map](https://en.wikipedia.org/wiki/Heightmap) wave simulation with circular/spherical wave propagation, real-time image distortion
+  - **[2dshooter](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/2dshooter)** — Java game engine (fivemagics) with 2D [collision detection](https://en.wikipedia.org/wiki/Collision_detection), physics engine, GUI system, resource loading, XML scene description
+  - **[GraphEdit](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/graphedit)** — 3D equation grapher with [symbolic expression](https://en.wikipedia.org/wiki/Computer_algebra) evaluation and distributed rendering across networked machines
   - Foundation for <span class="career">[#9 Kimera](#career)</span> and all subsequent graphics work.
   <details>
   <summary>Tree</summary>
