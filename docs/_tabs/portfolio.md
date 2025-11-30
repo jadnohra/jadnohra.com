@@ -19,6 +19,14 @@ Technical chronology showing projects, algorithms, study, and career connections
 
 ---
 
+### May 2019 - [TheNotes](https://github.com/jadnohra/TheNotes)
+- Mathematical study notes collection published to GitHub
+- Content from 2013-2018: physics, linear algebra, geometry, logic
+- Built on: All study during Havok years
+- → Used by: All subsequent technical work as reference
+
+---
+
 ### Jan 2023 → FERNRIDE - Principal Engineer / Senior Engineering Manager
 - Tech: C++, Python, LiDAR/Radar
 - ASIL-D autonomous trucks, safety cases for TÜV SÜD
@@ -38,16 +46,36 @@ Technical chronology showing projects, algorithms, study, and career connections
 
 ---
 
+### Sep 2017 - [tag_export](https://github.com/jadnohra/tag_export)
+- Curated digital library index - physics, math, CS academic references
+- Built on: Years of collecting papers while studying for Havok work
+- → Used for: Quick reference during study, TheNotes citations
+
+---
+
+### Apr 2017 - [defdefqed](https://github.com/jadnohra/defdefqed)
+- FOL theorem prover, semantic graph crawler for mathematical resources
+- Tech: Python
+- [Video demo](https://www.youtube.com/watch?v=766N2wSXbbc)
+- Built on: Logic studies, TheNotes FOL work
+- Study: [First-Order Logic](https://github.com/jadnohra/TheNotes/blob/master/2018/Free%20Occurrences%20in%20FOL.pdf)
+
+---
+
 ### 2017 - Study: Rigid Body Dynamics
 - [treat_rbd_1.pdf](https://github.com/jadnohra/TheNotes/blob/master/2017/treat_rbd_1.pdf) - Deep dive after years of physics work
 - Built on: Havok physics engine experience
-- References: [tag_export physics](https://github.com/jadnohra/tag_export)
+- References: [tag_export](https://github.com/jadnohra/tag_export) - Classical Mechanics, Rigid Body Dynamics, Multibody Systems
+  - ★★ "A Fast and Stable Penalty Method for Rigid Body Simulation"
+  - ★★ "Flexible Multibody Dynamics"
+  - ★★ "Geometric Mechanics and Symmetry"
 
 ---
 
 ### 2016 - Study: Mathematical Foundations
 - [Differential Forms](https://github.com/jadnohra/TheNotes/blob/master/2016/dform.pdf), [Manifolds](https://github.com/jadnohra/TheNotes/blob/master/2016/mfold_short.pdf), [Lagrange Multipliers Proof](https://github.com/jadnohra/TheNotes/blob/master/2016/proof_lagrmul.pdf)
 - Built on: 2013-2014 study of LCP, eigenvalues
+- References: [tag_export](https://github.com/jadnohra/tag_export) - Differential Geometry, Calculus of Variations, Tensor Analysis
 - → Applied: Formalized understanding for solver work at Havok
 
 ---
@@ -80,6 +108,9 @@ Technical chronology showing projects, algorithms, study, and career connections
 - [Physics Research (lamby)](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Physics/lamby) - MLCP, constraint solving
 - [GJK implementation](https://github.com/jadnohra/jad-pre-2015-dabblings/blob/master/Labs/Physics/fc/gjk/gjk0.py)
 - Built on: Core physics work at Havok
+- References: [tag_export](https://github.com/jadnohra/tag_export) - Linear Algebra, Optimization, Collision Detection
+  - ★★ "A Friendly Introduction to Mathematical Logic"
+  - ★★ "Hermann Grassmann and the Invention of Linear Algebra"
 - → Applied: Linear programming in Havok physics solvers
 
 ---
@@ -113,7 +144,7 @@ Technical chronology showing projects, algorithms, study, and career connections
 ---
 
 ### Aug 2010 - [Bigfoot Animation System](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Bigfoot)
-{% include embed/youtube.html id='XMj0xhCzx4U' %}
+- [Video demo](https://www.youtube.com/watch?v=XMj0xhCzx4U)
 - Tech: C++, OpenGL, GLM, strtk, Bigeye UI
 - Algorithms:
   - [BVH parsing](https://github.com/jadnohra/jad-pre-2015-dabblings/blob/master/Labs/Bigfoot/src/BF/LoaderBVH.cpp)
@@ -166,7 +197,7 @@ Technical chronology showing projects, algorithms, study, and career connections
 ---
 
 ### Apr 2009 - [Obstacle Avoidance](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/AI)
-{% include embed/youtube.html id='RZHIchPK1TE' %}
+- [Video demo](https://www.youtube.com/watch?v=RZHIchPK1TE)
 - Tech: C++, 2D visualization
 - Algorithms: Velocity obstacles, collision prediction, steering behaviors
 - → Applied: AI Sandbox → Guerrilla AI
@@ -211,10 +242,3 @@ Technical chronology showing projects, algorithms, study, and career connections
 - Tech: C++, Win32, software rendering
 - → Foundation for: Kimera engine, all subsequent graphics work
 
----
-
-## Other
-
-- **[defdefqed](https://github.com/jadnohra/defdefqed)** - FOL theorem prover, semantic graph crawler. [Video](https://www.youtube.com/watch?v=766N2wSXbbc)
-- **[TheNotes](https://github.com/jadnohra/TheNotes)** - Full collection of mathematical study notes
-- **[tag_export](https://github.com/jadnohra/tag_export)** - Curated digital library index (physics, math, CS references)
