@@ -42,10 +42,9 @@ social:
     - https://www.youtube.com/@JadNohraPoly
 
 # Analytics - using GoatCounter (free, privacy-friendly)
-# Sign up at https://www.goatcounter.com/ to get your code
 analytics:
   goatcounter:
-    id: ""  # Your goatcounter code (e.g., "jadnohra")
+    id: "jadnohra"
 
 # Page views counter on posts
 pageviews:
