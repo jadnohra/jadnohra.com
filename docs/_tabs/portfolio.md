@@ -5,209 +5,123 @@ icon: fas fa-folder-tree
 order: 5
 ---
 
-# Learning Journey Portfolio
+# Learning Journey
 
-A chronological map of projects, what I learned, and how they connected to my career.
-
----
-
-## Career Thread
-
-```
-Project Learning                    → Career Application
-─────────────────────────────────────────────────────────────
-Animation/Locomotion               → AI Sandbox, Guerrilla: "motion planning for humanoids"
-Physics/Constraints                → Havok: "Core Physics Engine R&D"
-Navigation/Pathfinding             → AI Sandbox, Guerrilla: "automated navigable space generation"
-MLCP/Linear Programming            → Havok: "linear programming in physics solvers"
-Numerical Analysis                 → Guided Knowledge: "nonlinear optimization for IMU"
-All foundations                    → AV Simulation (Audi/Argo/FERNRIDE/Irreducible)
-```
+Projects, study, and career - how they connected.
 
 ---
 
-## Study Notes (TheNotes)
+## Timeline
 
-Comprehensive mathematical notes that supported the projects below:
+- **Sep 2024 → Irreducible** (ZK-crypto/hardware) - Engineering Director
+  - Rust, FPGA, Zero-Knowledge Proofs
 
-### Physics & Mechanics
-- [Rigid Body Dynamics Treatment](https://github.com/jadnohra/TheNotes/blob/master/2017/treat_rbd_1.pdf)
-- [Lagrangian Framework](https://github.com/jadnohra/TheNotes/blob/master/2015/lagrfrmw.pdf)
-- [Hestenes' Geometric Algebra for Physics](https://github.com/jadnohra/TheNotes/blob/master/2015/Notes%20on%20Hestenes%27%20%27Reforming%20the%20Mathematical%20Language%20of%20Physics%27.pdf)
+- **Jan 2023 → FERNRIDE** - Principal Engineer / Senior Engineering Manager
+  - ASIL-D autonomous trucks, LiDAR/Radar perception, safety cases
 
-### Linear Algebra & Numerical
-- [Linear Complementarity Problem](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20the%20Linear%20Complementarity%20Problem.pdf)
-- [GJK Algorithm](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20the%20GJK%20Algorithm..pdf)
-- [Eigenvalue Problems](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Parlett's%20The%20Symmetric%20Eigenvalue%20Problem.pdf)
-- [Lagrange Multiplier Proofs](https://github.com/jadnohra/TheNotes/blob/master/2016/proof_lagrmul.pdf)
+- **Jun 2021 → Argo AI** - Engineering Manager & Staff Software Engineer
+  - Simulation lead, systems engineering, V&V
 
-### Geometry & Rotation
-- [Rotation Mathematics](https://github.com/jadnohra/TheNotes/blob/master/2015/rotation.pdf)
-- [Covariance](https://github.com/jadnohra/TheNotes/blob/master/2015/covar.pdf)
-- [Differential Forms](https://github.com/jadnohra/TheNotes/blob/master/2016/dform.pdf)
-- [Manifolds](https://github.com/jadnohra/TheNotes/blob/master/2016/mfold_short.pdf)
+- **Apr 2018 → Audi AID** - Simulation Tech Lead
+  - Built 4 teams (20 engineers), SIL framework, sensor sim
 
-### Logic & Computation
-- [First-Order Logic](https://github.com/jadnohra/TheNotes/blob/master/2018/Free%20Occurrences%20in%20FOL.pdf)
-- [Programming Logic](https://github.com/jadnohra/TheNotes/blob/master/2017/plql.pdf)
+- **2017 - [Rigid Body Dynamics notes](https://github.com/jadnohra/TheNotes/blob/master/2017/treat_rbd_1.pdf)**
+  - Deep dive after years of physics engine work at Havok
 
-**Full collection:** [TheNotes Repository](https://github.com/jadnohra/TheNotes)
+- **2016 - [Differential Forms](https://github.com/jadnohra/TheNotes/blob/master/2016/dform.pdf), [Manifolds](https://github.com/jadnohra/TheNotes/blob/master/2016/mfold_short.pdf), [Lagrange Multipliers Proof](https://github.com/jadnohra/TheNotes/blob/master/2016/proof_lagrmul.pdf)**
+  - Mathematical foundations formalized
 
----
+- **2015 - Guided Knowledge** - Consultant
+  - Nonlinear optimization for IMU sensors
+  - Study: [Rotation Mathematics](https://github.com/jadnohra/TheNotes/blob/master/2015/rotation.pdf), [Covariance](https://github.com/jadnohra/TheNotes/blob/master/2015/covar.pdf), [Lagrangian Framework](https://github.com/jadnohra/TheNotes/blob/master/2015/lagrfrmw.pdf)
 
-## Digital Library (tag_export)
+- **Sep 2015 - [MLCP 2.0](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Lab2015/mlcp2.0)** (Julia)
+  - Custom LP solver, LU decomposition, MLCP benchmarks
+  - Study: [Eigenvalue Problems](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Parlett's%20The%20Symmetric%20Eigenvalue%20Problem.pdf)
+  - Applied at Havok: solver optimization
 
-Curated collection of academic resources that informed this work:
+- **Jul 2015 - [asinus_salutem](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Lab2015/asinus_salutem)**
+  - Math expression parser, symbolic computation
+  - Tech: Python, SymPy
 
-- Mathematics & Logic
-- Physics (Classical, Quantum, Mechanics)
-- Numerical Analysis & Optimization
-- Machine Learning & AI
-- Computer Science & Algorithms
+- **Jun 2011 → Microsoft/Havok** - Lead Physics R&D
+  - Core physics engine, SIMD optimization, linear programming in solvers
+  - HoloLens R&D, co-invented localization algorithm (patent US10672159B2)
+  - "Parallel Pathfinding on Modern Computer Hardware" (2010, co-authored)
 
-**Library Index:** [tag_export Repository](https://github.com/jadnohra/tag_export)
+- **2013-2014 - Study & Research** (while at Havok)
+  - [Linear Complementarity Problem](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20the%20Linear%20Complementarity%20Problem.pdf), [GJK Algorithm](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20the%20GJK%20Algorithm..pdf), [Eigenvalue Problems](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Parlett's%20The%20Symmetric%20Eigenvalue%20Problem.pdf)
+  - Notes on Euclid, Euler, Morris Kline, Hefferon's Linear Algebra
+  - [Physics Research (lamby/MLCP)](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Physics/lamby) - constraint solving, Lagrange multipliers
+  - → Applied at Havok: linear programming in physics solvers
 
----
+- **May 2011 - [Floating Point Analysis](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/fp)**
+  - IEEE 754 deep dive, epsilon calculation, denormalized numbers
+  - Applied at Havok: low-level optimization, numerical analysis
 
-## Projects
+- **Nov 2010 - [RecastMOD Navigation](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/AI/RecastMOD)**
+  - Voxelization, navmesh generation, A* pathfinding, tiled streaming
+  - Tech: C++, OpenGL, Recast & Detour v1.4
+  - Study: [Collision Detection](https://github.com/jadnohra/TheNotes/blob/master/2016/notes_coll_det.pdf)
+  - → AI Sandbox: HPA*, terrain clustering → Guerrilla: automated navigable space
 
-- **2015 - MLCP 2.0 (Julia Implementation)**
-  - Tech Stack: Julia, GLPK
-  - Algorithms: Custom LP solver, LU decomposition, MLCP solving with benchmarks
-  - Learned: Julia for numerical computing, solver performance optimization
-  - Related Notes: [Lagrange Multiplier Proofs](https://github.com/jadnohra/TheNotes/blob/master/2016/proof_lagrmul.pdf), [Eigenvalue Problems](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Parlett's%20The%20Symmetric%20Eigenvalue%20Problem.pdf)
-  - Applied: → Havok solver optimization → Guided Knowledge: "nonlinear optimization for IMU sensors"
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Lab2015/mlcp2.0)
-
-- **2015 - asinus_salutem (Math Expression Parser)**
-  - Tech Stack: Python, SymPy
-  - Algorithms: Tokenization, expression parsing, symbolic computation, AST building
-  - Learned: Compiler techniques for math expressions, symbolic math integration
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Lab2015/asinus_salutem)
-
-- **2014 - Labs2014 Projects**
-  - dynamics - Physics simulation research
-  - formal1 - Formal methods exploration
-  - glfw - Graphics library bindings
-  - rseq - Sequence processing
-  - Tech Stack: C++, GLFW
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs2014)
-
-- **2013-2014 - Bigfoot Skeletal Animation System**
+- **Aug 2010 - [Bigfoot Animation System](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Bigfoot)**
   - {% include embed/youtube.html id='XMj0xhCzx4U' %}
-  - Tech Stack: C++, OpenGL, GLM, strtk tokenizer, Bigeye UI
-  - Algorithms: BVH parsing, quaternion conversion, rigid body dynamics, joint constraints, Lagrange multipliers, footstep planning, stride geometry, support polygon, skeleton topology analysis, semantic inference, motion retargeting, pose transfer
-  - Learned: Motion capture pipelines, physics-based animation, skate-free locomotion
-  - Related Notes: [Rigid Body Dynamics](https://github.com/jadnohra/TheNotes/blob/master/2017/treat_rbd_1.pdf), [Lagrangian Framework](https://github.com/jadnohra/TheNotes/blob/master/2015/lagrfrmw.pdf), [Rotation Mathematics](https://github.com/jadnohra/TheNotes/blob/master/2015/rotation.pdf), [Covariance](https://github.com/jadnohra/TheNotes/blob/master/2015/covar.pdf)
-  - Applied: → [AI Sandbox](https://web.archive.org/web/20190719084901/http://aigamedev.com/): "Motion Graphs, Locomotion Planning" → Guerrilla: "motion planning for humanoids" → Havok animation R&D
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Bigfoot)
+  - BVH parsing, rigid body dynamics, footstep planning, motion retargeting
+  - Tech: C++, OpenGL, GLM, Bigeye UI
+  - → AI Sandbox: motion graphs, locomotion → Guerrilla: humanoid motion planning → Havok animation R&D
 
-- **2013-2014 - Bigeye UI Framework**
-  - Tech Stack: C++, OpenGL, MagickWand, Win32, DroidSans font
-  - Algorithms: Retained-mode rendering, scene graph traversal, render tree building, widget event handling
-  - Learned: UI architecture patterns, immediate vs retained mode tradeoffs
-  - Applied: → Rapid prototyping tools throughout career
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Bigeye)
+- **Aug 2010 - [BlenderToBVH](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/BlenderToBVH)**
+  - Armature export tool, coordinate system conversion
+  - Tech: Python, Blender API
 
-- **2013-2014 - Puppeteer (BVH Viewer)**
-  - Tech Stack: C++, OpenGL, GLM
-  - Algorithms: BVH loading, skeletal rendering, animation playback
-  - Learned: Motion capture visualization, skeleton rendering
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Puppeteer)
+- **May 2010 - [Bigeye UI Framework](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Bigeye)**
+  - Retained-mode rendering, scene graph, widget events
+  - Tech: C++, OpenGL, MagickWand
+  - → Rapid prototyping tools throughout career
 
-- **2013-2014 - BlenderToBVH Export Tool**
-  - Tech Stack: Python, Blender API
-  - Algorithms: Armature traversal, coordinate system conversion, BVH format export
-  - Learned: Blender scripting, animation pipeline tools
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/BlenderToBVH)
+- **Apr 2010 - [Puppeteer](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Puppeteer)** (BVH Viewer)
+  - Skeletal rendering, animation playback
+  - Tech: C++, OpenGL, GLM
 
-- **2013-2014 - Physics Research (lamby/MLCP)**
-  - Tech Stack: C++, FLANN (nearest neighbors)
-  - Algorithms: Mixed Linear Complementarity Problem (MLCP), constraint solving, Lagrange multipliers
-  - Learned: How physics engines solve constraints, contact resolution
-  - Related Notes: [Linear Complementarity Problem](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20the%20Linear%20Complementarity%20Problem.pdf), [Supplementary LCP Notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Supplementary%20Notes%20on%20the%20Linear%20Complemetarity%20Problem.pdf), [GJK Algorithm](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20the%20GJK%20Algorithm..pdf)
-  - Applied: → Havok: "linear programming in physics solvers"
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Physics/lamby)
+- **2009 → Guerrilla Games** (Sony) - Senior AI Programmer
+  - Killzone 3: motion planning (humanoids, vehicles), multiplayer bots, automated nav generation, Maya tooling
 
-- **2013-2014 - Floating Point Analysis**
-  - Tech Stack: Python, C++
-  - Algorithms: IEEE 754 bit manipulation, epsilon calculation, denormalized number handling
-  - Learned: Numerical precision limits, floating point representation
-  - Applied: → Havok: "Low-level optimization, numerical analysis"
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/fp)
-
-- **2013-2014 - Numerical Libraries**
-  - FLANN - Fast Library for Approximate Nearest Neighbors
-  - randomc - Random number generation
-  - mprog - Mathematical programming solvers
-  - nics - Numerical computing utilities
-  - Tech Stack: C++, CMake
-  - Algorithms: KD-trees, approximate nearest neighbor search, random distributions, LP solvers
-  - Learned: Spatial queries, numerical computing foundations
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Numerical)
-
-- **2012 - Graphics Framework (Quake3 BSP)**
-  - Tech Stack: C++, OpenGL, Win32
-  - Algorithms: BSP tree traversal, PVS (Potentially Visible Set) culling, Lightmap rendering, Texture streaming
-  - Learned: Level streaming architecture, occlusion culling, game engine internals
-  - Applied: [TODO - user to fill]
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Graphics/Framework1)
-
-- **2008-2009 - TicTacToe AI Testbed**
-  - Tech Stack: C++, Visual Studio 2008
-  - Algorithms: Minimax, Alpha-Beta pruning, Reinforcement Learning (Value Iteration), Random play
-  - Learned: Game tree search, RL convergence to optimal policy, comparing AI paradigms
-  - Related Notes: [FOL notes](https://github.com/jadnohra/TheNotes/blob/master/2018/Free%20Occurrences%20in%20FOL.pdf)
-  - Applied: → [AI Sandbox](https://web.archive.org/web/20190719084901/http://aigamedev.com/): "Reinforcement Learning" contribution → Foundation for game AI roles
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/AI/TicTacToe)
-
-- **2008-2009 - RecastMOD Navigation System**
-  - Tech Stack: C++, OpenGL, Recast & Detour v1.4
-  - Algorithms: Voxelization, Navigation mesh generation, A* pathfinding, Tiled mesh streaming
-  - Learned: Spatial decomposition, automatic walkability analysis, pathfinding at scale
-  - Related Notes: [Collision Detection](https://github.com/jadnohra/TheNotes/blob/master/2016/notes_coll_det.pdf)
-  - Applied: → [AI Sandbox](https://web.archive.org/web/20190719084901/http://aigamedev.com/): "A*/Hierarchical A*, Terrain Clustering" → Guerrilla: "automated navigable space generation"
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/AI/RecastMOD)
-
-- **2009-2010 - AI Sandbox (AiGameDev.com)**
+- **2008-2010 - [AI Sandbox](https://web.archive.org/web/20190719084901/http://aigamedev.com/articles/?tx_ttnews%5Bcat%5D=17&cHash=93c15cd059)** (AiGameDev.com)
   - Main programmer for the AI Sandbox platform
-  - Tech Stack: C++
-  - Work: HPA* (Hierarchical Path-Finding A*), locomotion system, reinforcement learning
-  - Co-authored: "The Secrets of Parallel Pathfinding on Modern Computer Hardware" (2010)
-  - Archive: [AiGameDev Articles](https://web.archive.org/web/20190719084901/http://aigamedev.com/articles/?tx_ttnews%5Bcat%5D=17&cHash=93c15cd059)
-  - Note: Bought and studied the entire AI Game Programming Wisdom series (4 volumes). The series later went out of print - sold the collection for $500.
+  - HPA*, locomotion system, reinforcement learning
+  - Co-authored: "The Secrets of Parallel Pathfinding on Modern Computer Hardware"
+  - Bought and studied the entire AI Game Programming Wisdom series (4 volumes) - later sold for $500 when it went out of print
 
-- **2008-2009 - Obstacle Avoidance**
+- **Apr 2009 - [Obstacle Avoidance](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/AI)**
   - {% include embed/youtube.html id='RZHIchPK1TE' %}
-  - Tech Stack: C++, 2D visualization
-  - Algorithms: Velocity obstacles, collision prediction, steering behaviors
-  - Learned: Real-time avoidance in dynamic environments
-  - Applied: → AI Sandbox → Guerrilla AI work
-  - Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/AI)
+  - Velocity obstacles, collision prediction, steering behaviors
+  - → AI Sandbox → Guerrilla AI
+
+- **Apr 2009 - [TicTacToe AI Testbed](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/AI/TicTacToe)**
+  - Minimax, Alpha-Beta, Reinforcement Learning (Value Iteration)
+  - → AI Sandbox: RL contribution
+
+- **Apr 2009 - [Graphics Framework](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Graphics/Framework1)** (Quake3 BSP)
+  - BSP traversal, PVS culling, lightmaps, texture streaming
+  - Tech: C++, OpenGL, Win32
+
+- **2008 - Sixteen Tons** - Nintendo DS engine, stochastic game AI
+
+- **2006-2008 - Kimera Studios** - Indie game developer
+  - Built complete engine: rendering, physics, animation, NN goalkeeper AI
+  - [World-Of-Football](https://github.com/jadnohra/World-Of-Football)
+
+- **2002-2003 - ACT-Kern** - Stereoscopic screen software, OpenGL/DirectX wrappers
+
+- **2001-2002 - Living Systems** - Agent-based software
+
+- **1999-2001 - Gaming Logix** - Online casino engine, server/client architecture, C++/DirectX/Java
 
 ---
 
-## Other Projects
+## Other
 
-- **defdefqed**
-  - Exploration through definitions - semantic graph crawler for mathematical resources and FOL theorem prover.
-  - Tech Stack: Python
-  - Algorithms: Semantic graph traversal, First-Order Logic proving
-  - Video: [FOL Prover Demo](https://www.youtube.com/watch?v=766N2wSXbbc)
-  - Source: [GitHub](https://github.com/jadnohra/defdefqed)
-
-- **old_tech_experience**
-  - Historical technical documentation and CV materials.
-  - Source: [GitHub](https://github.com/jadnohra/old_tech_experience)
-
----
-
-## Utility Projects
-
-- **pyhotkey** - Keyboard hotkey library (Python)
-- **RaySpam** - Ray tracing/raycasting experiments
-- **gaussy** - Gaussian distribution tools
-- **LowLevel** - CPU utilities (alignment, CPUID)
-- **Math** - Specialized math algorithms
-
-Source: [GitHub](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs)
+- **[defdefqed](https://github.com/jadnohra/defdefqed)** - FOL theorem prover, semantic graph crawler. [Video](https://www.youtube.com/watch?v=766N2wSXbbc)
+- **[TheNotes](https://github.com/jadnohra/TheNotes)** - Full collection of mathematical study notes
+- **[tag_export](https://github.com/jadnohra/tag_export)** - Curated digital library index
