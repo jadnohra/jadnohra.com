@@ -499,7 +499,12 @@ Interactive visualization of connections between career, projects, algorithms, a
 │   ├── screenshots/ (render results)
 │   └── src/
 │       ├── main.cpp
-│       ├── 3rdparty/ (PixelToaster, plyLoader, wavefrontObjLoader)
+│       ├── 3rdparty/
+│       │   ├── awilliam/
+│       │   ├── LofstedtAkenineMoller05/
+│       │   ├── PixelToaster1.4/
+│       │   ├── plyLoader/
+│       │   └── wavefrontObjLoader/
 │       ├── rayTracer/
 │       │   ├── BoundingVolumeHierarchy.cpp/.hpp
 │       │   ├── Camera.cpp/.hpp
