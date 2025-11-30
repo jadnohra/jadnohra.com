@@ -7,8 +7,8 @@
   icon: "fa-brands fa-x-twitter"
 
 - type: linkedin
-  icon: "fab fa-linkedin"
-  url: "https://www.linkedin.com/in/jadnohra"
+  icon: "fa-brands fa-linkedin"
+  url: "https://www.linkedin.com/in/jadnohra/"
 
 - type: email
   icon: "fas fa-envelope"
