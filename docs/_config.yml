@@ -22,27 +22,34 @@ description: >-
 url: "https://jadnohra.github.io"
 baseurl: ""
 
-# Social links
+# Social links (shown in sidebar)
 github:
+  username: jadnohra
+
+twitter:
+  username: ""  # Add your X/Twitter username if you have one
+
+linkedin:
   username: jadnohra
 
 social:
   name: Jad Nohra
-  email: ""
+  email: ""  # Add email if you want contact icon
   links:
     - https://github.com/jadnohra
     - https://scholar.google.com/citations?user=0pae59AAAAAJ
     - https://www.linkedin.com/in/jadnohra
     - https://www.youtube.com/@JadNohraPoly
 
-# Analytics (disabled for now)
+# Analytics - using GoatCounter (free, privacy-friendly)
+# Sign up at https://www.goatcounter.com/ to get your code
 analytics:
-  google:
-    id: ""
+  goatcounter:
+    id: ""  # Your goatcounter code (e.g., "jadnohra")
 
-# Page views (disabled)
+# Page views counter on posts
 pageviews:
-  provider: ""
+  provider: goatcounter
 
 # Theme mode: light, dark, or blank for auto
 theme_mode: ""
