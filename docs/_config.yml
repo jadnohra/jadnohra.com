@@ -56,8 +56,8 @@ theme_mode: ""
 # CDN endpoint (leave blank to use local assets)
 cdn: ""
 
-# Avatar image
-avatar: ""
+# Avatar image (from GitHub)
+avatar: "https://avatars.githubusercontent.com/u/11947000?v=4"
 
 # Table of contents
 toc: true
