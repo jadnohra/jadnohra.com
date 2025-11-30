@@ -18,9 +18,9 @@ tagline: Mathematics, Physics, Logic, Science and Code
 description: >-
   Personal site of Jad Nohra - Mathematics, Physics, Logic, Science and Code
 
-# Site URL - will be set by GitHub Pages
+# Site URL
 url: "https://jadnohra.github.io"
-baseurl: ""
+baseurl: "/jadnohra.com"
 
 # Social links (shown in sidebar)
 github:
