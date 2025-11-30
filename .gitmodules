@@ -10,3 +10,6 @@
 [submodule "repos/jad-pre-2015-dabblings"]
 	path = repos/jad-pre-2015-dabblings
 	url = https://github.com/jadnohra/jad-pre-2015-dabblings
+[submodule "repos/77-neurons-project-perelman"]
+	path = repos/77-neurons-project-perelman
+	url = https://github.com/jadnohra/77-neurons-project-perelman.git
