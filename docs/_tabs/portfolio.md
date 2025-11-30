@@ -297,6 +297,26 @@ Technical tree showing projects, algorithms, study, and career connections.
   - Complete indie game engine for a football (soccer) game — custom rendering, physics, animation, and neural network-based goalkeeper AI.
   - <span class="algo">Tech: C++, DirectX. Algos: Custom physics, [Neural networks](https://en.wikipedia.org/wiki/Artificial_neural_network) (goalkeeper AI), spatial partitioning.</span>
   - Foundation for <span class="career">[#8 Sixteen Tons](#career)</span> and <span class="career">[#7 AiGameDev](#career)</span>.
+  <details>
+  <summary>Tree</summary>
+
+  ```
+  ├── dep/
+  │   ├── DXUT_9_0_c/
+  │   ├── squirrel_2_1_1_sqplus/
+  │   └── tinyxml/
+  ├── Doc/
+  ├── Media/
+  │   └── (screenshots, videos)
+  ├── WitchEngine3/
+  │   └── src/
+  ├── WOF2/
+  │   ├── moduleResources/
+  │   └── src/
+  └── WOF_Debugger/
+      └── src/
+  ```
+  </details>
 
 - **1998 - University Projects (AUB)** — Early graphics and systems programming
   - First explorations in 3D graphics and distributed computing during computer engineering degree at American University of Beirut — foundations for all subsequent graphics and systems work.
