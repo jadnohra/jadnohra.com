@@ -1,0 +1,98 @@
+{
+  "name": "portfolio",
+  "children": [
+    {
+      "name": "career",
+      "children": [
+        {"name": "career.irreducible", "label": "Irreducible", "imports": []},
+        {"name": "career.fernride", "label": "FERNRIDE", "imports": []},
+        {"name": "career.argo", "label": "Argo AI", "imports": []},
+        {"name": "career.audi", "label": "Audi AID", "imports": []},
+        {"name": "career.havok", "label": "Havok", "imports": []},
+        {"name": "career.guerrilla", "label": "Guerrilla", "imports": []},
+        {"name": "career.aigamedev", "label": "AiGameDev", "imports": []},
+        {"name": "career.sixteentons", "label": "Sixteen Tons", "imports": []},
+        {"name": "career.kimera", "label": "Kimera", "imports": []},
+        {"name": "career.guidedknowledge", "label": "Guided Knowledge", "imports": []}
+      ]
+    },
+    {
+      "name": "project",
+      "children": [
+        {"name": "project.thenotes", "label": "TheNotes", "imports": ["career.havok", "theory.rbd", "theory.linalg", "theory.settheory", "theory.fol"]},
+        {"name": "project.defdefqed", "label": "defdefqed", "imports": ["algo.fol", "theory.settheory", "theory.modeltheory", "theory.prooftheory"]},
+        {"name": "project.mlcp", "label": "MLCP 2.0", "imports": ["career.havok", "career.guidedknowledge", "algo.lu", "algo.lp", "theory.linalg", "theory.constraintsolving"]},
+        {"name": "project.asinus", "label": "asinus_salutem", "imports": ["algo.parsing"]},
+        {"name": "project.fp", "label": "Floating Point", "imports": ["career.havok", "algo.ieee754"]},
+        {"name": "project.recastmod", "label": "RecastMOD", "imports": ["career.guerrilla", "algo.astar", "algo.navmesh", "algo.voxelization"]},
+        {"name": "project.bigfoot", "label": "Bigfoot", "imports": ["career.guerrilla", "career.havok", "algo.skeletal", "algo.retargeting", "algo.quaternions", "theory.rbd", "theory.lagrangian"]},
+        {"name": "project.blendertobvh", "label": "BlenderToBVH", "imports": ["algo.bvhformat"]},
+        {"name": "project.bigeye", "label": "Bigeye UI", "imports": ["algo.scenegraph"]},
+        {"name": "project.puppeteer", "label": "Puppeteer", "imports": ["algo.bvhformat", "algo.skeletal"]},
+        {"name": "project.aisandbox", "label": "AI Sandbox", "imports": ["career.aigamedev", "algo.hpastar", "algo.rl", "algo.locomotion"]},
+        {"name": "project.obstacle", "label": "Obstacle Avoidance", "imports": ["career.guerrilla", "career.aigamedev", "algo.velocityobstacles"]},
+        {"name": "project.tictactoe", "label": "TicTacToe AI", "imports": ["career.aigamedev", "algo.minimax", "algo.alphabeta", "algo.valueiteration"]},
+        {"name": "project.graphics", "label": "Graphics Framework", "imports": ["algo.bsp", "algo.pvs"]},
+        {"name": "project.wof", "label": "World-Of-Football", "imports": ["career.kimera", "career.sixteentons", "career.aigamedev", "algo.nn", "algo.spatialpartition"]},
+        {"name": "project.university", "label": "University Projects", "imports": ["career.kimera", "algo.raytracing", "algo.rasterization", "algo.zbuffer"]}
+      ]
+    },
+    {
+      "name": "algo",
+      "children": [
+        {"name": "algo.gjk", "label": "GJK", "imports": ["theory.rbd", "theory.linalg"]},
+        {"name": "algo.bvh", "label": "BVH", "imports": ["theory.linalg"]},
+        {"name": "algo.spatialpartition", "label": "Spatial Partition", "imports": []},
+        {"name": "algo.astar", "label": "A*", "imports": []},
+        {"name": "algo.hpastar", "label": "HPA*", "imports": ["algo.astar"]},
+        {"name": "algo.navmesh", "label": "Navmesh", "imports": []},
+        {"name": "algo.voxelization", "label": "Voxelization", "imports": []},
+        {"name": "algo.bsp", "label": "BSP", "imports": []},
+        {"name": "algo.pvs", "label": "PVS", "imports": []},
+        {"name": "algo.raytracing", "label": "Ray Tracing", "imports": ["theory.linalg"]},
+        {"name": "algo.rasterization", "label": "Rasterization", "imports": []},
+        {"name": "algo.zbuffer", "label": "Z-buffering", "imports": []},
+        {"name": "algo.minimax", "label": "Minimax", "imports": []},
+        {"name": "algo.alphabeta", "label": "Alpha-Beta", "imports": ["algo.minimax"]},
+        {"name": "algo.rl", "label": "Reinforcement Learning", "imports": []},
+        {"name": "algo.valueiteration", "label": "Value Iteration", "imports": ["algo.rl"]},
+        {"name": "algo.nn", "label": "Neural Networks", "imports": []},
+        {"name": "algo.velocityobstacles", "label": "Velocity Obstacles", "imports": []},
+        {"name": "algo.locomotion", "label": "Locomotion", "imports": []},
+        {"name": "algo.skeletal", "label": "Skeletal Animation", "imports": ["algo.quaternions"]},
+        {"name": "algo.retargeting", "label": "Motion Retargeting", "imports": ["algo.skeletal"]},
+        {"name": "algo.bvhformat", "label": "BVH Format", "imports": ["algo.skeletal"]},
+        {"name": "algo.quaternions", "label": "Quaternions", "imports": ["theory.rbd", "theory.linalg"]},
+        {"name": "algo.lu", "label": "LU Decomposition", "imports": ["theory.linalg"]},
+        {"name": "algo.lp", "label": "Linear Programming", "imports": ["theory.linalg", "theory.constraintsolving"]},
+        {"name": "algo.ieee754", "label": "IEEE 754", "imports": []},
+        {"name": "algo.eigenvalue", "label": "Eigenvalue Decomp", "imports": ["theory.linalg"]},
+        {"name": "algo.scenegraph", "label": "Scene Graph", "imports": []},
+        {"name": "algo.parsing", "label": "Expression Parsing", "imports": []},
+        {"name": "algo.fol", "label": "FOL Prover", "imports": ["theory.fol", "theory.settheory"]}
+      ]
+    },
+    {
+      "name": "theory",
+      "children": [
+        {"name": "theory.rbd", "label": "Rigid Body Dynamics", "imports": ["theory.lagrangian", "theory.linalg"]},
+        {"name": "theory.lagrangian", "label": "Lagrangian Mechanics", "imports": ["theory.calcvar"]},
+        {"name": "theory.constraintsolving", "label": "Constraint Solving", "imports": ["theory.linalg"]},
+        {"name": "theory.diffgeom", "label": "Differential Geometry", "imports": ["theory.manifolds"]},
+        {"name": "theory.diffforms", "label": "Differential Forms", "imports": ["theory.diffgeom"]},
+        {"name": "theory.manifolds", "label": "Manifolds", "imports": ["theory.realanalysis"]},
+        {"name": "theory.realanalysis", "label": "Real Analysis", "imports": []},
+        {"name": "theory.measuretheory", "label": "Measure Theory", "imports": ["theory.realanalysis"]},
+        {"name": "theory.calcvar", "label": "Calculus of Variations", "imports": ["theory.realanalysis"]},
+        {"name": "theory.fol", "label": "First-Order Logic", "imports": ["theory.settheory"]},
+        {"name": "theory.settheory", "label": "Set Theory", "imports": []},
+        {"name": "theory.modeltheory", "label": "Model Theory", "imports": ["theory.fol"]},
+        {"name": "theory.prooftheory", "label": "Proof Theory", "imports": ["theory.fol"]},
+        {"name": "theory.lambdacalc", "label": "Lambda Calculus", "imports": []},
+        {"name": "theory.typetheory", "label": "Type Theory", "imports": ["theory.lambdacalc"]},
+        {"name": "theory.linalg", "label": "Linear Algebra", "imports": []},
+        {"name": "theory.numbertheory", "label": "Number Theory", "imports": []}
+      ]
+    }
+  ]
+}

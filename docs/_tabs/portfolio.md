@@ -15,11 +15,29 @@ order: 5
 .career { color: #dc2626; }
 .career a { color: #dc2626; text-decoration: underline; }
 strong a { text-decoration: underline; }
+#portfolio-viz {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+#portfolio-viz svg {
+  background: transparent;
+}
 </style>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
 
 # Learning Journey
 
 Technical tree showing projects, algorithms, study, and career connections.
+
+## Knowledge Graph
+
+Interactive visualization of connections between career, projects, algorithms, and theory. Hover over nodes to highlight relationships.
+
+<div id="portfolio-viz"></div>
+
+<script src="/assets/js/portfolio-viz.js"></script>
 
 ## Projects
 
