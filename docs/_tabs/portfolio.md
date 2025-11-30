@@ -494,7 +494,27 @@ Interactive visualization of connections between career, projects, algorithms, a
 │   ├── res/ResEngine.class, ResLoaderThread.class
 │   └── projects/thrashem/Applet.class, PlayerShip.class, EnemyShip.class
 ├── graphedit/ (screenshots, index.html)
-├── RayTracer/src/
+├── RayTracer/
+│   ├── data/bunny.obj, cornell_box.obj/.mtl
+│   ├── screenshots/ (render results)
+│   └── src/
+│       ├── main.cpp
+│       ├── 3rdparty/ (PixelToaster, plyLoader, wavefrontObjLoader)
+│       ├── rayTracer/
+│       │   ├── BoundingVolumeHierarchy.cpp/.hpp
+│       │   ├── Camera.cpp/.hpp
+│       │   ├── Material.cpp/.hpp
+│       │   ├── Math.cpp/.hpp
+│       │   ├── ParallelProcessor_Simple.cpp/.hpp
+│       │   ├── PostProcess.cpp/.hpp, GaussianBlur.cpp/.hpp
+│       │   ├── Primitive.cpp/.hpp
+│       │   ├── Primitive_{Sphere,Plane,Triangle,Quad,Cone}.hpp
+│       │   ├── Ray.hpp, RayTracer.hpp
+│       │   ├── Renderer.cpp/.hpp
+│       │   ├── RenderImage.cpp/.hpp, RenderTarget.cpp/.hpp
+│       │   ├── Scene.cpp/.hpp
+│       │   └── SpatialAccelerator.cpp/.hpp
+│       └── WE3/ (engine utilities)
 ├── thrashit3d/
 │   ├── engine/
 │   │   ├── ThrashIt3D.cpp, ThrashIt3D.h
