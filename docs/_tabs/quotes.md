@@ -63,3 +63,29 @@ A personal categorization system developed during the study:
 - **Geometry** — Differential Geometry, Topology, Euclidean
 - **Physics** — Mechanics, Relativity, Quantum
 - **Philosophy** — Nature of Math, History, Beauty
+
+### Formal Validation
+
+After years of self-study, I enrolled in a Mathematics MSc at Emporia State University to externally validate the knowledge gained. The program was discontinued after COVID-19.
+
+| Course | Score | Date |
+|--------|-------|------|
+| MA701 Mathematical Proofs | 99.18% | Apr 2018 |
+| MA728 Vector Spaces | 97.61% | May 2019 |
+| MA735 Advanced Calculus I | 98.47% | Dec 2019 |
+
+### The Deeper Journey
+
+These three courses represent only a fraction of the actual study. The self-directed curriculum ("ThePlan") followed a historical, insight-driven approach—understanding *why* mathematics developed the way it did, not just *how* to apply techniques.
+
+**Foundations:** Proof theory, Linear Algebra (Hefferon), Real Analysis I-III (Zakon), Calculus on Manifolds (Spivak), Number Theory, Algebra, Topology (Stillwell)
+
+**Advanced:** Abstract Algebra (Dummit), Differential Geometry 1-5 (Spivak), Dynamical Systems (Smale), Functional Analysis
+
+**Mathematical Physics:** Whittaker's trilogy, Arnold's *Mathematical Methods of Classical Mechanics*, Lanczos's *Variational Principles of Mechanics*
+
+**The goals:** The three-body problem, chaos in dynamical systems, Lie group integrators, and the deep connections between variational calculus and classical mechanics.
+
+The journey included eigenvalue theory, Lie groups, category theory, algebraic geometry, and the foundations of analysis through constructive mathematics.
+
+*"If I ever finish this, I will be a very pleased person for at least one day."* — ThePlan, 2012
