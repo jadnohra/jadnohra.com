@@ -1,14 +1,14 @@
-// Circular Quote Wheel - Topic → Subtopic → Random Quote
+// Circular Quote Wheel - Single morphing wheel
+// Level 1: Topics → Level 2: Subtopics → Quote display
 (function() {
-  const width = 500;
-  const height = 500;
-  const outerRadius = 220;
-  const innerRadius = 120;
-  const centerRadius = 80;
+  const width = 600;
+  const height = 600;
+  const radius = 250;
+  const innerRadius = 100;
 
   // Color scheme for main topics
   const topicColors = {
-    "Jad's System": "#14b8a6",  // teal - personal tag system
+    "Jad's System": "#14b8a6",
     "Foundations": "#dc2626",
     "Analysis": "#2563eb",
     "Algebra": "#059669",
@@ -18,8 +18,11 @@
   };
 
   let quotesData = null;
+  let topics = null;
+  let currentLevel = 0;  // 0 = main topics, 1 = subtopics, 2 = quote
   let selectedTopic = null;
   let selectedSubtopic = null;
+  let svg, wheelGroup, centerGroup;
 
   async function init() {
     const container = document.getElementById('quotes-wheel');
@@ -36,294 +39,375 @@
     }
 
     // Build topic structure
-    const topics = buildTopicStructure();
+    topics = buildTopicStructure();
 
     // Create SVG
-    const svg = d3.select(container)
+    svg = d3.select(container)
       .append("svg")
       .attr("viewBox", [-width/2, -height/2, width, height])
       .attr("width", width)
       .attr("height", height)
       .style("max-width", "100%")
-      .style("height", "auto")
-      .style("font", "12px sans-serif");
+      .style("height", "auto");
 
-    // Create groups
-    const outerWheel = svg.append("g").attr("class", "outer-wheel");
-    const innerWheel = svg.append("g").attr("class", "inner-wheel").style("opacity", 0);
-    const centerCircle = svg.append("g").attr("class", "center");
+    // Background circle for aesthetics
+    svg.append("circle")
+      .attr("r", radius + 10)
+      .attr("fill", "none")
+      .attr("stroke", "#e5e7eb")
+      .attr("stroke-width", 2);
 
-    // Draw outer wheel (main topics)
-    drawOuterWheel(outerWheel, topics);
+    // Wheel group (segments)
+    wheelGroup = svg.append("g").attr("class", "wheel");
 
-    // Draw center
-    drawCenter(centerCircle);
+    // Center group
+    centerGroup = svg.append("g").attr("class", "center");
 
-    // Quote display area
-    const quoteDisplay = d3.select(container)
-      .append("div")
-      .attr("class", "quote-display")
-      .style("margin-top", "20px")
-      .style("padding", "20px")
-      .style("min-height", "150px")
-      .style("background", "rgba(0,0,0,0.03)")
-      .style("border-radius", "10px")
-      .style("text-align", "center");
-
-    quoteDisplay.append("p")
-      .attr("class", "quote-text")
-      .style("font-style", "italic")
-      .style("font-size", "1.1em")
-      .style("line-height", "1.6")
-      .text("Select a topic from the wheel...");
-
-    quoteDisplay.append("p")
-      .attr("class", "quote-source")
-      .style("margin-top", "10px")
-      .style("color", "#666")
-      .style("font-size", "0.9em");
-
-    quoteDisplay.append("button")
-      .attr("class", "next-quote-btn")
-      .style("margin-top", "15px")
-      .style("padding", "8px 20px")
-      .style("border", "none")
-      .style("border-radius", "5px")
-      .style("background", "#2563eb")
-      .style("color", "white")
-      .style("cursor", "pointer")
-      .style("display", "none")
-      .text("Next Quote")
-      .on("click", showRandomQuote);
-
-    // Store references
-    container._svg = svg;
-    container._outerWheel = outerWheel;
-    container._innerWheel = innerWheel;
-    container._topics = topics;
-    container._quoteDisplay = quoteDisplay;
+    // Draw initial state
+    drawWheel(Object.keys(topics), null);
+    drawCenter("Math\nQuotes", "Select a topic", null);
   }
 
   function buildTopicStructure() {
-    const topics = {};
-
+    const t = {};
     for (const quote of quotesData.quotes) {
       for (const topicPath of quote.topics) {
         const [main, sub] = topicPath.split('/');
-        if (!topics[main]) topics[main] = {};
-        if (!topics[main][sub]) topics[main][sub] = [];
-        topics[main][sub].push(quote);
+        if (!t[main]) t[main] = {};
+        if (!t[main][sub]) t[main][sub] = [];
+        t[main][sub].push(quote);
       }
     }
-
-    return topics;
+    return t;
   }
 
-  function drawOuterWheel(g, topics) {
-    const mainTopics = Object.keys(topics);
-    const arcAngle = (2 * Math.PI) / mainTopics.length;
+  function drawWheel(items, parentColor) {
+    const n = items.length;
+    const arcAngle = (2 * Math.PI) / n;
 
     const arc = d3.arc()
-      .innerRadius(innerRadius)
-      .outerRadius(outerRadius);
+      .innerRadius(innerRadius + 20)
+      .outerRadius(radius);
 
-    const segments = g.selectAll("g.segment")
-      .data(mainTopics)
+    // Remove old segments with animation
+    wheelGroup.selectAll("g.segment")
+      .transition()
+      .duration(300)
+      .style("opacity", 0)
+      .remove();
+
+    // Add new segments
+    const segments = wheelGroup.selectAll("g.segment-new")
+      .data(items)
       .join("g")
       .attr("class", "segment")
+      .style("opacity", 0)
       .style("cursor", "pointer");
 
     segments.append("path")
       .attr("d", (d, i) => arc({
-        startAngle: i * arcAngle - Math.PI/2,
-        endAngle: (i + 1) * arcAngle - Math.PI/2
+        startAngle: i * arcAngle - Math.PI/2 + 0.02,
+        endAngle: (i + 1) * arcAngle - Math.PI/2 - 0.02
       }))
-      .attr("fill", d => topicColors[d] || "#999")
+      .attr("fill", (d) => {
+        if (parentColor) return parentColor;
+        return topicColors[d] || "#6b7280";
+      })
       .attr("stroke", "white")
-      .attr("stroke-width", 2)
-      .style("opacity", 0.8)
-      .on("mouseover", function() {
-        d3.select(this).style("opacity", 1);
+      .attr("stroke-width", 3)
+      .style("filter", "drop-shadow(0 2px 4px rgba(0,0,0,0.1))")
+      .on("mouseover", function(event, d) {
+        d3.select(this)
+          .transition()
+          .duration(150)
+          .attr("transform", function() {
+            const i = items.indexOf(d);
+            const angle = (i + 0.5) * arcAngle - Math.PI/2;
+            return `translate(${5 * Math.cos(angle)}, ${5 * Math.sin(angle)})`;
+          });
       })
       .on("mouseout", function() {
-        d3.select(this).style("opacity", 0.8);
+        d3.select(this)
+          .transition()
+          .duration(150)
+          .attr("transform", "translate(0, 0)");
       });
 
-    // Labels
+    // Labels - curved along the arc
     segments.append("text")
       .attr("transform", (d, i) => {
         const angle = (i + 0.5) * arcAngle - Math.PI/2;
-        const r = (innerRadius + outerRadius) / 2;
+        const r = (innerRadius + radius) / 2 + 10;
         const x = r * Math.cos(angle);
         const y = r * Math.sin(angle);
-        const rotation = (angle * 180 / Math.PI) + (angle > Math.PI/2 && angle < 3*Math.PI/2 ? 180 : 0);
+        let rotation = angle * 180 / Math.PI;
+        if (rotation > 90 || rotation < -90) rotation += 180;
         return `translate(${x},${y}) rotate(${rotation})`;
       })
       .attr("text-anchor", "middle")
       .attr("dy", "0.35em")
       .attr("fill", "white")
       .attr("font-weight", "bold")
-      .attr("font-size", "11px")
-      .text(d => d)
-      .style("pointer-events", "none");
-
-    segments.on("click", function(event, d) {
-      selectTopic(d, topics);
-    });
-  }
-
-  function drawCenter(g) {
-    g.append("circle")
-      .attr("r", centerRadius)
-      .attr("fill", "#1f2937")
-      .attr("stroke", "#374151")
-      .attr("stroke-width", 2);
-
-    g.append("text")
-      .attr("text-anchor", "middle")
-      .attr("dy", "-0.5em")
-      .attr("fill", "white")
-      .attr("font-size", "14px")
-      .attr("font-weight", "bold")
-      .text("Math");
-
-    g.append("text")
-      .attr("text-anchor", "middle")
-      .attr("dy", "1em")
-      .attr("fill", "#9ca3af")
-      .attr("font-size", "11px")
-      .text("Quotes");
-
-    // Back button (hidden initially)
-    g.append("text")
-      .attr("class", "back-btn")
-      .attr("text-anchor", "middle")
-      .attr("dy", "2.5em")
-      .attr("fill", "#60a5fa")
-      .attr("font-size", "10px")
-      .style("cursor", "pointer")
-      .style("display", "none")
-      .text("← Back")
-      .on("click", goBack);
-  }
-
-  function selectTopic(topic, topics) {
-    selectedTopic = topic;
-    selectedSubtopic = null;
-
-    const container = document.getElementById('quotes-wheel');
-    const innerWheel = container._svg.select(".inner-wheel");
-    const outerWheel = container._svg.select(".outer-wheel");
-    const center = container._svg.select(".center");
-
-    // Fade outer wheel
-    outerWheel.transition().duration(300).style("opacity", 0.3);
-
-    // Show back button
-    center.select(".back-btn").style("display", "block");
-
-    // Draw subtopic wheel
-    const subtopics = Object.keys(topics[topic]);
-    const arcAngle = (2 * Math.PI) / subtopics.length;
-
-    innerWheel.selectAll("*").remove();
-
-    const arc = d3.arc()
-      .innerRadius(centerRadius + 10)
-      .outerRadius(innerRadius - 10);
-
-    const segments = innerWheel.selectAll("g.sub-segment")
-      .data(subtopics)
-      .join("g")
-      .attr("class", "sub-segment")
-      .style("cursor", "pointer");
-
-    segments.append("path")
-      .attr("d", (d, i) => arc({
-        startAngle: i * arcAngle - Math.PI/2,
-        endAngle: (i + 1) * arcAngle - Math.PI/2
-      }))
-      .attr("fill", topicColors[topic] || "#999")
-      .attr("stroke", "white")
-      .attr("stroke-width", 1)
-      .style("opacity", 0.6)
-      .on("mouseover", function() {
-        d3.select(this).style("opacity", 0.9);
-      })
-      .on("mouseout", function() {
-        d3.select(this).style("opacity", 0.6);
+      .attr("font-size", n > 6 ? "11px" : "13px")
+      .style("text-shadow", "0 1px 2px rgba(0,0,0,0.3)")
+      .style("pointer-events", "none")
+      .text(d => {
+        // Shorten long names
+        if (d.length > 14) return d.substring(0, 12) + "...";
+        return d;
       });
 
-    segments.append("text")
-      .attr("transform", (d, i) => {
-        const angle = (i + 0.5) * arcAngle - Math.PI/2;
-        const r = (centerRadius + innerRadius) / 2;
-        const x = r * Math.cos(angle);
-        const y = r * Math.sin(angle);
-        return `translate(${x},${y})`;
-      })
-      .attr("text-anchor", "middle")
-      .attr("dy", "0.35em")
-      .attr("fill", "white")
-      .attr("font-size", "9px")
-      .text(d => d.length > 12 ? d.substring(0, 10) + "..." : d)
-      .style("pointer-events", "none");
-
+    // Click handler
     segments.on("click", function(event, d) {
-      selectSubtopic(topic, d, topics);
+      handleClick(d);
     });
 
-    innerWheel.transition().duration(300).style("opacity", 1);
+    // Fade in
+    segments.transition()
+      .duration(400)
+      .style("opacity", 1);
   }
 
-  function selectSubtopic(topic, subtopic, topics) {
-    selectedSubtopic = subtopic;
-    const container = document.getElementById('quotes-wheel');
+  function drawCenter(title, subtitle, backAction) {
+    centerGroup.selectAll("*").remove();
 
-    // Show next quote button
-    container._quoteDisplay.select(".next-quote-btn").style("display", "inline-block");
+    // Center circle
+    centerGroup.append("circle")
+      .attr("r", innerRadius)
+      .attr("fill", "#1f2937")
+      .style("filter", "drop-shadow(0 4px 6px rgba(0,0,0,0.2))");
 
-    showRandomQuote();
+    // Title
+    const lines = title.split('\n');
+    lines.forEach((line, i) => {
+      centerGroup.append("text")
+        .attr("text-anchor", "middle")
+        .attr("y", (i - (lines.length - 1) / 2) * 20)
+        .attr("fill", "white")
+        .attr("font-size", "16px")
+        .attr("font-weight", "bold")
+        .text(line);
+    });
+
+    // Subtitle
+    if (subtitle) {
+      centerGroup.append("text")
+        .attr("text-anchor", "middle")
+        .attr("y", lines.length * 15 + 10)
+        .attr("fill", "#9ca3af")
+        .attr("font-size", "11px")
+        .text(subtitle);
+    }
+
+    // Back button
+    if (backAction) {
+      const backBtn = centerGroup.append("g")
+        .attr("class", "back-btn")
+        .attr("transform", `translate(0, ${innerRadius - 25})`)
+        .style("cursor", "pointer")
+        .on("click", backAction);
+
+      backBtn.append("circle")
+        .attr("r", 18)
+        .attr("fill", "#374151");
+
+      backBtn.append("text")
+        .attr("text-anchor", "middle")
+        .attr("dy", "0.35em")
+        .attr("fill", "#60a5fa")
+        .attr("font-size", "18px")
+        .text("←");
+    }
   }
 
-  function showRandomQuote() {
-    if (!selectedTopic || !selectedSubtopic) return;
+  function handleClick(item) {
+    if (currentLevel === 0) {
+      // Clicked main topic → show subtopics
+      selectedTopic = item;
+      currentLevel = 1;
+      const subtopics = Object.keys(topics[item]);
+      drawWheel(subtopics, topicColors[item]);
+      drawCenter(item, `${subtopics.length} subtopics`, goBack);
+    } else if (currentLevel === 1) {
+      // Clicked subtopic → show quote
+      selectedSubtopic = item;
+      currentLevel = 2;
+      showQuote();
+    }
+  }
 
-    const container = document.getElementById('quotes-wheel');
-    const topics = container._topics;
+  function showQuote() {
     const quotes = topics[selectedTopic][selectedSubtopic];
-
     if (!quotes || quotes.length === 0) return;
 
     const quote = quotes[Math.floor(Math.random() * quotes.length)];
 
-    container._quoteDisplay.select(".quote-text")
+    // Fade out wheel
+    wheelGroup.transition().duration(300).style("opacity", 0.2);
+
+    // Show quote in expanded center
+    centerGroup.selectAll("*").remove();
+
+    // Larger background
+    centerGroup.append("circle")
+      .attr("r", radius - 20)
+      .attr("fill", "#1f2937")
       .style("opacity", 0)
       .transition()
+      .duration(400)
+      .style("opacity", 0.95);
+
+    // Topic/subtopic header
+    centerGroup.append("text")
+      .attr("text-anchor", "middle")
+      .attr("y", -radius + 60)
+      .attr("fill", topicColors[selectedTopic])
+      .attr("font-size", "14px")
+      .attr("font-weight", "bold")
+      .style("opacity", 0)
+      .transition()
+      .delay(200)
       .duration(300)
       .style("opacity", 1)
-      .text(`"${quote.text}"`);
+      .text(`${selectedTopic} › ${selectedSubtopic}`);
 
-    container._quoteDisplay.select(".quote-source")
-      .text(quote.source ? `— ${quote.source}` : "");
+    // Quote text (wrapped)
+    const quoteText = quote.text.length > 400
+      ? quote.text.substring(0, 400) + "..."
+      : quote.text;
+
+    const words = quoteText.split(' ');
+    const lines = [];
+    let currentLine = '';
+    const maxWidth = 35; // chars per line
+
+    for (const word of words) {
+      if ((currentLine + ' ' + word).length > maxWidth) {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = currentLine ? currentLine + ' ' + word : word;
+      }
+    }
+    if (currentLine) lines.push(currentLine);
+
+    // Limit lines
+    const displayLines = lines.slice(0, 10);
+    if (lines.length > 10) displayLines[9] += '...';
+
+    const textGroup = centerGroup.append("g")
+      .attr("transform", `translate(0, ${-displayLines.length * 8})`);
+
+    displayLines.forEach((line, i) => {
+      textGroup.append("text")
+        .attr("text-anchor", "middle")
+        .attr("y", i * 22)
+        .attr("fill", "white")
+        .attr("font-size", "13px")
+        .attr("font-style", "italic")
+        .style("opacity", 0)
+        .transition()
+        .delay(300 + i * 30)
+        .duration(300)
+        .style("opacity", 1)
+        .text(line);
+    });
+
+    // Source
+    if (quote.source) {
+      centerGroup.append("text")
+        .attr("text-anchor", "middle")
+        .attr("y", displayLines.length * 11 + 30)
+        .attr("fill", "#9ca3af")
+        .attr("font-size", "11px")
+        .style("opacity", 0)
+        .transition()
+        .delay(500)
+        .duration(300)
+        .style("opacity", 1)
+        .text(`— ${quote.source.substring(0, 50)}${quote.source.length > 50 ? '...' : ''}`);
+    }
+
+    // Buttons
+    const btnY = radius - 50;
+
+    // Back button
+    const backBtn = centerGroup.append("g")
+      .attr("transform", `translate(-50, ${btnY})`)
+      .style("cursor", "pointer")
+      .style("opacity", 0)
+      .on("click", goBackFromQuote);
+
+    backBtn.append("rect")
+      .attr("x", -35)
+      .attr("y", -15)
+      .attr("width", 70)
+      .attr("height", 30)
+      .attr("rx", 5)
+      .attr("fill", "#374151");
+
+    backBtn.append("text")
+      .attr("text-anchor", "middle")
+      .attr("dy", "0.35em")
+      .attr("fill", "#60a5fa")
+      .attr("font-size", "12px")
+      .text("← Back");
+
+    backBtn.transition().delay(600).duration(300).style("opacity", 1);
+
+    // Next button
+    const nextBtn = centerGroup.append("g")
+      .attr("transform", `translate(50, ${btnY})`)
+      .style("cursor", "pointer")
+      .style("opacity", 0)
+      .on("click", showQuote);
+
+    nextBtn.append("rect")
+      .attr("x", -35)
+      .attr("y", -15)
+      .attr("width", 70)
+      .attr("height", 30)
+      .attr("rx", 5)
+      .attr("fill", topicColors[selectedTopic]);
+
+    nextBtn.append("text")
+      .attr("text-anchor", "middle")
+      .attr("dy", "0.35em")
+      .attr("fill", "white")
+      .attr("font-size", "12px")
+      .text("Next →");
+
+    nextBtn.transition().delay(600).duration(300).style("opacity", 1);
+
+    // Quote count
+    centerGroup.append("text")
+      .attr("text-anchor", "middle")
+      .attr("y", btnY + 35)
+      .attr("fill", "#6b7280")
+      .attr("font-size", "10px")
+      .style("opacity", 0)
+      .transition()
+      .delay(700)
+      .duration(300)
+      .style("opacity", 1)
+      .text(`${quotes.length} quotes in this category`);
   }
 
   function goBack() {
-    selectedTopic = null;
-    selectedSubtopic = null;
+    if (currentLevel === 1) {
+      currentLevel = 0;
+      selectedTopic = null;
+      drawWheel(Object.keys(topics), null);
+      drawCenter("Math\nQuotes", "Select a topic", null);
+    }
+  }
 
-    const container = document.getElementById('quotes-wheel');
-    const innerWheel = container._svg.select(".inner-wheel");
-    const outerWheel = container._svg.select(".outer-wheel");
-    const center = container._svg.select(".center");
-
-    innerWheel.transition().duration(300).style("opacity", 0);
-    outerWheel.transition().duration(300).style("opacity", 1);
-    center.select(".back-btn").style("display", "none");
-
-    container._quoteDisplay.select(".quote-text").text("Select a topic from the wheel...");
-    container._quoteDisplay.select(".quote-source").text("");
-    container._quoteDisplay.select(".next-quote-btn").style("display", "none");
+  function goBackFromQuote() {
+    currentLevel = 1;
+    wheelGroup.transition().duration(300).style("opacity", 1);
+    const subtopics = Object.keys(topics[selectedTopic]);
+    drawWheel(subtopics, topicColors[selectedTopic]);
+    drawCenter(selectedTopic, `${subtopics.length} subtopics`, goBack);
   }
 
   // Initialize when DOM ready
