@@ -103,8 +103,10 @@
       .text(d => d.data.label || d.data.name.split('.')[1])
       .call(text => text.append("title").text(d => d.data.name));
 
-    // Add interactivity
-    node.on("mouseover", function(event, d) {
+    // Highlight function for a node
+    function highlightNode(d) {
+      if (!d) return;
+
       // Highlight connected links
       link.attr("stroke-opacity", l => {
         if (l.source === d || l.target === d) return 1;
@@ -132,9 +134,9 @@
 
       node.attr("fill-opacity", n => connected.has(n) ? 1 : 0.2);
       node.attr("font-weight", n => connected.has(n) ? "bold" : "normal");
-    });
+    }
 
-    node.on("mouseout", function() {
+    function resetHighlight() {
       link.attr("stroke-opacity", 0.6);
       link.attr("stroke-width", 1.5);
       link.attr("stroke", d => {
@@ -143,6 +145,58 @@
       });
       node.attr("fill-opacity", 1);
       node.attr("font-weight", "500");
+    }
+
+    // Add interactivity on node labels
+    node.on("mouseover", function(event, d) {
+      highlightNode(d);
+    });
+
+    node.on("mouseout", function() {
+      resetHighlight();
+    });
+
+    // Add hover detection inside the circle
+    let currentHighlight = null;
+
+    svg.on("mousemove", function(event) {
+      const [mx, my] = d3.pointer(event);
+      const dist = Math.sqrt(mx * mx + my * my);
+
+      // Only detect inside the inner circle area
+      if (dist > innerRadius - 20) {
+        if (currentHighlight) {
+          resetHighlight();
+          currentHighlight = null;
+        }
+        return;
+      }
+
+      // Find angle from center
+      let angle = Math.atan2(my, mx) + Math.PI / 2;
+      if (angle < 0) angle += 2 * Math.PI;
+
+      // Find closest node by angle
+      let closest = null;
+      let minDiff = Infinity;
+      for (const leaf of leaves) {
+        let diff = Math.abs(leaf.x - angle);
+        if (diff > Math.PI) diff = 2 * Math.PI - diff;
+        if (diff < minDiff) {
+          minDiff = diff;
+          closest = leaf;
+        }
+      }
+
+      if (closest && closest !== currentHighlight) {
+        currentHighlight = closest;
+        highlightNode(closest);
+      }
+    });
+
+    svg.on("mouseleave", function() {
+      resetHighlight();
+      currentHighlight = null;
     });
 
     // Add legend
