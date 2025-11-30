@@ -2,18 +2,24 @@
 layout: page
 title: Portfolio
 icon: fas fa-folder-tree
-order: 5
+order: 1
 ---
 
 <style>
-.algo { color: #2563eb; }
-.algo a { color: #2563eb; text-decoration: underline; }
-.study { color: #059669; }
-.study a { color: #059669; text-decoration: underline; }
-.ref { color: #7c3aed; }
-.ref a { color: #7c3aed; text-decoration: underline; }
-.career { color: #dc2626; }
-.career a { color: #dc2626; text-decoration: underline; }
+/* All links should be blue and underlined by default */
+a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+a:hover {
+  color: #1d4ed8;
+}
+/* Category spans with colored links */
+.algo, .algo a { color: #2563eb; text-decoration: underline; }
+.study, .study a { color: #059669; text-decoration: underline; }
+.ref, .ref a { color: #7c3aed; text-decoration: underline; }
+.career, .career a { color: #dc2626; text-decoration: underline; }
 strong a { text-decoration: underline; }
 #portfolio-viz {
   display: flex;

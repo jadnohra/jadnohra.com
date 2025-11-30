@@ -2,12 +2,22 @@
 layout: page
 title: Math Quotes
 icon: fas fa-quote-left
-order: 6
+order: 2
 ---
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <style>
+/* Link styling */
+a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+a:hover {
+  color: #1d4ed8;
+}
+
 #quotes-wheel {
   display: flex;
   flex-direction: column;

@@ -1,0 +1,40 @@
+<!-- Site-wide custom styles -->
+<style>
+/* Gray out WIP sidebar items */
+#sidebar .nav-item a[href*="categories"],
+#sidebar .nav-item a[href*="tags"],
+#sidebar .nav-item a[href*="archives"],
+#sidebar .nav-item a[href*="about"],
+.sidebar .nav-link[href*="categories"],
+.sidebar .nav-link[href*="tags"],
+.sidebar .nav-link[href*="archives"],
+.sidebar .nav-link[href*="about"] {
+  opacity: 0.4 !important;
+}
+
+/* Global link styling - blue with underline for content */
+.content a,
+.post-content a,
+article a,
+#core-wrapper a:not(.nav-link):not(.btn):not(.card-link):not(.tag):not(.category):not(.archive-item) {
+  color: #2563eb !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px;
+}
+.content a:hover,
+.post-content a:hover,
+article a:hover,
+#core-wrapper a:not(.nav-link):not(.btn):not(.card-link):not(.tag):not(.category):not(.archive-item):hover {
+  color: #1d4ed8 !important;
+}
+
+/* Algorithm/technique highlighting */
+.algo {
+  color: #2563eb !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.algo a {
+  color: #2563eb !important;
+}
+</style>
