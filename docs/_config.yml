@@ -1,29 +1,140 @@
+# The Site Configuration for Chirpy theme
+
+theme: jekyll-theme-chirpy
+
+# Site language
+lang: en
+
+# Timezone
+timezone: Europe/Berlin
+
+# Site title
 title: Jad Nohra
-description: Mathematics, Physics, Logic, Science and Code
-author: Jad Nohra
-markdown: kramdown
-show_downloads: false
-show_excerpts: true
-theme: minima
 
-minima:
-  date_format: "%Y-%m-%d"
-  social_links:
-    - { platform: github,         user_url: "https://github.com/jadnohra" }
-    - { platform: google_scholar, user_url: "https://scholar.google.com/citations?user=0pae59AAAAAJ" }
-    - { platform: linkedin,       user_url: "https://www.linkedin.com/in/jadnohra" }
-    - { platform: youtube,        user_url: "https://www.youtube.com/@JadNohraPoly" }
+# Subtitle/tagline
+tagline: Mathematics, Physics, Logic, Science and Code
 
-# Header navigation pages (will appear in top menu)
-header_pages:
-  - notes.md
-  - defdefqed.md
-  - tech-experience.md
-  - dabblings.md
+# Site description for SEO
+description: >-
+  Personal site of Jad Nohra - Mathematics, Physics, Logic, Science and Code
 
-# Collections from submodules
-include:
-  - "../repos/TheNotes/docs"
-  - "../repos/defdefqed"
-  - "../repos/old_tech_experience"
-  - "../repos/jad-pre-2015-dabblings"
+# Site URL - will be set by GitHub Pages
+url: "https://jadnohra.github.io"
+baseurl: ""
+
+# Social links
+github:
+  username: jadnohra
+
+social:
+  name: Jad Nohra
+  email: ""
+  links:
+    - https://github.com/jadnohra
+    - https://scholar.google.com/citations?user=0pae59AAAAAJ
+    - https://www.linkedin.com/in/jadnohra
+    - https://www.youtube.com/@JadNohraPoly
+
+# Analytics (disabled for now)
+analytics:
+  google:
+    id: ""
+
+# Page views (disabled)
+pageviews:
+  provider: ""
+
+# Theme mode: light, dark, or blank for auto
+theme_mode: ""
+
+# CDN endpoint (leave blank to use local assets)
+cdn: ""
+
+# Avatar image
+avatar: ""
+
+# Table of contents
+toc: true
+
+# Comments (disabled)
+comments:
+  provider: ""
+
+# Self-hosted static assets
+assets:
+  self_host:
+    enabled: false
+
+# PWA feature
+pwa:
+  enabled: true
+  cache:
+    enabled: true
+
+# Pagination
+paginate: 10
+
+# Kramdown settings
+kramdown:
+  footnote_backlink: "&#8617;&#xfe0e;"
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: highlight
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+      start_line: 1
+
+# Collections (for submodule content - future use)
+collections:
+  tabs:
+    output: true
+    sort_by: order
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      comments: false
+      toc: true
+      permalink: /posts/:title/
+  - scope:
+      path: _tabs
+      type: tabs
+    values:
+      layout: page
+      permalink: /:title/
+
+sass:
+  style: compressed
+
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  profile: false
+  blanklines: false
+  ignore:
+    envs: [development]
+
+exclude:
+  - "*.gem"
+  - "*.gemspec"
+  - docs
+  - tools
+  - README.md
+  - LICENSE
+  - "*.config.js"
+  - package*.json
+
+jekyll-archives:
+  enabled: [categories, tags]
+  layouts:
+    category: category
+    tag: tag
+  permalinks:
+    tag: /tags/:name/
+    category: /categories/:name/
