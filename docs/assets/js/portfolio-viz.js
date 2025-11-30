@@ -20,7 +20,9 @@
     if (!container) return;
 
     // Load data
-    const response = await fetch('/assets/data/portfolio-graph.json');
+    // Get baseurl from page if available
+    const baseUrl = document.querySelector('script[src*="portfolio-viz"]')?.src.replace(/\/assets\/js\/portfolio-viz\.js.*/, '') || '';
+    const response = await fetch(baseUrl + '/assets/data/portfolio-graph.json');
     const data = await response.json();
 
     // Process hierarchy

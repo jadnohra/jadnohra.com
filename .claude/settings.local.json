@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gem list:*)",
+      "Bash(brew list:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(find:*)",
+      "Bash(7z x:*)",
+      "Bash(brew install:*)",
+      "Bash(tree:*)",
+      "WebSearch"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

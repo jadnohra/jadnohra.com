@@ -37,7 +37,7 @@ Interactive visualization of connections between career, projects, algorithms, a
 
 <div id="portfolio-viz"></div>
 
-<script src="/assets/js/portfolio-viz.js"></script>
+<script src="{{ '/assets/js/portfolio-viz.js' | relative_url }}"></script>
 
 ## Projects
 
@@ -47,39 +47,38 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Notes: <span class="study">[LinAlg Done Right](https://github.com/jadnohra/TheNotes/blob/master/2019/memo_linear-algebra-done-right.pdf), [2022 robotics transforms](https://github.com/jadnohra/TheNotes/blob/master/2022/mapping_robotics_transform_terminology_to_abstract_linear_algebra.pdf)</span>
   <details>
   <summary>Tree</summary>
-
-  ```
-  ├── 2011-2012
-  │   ├── attribution.pdf
-  │   ├── quotes1-0-100.pdf
-  │   └── theplan.pdf
-  ├── 2013-2014
-  │   ├── Notes on the GJK Algorithm..pdf
-  │   ├── Notes on the Linear Complementarity Problem.pdf
-  │   ├── Notes on Euler's Writings.pdf
-  │   └── ... (30 files)
-  ├── 2015
-  │   ├── Notes on Potter's Set Theory and its Philosophy.pdf
-  │   ├── rotation.pdf
-  │   ├── lagrfrmw.pdf
-  │   └── ... (26 files)
-  ├── 2016
-  │   ├── dform.pdf
-  │   ├── notes_coll_det.pdf
-  │   ├── ml_survey.pdf
-  │   └── ... (19 files)
-  ├── 2017
-  │   ├── treat_rbd_1.pdf
-  │   ├── plql.pdf
-  │   └── ... (11 files)
-  ├── 2018
-  │   ├── Free Occurrences in FOL.pdf
-  │   └── thought_base.pdf
-  ├── 2019
-  │   └── memo_linear-algebra-done-right.pdf
-  └── 2022
-      └── mapping_robotics_transform_terminology_to_abstract_linear_algebra.pdf
-  ```
+  <pre>
+├── 2011-2012
+│   ├── attribution.pdf
+│   ├── quotes1-0-100.pdf
+│   └── theplan.pdf
+├── 2013-2014
+│   ├── Notes on the GJK Algorithm..pdf
+│   ├── Notes on the Linear Complementarity Problem.pdf
+│   ├── Notes on Euler's Writings.pdf
+│   └── ... (30 files)
+├── 2015
+│   ├── Notes on Potter's Set Theory and its Philosophy.pdf
+│   ├── rotation.pdf
+│   ├── lagrfrmw.pdf
+│   └── ... (26 files)
+├── 2016
+│   ├── dform.pdf
+│   ├── notes_coll_det.pdf
+│   ├── ml_survey.pdf
+│   └── ... (19 files)
+├── 2017
+│   ├── treat_rbd_1.pdf
+│   ├── plql.pdf
+│   └── ... (11 files)
+├── 2018
+│   ├── Free Occurrences in FOL.pdf
+│   └── thought_base.pdf
+├── 2019
+│   └── memo_linear-algebra-done-right.pdf
+└── 2022
+    └── mapping_robotics_transform_terminology_to_abstract_linear_algebra.pdf
+  </pre>
   </details>
 
 - **Sep 2017 - [tag_export](https://github.com/jadnohra/tag_export)** — Digital library index
@@ -127,18 +126,17 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Built on lamby research; applied at <span class="career">[#5 Havok](#career)</span> and <span class="career">[#10 Guided Knowledge](#career)</span>.
   <details>
   <summary>Tree</summary>
-
-  ```
-  ├── lp_glpk.jl
-  ├── lp_jad.jl
-  ├── lp.jl
-  ├── lu_julia.jl
-  ├── lu_std.jl
-  ├── lu.jl
-  ├── mlcp.jl
-  ├── shared_funcs.jl
-  └── shared_types.jl
-  ```
+  <pre>
+├── lp_glpk.jl
+├── lp_jad.jl
+├── lp.jl
+├── lu_julia.jl
+├── lu_std.jl
+├── lu.jl
+├── mlcp.jl
+├── shared_funcs.jl
+└── shared_types.jl
+  </pre>
   </details>
 
 - **Jul 2015 - [asinus_salutem](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Lab2015/asinus_salutem)** — Math expression parser
@@ -148,16 +146,15 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Built for mathematical exploration tooling.
   <details>
   <summary>Tree</summary>
-
-  ```
-  ├── as.py
-  ├── helper_arg.py
-  ├── helper_math1.py
-  ├── helper_term.py
-  └── scripts/
-      ├── script1.py
-      └── test_*.txt
-  ```
+  <pre>
+├── as.py
+├── helper_arg.py
+├── helper_math1.py
+├── helper_term.py
+└── scripts/
+    ├── script1.py
+    └── test_*.txt
+  </pre>
   </details>
 
 - **2013-2014 - Deep Mathematical Study** at <span class="career">[#5 Havok](#career)</span>
@@ -177,12 +174,11 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Applied at <span class="career">[#5 Havok](#career)</span> for low-level numerical optimization.
   <details>
   <summary>Tree</summary>
-
-  ```
-  ├── bitfp.cpp
-  ├── bitfp.py
-  └── line_err.py
-  ```
+  <pre>
+├── bitfp.cpp
+├── bitfp.py
+└── line_err.py
+  </pre>
   </details>
 
 - **Nov 2010 - [RecastMOD](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/AI/RecastMOD)** — Navigation mesh system
@@ -200,17 +196,16 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Built on Puppeteer/Bigeye; applied at <span class="career">[#7](#career)→[#6](#career)→[#5](#career)</span>. [Video](https://www.youtube.com/watch?v=XMj0xhCzx4U).
   <details>
   <summary>Tree</summary>
-
-  ```
-  ├── media/
-  │   └── *.bvh
-  └── src/
-      ├── BF/
-      ├── Main.cpp
-      ├── Planner.cpp
-      ├── Retarget.cpp
-      └── Viewer.cpp
-  ```
+  <pre>
+├── media/
+│   └── *.bvh
+└── src/
+    ├── BF/
+    ├── Main.cpp
+    ├── Planner.cpp
+    ├── Retarget.cpp
+    └── Viewer.cpp
+  </pre>
   </details>
 
 - **Aug 2010 - [BlenderToBVH](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/BlenderToBVH)** — Animation export tool
@@ -220,12 +215,11 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Used in Bigfoot animation pipeline.
   <details>
   <summary>Tree</summary>
-
-  ```
-  ├── bvh_export.py
-  ├── *.blend (test armatures)
-  └── *.bvh (test exports)
-  ```
+  <pre>
+├── bvh_export.py
+├── *.blend (test armatures)
+└── *.bvh (test exports)
+  </pre>
   </details>
 
 - **May 2010 - [Bigeye UI](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Bigeye)** — UI framework
@@ -235,13 +229,12 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Used for rapid prototyping throughout career.
   <details>
   <summary>Tree</summary>
-
-  ```
-  ├── lib/
-  │   └── media/
-  └── src/
-      └── BE/
-  ```
+  <pre>
+├── lib/
+│   └── media/
+└── src/
+    └── BE/
+  </pre>
   </details>
 
 - **Apr 2010 - [Puppeteer](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Puppeteer)** — BVH viewer
@@ -251,17 +244,16 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Foundation for Bigfoot animation system.
   <details>
   <summary>Tree</summary>
-
-  ```
-  └── src/
-      ├── LoaderBVH.cpp
-      ├── LoaderBVH.h
-      ├── Skeleton.cpp
-      ├── Skeleton.h
-      ├── SkeletonRenderer.cpp
-      ├── Camera.cpp
-      └── main.cpp
-  ```
+  <pre>
+└── src/
+    ├── LoaderBVH.cpp
+    ├── LoaderBVH.h
+    ├── Skeleton.cpp
+    ├── Skeleton.h
+    ├── SkeletonRenderer.cpp
+    ├── Camera.cpp
+    └── main.cpp
+  </pre>
   </details>
 
 - **2008-2010 - [AI Sandbox](https://web.archive.org/web/20190719084901/http://aigamedev.com/articles/?tx_ttnews%5Bcat%5D=17&cHash=93c15cd059)** at <span class="career">[#7 AiGameDev](#career)</span>
@@ -282,15 +274,14 @@ Interactive visualization of connections between career, projects, algorithms, a
   - RL contribution to <span class="career">[#7 AI Sandbox](#career)</span>.
   <details>
   <summary>Tree</summary>
-
-  ```
-  └── src/
-      ├── main.cpp
-      ├── TicTacToeGame.cpp
-      ├── TicTacToeAIPlayerAlphaBetaMinimax.cpp
-      ├── TicTacToeAIPlayerRLValueIter.cpp
-      └── TicTacToeAIPlayerHeuristic.cpp
-  ```
+  <pre>
+└── src/
+    ├── main.cpp
+    ├── TicTacToeGame.cpp
+    ├── TicTacToeAIPlayerAlphaBetaMinimax.cpp
+    ├── TicTacToeAIPlayerRLValueIter.cpp
+    └── TicTacToeAIPlayerHeuristic.cpp
+  </pre>
   </details>
 
 - **Apr 2009 - [Graphics Framework](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/Graphics/Framework1)** — Quake3 BSP renderer
@@ -299,16 +290,15 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Built on thrashit3d experience from university.
   <details>
   <summary>Tree</summary>
-
-  ```
-  ├── GfxFramework/
-  │   └── Source/
-  ├── Quake3App/
-  │   └── Source/
-  └── Quake3Lib/
-      ├── Q3ShaderParser/
-      └── Source/
-  ```
+  <pre>
+├── GfxFramework/
+│   └── Source/
+├── Quake3App/
+│   └── Source/
+└── Quake3Lib/
+    ├── Q3ShaderParser/
+    └── Source/
+  </pre>
   </details>
 
 - **2006-2008 - [World-Of-Football](https://github.com/jadnohra/World-Of-Football)** at <span class="career">[#9 Kimera](#career)</span>
@@ -317,23 +307,22 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Foundation for <span class="career">[#8 Sixteen Tons](#career)</span> and <span class="career">[#7 AiGameDev](#career)</span>.
   <details>
   <summary>Tree</summary>
-
-  ```
-  ├── dep/
-  │   ├── DXUT_9_0_c/
-  │   ├── squirrel_2_1_1_sqplus/
-  │   └── tinyxml/
-  ├── Doc/
-  ├── Media/
-  │   └── (screenshots, videos)
-  ├── WitchEngine3/
-  │   └── src/
-  ├── WOF2/
-  │   ├── moduleResources/
-  │   └── src/
-  └── WOF_Debugger/
-      └── src/
-  ```
+  <pre>
+├── dep/
+│   ├── DXUT_9_0_c/
+│   ├── squirrel_2_1_1_sqplus/
+│   └── tinyxml/
+├── Doc/
+├── Media/
+│   └── (screenshots, videos)
+├── WitchEngine3/
+│   └── src/
+├── WOF2/
+│   ├── moduleResources/
+│   └── src/
+└── WOF_Debugger/
+    └── src/
+  </pre>
   </details>
 
 - **1998 - University Projects (AUB)** — Early graphics and systems programming
@@ -348,15 +337,14 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Foundation for <span class="career">[#9 Kimera](#career)</span> and all subsequent graphics work.
   <details>
   <summary>Tree</summary>
-
-  ```
-  ├── 2dshooter/
-  ├── graphedit/
-  ├── RayTracer/
-  ├── thrashit3d/
-  ├── watereffect/
-  └── xu1/
-  ```
+  <pre>
+├── 2dshooter/
+├── graphedit/
+├── RayTracer/
+├── thrashit3d/
+├── watereffect/
+└── xu1/
+  </pre>
   </details>
 
 ---
