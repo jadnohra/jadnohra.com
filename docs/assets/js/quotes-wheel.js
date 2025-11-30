@@ -75,7 +75,7 @@
           cursor: pointer;
           transition: transform 0.15s, box-shadow 0.15s;
           box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
-        ">Draw a Quote</button>
+        ">I Love Science</button>
         <div style="
           margin-top: 1rem;
           color: #64748b;
