@@ -1,0 +1,26 @@
+21-10-2001
+still have to implement zbuffer in flat shading
+next: texture mapping
+BifFlag array is giving little acceleartion in release mode
+
+20-10-2001
+implemented accelerated angles with prcalced cos and sin, used for camera in trans. stage
+no lookup tables yileding better res. in release and no improv. in debug, investigate this, or improvove lookup algo
+
+
+14-10-2001
+use TI integer angles depending on TI resolution e.g : 0 -> 1230 (+ conversion routines) -> best acceleration
+instead of 100 use 128 res : bit shifts!!!!
++ angle struct with precalced cos and sin!!!
+improve rot routine? (int) ...
+minimzie size of TITriangle struct!!!!!
+
+14-10-2001
+modularized package and pipelined engine
+added logfile
+
+14-9-2001
+implemnted gouraud and zbuffer
+
+14-8-2001
+implemented flat shading

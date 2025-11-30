@@ -1,0 +1,44 @@
+<NEWS> 
+	<1>this happened</1>
+	<2>and this too</2>
+	<3>watch out for this event!</3>
+</NEWS>
+
+<IMG_PLAYERWEAPON>pumpD1anim.gif</IMG_PLAYERWEAPON>	
+
+<PLAYERPROFILES>
+	<1>TestTest</1>
+	<2>LEBROCKS</2>
+	<3>FiveMagics*</3>
+</PLAYERPROFILES>
+
+<TestTest>
+	<IMG_PLAYERSHIP>batD1.gif</IMG_PLAYERSHIP>
+</TestTest>
+
+<LEBROCKS>
+	<IMG_PLAYERSHIP>batD1.gif</IMG_PLAYERSHIP>
+</LEBROCKS>
+
+<FiveMagics*>
+	<IMG_PLAYERSHIP>batD1.gif</IMG_PLAYERSHIP>
+</FiveMagics*>
+
+
+<ANIM_PLAYERWEAPON>
+	<FRAMEDELAY>4</FRAMEDELAY>
+	<LOOP>true</LOOP>
+	<STARTANIM>true</STARTANIM>
+	<TILECOUNTX>2</TILECOUNTX>
+	<TILECOUNTY>2</TILECOUNTY>
+	<ANIMHORIZ>false</ANIMHORIZ>
+	<ANIMVERT>false</ANIMVERT>
+	<ANIMHORIZVERT>true</ANIMHORIZVERT>
+</ANIM_PLAYERWEAPON>	
+
+<IMG_ENEMIES>   
+	<1>pic1.gif</1>
+	<2>pic2.gif</2>
+	<3>pic3.gif</3>
+</IMG_ENEMIES>   
+ 

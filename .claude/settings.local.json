@@ -10,7 +10,8 @@
       "Bash(7z x:*)",
       "Bash(brew install:*)",
       "Bash(tree:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(git clone:*)"
     ],
     "deny": [],
     "ask": []

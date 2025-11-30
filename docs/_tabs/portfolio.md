@@ -127,9 +127,24 @@ Interactive visualization of connections between career, projects, algorithms, a
   <details>
   <summary>Tree</summary>
   <pre>
+├── _dcd_off.jl
+├── _dcd_on.jl
+├── _load_common.jl
+├── _load_lp_1.jl
+├── _load_lu_1.jl
+├── arg.jl
+├── bench/
+│   └── impcol_a.mtx.gz
+├── conv.jl
+├── load_lp_dcd.jl
+├── load_lp.jl
+├── load_lu.jl
+├── load.jl
+├── lp_bench.jl
 ├── lp_glpk.jl
 ├── lp_jad.jl
 ├── lp.jl
+├── lu_bench.jl
 ├── lu_julia.jl
 ├── lu_std.jl
 ├── lu.jl
@@ -152,8 +167,15 @@ Interactive visualization of connections between career, projects, algorithms, a
 ├── helper_math1.py
 ├── helper_term.py
 └── scripts/
+    ├── gk_notes_p45.txt
     ├── script1.py
-    └── test_*.txt
+    ├── test_basics.txt
+    ├── test_comp.txt
+    ├── test_df.txt
+    ├── test_mtest.txt
+    ├── test_parser.txt
+    ├── test_scope.txt
+    └── test_ztest.txt
   </pre>
   </details>
 
@@ -197,10 +219,33 @@ Interactive visualization of connections between career, projects, algorithms, a
   <details>
   <summary>Tree</summary>
   <pre>
-├── media/
-│   └── *.bvh
 └── src/
     ├── BF/
+    │   ├── 3rdparty/
+    │   ├── BFMath.h
+    │   ├── Camera.cpp
+    │   ├── Camera.h
+    │   ├── ColorUtil.cpp
+    │   ├── ColorUtil.h
+    │   ├── DrawUtil.h
+    │   ├── GridRenderer.cpp
+    │   ├── GridRenderer.h
+    │   ├── LoaderBVH.cpp
+    │   ├── LoaderBVH.h
+    │   ├── Locomo.cpp
+    │   ├── Locomo.h
+    │   ├── LocomoRender.h
+    │   ├── Random.cpp
+    │   ├── Random.h
+    │   ├── Rendering.h
+    │   ├── Skeleton.cpp
+    │   ├── Skeleton.h
+    │   ├── SkeletonAnalyzer.cpp
+    │   ├── SkeletonAnalyzer.h
+    │   ├── SkeletonPhysicsModel.cpp
+    │   ├── SkeletonPhysicsModel.h
+    │   ├── SkeletonRenderer.cpp
+    │   └── SkeletonRenderer.h
     ├── Main.cpp
     ├── Planner.cpp
     ├── Retarget.cpp
@@ -217,8 +262,19 @@ Interactive visualization of connections between career, projects, algorithms, a
   <summary>Tree</summary>
   <pre>
 ├── bvh_export.py
-├── *.blend (test armatures)
-└── *.bvh (test exports)
+├── BVHFriendlyArmature.blend
+├── OneBone_NoRots.blend
+├── OneBone_RotX90.blend
+├── OneBone_RotY90.blend
+├── OneBone_RotZ90.blend
+├── OneRoot_NoRots_1Child_NoRots.blend
+├── OneRoot_NoRots_1Child_Rot1.blend
+├── OneRoot_Rot1_1Child_Rot1.blend
+├── OneRoot_Rot1_2Child_Rot1.blend
+├── Proto1.blend
+├── Test3Bones.blend
+├── proto1_export.bvh
+├── Test1.bvh ... Test10.bvh
   </pre>
   </details>
 
@@ -230,10 +286,31 @@ Interactive visualization of connections between career, projects, algorithms, a
   <details>
   <summary>Tree</summary>
   <pre>
-├── lib/
-│   └── media/
-└── src/
-    └── BE/
+└── src/BE/
+    ├── ARB_Multisample.cpp
+    ├── ARB_Multisample.h
+    ├── Assert.h
+    ├── BEMath.h
+    ├── Bigeye.cpp
+    ├── Bigeye.h
+    ├── Demo.cpp
+    ├── LibInclude.h
+    ├── MagickWand.cpp
+    ├── MagickWand.h
+    ├── MainWindow.cpp
+    ├── MainWindow.h
+    ├── OGL.cpp
+    ├── OGL.h
+    ├── Platform.h
+    ├── Renderer.cpp
+    ├── Renderer.h
+    ├── RenderNodes.cpp
+    ├── RenderNodes.h
+    ├── RenderTreeBuilder.cpp
+    ├── RenderTreeBuilder.h
+    ├── WidgetEvent.h
+    ├── Widgets.cpp
+    └── Widgets.h
   </pre>
   </details>
 
@@ -246,13 +323,29 @@ Interactive visualization of connections between career, projects, algorithms, a
   <summary>Tree</summary>
   <pre>
 └── src/
+    ├── app.h
+    ├── ARB_Multisample.cpp
+    ├── ARB_Multisample.h
+    ├── Camera.cpp
+    ├── Camera.h
+    ├── dSFMT/
+    ├── freeglut/
+    ├── glm/
     ├── LoaderBVH.cpp
     ├── LoaderBVH.h
+    ├── main.cpp
+    ├── mesh.h
+    ├── NeHeGL.cpp
+    ├── NeHeGL.h
+    ├── Random.cpp
+    ├── Random.h
+    ├── Rendering.h
     ├── Skeleton.cpp
     ├── Skeleton.h
     ├── SkeletonRenderer.cpp
-    ├── Camera.cpp
-    └── main.cpp
+    ├── SkeletonRenderer.h
+    ├── strtk/
+    └── wavefrontObjLoader/
   </pre>
   </details>
 
@@ -275,12 +368,26 @@ Interactive visualization of connections between career, projects, algorithms, a
   <details>
   <summary>Tree</summary>
   <pre>
+├── Readme.txt
+├── TicTacToe.sln
+├── TicTacToe.vcproj
 └── src/
+    ├── Array.hpp
     ├── main.cpp
-    ├── TicTacToeGame.cpp
+    ├── Ptr.hpp
+    ├── Random.hpp
+    ├── SuperHeader.hpp
     ├── TicTacToeAIPlayerAlphaBetaMinimax.cpp
+    ├── TicTacToeAIPlayerAlphaBetaMinimax.hpp
+    ├── TicTacToeAIPlayerConsoleInput.cpp
+    ├── TicTacToeAIPlayerConsoleInput.hpp
+    ├── TicTacToeAIPlayerHeuristic.cpp
+    ├── TicTacToeAIPlayerHeuristic.hpp
+    ├── TicTacToeAIPlayerRandom.hpp
     ├── TicTacToeAIPlayerRLValueIter.cpp
-    └── TicTacToeAIPlayerHeuristic.cpp
+    ├── TicTacToeAIPlayerRLValueIter.h
+    ├── TicTacToeGame.cpp
+    └── TicTacToeGame.hpp
   </pre>
   </details>
 
@@ -293,8 +400,18 @@ Interactive visualization of connections between career, projects, algorithms, a
   <pre>
 ├── GfxFramework/
 │   └── Source/
+│       ├── BasicRenderer.cs
+│       ├── BezierPatch.cs
+│       ├── EffectContext.cs
+│       ├── Renderer.cs
+│       ├── RenderResourceManager.cs
+│       ├── Scene.cs
+│       ├── TriangleListType.cs
+│       └── UniformGridTesselator.cs
 ├── Quake3App/
 │   └── Source/
+│       ├── Game1.cs
+│       └── ManualCamera.cs
 └── Quake3Lib/
     ├── Q3ShaderParser/
     └── Source/
@@ -313,15 +430,35 @@ Interactive visualization of connections between career, projects, algorithms, a
 │   ├── squirrel_2_1_1_sqplus/
 │   └── tinyxml/
 ├── Doc/
-├── Media/
-│   └── (screenshots, videos)
-├── WitchEngine3/
-│   └── src/
-├── WOF2/
-│   ├── moduleResources/
-│   └── src/
+├── Media/ (screenshots, videos)
+├── WitchEngine3/src/WE3/
+│   ├── audio/
+│   ├── coll/
+│   ├── coordSys/
+│   ├── geometry/
+│   ├── input/
+│   ├── math/
+│   ├── mesh/
+│   ├── phys/
+│   ├── render/
+│   ├── scene/
+│   ├── script/
+│   ├── skeleton/
+│   ├── spatialManager/
+│   └── ui/
+├── WOF2/src/WOF/
+│   ├── match/
+│   │   ├── Clock.cpp
+│   │   ├── Match.cpp
+│   │   ├── Team.cpp
+│   │   ├── Player.cpp
+│   │   ├── collision/
+│   │   ├── entity/
+│   │   ├── scene/
+│   │   ├── script/
+│   │   └── spatialQuery/
+│   └── script/
 └── WOF_Debugger/
-    └── src/
   </pre>
   </details>
 
@@ -339,11 +476,43 @@ Interactive visualization of connections between career, projects, algorithms, a
   <summary>Tree</summary>
   <pre>
 ├── 2dshooter/
+│   └── fivemagics/ (Java game engine)
+│       ├── applet/
+│       ├── collision/d2/
+│       ├── engine/d2/physics/
+│       ├── gfx/d2/
+│       ├── gfx/filter/hmap/
+│       └── projects/thrashem/
 ├── graphedit/
+│   └── (screenshots, index.html)
 ├── RayTracer/
+│   └── src/
 ├── thrashit3d/
+│   ├── engine/
+│   │   ├── ThrashIt3D.cpp
+│   │   ├── TIStageOcclusion.cpp
+│   │   ├── TIStageProjection.cpp
+│   │   ├── TIStageRasterization.cpp
+│   │   ├── TIStageRasterizationFlat.cpp
+│   │   ├── TIStageRasterizationGouraud.cpp
+│   │   ├── TIStageRasterizationWireframe.cpp
+│   │   ├── TIStageTransformation.cpp
+│   │   └── TIZBuffer.cpp
+│   └── geom/
+│       ├── TIAngle.cpp
+│       ├── TIGeometry.cpp
+│       ├── TITransform.cpp
+│       └── TIVertex.cpp
 ├── watereffect/
+│   ├── Applet1.class
+│   ├── CircularWave.class
+│   ├── HeightMapImage.class
+│   └── (wave simulation classes)
 └── xu1/
+    └── src/ThrashIt/
+        ├── FileFormats/ASE/
+        ├── General/Collection/
+        └── MabenEngine/TIStaticGeometry/
   </pre>
   </details>
 

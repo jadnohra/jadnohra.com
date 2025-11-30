@@ -1,0 +1,6 @@
+Copyright (c) 2001 FiveMagics.org*
+
+Permission to use, modify, and distribute this Software, including incorporating it into proprietary software, is granted without fee. 
+This Software is provided "as is", WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Please, Give Credit where Credit is due and Let me know if you use this in any way.
