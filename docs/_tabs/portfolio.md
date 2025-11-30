@@ -475,44 +475,62 @@ Interactive visualization of connections between career, projects, algorithms, a
   <details>
   <summary>Tree</summary>
   <pre>
-├── 2dshooter/
-│   └── fivemagics/ (Java game engine)
-│       ├── applet/
-│       ├── collision/d2/
-│       ├── engine/d2/physics/
-│       ├── gfx/d2/
-│       ├── gfx/filter/hmap/
-│       └── projects/thrashem/
-├── graphedit/
-│   └── (screenshots, index.html)
-├── RayTracer/
-│   └── src/
+├── 2dshooter/fivemagics/ (Java game engine)
+│   ├── applet/GenericApplet.class
+│   ├── collision/
+│   │   ├── ICollisionHandler.class
+│   │   └── d2/{circle,rect}/CollisionArea.class, CollisionEngine.class
+│   ├── dataformats/AwtImage.class, XMLFile.class, XMLTag.class
+│   ├── engine/
+│   │   ├── IEngine.class
+│   │   ├── d2/physics/PhEngine.class, PhObject.class
+│   │   └── gui/GUIEngine.class, WMenu.class, WTextConsole.class
+│   ├── evt/Event.class, TimedEventManager.class
+│   ├── geo/d2/D2FloatPoint.class, D2Line.class
+│   ├── gfx/
+│   │   ├── PixelData.class, IBlittable.class, IGfxImage.class
+│   │   ├── d2/GfxEngine.class, ImageAnimation.class
+│   │   └── filter/hmap/HeightMap.class, CircularWave.class
+│   ├── res/ResEngine.class, ResLoaderThread.class
+│   └── projects/thrashem/Applet.class, PlayerShip.class, EnemyShip.class
+├── graphedit/ (screenshots, index.html)
+├── RayTracer/src/
 ├── thrashit3d/
 │   ├── engine/
-│   │   ├── ThrashIt3D.cpp
-│   │   ├── TIStageOcclusion.cpp
-│   │   ├── TIStageProjection.cpp
-│   │   ├── TIStageRasterization.cpp
-│   │   ├── TIStageRasterizationFlat.cpp
-│   │   ├── TIStageRasterizationGouraud.cpp
-│   │   ├── TIStageRasterizationWireframe.cpp
-│   │   ├── TIStageTransformation.cpp
-│   │   └── TIZBuffer.cpp
+│   │   ├── ThrashIt3D.cpp, ThrashIt3D.h
+│   │   ├── TIStageOcclusion.cpp/.h
+│   │   ├── TIStageProjection.cpp/.h
+│   │   ├── TIStageRasterization.cpp/.h
+│   │   ├── TIStageRasterizationFlat.cpp/.h
+│   │   ├── TIStageRasterizationGouraud.cpp/.h
+│   │   ├── TIStageRasterizationWireframe.cpp/.h
+│   │   ├── TIStageTransformation.cpp/.h
+│   │   ├── TIViewport.cpp/.h
+│   │   └── TIZBuffer.cpp/.h
 │   └── geom/
-│       ├── TIAngle.cpp
-│       ├── TIGeometry.cpp
-│       ├── TITransform.cpp
-│       └── TIVertex.cpp
-├── watereffect/
-│   ├── Applet1.class
-│   ├── CircularWave.class
-│   ├── HeightMapImage.class
-│   └── (wave simulation classes)
-└── xu1/
-    └── src/ThrashIt/
-        ├── FileFormats/ASE/
-        ├── General/Collection/
-        └── MabenEngine/TIStaticGeometry/
+│       ├── TIAngle.cpp/.h
+│       ├── TIBasicVertex.cpp/.h
+│       ├── TIGeometry.cpp/.h
+│       ├── TITransform.cpp/.h
+│       ├── TITriangle.cpp/.h
+│       └── TIVertex.cpp/.h
+├── watereffect/ (23 Java classes)
+│   ├── Applet1.class, GenericApplet.class
+│   ├── CircularWave.class, CircularWave2.class, SphereWave.class
+│   ├── HeightMapImage.class, IHeightMapGenerator.class
+│   ├── IScene.class, Scene1.class
+│   └── Drop1Event.class, TimedDrop1Event.class
+└── xu1/src/ThrashIt/
+    ├── FileFormats/
+    │   ├── ASE/ASEFile.cpp/.h, ASEGeomObject.cpp/.h
+    │   └── TIS/TISFileStructs.cpp/.h
+    ├── General/Collection/
+    │   ├── CArray.cpp/.h, CHashTable.cpp/.h
+    │   ├── Tree.cpp/.h, FixedTree.cpp/.h
+    │   └── String.cpp/.h, Fraction.cpp/.h
+    └── MabenEngine/TIStaticGeometry/
+        ├── PreBuild/TIStaticBuilder.cpp
+        └── RealTime/TIStaticGeometryRealTime.cpp/.h
   </pre>
   </details>
 
