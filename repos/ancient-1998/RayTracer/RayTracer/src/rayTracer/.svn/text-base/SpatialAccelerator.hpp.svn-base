@@ -1,0 +1,31 @@
+#ifndef _RayTracer_SpatialAccelerator_hpp
+#define _RayTracer_SpatialAccelerator_hpp
+
+#include "Primitive.hpp"
+#include "Clock.hpp"
+#include "WE3/math/WEAAB.h"
+
+namespace rayTracer {
+
+	class Scene;
+
+	class SpatialAccelerator {
+	public:
+
+		virtual ~SpatialAccelerator() {
+
+			destroy();
+		}
+
+		virtual void destroy() {}
+		virtual void build(Scene& scene, int maxLeafPrimitiveCount, float planeThickness) = 0;
+		virtual bool shootRay(const RayShot& rayShot, RayShotHit& result) = 0;
+		virtual unsigned int debugShootRay(const RayShot& rayShot) { return 0; }
+
+		#ifdef RayTracerConfig_EnablePackets
+			virtual bool shootRayPacket(const Constants& cts, const PacketRayShot& rayPacket, PacketRayHit& t) = 0;
+		#endif
+	};
+}
+
+#endif

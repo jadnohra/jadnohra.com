@@ -1,0 +1,25 @@
+8
+
+dir
+20
+http://svn4.cvsdude.com/jadnohra/shared/Lab/RayTracer_v2/src/3rdparty
+http://svn4.cvsdude.com/jadnohra/shared
+
+
+
+2008-10-17T22:28:12.235292Z
+20
+jadnohra
+
+
+svn:special svn:externals svn:needs-lock
+
+LofstedtAkenineMoller05
+dir
+
+awilliam
+dir
+
+wavefrontObjLoader
+dir
+

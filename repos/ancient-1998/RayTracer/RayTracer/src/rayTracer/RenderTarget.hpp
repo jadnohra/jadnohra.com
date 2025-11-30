@@ -1,0 +1,216 @@
+#ifndef _RayTracer_RenderTarget_hpp
+#define _RayTracer_RenderTarget_hpp
+
+#include "RayTracerTypes.hpp"
+#include "../WE3/WETL/WETLSizeAlloc.h"
+
+namespace rayTracer {
+
+	class RenderTarget {
+	public:
+
+		virtual ~RenderTarget() {}
+
+		virtual bool isValid() = 0;
+
+		virtual void destroy() = 0;
+		virtual bool create(unsigned int width, unsigned int height) = 0;
+		virtual void setPixel(unsigned int x, unsigned int y, float r, float g, float b, float a) = 0;
+		virtual void getPixel(unsigned int x, unsigned int y, float& r, float& g, float& b, float& a) = 0;
+		
+		virtual void addToPixel(unsigned int x, unsigned int y, float& r_, float& g_, float& b_, float& a_) {
+
+			float r; float g; float b; float a;
+
+			getPixel(x, y, r, g, b, a);
+			setPixel(x, y, r + r_, g + g_, b + b_, a + a_);
+		}
+
+		virtual unsigned int getWidth() = 0;
+		virtual unsigned int getHeight() = 0;
+
+		virtual void fill(float r, float g, float b, float a) {
+
+			int width = getWidth();
+			int height = getHeight();
+
+			for (int y = 0; y < height; ++y) {
+
+				for (int x = 0; x < width; ++x) {
+
+					setPixel(x, y, r, g, b, a);
+				}
+			}
+		}
+
+		virtual void addToPixels(RenderTarget& source) {
+
+			if (source.getWidth() == getWidth()
+				&& source.getHeight() == getHeight()) {
+
+				int width = getWidth();
+				int height = getHeight();
+
+				float r,g,b,a;
+
+				for (int y = 0; y < height; ++y) {
+
+					for (int x = 0; x < width; ++x) {
+
+						source.getPixel(x, y, r, g, b, a);
+						addToPixel(x, y, r, g, b, a);
+					}
+				}
+			}
+		}
+
+		virtual void copyPixelsFrom(RenderTarget& source) {
+
+			if (source.getWidth() == getWidth()
+				&& source.getHeight() == getHeight()) {
+
+				int width = getWidth();
+				int height = getHeight();
+
+				float r,g,b,a;
+
+				for (int y = 0; y < height; ++y) {
+
+					for (int x = 0; x < width; ++x) {
+
+						source.getPixel(x, y, r, g, b, a);
+						setPixel(x, y, r, g, b, a);
+					}
+				}
+			}
+		}
+
+		virtual bool flush() = 0;
+	};
+
+	class FloatRenderBuffer : public RenderTarget {
+	public:
+
+		struct Pixel {
+
+			union {
+				struct {
+					float r, g, b, a;
+				};
+
+				struct {
+					float el[4];
+				};
+			};
+		};
+
+	public:
+
+		virtual bool isValid() { return mPixels.el != NULL; }
+
+		virtual void destroy() { mPixels.destroy(); }
+
+		virtual bool create(unsigned int width, unsigned int height) {
+
+			mWidth = width;
+			mHeight = height;
+
+			mPixels.resize(mWidth * mHeight);
+
+			return true;
+		}
+
+		virtual void fill(float r, float g, float b, float a) {
+
+			int count = mWidth * mHeight;
+
+			for (unsigned int i = 0; i < count; ++i) {
+
+				mPixels[i].r = r;
+				mPixels[i].g = g;
+				mPixels[i].b = b;
+				mPixels[i].a = a;
+			}
+		}
+
+		virtual void setPixel(unsigned int x, unsigned int y, float r, float g, float b, float a) {
+
+			Pixel& pxl = pixel(x, y);
+
+			pxl.r = r;
+			pxl.g = g;
+			pxl.b = b;
+			pxl.a = a;
+		}
+
+		virtual void getPixel(unsigned int x, unsigned int y, float& r, float& g, float& b, float& a) {
+
+			Pixel& pxl = pixel(x, y);
+
+			r = pxl.r;
+			g = pxl.g;
+			b = pxl.b;
+			a = pxl.a;
+		}
+
+		virtual unsigned int getWidth() { return mWidth; }
+		virtual unsigned int getHeight() { return mHeight; }
+		
+		virtual bool flush() { return true; }
+
+	public:
+
+		inline const unsigned int& width() { return mWidth; }
+		inline const unsigned int& height() { return mHeight; }
+
+		inline Pixel& pixel(const unsigned int x, const unsigned int y) const {
+
+			return mPixels.el[toPixelIndex(x, y)];
+		}
+
+		inline unsigned int toPixelIndex(const unsigned int x, const unsigned int y) const {
+
+			return y * mWidth + x;
+		}
+
+	protected:
+
+		typedef WETL::SizeAllocT<Pixel, unsigned int> Pixels;
+
+		Pixels mPixels;
+		unsigned int mWidth;
+		unsigned int mHeight;
+	};
+
+	class VirtualRenderTarget : public RenderTarget {
+	public:
+
+		virtual ~VirtualRenderTarget();
+
+		void add(RenderTarget* pTarget); //ownership is transferred to VirtualRenderTarget
+		void addWeak(RenderTarget* pTarget); 
+
+		virtual bool isValid();
+
+		virtual unsigned int getWidth();
+		virtual unsigned int getHeight();
+
+		virtual void destroy();
+		virtual bool create(unsigned int width, unsigned int height);
+		virtual void setPixel(unsigned int x, unsigned int y, float r, float g, float b, float a);
+		virtual void getPixel(unsigned int x, unsigned int y, float& r, float& g, float& b, float& a);
+		virtual void fill(float r, float g, float b, float a);
+
+		virtual bool flush();
+
+	protected:
+
+		typedef WETL::CountedPtrArrayEx<RenderTarget, size_t> Targets;
+		Targets mTargets;
+
+		typedef WETL::CountedArray<RenderTarget*, true, size_t> SoftTargets;
+		SoftTargets mWeakTargets;
+	};
+}
+
+#endif

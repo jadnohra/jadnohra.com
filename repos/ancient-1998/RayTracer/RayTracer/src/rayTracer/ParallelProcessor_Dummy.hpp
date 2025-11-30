@@ -1,0 +1,20 @@
+#ifndef _RayTracer_ParallelProcessor_Dummy_hpp
+#define _RayTracer_ParallelProcessor_Dummy_hpp
+
+#include "RayTracerTypes.hpp"
+#include "../WE3/WERef.h"
+
+namespace rayTracer {
+
+	class ParallelProcessor {
+	public:
+
+		class Task : public Ref {
+		public:
+
+			virtual void execute() = 0 {};
+		};
+	};
+}
+
+#endif

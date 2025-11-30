@@ -1,0 +1,58 @@
+8
+
+dir
+19
+http://svn4.cvsdude.com/jadnohra/shared/Lab/RayTracer_v2/src
+http://svn4.cvsdude.com/jadnohra/shared
+
+
+
+2008-10-16T16:17:16.390110Z
+19
+jadnohra
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+c16f82dd-d4d8-45d8-8dca-e4ef8be94889
+
+main.cpp
+file
+35
+
+
+
+2008-11-04T10:49:49.937500Z
+467c13010eaa502d54adb21a756c0ccc
+2008-11-04T10:54:58.164972Z
+35
+jadnohra
+
+3rdparty
+dir
+
+rayTracer
+dir
+
+SuperHeader.hpp
+file
+
+
+
+
+2008-10-02T19:30:58.703125Z
+ee660118056f35bf9b3ed6d32d9b01d5
+2008-09-30T20:45:15.120456Z
+2
+jadnohra
+

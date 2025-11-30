@@ -1,0 +1,64 @@
+8
+
+dir
+27
+http://svn4.cvsdude.com/jadnohra/shared/Lab/RayTracer_v2/src/3rdparty/awilliam/box
+http://svn4.cvsdude.com/jadnohra/shared
+
+
+
+2008-10-27T21:04:32.243089Z
+27
+jadnohra
+
+
+svn:special svn:externals svn:needs-lock
+
+ray.h
+file
+
+
+
+
+2005-06-02T02:33:50.000000Z
+f83ce758dc8ed11e2d5729a3bcd12290
+2008-10-27T21:04:32.243089Z
+27
+jadnohra
+
+vector3.h
+file
+
+
+
+
+2003-02-07T00:01:44.000000Z
+60fe200ac2396ae2968fcfdbf0d9dd8a
+2008-10-27T21:04:32.243089Z
+27
+jadnohra
+
+box.cc
+file
+
+
+
+
+2005-06-02T02:26:42.000000Z
+d600d0f5aa0b288c932ef99f76d5f971
+2008-10-27T21:04:32.243089Z
+27
+jadnohra
+
+box.h
+file
+
+
+
+
+2005-06-02T02:33:47.000000Z
+25fda148640227d802810787a6489c78
+2008-10-27T21:04:32.243089Z
+27
+jadnohra
+

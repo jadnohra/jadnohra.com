@@ -1,0 +1,299 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/jadnohra/shared/!svn/ver/19/Lab/RayTracer_v2/src/rayTracer
+END
+Clock.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/jadnohra/shared/!svn/ver/12/Lab/RayTracer_v2/src/rayTracer/Clock.hpp
+END
+Ray.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/rayTracer/Ray.hpp
+END
+ParallelProcessor.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/jadnohra/shared/!svn/ver/17/Lab/RayTracer_v2/src/rayTracer/ParallelProcessor.hpp
+END
+Scene.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/jadnohra/shared/!svn/ver/34/Lab/RayTracer_v2/src/rayTracer/Scene.hpp
+END
+CPUID.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/CPUID.cpp
+END
+ParallelProcessor_Dummy.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/jadnohra/shared/!svn/ver/15/Lab/RayTracer_v2/src/rayTracer/ParallelProcessor_Dummy.cpp
+END
+Primitive.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/jadnohra/shared/!svn/ver/26/Lab/RayTracer_v2/src/rayTracer/Primitive.cpp
+END
+CPUID.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/CPUID.hpp
+END
+RenderWindow_PixelToaster.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/RenderWindow_PixelToaster.cpp
+END
+ParallelProcessor_Dummy.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/jadnohra/shared/!svn/ver/16/Lab/RayTracer_v2/src/rayTracer/ParallelProcessor_Dummy.hpp
+END
+Primitive.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/rayTracer/Primitive.hpp
+END
+RenderWindow_PixelToaster.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/RenderWindow_PixelToaster.hpp
+END
+RayTracerTypes.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/jadnohra/shared/!svn/ver/34/Lab/RayTracer_v2/src/rayTracer/RayTracerTypes.cpp
+END
+RenderImage.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/RenderImage.cpp
+END
+Primitive_Sphere.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/rayTracer/Primitive_Sphere.hpp
+END
+PostProcess.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/PostProcess.cpp
+END
+Primitive_Quadric.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/rayTracer/Primitive_Quadric.hpp
+END
+RayTracerTypes.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/jadnohra/shared/!svn/ver/34/Lab/RayTracer_v2/src/rayTracer/RayTracerTypes.hpp
+END
+Primitive_Quad.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/rayTracer/Primitive_Quad.hpp
+END
+RenderImage.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/RenderImage.hpp
+END
+Math.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/jadnohra/shared/!svn/ver/33/Lab/RayTracer_v2/src/rayTracer/Math.cpp
+END
+PostProcess.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/PostProcess.hpp
+END
+BoundingVolumeHierarchy.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/jadnohra/shared/!svn/ver/34/Lab/RayTracer_v2/src/rayTracer/BoundingVolumeHierarchy.cpp
+END
+Primitive_Triangle.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/jadnohra/shared/!svn/ver/34/Lab/RayTracer_v2/src/rayTracer/Primitive_Triangle.cpp
+END
+Math.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/jadnohra/shared/!svn/ver/32/Lab/RayTracer_v2/src/rayTracer/Math.hpp
+END
+Material.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/jadnohra/shared/!svn/ver/6/Lab/RayTracer_v2/src/rayTracer/Material.cpp
+END
+GaussianBlur.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/GaussianBlur.cpp
+END
+BoundingVolumeHierarchy.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/jadnohra/shared/!svn/ver/34/Lab/RayTracer_v2/src/rayTracer/BoundingVolumeHierarchy.hpp
+END
+RayTracer.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/jadnohra/shared/!svn/ver/7/Lab/RayTracer_v2/src/rayTracer/RayTracer.hpp
+END
+Primitive_Triangle.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/jadnohra/shared/!svn/ver/34/Lab/RayTracer_v2/src/rayTracer/Primitive_Triangle.hpp
+END
+SpatialAccelerator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/rayTracer/SpatialAccelerator.cpp
+END
+Material.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/rayTracer/Material.hpp
+END
+GaussianBlur.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/GaussianBlur.hpp
+END
+ParallelProcessor_Simple.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/jadnohra/shared/!svn/ver/17/Lab/RayTracer_v2/src/rayTracer/ParallelProcessor_Simple.cpp
+END
+Renderer.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/jadnohra/shared/!svn/ver/35/Lab/RayTracer_v2/src/rayTracer/Renderer.cpp
+END
+SpatialAccelerator.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/jadnohra/shared/!svn/ver/34/Lab/RayTracer_v2/src/rayTracer/SpatialAccelerator.hpp
+END
+ParallelProcessor_Simple.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/jadnohra/shared/!svn/ver/17/Lab/RayTracer_v2/src/rayTracer/ParallelProcessor_Simple.hpp
+END
+Renderer.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/Renderer.hpp
+END
+BoundingVolumeHierarchy2.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/jadnohra/shared/!svn/ver/35/Lab/RayTracer_v2/src/rayTracer/BoundingVolumeHierarchy2.cpp
+END
+Primitive_Cone.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/jadnohra/shared/!svn/ver/20/Lab/RayTracer_v2/src/rayTracer/Primitive_Cone.hpp
+END
+BoundingVolumeHierarchy2.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/jadnohra/shared/!svn/ver/34/Lab/RayTracer_v2/src/rayTracer/BoundingVolumeHierarchy2.hpp
+END
+RenderTarget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/RenderTarget.cpp
+END
+RayTracerConfig.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/jadnohra/shared/!svn/ver/35/Lab/RayTracer_v2/src/rayTracer/RayTracerConfig.hpp
+END
+Camera.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/jadnohra/shared/!svn/ver/33/Lab/RayTracer_v2/src/rayTracer/Camera.cpp
+END
+Clock.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/jadnohra/shared/!svn/ver/7/Lab/RayTracer_v2/src/rayTracer/Clock.cpp
+END
+RenderTarget.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/jadnohra/shared/!svn/ver/28/Lab/RayTracer_v2/src/rayTracer/RenderTarget.hpp
+END
+Primitive_Plane.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/rayTracer/Primitive_Plane.hpp
+END
+Scene.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/jadnohra/shared/!svn/ver/35/Lab/RayTracer_v2/src/rayTracer/Scene.cpp
+END
+Camera.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/jadnohra/shared/!svn/ver/32/Lab/RayTracer_v2/src/rayTracer/Camera.hpp
+END

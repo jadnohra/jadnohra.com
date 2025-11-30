@@ -1,0 +1,43 @@
+<NEWS> 
+	<1>this happened</1>
+	<2>and this too</2>
+	<3>watch out for this event!</3>
+</NEWS>
+
+<IMG_PLAYERWEAPON>w1.gif</IMG_PLAYERWEAPON>	
+
+<PLAYERPROFILES>
+	<1>Red Ship</1>
+	<2>Voyager</2>
+</PLAYERPROFILES>
+
+<Red Ship>
+	<IMG_PLAYERSHIP>ship1.gif</IMG_PLAYERSHIP>
+</Red Ship>
+
+<Voyager>
+	<IMG_PLAYERSHIP>ship2.gif</IMG_PLAYERSHIP>
+</Voyager>
+
+
+
+<ANIM_PLAYERWEAPON>
+	<FRAMEDELAY>2</FRAMEDELAY>
+	<LOOP>true</LOOP>
+	<STARTANIM>true</STARTANIM>
+	<TILECOUNTX>3</TILECOUNTX>
+	<TILECOUNTY>1</TILECOUNTY>
+	<ANIMHORIZ>false</ANIMHORIZ>
+	<ANIMVERT>false</ANIMVERT>
+	<ANIMHORIZVERT>true</ANIMHORIZVERT>
+</ANIM_PLAYERWEAPON>	
+
+<IMG_ENEMIES>   
+	<1>en1.gif</1>
+	<2>en2.gif</2>
+	<3>en3.gif</3>
+	<4>en4.gif</4>
+	<5>en5.gif</5>
+	<6>en6.gif</6>
+</IMG_ENEMIES>   
+ 

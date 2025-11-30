@@ -1,0 +1,59 @@
+#ifndef _RayTracer_Clock_hpp
+#define _RayTracer_Clock_hpp
+
+#include "RayTracerTypes.hpp"
+#include "WE3/WETime.h"
+#include "PixelToaster.h"
+
+namespace rayTracer {
+
+	class Clock {
+	public:
+
+		Clock() {
+
+			mTime.init(30);
+		}
+
+		void start() {
+
+			mTime.start((WE::Time) mTimer.time());
+		}
+
+		float getRawTime() { return (WE::Time) (mTimer.time()); }
+		float getRawTimeMillis() { return ((WE::Time) (mTimer.time())) * 1000.0f; }
+
+		void startFrame() {
+
+			mTime.add((WE::Time) mTimer.time() - mTime.t);
+			mTime.accept();
+		}
+
+		int getFrameTicks() {
+
+			return mTime.frameTicks;
+		}
+
+		float getTickLength() {
+
+			return mTime.tickLength;
+		}
+
+		float getTime() {
+
+			return mTime.t_discreet;
+		}
+
+		void endFrame() {
+
+			mTime.consume();
+		}
+
+	protected:
+
+		PixelToaster::Timer mTimer;
+		DiscreeteTime mTime;
+	};
+}
+
+#endif

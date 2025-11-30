@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/jadnohra/shared/!svn/ver/20/Lab/RayTracer_v2/src/3rdparty/wavefrontObjLoader
+END
+string_extra.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/jadnohra/shared/!svn/ver/20/Lab/RayTracer_v2/src/3rdparty/wavefrontObjLoader/string_extra.h
+END
+list.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/jadnohra/shared/!svn/ver/20/Lab/RayTracer_v2/src/3rdparty/wavefrontObjLoader/list.h
+END
+objLoader.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/jadnohra/shared/!svn/ver/20/Lab/RayTracer_v2/src/3rdparty/wavefrontObjLoader/objLoader.cpp
+END
+objTester.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/jadnohra/shared/!svn/ver/20/Lab/RayTracer_v2/src/3rdparty/wavefrontObjLoader/objTester.cpp
+END
+objLoader.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/jadnohra/shared/!svn/ver/20/Lab/RayTracer_v2/src/3rdparty/wavefrontObjLoader/objLoader.h
+END
+obj_parser.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/jadnohra/shared/!svn/ver/26/Lab/RayTracer_v2/src/3rdparty/wavefrontObjLoader/obj_parser.cpp
+END
+string_extra.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/jadnohra/shared/!svn/ver/20/Lab/RayTracer_v2/src/3rdparty/wavefrontObjLoader/string_extra.cpp
+END
+ReadMe.txt
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/jadnohra/shared/!svn/ver/21/Lab/RayTracer_v2/src/3rdparty/wavefrontObjLoader/ReadMe.txt
+END
+list.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/jadnohra/shared/!svn/ver/20/Lab/RayTracer_v2/src/3rdparty/wavefrontObjLoader/list.cpp
+END
+obj_parser.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/jadnohra/shared/!svn/ver/26/Lab/RayTracer_v2/src/3rdparty/wavefrontObjLoader/obj_parser.h
+END

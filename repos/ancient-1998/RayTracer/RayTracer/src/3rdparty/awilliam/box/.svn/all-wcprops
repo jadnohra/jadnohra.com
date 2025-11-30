@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/3rdparty/awilliam/box
+END
+ray.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/3rdparty/awilliam/box/ray.h
+END
+vector3.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/3rdparty/awilliam/box/vector3.h
+END
+box.cc
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/3rdparty/awilliam/box/box.cc
+END
+box.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/jadnohra/shared/!svn/ver/27/Lab/RayTracer_v2/src/3rdparty/awilliam/box/box.h
+END

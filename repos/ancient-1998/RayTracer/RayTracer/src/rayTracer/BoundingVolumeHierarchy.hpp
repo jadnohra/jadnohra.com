@@ -1,0 +1,281 @@
+#ifndef _RayTracer_BoundingVolumeHierarchy_hpp
+#define _RayTracer_BoundingVolumeHierarchy_hpp
+
+#include "Scene.hpp"
+#include "../WE3/math/WEPlane.h"
+#include "Scene.hpp"
+#include "Renderer.hpp"
+#include "SpatialAccelerator.hpp"
+#include <limits>
+
+namespace rayTracer {
+
+	class BoundingVolumeHierarchy : public SpatialAccelerator {
+	public:
+
+		virtual void destroy();
+		virtual void build(Scene& scene, int maxLeafPrimitiveCount, float planeThickness);
+		virtual bool shootRay(const RayShot& rayShot, RayShotHit& result);
+
+		#ifdef RayTracerConfig_EnablePackets
+			virtual bool shootRayPacket(const Constants& cts, const PacketRayShot& rayPacket, PacketRayHit& t);
+		#endif
+
+	protected:
+
+		typedef WETL::CountedArray<Primitive*, false, size_t, WETL::ResizeExact> LeafPrimitives;
+
+		struct Leaf {
+
+			LeafPrimitives primitives;
+		};
+
+		struct Stack1;
+		struct PacketStack1;
+		struct PacketStack2;
+		//typedef PacketStack1 PacketStack;
+		typedef PacketStack2 PacketStack;
+
+		struct Node {
+
+			AAB volume;
+			SoftPtr<Node> leftChild;
+			SoftPtr<Node> rightChild;
+
+			HardPtr<Leaf> leaf;
+
+			Node();
+
+			void recurseDestroy();
+			void deleteSelf();
+
+			void recurseCount(unsigned int& maxDepth, unsigned int& leafCount);
+
+			void add(Primitive* pPrim);
+			void split(int maxLeafPrimitiveCount, int& hintDim, float planeThickness);
+			bool findBestSplitPlane(AAPlane& splitPlane, int& splitLeftCount, int& splitRightCount, int& hintDim, float planeThickness);
+			bool shootRay(const RayShot& rayShot, RayShotHit& result, float minT, float maxT);
+			void shootRay2(const RayShot& rayShot, RayShotHit& result, float minT, float maxT);
+			void shootRay3(Stack1& stack, const RayShot& rayShot, RayShotHit& result, float minT);
+
+			#ifdef RayTracerConfig_EnablePackets
+				bool shootRayPacket(const Constants& cts, const PacketRayShot& rayPacket, PacketRayHit& t, PacketRayMask& rayPacketState, const Packet4& inTmin, const Packet4& inTmax);
+				void shootRayPacketIterative(PacketStack& stack, const Constants& cts, const PacketRayShot& rayPacket, PacketRayHit& t, PacketRayMask& rayPacketState, const Packet4& inTmin);
+				bool intersects(const PacketRayShot& rayPacket, PacketRayMask& rayPacketMask, Packet4& tmin, Packet4& tmax, bool& tPacketOutIsValid, const bool forceTestAllRays);
+				bool intersects(const Constants& cts, const PacketRayShot& rayPacket, PacketRayMask& rayPacketMask, Packet4& tmin, const bool forceFullTest);
+			#endif
+
+			bool intersects(const Ray& ray, float& t0, float& t1);
+			bool intersects2(const Ray& ray, float& outTMin);
+		};
+
+		struct Stack1 {
+
+			void create(unsigned int size) {
+
+				mNodes.resize(size);
+				mCount = 0;
+			}
+
+			void grow(bool warn) {
+
+				unsigned int newSize = mNodes.size + mNodes.size + 2;
+
+				if (warn) {
+
+					printf("Warning: Traversal Stack Grown from %u to %u\n", mNodes.size, newSize);
+				}
+
+				mNodes.resize(newSize);
+			}
+
+			inline void empty() {
+
+				mCount = 0;
+			}
+
+			inline Node* popNode() {
+
+				return mCount ? mNodes[--mCount] : NULL;
+			}
+
+			inline void pushNode(Node* pNode) {
+
+				if (mNodes.size != mCount) {
+
+					mNodes[mCount++] = pNode;
+					
+				} else {
+			
+					grow(true);
+					
+					mNodes[mCount++] = pNode;
+				}
+			}
+
+			typedef WETL::SizeAllocT<Node*, unsigned int> Nodes;
+			Nodes mNodes;
+			unsigned int mCount;
+		};
+
+		#ifdef RayTracerConfig_EnablePackets
+
+		__declspec(align(16))
+		struct PacketStack1 {
+
+			struct Element {
+
+				union {
+
+					struct {
+						Packet4 packetMask;
+						SoftPtr<Node> node;
+					};
+				};
+			};
+
+			void create(unsigned int size) {
+
+				mElements.resize(size, 16);
+				mCount = 0;
+			}
+
+			~PacketStack1() {
+
+				mElements.destroy(true);
+			}
+
+			void grow(bool warn) {
+
+				unsigned int newSize = mElements.size + mElements.size + 2;
+
+				if (warn) {
+
+					printf("Warning: Traversal Stack Grown from %u to %u\n", mElements.size, newSize);
+				}
+
+				mElements.resize(newSize);
+			}
+
+			inline void empty() {
+
+				mCount = 0;
+			}
+
+			inline bool hasElements() { return mCount > 0; }
+
+			inline Node* popNode(PacketRayMask& mask) {
+
+				if (mCount) {
+
+					Element& el = mElements[--mCount];
+					mask.active.el4 = el.packetMask.el4;
+
+					return el.node;
+				}
+
+				return NULL;
+			}
+
+			 inline void pushNode(Node* pNode, PacketRayMask& mask) {
+
+				if (mElements.size <= mCount) {
+
+					grow(true);
+				}
+
+				Element& el = mElements[mCount++];
+				el.node = pNode;
+				el.packetMask.el4 = mask.active.el4;
+			}
+
+			typedef WETL::SizeAllocT<Element, unsigned int> Elements;
+			Elements mElements;
+			unsigned int mCount;
+		};
+
+		struct PacketStack2 {
+
+			struct Element {
+
+				SoftPtr<Node> node;
+				int packetMask;
+			};
+
+			void create(unsigned int size) {
+
+				mElements.resize(size);
+				mCount = 0;
+			}
+
+			void grow(bool warn) {
+
+				unsigned int newSize = mElements.size + mElements.size + 2;
+
+				if (warn) {
+
+					printf("Warning: Traversal Stack Grown from %u to %u\n", mElements.size, newSize);
+				}
+
+				mElements.resize(newSize);
+			}
+
+			inline void empty() {
+
+				mCount = 0;
+			}
+
+			 inline Node* popNode(PacketRayMask& mask) {
+
+				if (mCount) {
+
+					Element& el = mElements[--mCount];
+					mask.setActiveMask(el.packetMask);
+					
+					return el.node;
+				}
+
+				return NULL;
+			}
+
+			 inline void pushNode(Node* pNode, PacketRayMask& mask) {
+
+				if (mElements.size != mCount) {
+
+					Element& el = mElements[mCount++];
+					el.node = pNode;
+					el.packetMask = mask.extractMask();
+					
+				} else {
+			
+					grow(true);
+					
+					Element& el = mElements[mCount++];
+					el.node = pNode;
+					el.packetMask = mask.extractMask();
+				}
+			}
+
+			typedef WETL::SizeAllocT<Element, unsigned int> Elements;
+			Elements mElements;
+			unsigned int mCount;
+		};
+
+		#endif
+
+		SoftPtr<Scene> mScene;
+		SoftPtr<Node> mRootNode;
+		unsigned int mMaxDepth;
+		unsigned int mLeafCount;
+
+		Stack1 mTraversalStack;
+
+		#ifdef RayTracerConfig_EnablePackets
+			PacketStack mPacketTraversalStack;
+		#endif
+	};
+
+	typedef BoundingVolumeHierarchy BVH;
+}
+
+#endif

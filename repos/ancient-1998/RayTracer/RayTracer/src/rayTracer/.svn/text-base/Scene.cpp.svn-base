@@ -1,0 +1,1051 @@
+#include "Scene.hpp"
+#include "../3rdparty/wavefrontObjLoader/objLoader.h"
+#include "Camera.hpp"
+#include "WE3/coordSys/WECoordSysConv_Swizzle.h"
+#include "WE3/math/WESphere.h"
+#include "WE3/WEFile.h"
+
+#ifdef RayTracerConfig_BVH2
+	#include "BoundingVolumeHierarchy2.hpp"
+#else
+	#include "BoundingVolumeHierarchy.hpp"
+#endif
+
+namespace rayTracer {
+
+Scene::Scene() : mHasAmbient(false) {
+
+	mVertexCount = 0;
+	mTriangleCount = 0;
+
+	mAmbient.zero();
+	mSceneAAB.empty();
+
+	mDefaultMaterial.reflection() = 0.0f;
+	mDefaultMaterial.diffuse() = 1.0f;
+	mDefaultMaterial.specular() = 0.5f;
+	mDefaultMaterial.color().set(0.9f, 0.9f, 0.9f);
+}
+
+void Scene::initSimple(Clock* pClock) {
+
+	mClock = pClock;
+
+	CoordSys& coordSysBase = mCoordSysBase;
+	coordSysBase.el0 = CSD_Right;
+	coordSysBase.el1 = CSD_Up;
+	coordSysBase.el2 = CSD_Forward;
+	coordSysBase.setValid(true);
+	coordSysBase.setFloatUnitsPerMeter(1.0f);
+	coordSysBase.rotationLeftHanded = 1;
+
+	FastUnitCoordSys& coordSys = mCoordSys;
+	coordSys.init(coordSysBase, 1.0f);
+
+	mSelfRayTolerance.t = 0.0001f;
+}
+
+void Scene::destroyScene() {
+
+	mHasAmbient = false;
+	mAmbient.zero();
+
+	mSceneAAB.empty();
+
+	mPrimitives.destroy();
+	
+	mTriangles.destroy();
+	mTriangleCount = 0;
+
+	mVertices.destroy();
+	mVertexCount = 0;
+
+	mLights.destroy();
+}
+
+void Scene::finalizeScene(bool enableAcceleration, int hintMaxLeafPrimCount) {
+
+	mSpatialAccelerator.destroy();
+
+	#ifndef RayTracerConfig_UseSpatialAccel
+		enableAcceleration = false;
+	#endif
+
+	if (enableAcceleration) {
+
+		#ifdef RayTracerConfig_BVH2
+			mSpatialAccelerator = new BoundingVolumeHierarchy2();	
+		#else
+			mSpatialAccelerator = new BoundingVolumeHierarchy();	
+		#endif
+
+		//TODO make this scene dependent!
+		const float volumeTolerance = 0.000001f;
+		mSpatialAccelerator->build(dref(this), hintMaxLeafPrimCount, volumeTolerance);
+	} 
+}
+
+void Scene::declareVertices(unsigned int count) {
+
+	mVertices.resize(mVertexCount + count);
+}
+
+Vertex& Scene::newVertex() {
+
+	assert(mVertexCount + 1 <= mVertices.size);
+	return mVertices[mVertexCount++];
+}
+
+void Scene::declareTriangles(unsigned int count) {
+
+	mTriangles.resize(mTriangleCount + count);
+}
+
+Triangle& Scene::newTriangle() {
+
+	assert(mTriangleCount + 1 <= mTriangles.size);
+	return mTriangles[mTriangleCount++];
+}
+
+#ifdef RayTracerConfig_EnablePackets
+bool Scene::shootRayPacket(const Constants& cts, const PacketRayShot& rayPacket, PacketRayHit& t) {
+
+	if (mSpatialAccelerator.isValid()) {
+		
+		return mSpatialAccelerator->shootRayPacket(cts, rayPacket, t);
+
+	} else {
+
+		for (int pi = 0; pi < primitives().count; ++pi) {
+
+			Primitive_Triangle& tri = dref((Primitive_Triangle*) primitives()[pi]);
+
+			{
+				tri.intersectRayTri_impl_project(cts, rayPacket, t, PacketRayMask::kFullMask, pi);
+			}
+		}
+
+		return true;
+	}
+}
+#endif
+
+unsigned int Scene::debugShootRay(const RayShot& rayShot) {
+
+	if (mSpatialAccelerator.isValid()) {
+		
+		return mSpatialAccelerator->debugShootRay(rayShot);
+
+	} 
+
+	return 0;
+}
+
+bool Scene::shootRay(const RayShot& rayShot, RayShotHit& result) {
+
+	result.reset();
+
+	if (mSpatialAccelerator.isValid()) {
+		
+		return mSpatialAccelerator->shootRay(rayShot, result);
+
+	} else {
+
+		for (int pi = 0; pi < primitives().count; ++pi) {
+
+			SoftPtr<Primitive> prim = primitives()[pi];
+
+			{
+			
+				if (prim->intersects(rayShot, result.inters)) {
+
+					result.primID = pi;
+				}
+			}
+		}
+
+		return result.hasPrimitive();
+	}
+}
+
+void Scene::appendScene_wavefrontObj(const char* filePath, Camera* pCamera, bool autoPlaceCamIfNeeded, bool autoPlaceLightIfNeeded, bool autoGenerateAmbientIfNeeded) {
+
+	struct wfo {
+		
+		struct FileCoordSys : CoordSys {
+
+			FileCoordSys() : CoordSys(true) {
+
+				el0 = CSD_Left;
+				el1 = CSD_Up;
+				el2 = CSD_Forward;
+				setValid(true);
+				setFloatUnitsPerMeter(1.0f);
+				rotationLeftHanded = 0;
+			}
+		};
+
+		static inline Vector3 getPos(CoordSysConv& sysConv, objLoader& objData, int index) {
+
+			obj_vector& vect = dref(objData.vertexList[index]);
+			Vector3 ret;
+			
+			sysConv.toTargetPoint(vect.e, ret.el);
+
+			return ret;
+		}
+
+		static inline Vector3 getNormal(CoordSysConv& sysConv, objLoader& objData, int index) {
+
+			obj_vector& vect = dref(objData.normalList[index]);
+			Vector3 ret;
+
+			sysConv.toTargetVector(vect.e, ret.el);
+
+			return ret;
+		}
+
+		static void loadMaterial(objLoader& objData, int matIndex, Material& material, bool* pHasAmbient = NULL, Vector3* pAmbient = NULL) {
+
+			if (matIndex >= 0) {
+
+				obj_material& mat = dref(objData.materialList[matIndex]);
+
+				material.reflection() = (float) mat.reflect;
+				material.refraction() = (float) mat.refract;
+				material.refractionIndex() = (float) mat.refract_index;
+				material.diffuse() = 1.0f;
+				material.specularPower() = (float) mat.glossy;
+				material.specular() = (mat.spec[0] != 0.0f || mat.spec[1] != 0.0f || mat.spec[2] != 0.0f) ? 1.0f : 0.0f;
+				material.color().set((float) mat.diff[0], (float) mat.diff[1], (float) mat.diff[2]);
+
+				material.color().capMax(1.0f);
+
+				if (pHasAmbient) {
+
+					*pHasAmbient = true;
+					pAmbient->el[0] += (float) mat.amb[0];
+					pAmbient->el[1] += (float) mat.amb[1];
+					pAmbient->el[2] += (float) mat.amb[2];
+				}
+
+			} else {
+
+				material.reflection() = 0.0f;
+				material.diffuse() = 1.0f;
+				material.specular() = 0.7f;
+				material.color().set(1.0f, 1.0f, 1.0f);
+
+				if (pHasAmbient) {
+
+					*pHasAmbient = true;
+					pAmbient->el[0] += 0.2f;
+					pAmbient->el[1] += 0.2f;
+					pAmbient->el[2] += 0.2f;
+				}
+			}
+		}
+
+		static void onLightMaterial(objLoader& objData, int matIndex, Material& material, bool* pHasAmbient = NULL, Vector3* pAmbient = NULL) {
+
+			if (matIndex >= 0) {
+
+				obj_material& mat = dref(objData.materialList[matIndex]);
+
+				if (pHasAmbient) {
+
+					*pHasAmbient = true;
+					pAmbient->el[0] += (float) mat.amb[0];
+					pAmbient->el[1] += (float) mat.amb[1];
+					pAmbient->el[2] += (float) mat.amb[2];
+				}
+
+			} else {
+
+				if (pHasAmbient) {
+
+					*pHasAmbient = true;
+					pAmbient->el[0] += 0.2f;
+					pAmbient->el[1] += 0.2f;
+					pAmbient->el[2] += 0.2f;
+				}
+			}
+		}
+	};
+
+	objLoader objData;
+	if (!objData.load(filePath))
+		return;
+
+	Primitives& primitives = mPrimitives;
+	Primitives& lights = mLights;
+	Materials& materials = mMaterials;
+	FastUnitCoordSys& coordSys = mCoordSys;
+	
+	static wfo::FileCoordSys fileCoordSys;
+	CoordSysConv_Swizzle sysConv;
+	sysConv.init(fileCoordSys, mCoordSysBase);
+
+
+	{
+		if (pCamera && objData.camera) {
+
+			SceneTransform& transf = pCamera->worldTransform();
+
+			transf.identity();
+			transf.setPosition(wfo::getPos(sysConv, objData, objData.camera->camera_pos_index));
+			transf.setOrientation(transf.getPosition(), 
+									wfo::getPos(sysConv, objData, objData.camera->camera_look_point_index),
+									wfo::getNormal(sysConv, objData, objData.camera->camera_up_norm_index));
+
+			if (objData.camera->fov > 0.0f)
+				pCamera->initProjection(dref(this), pCamera->getNearZ(), pCamera->getFarZ(), objData.camera->fov);
+
+			pCamera->markDirty();
+		}
+	}
+
+	{
+		for (int i = 0; i < objData.materialCount; ++i) {
+
+			SoftPtr<Material> material = (materials.addOne() = new Material());
+
+			wfo::loadMaterial(objData, i, material);
+		}
+	}
+
+	{
+		for (int i = 0; i < objData.sphereCount; ++i) {
+
+			obj_sphere& sphere = dref(objData.sphereList[i]);
+
+			SoftPtr<Primitive_Sphere> prim = new Primitive_Sphere(wfo::getPos(sysConv, objData, sphere.pos_index), wfo::getNormal(sysConv, objData, sphere.up_normal_index).mag());
+			primitives.addOne() = prim;
+		
+			prim->setMaterial(sphere.material_index >= 0 ? mMaterials[sphere.material_index] : &mDefaultMaterial);
+
+			{
+				Sphere sphere(prim->position(), prim->getRadius());
+				
+				mSceneAAB.add(sphere);
+			}
+		}
+	}
+
+	{
+		unsigned int baseVertexCount = mVertexCount;
+		declareVertices(objData.vertexCount);
+
+		for (int i = 0; i < objData.vertexCount; ++i) {
+
+			((Vector3&) newVertex()) = wfo::getPos(sysConv, objData, i);
+		}
+
+		unsigned int faceCount = 0;
+
+		for (int i = 0; i < objData.faceCount; ++i) {
+
+			obj_face& face = dref(objData.faceList[i]);
+
+			if (face.vertex_count == 3) {
+
+				++faceCount;
+			}
+		}
+
+		declareTriangles(faceCount);
+
+		for (int i = 0; i < objData.faceCount; ++i) {
+
+			obj_face& face = dref(objData.faceList[i]);
+
+			if (face.vertex_count == 3) {
+
+				Triangle& tri = newTriangle();
+
+				tri.vertices[0] = baseVertexCount + face.vertex_index[0];
+				tri.vertices[1] = baseVertexCount + face.vertex_index[1];
+				tri.vertices[2] = baseVertexCount + face.vertex_index[2];
+
+				if (face.normal_index[0] >= 0)
+					tri.normal = wfo::getNormal(sysConv, objData, face.normal_index[0]);
+				else
+					tri.autoGenNormal(mVertices.el, fileCoordSys.rotationLeftHanded == 1);
+			}
+		}
+	}
+
+	{
+		for (int i = 0; i < objData.faceCount; ++i) {
+
+			obj_face& face = dref(objData.faceList[i]);
+
+			if (face.vertex_count == 3) {
+
+				
+				SoftPtr<Primitive_Triangle> prim = new Primitive_Triangle(wfo::getPos(sysConv, objData, face.vertex_index[0]), 
+																						wfo::getPos(sysConv, objData, face.vertex_index[1]), 
+																						wfo::getPos(sysConv, objData, face.vertex_index[2]), 
+																						face.normal_index[0] >= 0 ? &wfo::getNormal(sysConv, objData, face.normal_index[0]) : NULL, fileCoordSys.rotationLeftHanded == 1);
+				primitives.addOne() = prim;
+
+				prim->setMaterial(face.material_index >= 0 ? mMaterials[face.material_index] : &mDefaultMaterial);
+
+				{
+					mSceneAAB.add(prim->V(0));
+					mSceneAAB.add(prim->V(1));
+					mSceneAAB.add(prim->V(2));
+				}
+			}
+		}
+	}
+
+	{
+		for (int i = 0; i < objData.lightPointCount; ++i) {
+
+			obj_light_point& light = dref(objData.lightPointList[i]);
+
+			SoftPtr<Primitive> prim = new Primitive_Sphere(wfo::getPos(sysConv, objData, light.pos_index), 0.0f);
+			lights.addOne() = prim;
+			
+			prim->setMaterial(light.material_index >= 0 ? mMaterials[light.material_index] : &mDefaultMaterial);
+			wfo::onLightMaterial(objData, light.material_index, prim->material(), &mHasAmbient, &mAmbient);
+		}
+
+		/*
+		for (int i = 0; i < objData.lightDiscCount; ++i) {
+
+			obj_light_disc& light = dref(objData.lightDiscList[i]);
+
+			SoftPtr<Primitive> prim = new Primitive_Sphere(wfo::getPos(sysConv, objData, light.pos_index), 0.1f);
+			lights.addOne() = prim;
+			
+			prim->isLight() = true;
+			prim->material().diffuse() = 1.0f;
+			prim->material().specular() = 1.0f;
+			prim->material().color().set(0.0f, 0.8f, 0.0f, &mHasAmbient, &mAmbient);
+		}
+		*/
+
+		/*
+		for (int i = 0; i < objData.lightQuadCount; ++i) {
+
+			obj_light_quad& light = dref(objData.lightQuadList[i]);
+
+			SoftPtr<Primitive> prim = new Primitive_Sphere(wfo::getPos(sysConv, objData, light.vertex_index[0]), 0.1f);
+			lights.addOne() = prim;
+			
+			prim->isLight() = true;
+			prim->material().diffuse() = 1.0f;
+			prim->material().specular() = 1.0f;
+			prim->material().color().set(0.0f, 0.0f, 0.9f, &mHasAmbient, &mAmbient);
+		}
+		*/
+	}
+
+	{
+		if (pCamera && !objData.camera && autoPlaceCamIfNeeded && !mSceneAAB.isEmpty()) {
+
+			SceneTransform& transf = pCamera->worldTransform();
+
+			Vector3 camPos;
+			Vector3 lookAtPos;
+			Vector3 up;
+
+			up.zero();
+			up.el[Scene_Up] = 1.0f;
+
+			sysConv.toTargetVector(up.el);
+
+			mSceneAAB.center(lookAtPos);
+			camPos = lookAtPos;
+			
+			camPos.el[Scene_Forward] = mSceneAAB.min.el[Scene_Forward];
+			camPos.el[Scene_Forward] -= 1.4f * mSceneAAB.size(Scene_Right);
+			//camPos.el[Scene_Forward] = -camPos.el[Scene_Forward];
+			
+			transf.identity();
+			transf.setPosition(camPos);
+			transf.setOrientation(transf.getPosition(), lookAtPos, up);
+
+			pCamera->markDirty();
+		}
+
+		if (lights.count == 0 && autoGenerateAmbientIfNeeded) {
+
+			if (autoPlaceLightIfNeeded && pCamera) {
+
+				Vector3 lightPos = pCamera->worldTransform().getPosition();
+				lightPos.el[Scene_Right] += 0.2f * mSceneAAB.size(Scene_Right);
+				lightPos.el[Scene_Up] += 0.5f * mSceneAAB.size(Scene_Up);
+
+				SoftPtr<Primitive> prim = (new Primitive_Sphere(lightPos, 0.0f));
+				lights.addOne() = prim;
+				
+				prim->setMaterial(&mDefaultMaterial);
+				wfo::onLightMaterial(objData, -1, prim->material(), &mHasAmbient, &mAmbient);
+		
+			} else if (autoGenerateAmbientIfNeeded) {
+
+				mHasAmbient = true; 
+				mAmbient.set(0.7f);
+			}
+		}
+	}
+}
+
+void Scene::appendScene_ra2(const char* filePath, const char* extFilePath, Camera* pCamera, bool autoPlaceCamIfNeeded, bool autoPlaceLightIfNeeded, bool autoGenerateAmbientIfNeeded) {
+
+	struct ra2 {
+		
+		struct FileCoordSys : CoordSys {
+
+			FileCoordSys(int up) : CoordSys(true) {
+
+				if (up == 1) {
+
+					el0 = CSD_Right;
+					el1 = CSD_Up;
+					el2 = CSD_Forward;
+					setValid(true);
+					setFloatUnitsPerMeter(1.0f);
+					rotationLeftHanded = 1;
+
+				} else if (up == 2) {
+
+					el0 = CSD_Right;
+					el1 = CSD_Up;
+					el2 = CSD_Forward;
+					setValid(true);
+					setFloatUnitsPerMeter(1.0f);
+					rotationLeftHanded = 1;
+
+				} else if (up == 0) {
+
+					el0 = CSD_Right;
+					el1 = CSD_Up;
+					el2 = CSD_Forward;
+					setValid(true);
+					setFloatUnitsPerMeter(1.0f);
+					rotationLeftHanded = 1;
+				}
+			}
+		};
+
+		static inline Vector3 getPos(CoordSysConv& sysConv, objLoader& objData, int index) {
+
+			obj_vector& vect = dref(objData.vertexList[index]);
+			Vector3 ret;
+			
+			sysConv.toTargetPoint(vect.e, ret.el);
+
+			return ret;
+		}
+	};
+
+	Primitives& primitives = mPrimitives;
+	Primitives& lights = mLights;
+	Materials& materials = mMaterials;
+	FastUnitCoordSys& coordSys = mCoordSys;
+	
+	bool hasCamera = false;
+	Vector3 extCamPos;
+	Vector3 extCamLookAt;
+	Vector3 extCamUp;
+	int extCamDimUp = 1;
+
+	{
+		File file;
+
+		if (file.openFile(extFilePath, true)) {
+
+			hasCamera = true;
+
+			fscanf(file._stream(), "%f %f %f %f %f %f %d",	
+				&extCamPos.x, &extCamPos.y, &extCamPos.z, 
+				&extCamLookAt.x, &extCamLookAt.y, &extCamLookAt.z, &extCamDimUp);
+		}
+
+		extCamUp.zero();
+		extCamUp.el[extCamDimUp] = 1.0f;
+	}
+
+	ra2::FileCoordSys fileCoordSys(extCamDimUp);
+	CoordSysConv_Swizzle sysConv;
+	sysConv.init(fileCoordSys, mCoordSysBase);
+
+	{
+		File file;
+
+		if (file.openFile(extFilePath, true)) {
+
+			hasCamera = true;
+
+			fscanf(file._stream(), "%f %f %f %f %f %f %d",	
+				&extCamPos.x, &extCamPos.y, &extCamPos.z, 
+				&extCamLookAt.x, &extCamLookAt.y, &extCamLookAt.z, &extCamDimUp);
+
+			sysConv.toTargetPoint(extCamPos.el);
+			sysConv.toTargetPoint(extCamLookAt.el);
+			//assert(extCamDimUp == 1);
+		}
+	}
+
+	{
+		if (pCamera && hasCamera) {
+
+			SceneTransform& transf = pCamera->worldTransform();
+
+			transf.identity();
+			transf.setPosition(extCamPos);
+			transf.setOrientation(transf.getPosition(), extCamLookAt, extCamUp);
+
+			pCamera->markDirty();
+		}
+	}
+
+
+	{
+		File file;
+
+		if (file.openFile(filePath, true))  {
+		
+			fseek(file._stream(), 0, SEEK_END);
+			unsigned int fileSize = ftell(file._stream());
+			unsigned int vertexCount =  fileSize / sizeof(Vector3);
+			file.rewind();
+
+			unsigned int baseVertexCount = mVertexCount;
+			declareVertices(vertexCount);
+
+			unsigned int readCount = file.read(mVertices.el, vertexCount * sizeof(Vector3));
+			
+			if (ferror(file._stream()))
+				assert(false);
+
+			for (int i = 0; i < vertexCount; ++i) {
+
+				newVertex();
+
+				sysConv.toTargetPoint(mVertices.el[i].el);
+			}
+
+			unsigned int faceCount = vertexCount / 3;
+			declareTriangles(faceCount);
+
+			unsigned int vi = 0;
+			for (int i = 0; i < faceCount; ++i) {
+
+				Triangle& tri = newTriangle();
+
+				tri.vertices[0] = vi++;
+				tri.vertices[1] = vi++;
+				tri.vertices[2] = vi++;
+
+				tri.autoGenNormal(mVertices.el, fileCoordSys.rotationLeftHanded == 1);
+
+				SoftPtr<Primitive_Triangle> prim = new Primitive_Triangle(mVertices[tri.vertices[0]], mVertices[tri.vertices[1]], mVertices[tri.vertices[2]], &tri.normal);
+				primitives.addOne() = prim;
+				prim->setMaterial(&mDefaultMaterial);
+			}
+		}
+	}
+
+
+	{
+		if (pCamera && !hasCamera && autoPlaceCamIfNeeded && !mSceneAAB.isEmpty()) {
+
+			SceneTransform& transf = pCamera->worldTransform();
+
+			Vector3 camPos;
+			Vector3 lookAtPos;
+			Vector3 up;
+
+			up.zero();
+			up.el[Scene_Up] = 1.0f;
+
+			sysConv.toTargetVector(up.el);
+
+			mSceneAAB.center(lookAtPos);
+			camPos = lookAtPos;
+			
+			camPos.el[Scene_Forward] = mSceneAAB.min.el[Scene_Forward];
+			camPos.el[Scene_Forward] -= 1.4f * mSceneAAB.size(Scene_Right);
+			//camPos.el[Scene_Forward] = -camPos.el[Scene_Forward];
+			
+			transf.identity();
+			transf.setPosition(camPos);
+			transf.setOrientation(transf.getPosition(), lookAtPos, up);
+
+			pCamera->markDirty();
+		}
+
+		if (autoGenerateAmbientIfNeeded) {
+
+			if (autoPlaceLightIfNeeded && pCamera) {
+
+				Vector3 lightPos = pCamera->worldTransform().getPosition();
+				//lightPos.el[Scene_Right] += 0.2f * mSceneAAB.size(Scene_Right);
+				//lightPos.el[Scene_Up] += 0.5f * mSceneAAB.size(Scene_Up);
+
+				SoftPtr<Primitive> prim = (new Primitive_Sphere(lightPos, 0.0f));
+				lights.addOne() = prim;
+				
+				prim->setMaterial(&mDefaultMaterial);
+
+				mHasAmbient = true; 
+				mAmbient.set(0.2f);
+		
+			} else if (autoGenerateAmbientIfNeeded) {
+
+				mHasAmbient = true; 
+				mAmbient.set(0.7f);
+			}
+		}
+	}
+}
+
+
+void Scene::appendScene3() {
+
+	Primitives& primitives = mPrimitives;
+	Primitives& lights = mLights;
+	Materials& materials = mMaterials;
+	FastUnitCoordSys& coordSys = mCoordSys;
+
+
+	// ground plane
+
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Plane(Vector3(coordSys, 0.0f, 0.0f, 0.0f), Vector3(coordSys, 0.0f, 1.0f, 0.0f)));
+		prim->setMaterial(materials.addOne() = new Material());
+
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 1.0f;
+		prim->material().color().set(0.4f, 0.3f, 0.3f);
+	}
+
+
+	// back plane
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Plane(Vector3(coordSys, 0.0f, 0.0f, 20.0f), Vector3(coordSys, 0.0f, 0.0f, -1.0f)));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 1.0f;
+		prim->material().color().set(0.2f, 0.2f, 0.65f);
+	}
+
+	// big sphere
+	/*
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Sphere(Vector3(coordSys, 1.0, 2.75f, 3.0f), 2.5f));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 1.0f;
+		prim->material().specular() = 0.5f;
+		prim->material().color().set(1.0f, 1.0f, 1.0f);
+	}
+	*/
+
+	/*
+	// test sphere
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Sphere(Vector3(coordSys, 0.0, 0.0f, 0.0f), 0.5f));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 1.0f;
+		prim->material().specular() = 0.5f;
+		prim->material().color().set(1.0f, 1.0f, 1.0f);
+	}
+	*/
+
+	// quadric
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Ellipsoid(Vector3(coordSys, 0.0f, 0.0f, 0.0f), Vector3(coordSys, 1.0f, 1.0f, 0.5f)));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 0.7f;
+		prim->material().specular() = 0.0f;
+		prim->material().color().set(0.0f, 1.0f, 0.0f);
+	}
+
+	/*
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Sphere(Vector3(coordSys, 0.0, 2.0f, 0.0f), 0.2f));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 1.0f;
+		prim->material().specular() = 0.0f;
+		prim->material().color().set(1.0f, 0.0f, 0.0f);
+	}
+	*/
+	
+	// light source1
+	{
+		SoftPtr<Primitive> prim = new Primitive_Sphere(Vector3(coordSys, 0.0f, 10.0f, 5.0f), 0.1f);
+		prim->setMaterial(materials.addOne() = new Material());
+		lights.addOne() = prim;
+
+		prim->material().diffuse() = 1.0f;
+		prim->material().specular() = 1.0f;
+		prim->material().color().set(0.6f, 0.6f, 0.7f);
+	}
+
+	// light source2
+	{
+		SoftPtr<Primitive> prim = new Primitive_Sphere(Vector3(coordSys, 2.0f, 7.0f, -1.0f), 0.1f);
+		prim->setMaterial(materials.addOne() = new Material());
+		lights.addOne() = prim;
+		
+		prim->material().diffuse() = 1.0f;
+		prim->material().specular() = 1.0f;
+		prim->material().color().set(0.9f, 0.9f, 0.9f);
+	}
+}
+
+void Scene::appendScene2() {
+
+	Primitives& primitives = mPrimitives;
+	Primitives& lights = mLights;
+	Materials& materials = mMaterials;
+	FastUnitCoordSys& coordSys = mCoordSys;
+
+
+	// ground plane
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Plane(Vector3(coordSys, 0.0f, 0.0f, 0.0f), Vector3(coordSys, 0.0f, 1.0f, 0.0f)));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 1.0f;
+		prim->material().color().set(0.4f, 0.3f, 0.3f);
+	}
+
+	// back plane
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Plane(Vector3(coordSys, 0.0f, 0.0f, 20.0f), Vector3(coordSys, 0.0f, 0.0f, -1.0f)));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 1.0f;
+		prim->material().color().set(0.2f, 0.2f, 0.65f);
+	}
+
+	//sphere grid
+	{
+		float radius = 0.2f;
+		float z = 10.5f;
+		float startX = -4.0f;
+		float endX = 10.0f;
+		float startY = 6.0f;
+		float endY = 0.0f;
+
+		int yCount = 7;
+		int xCount = 7;
+		
+		for (int y = 0; y < 7; ++y) {
+
+			float yPos = startY + (((endY - startY) * (float) y) / ((float) yCount));
+
+			for (int x = 0; x < 7; ++x) {
+
+				float xPos = startX + (((endX - startX) * (float) x) / ((float) xCount));
+
+				SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Sphere(Vector3(coordSys, xPos, yPos, z), radius));
+				prim->setMaterial(materials.addOne() = new Material());
+		
+				prim->material().reflection() = 0.0f;
+				prim->material().diffuse() = 0.7f;
+				prim->material().specular() = 0.5f;
+				prim->material().color().set(0.0f, 1.0f, 0.2f);
+			}
+		}
+	}
+
+	// transp sphere
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Sphere(Vector3(coordSys, 0.4f, 2.5f, 3.0f), 2.5f));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().isShadowCaster() = false;
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 0.0f;
+		prim->material().specular() = 1.0f;
+		prim->material().refraction() = 1.0f;
+		prim->material().refractionIndex() = 1.04f;
+		prim->material().color().set(1.0f, 1.0f, 1.0f);
+	}
+	
+	// light source1
+	{
+		SoftPtr<Primitive> prim = new Primitive_Sphere(Vector3(coordSys, 0.0f, 10.0f, 5.0f), 0.1f);
+		prim->setMaterial(materials.addOne() = new Material());
+		lights.addOne() = prim;
+
+		prim->material().diffuse() = 1.0f;
+		prim->material().specular() = 1.0f;
+		prim->material().color().set(0.6f, 0.6f, 0.7f);
+	}
+
+	// light source2
+	{
+		SoftPtr<Primitive> prim = new Primitive_Sphere(Vector3(coordSys, 2.0f, 7.0f, -1.0f), 0.1f);
+		prim->setMaterial(materials.addOne() = new Material());
+		lights.addOne() = prim;
+		
+		prim->material().diffuse() = 1.0f;
+		prim->material().specular() = 1.0f;
+		prim->material().color().set(0.9f, 0.9f, 0.9f);
+	}
+}
+
+void Scene::appendScene1() {
+
+	Primitives& primitives = mPrimitives;
+	Primitives& lights = mLights;
+	Materials& materials = mMaterials;
+	FastUnitCoordSys& coordSys = mCoordSys;
+
+
+	// ground plane
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Plane(Vector3(coordSys, 0.0f, 0.0f, 0.0f), Vector3(coordSys, 0.0f, 1.0f, 0.0f)));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 1.0f;
+		prim->material().color().set(0.4f, 0.3f, 0.3f);
+	}
+
+	// back plane
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Plane(Vector3(coordSys, 0.0f, 0.0f, 20.0f), Vector3(coordSys, 0.0f, 0.0f, -1.0f)));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 1.0f;
+		prim->material().color().set(0.2f, 0.2f, 0.65f);
+	}
+
+	// big sphere
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Sphere(Vector3(coordSys, 1.0f, 2.75f, 3.0f), 2.5f));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 1.0f;
+		prim->material().specular() = 0.5f;
+		prim->material().color().set(4.0f, 4.0f, 4.0f);
+	}
+
+	//ellipsoid
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Ellipsoid(Vector3(coordSys, 4.0f, 0.75f, 2.0f), Vector3(coordSys, 0.8f, 0.2f, 0.5f)));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 0.7f;
+		prim->material().specular() = 0.5f;
+		//prim->material().color().set(0.4f, 1.0f, 0.0f);
+		prim->material().color().set(0.4f, 2.2f, 0.0f);
+	}
+
+	//ellipsoid
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Ellipsoid(Vector3(coordSys, 4.5f, 0.75f, 0.5f), Vector3(coordSys, 0.6f, 0.15f, 0.4f)));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 0.7f;
+		prim->material().specular() = 0.5f;
+		prim->material().color().set(0.4f, 1.0f, 0.0f);
+	}
+
+	// tri
+	/*
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Triangle(Vector3(coordSys, -3.5f, 2.75f, 1.0f), Vector3(coordSys, -2.5f, 2.75f, 1.0f), Vector3(coordSys, -3.0f, 1.25f, 1.0f), NULL));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 0.7f;
+		prim->material().specular() = 0.5f;
+		prim->material().color().set(0.7f, 0.0f, 0.2f);
+	}
+	*/
+
+	// transp sphere
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Sphere(Vector3(coordSys, -3.0, 1.75f, 3.0f), 1.5f));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 0.0f;
+		prim->material().specular() = 1.0f;
+		prim->material().refraction() = 1.0f;
+		prim->material().refractionIndex() = 1.07f;
+		prim->material().color().set(0.2f, 0.2f, 1.0f);
+	}
+	
+	// small sphere
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Sphere(Vector3(coordSys, -5.5f, 3.0f, 7.0f), 2.0f));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 0.7f;
+		prim->material().specular() = 0.5f;
+		prim->material().color().set(0.7f, 0.7f, 1.0f);
+	}
+
+	// small sphere
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Sphere(Vector3(coordSys, -7.0f, 3.0f, 7.0f), 2.0f));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.0f;
+		prim->material().diffuse() = 0.7f;
+		prim->material().specular() = 0.5f;
+		prim->material().color().set(0.7f, 0.0f, 0.2f);
+	}
+
+	// gold sphere
+	{
+		SoftPtr<Primitive> prim = (primitives.addOne() = new Primitive_Sphere(Vector3(coordSys, 7.0f, 3.0f, 12.0f), 2.5f));
+		prim->setMaterial(materials.addOne() = new Material());
+		
+		prim->material().reflection() = 0.8f;
+		prim->material().diffuse() = 0.0f;
+		prim->material().specular() = 0.5f;
+		prim->material().color().set(1.0f, 1.0f, 0.0f);
+	}
+
+	// light source1
+	{
+		SoftPtr<Primitive> prim = new Primitive_Sphere(Vector3(coordSys, 0.0f, 10.0f, 5.0f), 0.1f);
+		prim->setMaterial(materials.addOne() = new Material());
+		lights.addOne() = prim;
+
+		prim->material().diffuse() = 1.0f;
+		prim->material().specular() = 1.0f;
+		prim->material().color().set(0.6f, 0.6f, 0.7f);
+	}
+
+	// light source2
+	{
+		SoftPtr<Primitive> prim = new Primitive_Sphere(Vector3(coordSys, 2.0f, 7.0f, -1.0f), 0.1f);
+		prim->setMaterial(materials.addOne() = new Material());
+		lights.addOne() = prim;
+		
+		prim->material().diffuse() = 1.0f;
+		prim->material().specular() = 1.0f;
+		prim->material().color().set(0.9f, 0.9f, 0.9f);
+	}
+}
+
+}
