@@ -46,7 +46,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Covers physics, linear algebra, geometry, logic across 90+ documents.
   - Notes: <span class="study">[LinAlg Done Right](https://github.com/jadnohra/TheNotes/blob/master/2019/memo_linear-algebra-done-right.pdf), [2022 robotics transforms](https://github.com/jadnohra/TheNotes/blob/master/2022/mapping_robotics_transform_terminology_to_abstract_linear_algebra.pdf)</span>
   <details>
-  <summary>Tree</summary>
+  <summary>Source Tree</summary>
   <pre>
 ├── 2011-2012
 │   ├── attribution.pdf
@@ -125,7 +125,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Notes: <span class="study">[Eigenvalues](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Parlett's%20The%20Symmetric%20Eigenvalue%20Problem.pdf), [eigenvalues2](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/notes%20on%20eigenvalues.pdf)</span>
   - Built on lamby research; applied at <span class="career">[#5 Havok](#career)</span> and <span class="career">[#10 Guided Knowledge](#career)</span>.
   <details>
-  <summary>Tree</summary>
+  <summary>Source Tree</summary>
   <pre>
 ├── _dcd_off.jl
 ├── _dcd_on.jl
@@ -160,7 +160,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - <span class="algo">Key files: [as.py](https://github.com/jadnohra/jad-pre-2015-dabblings/blob/master/Lab2015/asinus_salutem/as.py).</span>
   - Built for mathematical exploration tooling.
   <details>
-  <summary>Tree</summary>
+  <summary>Source Tree</summary>
   <pre>
 ├── as.py
 ├── helper_arg.py
@@ -195,7 +195,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Notes: <span class="study">[asymp_not](https://github.com/jadnohra/TheNotes/blob/master/2016/asymp_not.pdf)</span>
   - Applied at <span class="career">[#5 Havok](#career)</span> for low-level numerical optimization.
   <details>
-  <summary>Tree</summary>
+  <summary>Source Tree</summary>
   <pre>
 ├── bitfp.cpp
 ├── bitfp.py
@@ -217,7 +217,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Notes: <span class="study">[RBD](https://github.com/jadnohra/TheNotes/blob/master/2017/treat_rbd_1.pdf), [Lagrangian](https://github.com/jadnohra/TheNotes/blob/master/2015/lagrfrmw.pdf), [Rotation](https://github.com/jadnohra/TheNotes/blob/master/2015/rotation.pdf), [Covariance](https://github.com/jadnohra/TheNotes/blob/master/2015/covar.pdf), [Hestenes GA](https://github.com/jadnohra/TheNotes/blob/master/2015/Notes%20on%20Hestenes%27%20%27Reforming%20the%20Mathematical%20Language%20of%20Physics%27.pdf)</span>
   - Built on Puppeteer/Bigeye; applied at <span class="career">[#7](#career)→[#6](#career)→[#5](#career)</span>. [Video](https://www.youtube.com/watch?v=XMj0xhCzx4U).
   <details>
-  <summary>Tree</summary>
+  <summary>Source Tree</summary>
   <pre>
 └── src/
     ├── BF/
@@ -259,7 +259,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - <span class="algo">Key files: [bvh_export.py](https://github.com/jadnohra/jad-pre-2015-dabblings/blob/master/Labs/BlenderToBVH/bvh_export.py).</span>
   - Used in Bigfoot animation pipeline.
   <details>
-  <summary>Tree</summary>
+  <summary>Source Tree</summary>
   <pre>
 ├── bvh_export.py
 ├── BVHFriendlyArmature.blend
@@ -284,7 +284,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - <span class="algo">Key files: [Bigeye.cpp](https://github.com/jadnohra/jad-pre-2015-dabblings/blob/master/Labs/Bigeye/src/BE/Bigeye.cpp), [RenderNodes.h](https://github.com/jadnohra/jad-pre-2015-dabblings/blob/master/Labs/Bigeye/src/BE/RenderNodes.h).</span>
   - Used for rapid prototyping throughout career.
   <details>
-  <summary>Tree</summary>
+  <summary>Source Tree</summary>
   <pre>
 └── src/BE/
     ├── ARB_Multisample.cpp
@@ -320,7 +320,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - <span class="algo">Key files: [LoaderBVH.cpp](https://github.com/jadnohra/jad-pre-2015-dabblings/blob/master/Labs/Puppeteer/src/LoaderBVH.cpp), [Skeleton.h](https://github.com/jadnohra/jad-pre-2015-dabblings/blob/master/Labs/Puppeteer/src/Skeleton.h).</span>
   - Foundation for Bigfoot animation system.
   <details>
-  <summary>Tree</summary>
+  <summary>Source Tree</summary>
   <pre>
 └── src/
     ├── app.h
@@ -366,7 +366,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Notes: <span class="study">[FOL](https://github.com/jadnohra/TheNotes/blob/master/2018/Free%20Occurrences%20in%20FOL.pdf), [plql](https://github.com/jadnohra/TheNotes/blob/master/2017/plql.pdf)</span>
   - RL contribution to <span class="career">[#7 AI Sandbox](#career)</span>.
   <details>
-  <summary>Tree</summary>
+  <summary>Source Tree</summary>
   <pre>
 ├── Readme.txt
 ├── TicTacToe.sln
@@ -396,7 +396,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - <span class="algo">Tech: C++, OpenGL, Win32. Algos: [BSP](https://en.wikipedia.org/wiki/Binary_space_partitioning) traversal, [PVS](https://en.wikipedia.org/wiki/Potentially_visible_set) culling, lightmaps.</span>
   - Built on thrashit3d experience from university.
   <details>
-  <summary>Tree</summary>
+  <summary>Source Tree</summary>
   <pre>
 ├── GfxFramework/
 │   └── Source/
@@ -423,7 +423,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - <span class="algo">Tech: C++, DirectX. Algos: Custom physics, [Neural networks](https://en.wikipedia.org/wiki/Artificial_neural_network) (goalkeeper AI), spatial partitioning.</span>
   - Foundation for <span class="career">[#8 Sixteen Tons](#career)</span> and <span class="career">[#7 AiGameDev](#career)</span>.
   <details>
-  <summary>Tree</summary>
+  <summary>Source Tree</summary>
   <pre>
 ├── dep/
 │   ├── DXUT_9_0_c/
@@ -472,7 +472,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - **[GraphEdit](https://github.com/jadnohra/jadnohra.com/tree/main/repos/ancient-1998/graphedit)** — 3D equation grapher with [symbolic expression](https://en.wikipedia.org/wiki/Computer_algebra) evaluation and distributed rendering across networked machines
   - Foundation for <span class="career">[#9 Kimera](#career)</span> and all subsequent graphics work.
   <details>
-  <summary>Tree</summary>
+  <summary>Source Tree</summary>
   <pre>
 ├── 2dshooter/fivemagics/ (Java game engine)
 │   ├── applet/GenericApplet.class
