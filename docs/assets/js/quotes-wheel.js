@@ -1,9 +1,8 @@
 // Math Quotes - Constellation Map
 (function() {
   const width = 700;
-  const height = 500;
+  const height = 550;
 
-  // Colors
   const bg = '#0f172a';
   const starColor = '#fef3c7';
   const topicColors = {
@@ -18,15 +17,12 @@
 
   let data = null;
   let topics = null;
-  let svg, starsGroup, nodesGroup, quoteCard;
-  let selectedTopic = null;
-  let subtopicNodes = [];
+  let svg, starsGroup, nodesGroup;
 
   async function init() {
     const container = document.getElementById('quotes-wheel');
     if (!container) return;
 
-    // Load data
     try {
       let resp = await fetch('./assets/data/quotes.json');
       if (!resp.ok) resp = await fetch('/jadnohra.com/assets/data/quotes.json');
@@ -36,7 +32,6 @@
       return;
     }
 
-    // Build topics
     topics = {};
     for (const q of data.quotes) {
       for (const path of q.topics) {
@@ -47,7 +42,6 @@
       }
     }
 
-    // Create SVG
     svg = d3.select(container)
       .append('svg')
       .attr('width', width)
@@ -57,262 +51,284 @@
       .style('display', 'block')
       .style('margin', '0 auto');
 
-    // Background stars
     starsGroup = svg.append('g').attr('class', 'stars');
     createBackgroundStars();
 
-    // Nodes group
     nodesGroup = svg.append('g').attr('class', 'nodes');
 
-    // Quote card below SVG
-    quoteCard = d3.select(container)
-      .append('div')
-      .attr('id', 'quote-card')
-      .style('max-width', width + 'px')
-      .style('margin', '1rem auto')
-      .style('padding', '1.5rem')
-      .style('background', '#1e293b')
-      .style('border-radius', '12px')
-      .style('color', 'white')
-      .style('display', 'none')
-      .style('font-family', 'Georgia, serif');
-
-    // Draw initial constellation
     drawTopics();
   }
 
   function createBackgroundStars() {
-    // Random tiny stars
-    for (let i = 0; i < 150; i++) {
+    for (let i = 0; i < 120; i++) {
       const x = Math.random() * width;
       const y = Math.random() * height;
       const r = Math.random() * 1.2 + 0.3;
-      const opacity = Math.random() * 0.5 + 0.2;
 
       starsGroup.append('circle')
         .attr('cx', x)
         .attr('cy', y)
         .attr('r', r)
         .attr('fill', starColor)
-        .attr('opacity', opacity)
+        .attr('opacity', Math.random() * 0.4 + 0.1)
         .call(twinkle);
     }
   }
 
   function twinkle(star) {
     star.transition()
-      .duration(1000 + Math.random() * 2000)
-      .attr('opacity', Math.random() * 0.3 + 0.1)
+      .duration(1500 + Math.random() * 2000)
+      .attr('opacity', Math.random() * 0.2 + 0.05)
       .transition()
-      .duration(1000 + Math.random() * 2000)
-      .attr('opacity', Math.random() * 0.5 + 0.3)
+      .duration(1500 + Math.random() * 2000)
+      .attr('opacity', Math.random() * 0.4 + 0.2)
       .on('end', function() { twinkle(d3.select(this)); });
   }
 
   function drawTopics() {
-    nodesGroup.selectAll('*').remove();
-    selectedTopic = null;
-    subtopicNodes = [];
-    quoteCard.style('display', 'none');
+    nodesGroup.selectAll('*').transition().duration(200).style('opacity', 0).remove();
 
-    const topicNames = Object.keys(topics);
-    const cx = width / 2;
-    const cy = height / 2;
-    const radius = 160;
+    setTimeout(() => {
+      nodesGroup.selectAll('*').remove();
 
-    topicNames.forEach((name, i) => {
-      const angle = (i / topicNames.length) * 2 * Math.PI - Math.PI / 2;
-      const x = cx + radius * Math.cos(angle);
-      const y = cy + radius * Math.sin(angle);
-      const color = topicColors[name] || '#fff';
-      const subtopicCount = Object.keys(topics[name]).length;
-      const quoteCount = Object.values(topics[name]).flat().length;
+      const topicNames = Object.keys(topics);
+      const cx = width / 2;
+      const cy = height / 2;
+      const radius = 170;
 
-      const g = nodesGroup.append('g')
-        .attr('class', 'topic-node')
-        .style('cursor', 'pointer')
-        .on('click', () => selectTopic(name));
+      // Center text
+      const centerG = nodesGroup.append('g').style('opacity', 0);
 
-      // Glow
-      g.append('circle')
-        .attr('cx', x)
-        .attr('cy', y)
-        .attr('r', 25)
-        .attr('fill', color)
-        .attr('opacity', 0.2)
-        .attr('filter', 'blur(8px)');
-
-      // Star
-      g.append('circle')
-        .attr('cx', x)
-        .attr('cy', y)
-        .attr('r', 8)
-        .attr('fill', color)
-        .on('mouseover', function() {
-          d3.select(this).transition().duration(150).attr('r', 12);
-        })
-        .on('mouseout', function() {
-          d3.select(this).transition().duration(150).attr('r', 8);
-        });
-
-      // Label
-      g.append('text')
-        .attr('x', x)
-        .attr('y', y + 22)
+      centerG.append('text')
+        .attr('x', cx)
+        .attr('y', cy - 15)
         .attr('text-anchor', 'middle')
         .attr('fill', '#e2e8f0')
-        .attr('font-size', '11px')
-        .attr('font-weight', '500')
-        .text(name);
+        .attr('font-size', '18px')
+        .attr('font-weight', '300')
+        .text('Math Quotes');
 
-      // Count
-      g.append('text')
-        .attr('x', x)
-        .attr('y', y + 35)
+      centerG.append('text')
+        .attr('x', cx)
+        .attr('y', cy + 10)
         .attr('text-anchor', 'middle')
         .attr('fill', '#64748b')
-        .attr('font-size', '9px')
-        .text(`${quoteCount} quotes`);
-    });
+        .attr('font-size', '12px')
+        .text(`${data.quotes.length} quotes`);
 
-    // Center text
-    nodesGroup.append('text')
-      .attr('x', cx)
-      .attr('y', cy - 10)
-      .attr('text-anchor', 'middle')
-      .attr('fill', '#94a3b8')
-      .attr('font-size', '14px')
-      .text('Math Quotes');
+      centerG.append('text')
+        .attr('x', cx)
+        .attr('y', cy + 28)
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#475569')
+        .attr('font-size', '10px')
+        .text('click a star');
 
-    nodesGroup.append('text')
-      .attr('x', cx)
-      .attr('y', cy + 10)
-      .attr('text-anchor', 'middle')
-      .attr('fill', '#64748b')
-      .attr('font-size', '11px')
-      .text(`${data.quotes.length} quotes · Click a topic`);
+      centerG.transition().duration(400).style('opacity', 1);
+
+      // Topics
+      topicNames.forEach((name, i) => {
+        const angle = (i / topicNames.length) * 2 * Math.PI - Math.PI / 2;
+        const x = cx + radius * Math.cos(angle);
+        const y = cy + radius * Math.sin(angle);
+        const color = topicColors[name] || '#fff';
+        const quoteCount = Object.values(topics[name]).flat().length;
+
+        const g = nodesGroup.append('g')
+          .style('cursor', 'pointer')
+          .style('opacity', 0)
+          .on('click', () => selectTopic(name));
+
+        // Glow
+        g.append('circle')
+          .attr('cx', x)
+          .attr('cy', y)
+          .attr('r', 0)
+          .attr('fill', color)
+          .attr('opacity', 0.25)
+          .transition()
+          .delay(i * 50)
+          .duration(500)
+          .attr('r', 28);
+
+        // Star
+        const star = g.append('circle')
+          .attr('cx', x)
+          .attr('cy', y)
+          .attr('r', 0)
+          .attr('fill', color);
+
+        star.transition()
+          .delay(i * 50)
+          .duration(400)
+          .attr('r', 9);
+
+        star.on('mouseover', function() {
+            d3.select(this).transition().duration(150).attr('r', 14);
+          })
+          .on('mouseout', function() {
+            d3.select(this).transition().duration(150).attr('r', 9);
+          });
+
+        // Label
+        g.append('text')
+          .attr('x', x)
+          .attr('y', y + 24)
+          .attr('text-anchor', 'middle')
+          .attr('fill', '#e2e8f0')
+          .attr('font-size', '11px')
+          .attr('font-weight', '500')
+          .style('opacity', 0)
+          .text(name)
+          .transition()
+          .delay(i * 50 + 200)
+          .duration(300)
+          .style('opacity', 1);
+
+        g.append('text')
+          .attr('x', x)
+          .attr('y', y + 37)
+          .attr('text-anchor', 'middle')
+          .attr('fill', '#64748b')
+          .attr('font-size', '9px')
+          .text(`${quoteCount}`);
+
+        g.transition().delay(i * 50).duration(300).style('opacity', 1);
+      });
+    }, 250);
   }
 
   function selectTopic(topicName) {
-    nodesGroup.selectAll('*').remove();
-    selectedTopic = topicName;
-    quoteCard.style('display', 'none');
+    nodesGroup.selectAll('*').transition().duration(200).style('opacity', 0);
 
-    const color = topicColors[topicName] || '#fff';
-    const subtopics = Object.keys(topics[topicName]);
-    const cx = width / 2;
-    const cy = height / 2;
+    setTimeout(() => {
+      nodesGroup.selectAll('*').remove();
 
-    // Back button
-    const backBtn = nodesGroup.append('g')
-      .style('cursor', 'pointer')
-      .on('click', drawTopics);
+      const color = topicColors[topicName] || '#fff';
+      const subtopics = Object.keys(topics[topicName]);
+      const cx = width / 2;
+      const cy = height / 2;
 
-    backBtn.append('circle')
-      .attr('cx', 40)
-      .attr('cy', 40)
-      .attr('r', 18)
-      .attr('fill', '#334155');
+      // Topic at center
+      const centerG = nodesGroup.append('g').style('opacity', 0);
 
-    backBtn.append('text')
-      .attr('x', 40)
-      .attr('y', 44)
-      .attr('text-anchor', 'middle')
-      .attr('fill', '#94a3b8')
-      .attr('font-size', '16px')
-      .text('←');
-
-    // Topic at center
-    nodesGroup.append('circle')
-      .attr('cx', cx)
-      .attr('cy', cy)
-      .attr('r', 35)
-      .attr('fill', color)
-      .attr('opacity', 0.15);
-
-    nodesGroup.append('circle')
-      .attr('cx', cx)
-      .attr('cy', cy)
-      .attr('r', 12)
-      .attr('fill', color);
-
-    nodesGroup.append('text')
-      .attr('x', cx)
-      .attr('y', cy + 28)
-      .attr('text-anchor', 'middle')
-      .attr('fill', color)
-      .attr('font-size', '13px')
-      .attr('font-weight', 'bold')
-      .text(topicName);
-
-    // Subtopics around it
-    const radius = 140;
-    subtopicNodes = [];
-
-    subtopics.forEach((sub, i) => {
-      const angle = (i / subtopics.length) * 2 * Math.PI - Math.PI / 2;
-      const x = cx + radius * Math.cos(angle);
-      const y = cy + radius * Math.sin(angle);
-      const quotes = topics[topicName][sub];
-
-      subtopicNodes.push({ name: sub, x, y, quotes });
-
-      // Connection line
-      nodesGroup.append('line')
-        .attr('x1', cx)
-        .attr('y1', cy)
-        .attr('x2', x)
-        .attr('y2', y)
-        .attr('stroke', color)
-        .attr('stroke-opacity', 0.2)
-        .attr('stroke-width', 1);
-
-      const g = nodesGroup.append('g')
-        .style('cursor', 'pointer')
-        .on('click', () => showQuote(topicName, sub));
-
-      // Glow
-      g.append('circle')
-        .attr('cx', x)
-        .attr('cy', y)
-        .attr('r', 15)
+      centerG.append('circle')
+        .attr('cx', cx)
+        .attr('cy', cy)
+        .attr('r', 40)
         .attr('fill', color)
-        .attr('opacity', 0.15);
+        .attr('opacity', 0.2);
 
-      // Star
-      g.append('circle')
-        .attr('cx', x)
-        .attr('cy', y)
-        .attr('r', 5)
-        .attr('fill', starColor)
-        .on('mouseover', function() {
-          d3.select(this).transition().duration(150).attr('r', 8).attr('fill', color);
-        })
-        .on('mouseout', function() {
-          d3.select(this).transition().duration(150).attr('r', 5).attr('fill', starColor);
-        });
+      centerG.append('circle')
+        .attr('cx', cx)
+        .attr('cy', cy)
+        .attr('r', 14)
+        .attr('fill', color);
 
-      // Label
-      let label = sub;
-      if (label && label.length > 15) label = label.substring(0, 13) + '..';
-
-      g.append('text')
-        .attr('x', x)
-        .attr('y', y + 18)
+      centerG.append('text')
+        .attr('x', cx)
+        .attr('y', cy + 32)
         .attr('text-anchor', 'middle')
-        .attr('fill', '#cbd5e1')
+        .attr('fill', color)
+        .attr('font-size', '14px')
+        .attr('font-weight', 'bold')
+        .text(topicName);
+
+      centerG.transition().duration(300).style('opacity', 1);
+
+      // Subtopics
+      const radius = Math.min(150, 180 - subtopics.length * 5);
+
+      subtopics.forEach((sub, i) => {
+        const angle = (i / subtopics.length) * 2 * Math.PI - Math.PI / 2;
+        const x = cx + radius * Math.cos(angle);
+        const y = cy + radius * Math.sin(angle);
+        const quotes = topics[topicName][sub];
+
+        // Line
+        nodesGroup.append('line')
+          .attr('x1', cx)
+          .attr('y1', cy)
+          .attr('x2', cx)
+          .attr('y2', cy)
+          .attr('stroke', color)
+          .attr('stroke-opacity', 0.15)
+          .attr('stroke-width', 1)
+          .transition()
+          .delay(i * 30 + 100)
+          .duration(400)
+          .attr('x2', x)
+          .attr('y2', y);
+
+        const g = nodesGroup.append('g')
+          .style('cursor', 'pointer')
+          .style('opacity', 0)
+          .on('click', () => showQuote(topicName, sub));
+
+        g.append('circle')
+          .attr('cx', x)
+          .attr('cy', y)
+          .attr('r', 12)
+          .attr('fill', color)
+          .attr('opacity', 0.12);
+
+        const star = g.append('circle')
+          .attr('cx', x)
+          .attr('cy', y)
+          .attr('r', 5)
+          .attr('fill', starColor);
+
+        star.on('mouseover', function() {
+            d3.select(this).transition().duration(100).attr('r', 8).attr('fill', color);
+          })
+          .on('mouseout', function() {
+            d3.select(this).transition().duration(100).attr('r', 5).attr('fill', starColor);
+          });
+
+        let label = sub || 'General';
+        if (label.length > 14) label = label.substring(0, 12) + '..';
+
+        g.append('text')
+          .attr('x', x)
+          .attr('y', y + 18)
+          .attr('text-anchor', 'middle')
+          .attr('fill', '#cbd5e1')
+          .attr('font-size', '9px')
+          .text(label);
+
+        g.append('text')
+          .attr('x', x)
+          .attr('y', y + 28)
+          .attr('text-anchor', 'middle')
+          .attr('fill', '#64748b')
+          .attr('font-size', '8px')
+          .text(quotes.length);
+
+        g.transition().delay(i * 30 + 150).duration(300).style('opacity', 1);
+      });
+
+      // Back hint
+      nodesGroup.append('text')
+        .attr('x', cx)
+        .attr('y', height - 25)
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#475569')
         .attr('font-size', '10px')
-        .text(label || 'General');
+        .style('opacity', 0)
+        .text('click star for quote · click anywhere else to go back')
+        .transition()
+        .delay(400)
+        .duration(300)
+        .style('opacity', 1);
 
-      // Count
-      g.append('text')
-        .attr('x', x)
-        .attr('y', y + 29)
-        .attr('text-anchor', 'middle')
-        .attr('fill', '#64748b')
-        .attr('font-size', '8px')
-        .text(`${quotes.length}`);
-    });
+      // Click background to go back
+      svg.on('click.back', function(event) {
+        if (event.target.tagName === 'svg' || event.target.closest('.stars')) {
+          svg.on('click.back', null);
+          drawTopics();
+        }
+      });
+    }, 250);
   }
 
   function showQuote(topicName, subtopicName) {
@@ -321,28 +337,129 @@
 
     const q = quotes[Math.floor(Math.random() * quotes.length)];
     const color = topicColors[topicName] || '#fff';
+    const cx = width / 2;
+    const cy = height / 2;
 
-    quoteCard.style('display', 'block')
-      .html(`
-        <div style="color: ${color}; font-size: 12px; margin-bottom: 0.75rem; font-family: sans-serif;">
-          ${topicName} › ${subtopicName || 'General'}
-        </div>
-        <div style="font-size: 15px; line-height: 1.7; font-style: italic; margin-bottom: 1rem;">
-          "${q.text}"
-        </div>
-        ${q.source ? `<div style="color: #94a3b8; font-size: 12px; font-family: sans-serif;">— ${q.source}</div>` : ''}
-        <div style="margin-top: 1.25rem; display: flex; gap: 0.75rem; align-items: center;">
-          <button id="quote-back" style="padding: 0.5rem 1rem; background: #334155; color: #94a3b8; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">← Back</button>
-          <button id="quote-next" style="padding: 0.5rem 1rem; background: ${color}; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">Next Quote →</button>
-          <span style="color: #64748b; font-size: 11px; margin-left: auto;">${quotes.length} quotes</span>
-        </div>
-      `);
+    nodesGroup.selectAll('*').transition().duration(200).style('opacity', 0);
 
-    document.getElementById('quote-back').onclick = () => selectTopic(topicName);
-    document.getElementById('quote-next').onclick = () => showQuote(topicName, subtopicName);
+    setTimeout(() => {
+      nodesGroup.selectAll('*').remove();
+      svg.on('click.back', null);
+
+      // Quote display
+      const quoteG = nodesGroup.append('g').style('opacity', 0);
+
+      // Header
+      quoteG.append('text')
+        .attr('x', cx)
+        .attr('y', 40)
+        .attr('text-anchor', 'middle')
+        .attr('fill', color)
+        .attr('font-size', '12px')
+        .attr('font-weight', '500')
+        .text(`${topicName} › ${subtopicName || 'General'}`);
+
+      // Quote text - wrap it
+      let text = q.text;
+      const maxChars = 55;
+      const words = text.split(' ');
+      const lines = [];
+      let line = '';
+
+      for (const w of words) {
+        if ((line + ' ' + w).length > maxChars) {
+          lines.push(line);
+          line = w;
+        } else {
+          line = line ? line + ' ' + w : w;
+        }
+      }
+      if (line) lines.push(line);
+
+      const maxLines = 12;
+      const showLines = lines.slice(0, maxLines);
+      if (lines.length > maxLines) showLines[maxLines - 1] += '...';
+
+      const startY = cy - (showLines.length * 11);
+
+      quoteG.append('text')
+        .attr('x', cx - 180)
+        .attr('y', startY - 15)
+        .attr('fill', '#64748b')
+        .attr('font-size', '24px')
+        .attr('font-family', 'Georgia, serif')
+        .text('"');
+
+      showLines.forEach((ln, i) => {
+        quoteG.append('text')
+          .attr('x', cx)
+          .attr('y', startY + i * 22)
+          .attr('text-anchor', 'middle')
+          .attr('fill', '#e2e8f0')
+          .attr('font-size', '14px')
+          .attr('font-family', 'Georgia, serif')
+          .attr('font-style', 'italic')
+          .text(ln);
+      });
+
+      // Source
+      if (q.source) {
+        let src = q.source;
+        if (src.length > 60) src = src.substring(0, 57) + '...';
+        quoteG.append('text')
+          .attr('x', cx)
+          .attr('y', startY + showLines.length * 22 + 20)
+          .attr('text-anchor', 'middle')
+          .attr('fill', '#64748b')
+          .attr('font-size', '11px')
+          .text('— ' + src);
+      }
+
+      // Buttons
+      const btnY = height - 60;
+
+      // Next button
+      const nextBtn = quoteG.append('g')
+        .style('cursor', 'pointer')
+        .on('click', (e) => { e.stopPropagation(); showQuote(topicName, subtopicName); });
+
+      nextBtn.append('rect')
+        .attr('x', cx - 50)
+        .attr('y', btnY - 12)
+        .attr('width', 100)
+        .attr('height', 28)
+        .attr('rx', 6)
+        .attr('fill', color);
+
+      nextBtn.append('text')
+        .attr('x', cx)
+        .attr('y', btnY + 5)
+        .attr('text-anchor', 'middle')
+        .attr('fill', 'white')
+        .attr('font-size', '12px')
+        .text('Next Quote →');
+
+      // Count
+      quoteG.append('text')
+        .attr('x', cx)
+        .attr('y', btnY + 30)
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#475569')
+        .attr('font-size', '10px')
+        .text(`${quotes.length} quotes · click anywhere to return`);
+
+      quoteG.transition().duration(400).style('opacity', 1);
+
+      // Click anywhere to go back to start
+      svg.on('click.back', function(event) {
+        if (!event.target.closest('g[style*="cursor: pointer"]')) {
+          svg.on('click.back', null);
+          drawTopics();
+        }
+      });
+    }, 250);
   }
 
-  // Start
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
