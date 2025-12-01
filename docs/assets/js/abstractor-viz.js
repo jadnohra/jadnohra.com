@@ -1,4 +1,4 @@
-// Abstractor Visualizations
+// Abstractor - Concept Grid Visualization
 (function() {
   const domainColors = {
     physical: "#f97316",
@@ -10,366 +10,50 @@
     language: "#22c55e"
   };
 
-  const categoryColors = {
-    abstracts: "#f59e0b",
-    exposes: "#22c55e",
-    leaks: "#ef4444",
-    escapes: "#8b5cf6"
-  };
-
   let data = null;
+  let exposeToLayer = {};
+  let layerById = {};
+  let dependsOn = {};
+  let dependents = {};
 
   async function init() {
+    const container = document.getElementById('concept-grid');
+    if (!container) return;
+
     try {
       let resp = await fetch('./assets/data/abstractor.json');
       if (!resp.ok) resp = await fetch('/jadnohra.com/assets/data/abstractor.json');
       data = await resp.json();
     } catch (e) {
-      console.error('Failed to load abstractor data:', e);
+      container.innerHTML = '<p style="color:#ef4444;">Failed to load data.</p>';
       return;
     }
 
-    // Build lookup maps
     buildLookups();
-
-    // Initialize all visualizations
-    initThreadTracer();
-    initExpandingTower();
-    initSankey();
-    initRadial();
-    initExpandingTower2();
+    renderGrid(container);
   }
 
-  // Lookup maps
-  let exposeToLayer = {};
-  let conceptById = {};
-  let layerById = {};
-
   function buildLookups() {
+    // Build layer and expose lookups
     data.layers.forEach(layer => {
       layerById[layer.id] = layer;
       layer.exposes.forEach(e => {
         exposeToLayer[e.id] = layer.id;
-        conceptById[e.id] = { ...e, type: 'exposes', layerId: layer.id };
-      });
-      layer.abstracts.forEach(a => {
-        conceptById[a.id] = { ...a, type: 'abstracts', layerId: layer.id };
-      });
-      layer.leaks.forEach(l => {
-        conceptById[l.id] = { ...l, type: 'leaks', layerId: layer.id };
-      });
-      layer.escapes.forEach(e => {
-        conceptById[e.id] = { ...e, type: 'escapes', layerId: layer.id };
-      });
-    });
-  }
-
-  // ============================================================
-  // VIZ 1: THREAD TRACER
-  // ============================================================
-  function initThreadTracer() {
-    const container = document.getElementById('viz-thread-tracer');
-    if (!container) return;
-
-    const width = container.clientWidth || 800;
-    const height = 500;
-    const layerHeight = 40;
-    const padding = { top: 20, right: 300, bottom: 20, left: 20 };
-
-    const svg = d3.select(container)
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height)
-      .attr('viewBox', `0 0 ${width} ${height}`);
-
-    // Sort layers by level
-    const sortedLayers = [...data.layers].sort((a, b) => a.level - b.level);
-
-    // Draw layers
-    const layerGroup = svg.append('g').attr('class', 'layers');
-    const layerBoxWidth = 250;
-
-    sortedLayers.forEach((layer, i) => {
-      const y = padding.top + i * layerHeight;
-      const g = layerGroup.append('g')
-        .attr('class', 'layer')
-        .attr('data-layer', layer.id);
-
-      g.append('rect')
-        .attr('x', padding.left)
-        .attr('y', y)
-        .attr('width', layerBoxWidth)
-        .attr('height', layerHeight - 4)
-        .attr('rx', 4)
-        .attr('fill', domainColors[layer.domain] || '#666')
-        .attr('opacity', 0.8)
-        .style('cursor', 'pointer');
-
-      g.append('text')
-        .attr('x', padding.left + 10)
-        .attr('y', y + layerHeight / 2)
-        .attr('fill', '#fff')
-        .attr('font-size', '12px')
-        .attr('dominant-baseline', 'middle')
-        .text(layer.name)
-        .style('pointer-events', 'none');
-
-      // Level indicator
-      g.append('text')
-        .attr('x', padding.left + layerBoxWidth - 10)
-        .attr('y', y + layerHeight / 2)
-        .attr('fill', 'rgba(255,255,255,0.6)')
-        .attr('font-size', '10px')
-        .attr('text-anchor', 'end')
-        .attr('dominant-baseline', 'middle')
-        .text(`L${layer.level}`)
-        .style('pointer-events', 'none');
-    });
-
-    // Info panel
-    const infoPanel = svg.append('g')
-      .attr('class', 'info-panel')
-      .attr('transform', `translate(${padding.left + layerBoxWidth + 30}, ${padding.top})`);
-
-    infoPanel.append('text')
-      .attr('class', 'info-title')
-      .attr('fill', '#e2e8f0')
-      .attr('font-size', '14px')
-      .attr('font-weight', 'bold')
-      .text('Click a layer to explore');
-
-    infoPanel.append('text')
-      .attr('class', 'info-detail')
-      .attr('y', 25)
-      .attr('fill', '#94a3b8')
-      .attr('font-size', '11px');
-
-    // Connection lines group
-    const linesGroup = svg.append('g').attr('class', 'connections');
-
-    // Click handler
-    layerGroup.selectAll('.layer').on('click', function(event, d) {
-      const layerId = this.getAttribute('data-layer');
-      const layer = layerById[layerId];
-      showLayerConnections(layer, sortedLayers, linesGroup, layerGroup, infoPanel, padding, layerHeight, layerBoxWidth);
-    });
-  }
-
-  function showLayerConnections(layer, sortedLayers, linesGroup, layerGroup, infoPanel, padding, layerHeight, layerBoxWidth) {
-    // Clear previous
-    linesGroup.selectAll('*').remove();
-    layerGroup.selectAll('rect').attr('opacity', 0.3);
-
-    // Highlight selected layer
-    layerGroup.select(`[data-layer="${layer.id}"] rect`).attr('opacity', 1);
-
-    // Find dependencies (what this layer's abstracts depend on)
-    const dependsOn = new Set();
-    layer.abstracts.forEach(a => {
-      if (a.from) {
-        a.from.forEach(fromId => {
-          const sourceLayerId = exposeToLayer[fromId];
-          if (sourceLayerId) dependsOn.add(sourceLayerId);
-        });
-      }
-    });
-
-    // Find dependents (what depends on this layer's exposes)
-    const dependents = new Set();
-    data.layers.forEach(otherLayer => {
-      otherLayer.abstracts.forEach(a => {
-        if (a.from) {
-          a.from.forEach(fromId => {
-            if (layer.exposes.some(e => e.id === fromId)) {
-              dependents.add(otherLayer.id);
-            }
-          });
-        }
-      });
-    });
-
-    // Draw connections
-    const layerIndex = {};
-    sortedLayers.forEach((l, i) => layerIndex[l.id] = i);
-    const selectedY = padding.top + layerIndex[layer.id] * layerHeight + layerHeight / 2;
-
-    // Down connections (dependencies) - orange
-    dependsOn.forEach(depId => {
-      layerGroup.select(`[data-layer="${depId}"] rect`).attr('opacity', 0.8);
-      const depY = padding.top + layerIndex[depId] * layerHeight + layerHeight / 2;
-
-      linesGroup.append('path')
-        .attr('d', `M${padding.left + layerBoxWidth + 5},${selectedY}
-                    Q${padding.left + layerBoxWidth + 40},${(selectedY + depY) / 2}
-                    ${padding.left + layerBoxWidth + 5},${depY}`)
-        .attr('fill', 'none')
-        .attr('stroke', '#f97316')
-        .attr('stroke-width', 2)
-        .attr('opacity', 0)
-        .transition()
-        .duration(300)
-        .attr('opacity', 0.8);
-    });
-
-    // Up connections (dependents) - blue
-    dependents.forEach(depId => {
-      layerGroup.select(`[data-layer="${depId}"] rect`).attr('opacity', 0.8);
-      const depY = padding.top + layerIndex[depId] * layerHeight + layerHeight / 2;
-
-      linesGroup.append('path')
-        .attr('d', `M${padding.left - 5},${selectedY}
-                    Q${padding.left - 40},${(selectedY + depY) / 2}
-                    ${padding.left - 5},${depY}`)
-        .attr('fill', 'none')
-        .attr('stroke', '#3b82f6')
-        .attr('stroke-width', 2)
-        .attr('opacity', 0)
-        .transition()
-        .duration(300)
-        .attr('opacity', 0.8);
-    });
-
-    // Update info panel
-    infoPanel.select('.info-title').text(layer.name);
-    infoPanel.select('.info-detail')
-      .text(`Abstracts: ${layer.abstracts.length} | Exposes: ${layer.exposes.length} | Leaks: ${layer.leaks.length} | Escapes: ${layer.escapes.length}`);
-  }
-
-  // ============================================================
-  // VIZ 2: EXPANDING TOWER
-  // ============================================================
-  function initExpandingTower() {
-    const container = document.getElementById('viz-expanding-tower');
-    if (!container) return;
-
-    const width = container.clientWidth || 800;
-
-    // Sort layers by level
-    const sortedLayers = [...data.layers].sort((a, b) => a.level - b.level);
-
-    // Create HTML-based tower (easier for expand/collapse)
-    container.innerHTML = '';
-    const tower = document.createElement('div');
-    tower.className = 'tower';
-    tower.style.cssText = 'display: flex; flex-direction: column; gap: 4px;';
-
-    sortedLayers.forEach(layer => {
-      const layerEl = document.createElement('div');
-      layerEl.className = 'tower-layer';
-      layerEl.style.cssText = `
-        background: ${domainColors[layer.domain]}22;
-        border-left: 4px solid ${domainColors[layer.domain]};
-        border-radius: 4px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-      `;
-
-      // Header
-      const header = document.createElement('div');
-      header.style.cssText = `
-        padding: 8px 12px;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: ${domainColors[layer.domain]}33;
-      `;
-      header.innerHTML = `
-        <span style="color: #e2e8f0; font-weight: 500;">${layer.name}</span>
-        <span style="color: ${domainColors[layer.domain]}; font-size: 11px;">L${layer.level} ▼</span>
-      `;
-
-      // Content
-      const content = document.createElement('div');
-      content.className = 'tower-content';
-      content.style.cssText = `
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease;
-        padding: 0 12px;
-      `;
-
-      const grid = document.createElement('div');
-      grid.style.cssText = 'display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 12px 0;';
-
-      ['abstracts', 'exposes', 'leaks', 'escapes'].forEach(cat => {
-        const col = document.createElement('div');
-        col.innerHTML = `<div style="color: ${categoryColors[cat]}; font-size: 10px; text-transform: uppercase; margin-bottom: 6px;">${cat}</div>`;
-
-        layer[cat].forEach(item => {
-          const pill = document.createElement('div');
-          pill.style.cssText = `
-            font-size: 10px;
-            color: #94a3b8;
-            padding: 2px 6px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 3px;
-            margin-bottom: 3px;
-            cursor: pointer;
-            transition: all 0.2s;
-          `;
-          pill.textContent = item.name;
-          pill.title = item.desc || '';
-          pill.onmouseenter = () => pill.style.background = `${categoryColors[cat]}33`;
-          pill.onmouseleave = () => pill.style.background = 'rgba(255,255,255,0.05)';
-          col.appendChild(pill);
-        });
-
-        if (layer[cat].length === 0) {
-          col.innerHTML += '<div style="font-size: 10px; color: #475569; font-style: italic;">none</div>';
-        }
-        grid.appendChild(col);
-      });
-
-      content.appendChild(grid);
-      layerEl.appendChild(header);
-      layerEl.appendChild(content);
-      tower.appendChild(layerEl);
-
-      // Toggle handler
-      header.onclick = () => {
-        const isOpen = content.style.maxHeight !== '0px' && content.style.maxHeight !== '';
-        content.style.maxHeight = isOpen ? '0' : content.scrollHeight + 'px';
-        content.style.padding = isOpen ? '0 12px' : '0 12px';
-      };
-    });
-
-    container.appendChild(tower);
-  }
-
-  // ============================================================
-  // VIZ 3: SELECTIVE THREAD SANKEY
-  // ============================================================
-  function initSankey() {
-    const container = document.getElementById('viz-sankey');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    // Build dependency maps
-    const dependsOn = {};  // conceptId -> [sourceConceptIds]
-    const dependents = {}; // conceptId -> [dependentConceptIds]
-
-    data.layers.forEach(layer => {
-      layer.exposes.forEach(e => {
         dependsOn[e.id] = [];
         dependents[e.id] = [];
       });
     });
 
-    // Build relationships from abstracts
+    // Build dependency maps from abstracts
     data.layers.forEach(layer => {
       layer.abstracts.forEach(a => {
         if (a.from) {
           a.from.forEach(fromId => {
-            // Find which exposes in this layer relate to this abstract
             layer.exposes.forEach(exp => {
-              if (!dependsOn[exp.id]) dependsOn[exp.id] = [];
               if (!dependsOn[exp.id].includes(fromId)) {
                 dependsOn[exp.id].push(fromId);
               }
-              if (!dependents[fromId]) dependents[fromId] = [];
-              if (!dependents[fromId].includes(exp.id)) {
+              if (dependents[fromId] && !dependents[fromId].includes(exp.id)) {
                 dependents[fromId].push(exp.id);
               }
             });
@@ -377,756 +61,207 @@
         }
       });
     });
+  }
 
-    // Get unique levels and sort layers
-    const levels = [...new Set(data.layers.map(l => l.level))].sort((a, b) => a - b);
-    const layersByLevel = {};
-    levels.forEach(l => layersByLevel[l] = []);
-    data.layers.forEach(layer => layersByLevel[layer.level].push(layer));
+  function renderGrid(container) {
+    container.innerHTML = '';
 
-    // Flatten to get column order (pick representative layers per level)
-    const columns = [];
-    levels.forEach(level => {
-      layersByLevel[level].forEach(layer => {
-        columns.push(layer);
-      });
-    });
-
-    // Create HTML layout
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'position: relative; width: 100%; overflow-x: auto;';
-
-    // SVG for connections (positioned absolutely)
+    // SVG for connections
     const svgNS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(svgNS, 'svg');
-    svg.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;';
-    svg.id = 'sankey-connections';
+    svg.id = 'connection-lines';
 
-    // Columns container
-    const columnsDiv = document.createElement('div');
-    columnsDiv.style.cssText = 'display: flex; gap: 8px; padding: 10px; min-width: max-content; position: relative; z-index: 2;';
+    // Grid container
+    const gridDiv = document.createElement('div');
+    gridDiv.className = 'grid-container';
 
-    const conceptElements = {}; // conceptId -> DOM element
-    const conceptPositions = {}; // conceptId -> {x, y}
+    // Clear button
+    const clearBtn = document.createElement('button');
+    clearBtn.className = 'clear-btn';
+    clearBtn.textContent = 'Clear';
 
-    // Create columns
-    columns.forEach((layer, colIdx) => {
-      const col = document.createElement('div');
-      col.style.cssText = `
-        min-width: 120px;
-        max-width: 150px;
-        background: ${domainColors[layer.domain]}15;
-        border-radius: 8px;
-        padding: 8px;
-        flex-shrink: 0;
-      `;
+    const conceptElements = {};
+    const sortedLayers = [...data.layers].sort((a, b) => a.level - b.level);
 
-      // Header
+    // Create layer groups
+    sortedLayers.forEach(layer => {
+      const group = document.createElement('div');
+      group.className = 'layer-group';
+
       const header = document.createElement('div');
-      header.style.cssText = `
-        font-size: 11px;
-        font-weight: 600;
-        color: ${domainColors[layer.domain]};
-        margin-bottom: 8px;
-        padding-bottom: 4px;
-        border-bottom: 1px solid ${domainColors[layer.domain]}44;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      `;
+      header.className = 'layer-header';
+      header.style.color = domainColors[layer.domain];
       header.textContent = layer.name;
-      header.title = layer.name;
-      col.appendChild(header);
+      group.appendChild(header);
 
-      // Exposes
+      // Add exposes as concepts
       layer.exposes.forEach(exp => {
-        const item = document.createElement('div');
-        item.className = 'sankey-item';
-        item.dataset.conceptId = exp.id;
-        item.dataset.layerId = layer.id;
-        item.style.cssText = `
-          font-size: 10px;
-          color: #94a3b8;
-          padding: 4px 6px;
-          margin: 2px 0;
-          background: rgba(255,255,255,0.05);
-          border-radius: 4px;
-          cursor: pointer;
-          transition: all 0.2s;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        `;
-        item.textContent = exp.name;
-        item.title = exp.desc || exp.name;
-
-        conceptElements[exp.id] = item;
-        col.appendChild(item);
+        const concept = document.createElement('div');
+        concept.className = 'concept';
+        concept.dataset.id = exp.id;
+        concept.dataset.layer = layer.id;
+        concept.textContent = exp.name;
+        concept.title = exp.desc || '';
+        conceptElements[exp.id] = concept;
+        group.appendChild(concept);
       });
 
-      columnsDiv.appendChild(col);
+      gridDiv.appendChild(group);
     });
 
-    // Clear button
-    const clearBtn = document.createElement('button');
-    clearBtn.textContent = 'Clear';
-    clearBtn.style.cssText = `
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      padding: 4px 12px;
-      font-size: 11px;
-      background: #334155;
-      color: #e2e8f0;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      z-index: 10;
-    `;
+    container.appendChild(svg);
+    container.appendChild(gridDiv);
+    container.appendChild(clearBtn);
 
-    wrapper.appendChild(svg);
-    wrapper.appendChild(columnsDiv);
-    wrapper.appendChild(clearBtn);
-    container.appendChild(wrapper);
+    // State
+    let selectedId = null;
 
-    // After layout, get positions
-    setTimeout(() => {
-      Object.entries(conceptElements).forEach(([id, el]) => {
-        const rect = el.getBoundingClientRect();
-        const containerRect = wrapper.getBoundingClientRect();
-        conceptPositions[id] = {
-          x: rect.left - containerRect.left + rect.width / 2,
-          y: rect.top - containerRect.top + rect.height / 2,
-          left: rect.left - containerRect.left,
-          right: rect.right - containerRect.left,
-          el
-        };
-      });
-
-      // Update SVG size
-      const totalHeight = columnsDiv.scrollHeight;
-      const totalWidth = columnsDiv.scrollWidth;
-      svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
-      svg.style.width = totalWidth + 'px';
-      svg.style.height = totalHeight + 'px';
-    }, 100);
-
-    // Trace thread function
-    function traceThread(conceptId) {
-      const inThread = new Set([conceptId]);
-      const connections = [];
-
-      // Trace dependencies (going down/left)
-      function traceDown(id, visited = new Set()) {
-        if (visited.has(id)) return;
-        visited.add(id);
-        const deps = dependsOn[id] || [];
-        deps.forEach(depId => {
-          if (conceptPositions[depId]) {
-            inThread.add(depId);
-            connections.push({ from: depId, to: id, direction: 'up' });
-            traceDown(depId, visited);
-          }
-        });
-      }
-
-      // Trace dependents (going up/right)
-      function traceUp(id, visited = new Set()) {
-        if (visited.has(id)) return;
-        visited.add(id);
-        const deps = dependents[id] || [];
-        deps.forEach(depId => {
-          if (conceptPositions[depId]) {
-            inThread.add(depId);
-            connections.push({ from: id, to: depId, direction: 'up' });
-            traceUp(depId, visited);
-          }
-        });
-      }
-
-      traceDown(conceptId);
-      traceUp(conceptId);
-
-      return { inThread, connections };
-    }
-
-    // Draw connections
-    function drawConnections(connections, selectedId) {
-      svg.innerHTML = '';
-
-      // Add animation style
-      const style = document.createElementNS(svgNS, 'style');
-      style.textContent = `
-        @keyframes flowRight {
-          from { stroke-dashoffset: 20; }
-          to { stroke-dashoffset: 0; }
-        }
-        .flow-line {
-          animation: flowRight 0.5s linear infinite;
-        }
-      `;
-      svg.appendChild(style);
-
-      connections.forEach(({ from, to }) => {
-        const fromPos = conceptPositions[from];
-        const toPos = conceptPositions[to];
-        if (!fromPos || !toPos) return;
-
-        const path = document.createElementNS(svgNS, 'path');
-        const x1 = fromPos.right;
-        const y1 = fromPos.y;
-        const x2 = toPos.left;
-        const y2 = toPos.y;
-        const midX = (x1 + x2) / 2;
-
-        path.setAttribute('d', `M${x1},${y1} C${midX},${y1} ${midX},${y2} ${x2},${y2}`);
-        path.setAttribute('fill', 'none');
-        path.setAttribute('stroke', '#f97316');
-        path.setAttribute('stroke-width', '2');
-        path.setAttribute('stroke-dasharray', '5,5');
-        path.classList.add('flow-line');
-        path.style.opacity = '0.7';
-
-        svg.appendChild(path);
-      });
-    }
-
-    // Click handler
-    function handleClick(e) {
-      const item = e.target.closest('.sankey-item');
-      if (!item) return;
-
-      const conceptId = item.dataset.conceptId;
-      const { inThread, connections } = traceThread(conceptId);
-
-      // Update styles
-      Object.entries(conceptElements).forEach(([id, el]) => {
-        if (id === conceptId) {
-          el.style.background = '#f9731644';
-          el.style.color = '#fff';
-          el.style.fontWeight = '600';
-        } else if (inThread.has(id)) {
-          el.style.background = 'rgba(255,255,255,0.1)';
-          el.style.color = '#e2e8f0';
-          el.style.fontWeight = 'normal';
-        } else {
-          el.style.background = 'rgba(255,255,255,0.02)';
-          el.style.color = '#475569';
-          el.style.fontWeight = 'normal';
-        }
-      });
-
-      drawConnections(connections, conceptId);
-    }
-
-    // Clear handler
-    function handleClear() {
-      svg.innerHTML = '';
-      Object.values(conceptElements).forEach(el => {
-        el.style.background = 'rgba(255,255,255,0.05)';
-        el.style.color = '#94a3b8';
-        el.style.fontWeight = 'normal';
-      });
-    }
-
-    columnsDiv.addEventListener('click', handleClick);
-    clearBtn.addEventListener('click', handleClear);
-  }
-
-  // ============================================================
-  // VIZ 4: RADIAL VIEW
-  // ============================================================
-  function initRadial() {
-    const container = document.getElementById('viz-radial');
-    if (!container) return;
-
-    const width = container.clientWidth || 800;
-    const height = 500;
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const maxRadius = Math.min(width, height) / 2 - 40;
-
-    const svg = d3.select(container)
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height);
-
-    const g = svg.append('g')
-      .attr('transform', `translate(${centerX}, ${centerY})`);
-
-    // Get unique levels
-    const levels = [...new Set(data.layers.map(l => l.level))].sort((a, b) => a - b);
-    const levelRadius = maxRadius / (levels.length + 1);
-
-    // Draw level rings
-    levels.forEach((level, i) => {
-      const r = (i + 1) * levelRadius;
-      g.append('circle')
-        .attr('r', r)
-        .attr('fill', 'none')
-        .attr('stroke', '#334155')
-        .attr('stroke-width', 1)
-        .attr('stroke-dasharray', '2,4');
-    });
-
-    // Position layers on rings
-    const layersByLevel = {};
-    levels.forEach(l => layersByLevel[l] = []);
-    data.layers.forEach(layer => layersByLevel[layer.level].push(layer));
-
-    const layerPositions = {};
-
-    levels.forEach((level, levelIdx) => {
-      const layersAtLevel = layersByLevel[level];
-      const r = (levelIdx + 1) * levelRadius;
-      const angleStep = (2 * Math.PI) / Math.max(layersAtLevel.length, 1);
-
-      layersAtLevel.forEach((layer, i) => {
-        const angle = i * angleStep - Math.PI / 2;
-        const x = r * Math.cos(angle);
-        const y = r * Math.sin(angle);
-        layerPositions[layer.id] = { x, y, angle, r };
-
-        // Draw layer node
-        const nodeG = g.append('g')
-          .attr('transform', `translate(${x}, ${y})`)
-          .style('cursor', 'pointer');
-
-        nodeG.append('circle')
-          .attr('r', 20)
-          .attr('fill', domainColors[layer.domain] || '#666')
-          .attr('stroke', '#1e293b')
-          .attr('stroke-width', 2);
-
-        // Abbreviated name
-        const abbrev = layer.name.split(/[\s\/()]+/).map(w => w[0]).join('').slice(0, 3);
-        nodeG.append('text')
-          .attr('text-anchor', 'middle')
-          .attr('dominant-baseline', 'middle')
-          .attr('fill', '#fff')
-          .attr('font-size', '9px')
-          .attr('font-weight', 'bold')
-          .text(abbrev);
-
-        // Full name on hover
-        nodeG.append('title').text(`${layer.name} (L${layer.level})`);
-
-        // Hover effect
-        nodeG.on('mouseenter', function() {
-          d3.select(this).select('circle').attr('r', 25);
-          showRadialConnections(layer, g, layerPositions);
-        });
-        nodeG.on('mouseleave', function() {
-          d3.select(this).select('circle').attr('r', 20);
-          g.selectAll('.radial-connection').remove();
-        });
-      });
-    });
-
-    // Center label
-    g.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('fill', '#64748b')
-      .attr('font-size', '10px')
-      .text('Physics');
-
-    // Legend
-    const legend = svg.append('g')
-      .attr('transform', `translate(20, 20)`);
-
-    Object.entries(domainColors).forEach(([domain, color], i) => {
-      legend.append('rect')
-        .attr('x', 0)
-        .attr('y', i * 18)
-        .attr('width', 12)
-        .attr('height', 12)
-        .attr('fill', color)
-        .attr('rx', 2);
-      legend.append('text')
-        .attr('x', 18)
-        .attr('y', i * 18 + 10)
-        .attr('fill', '#94a3b8')
-        .attr('font-size', '10px')
-        .text(domain);
-    });
-  }
-
-  // ============================================================
-  // VIZ 5: THREAD EXPLORER (Expanding Tower with arrows)
-  // ============================================================
-  function initExpandingTower2() {
-    const container = document.getElementById('viz-tower2');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    // Build dependency maps
-    const dependsOn = {};
-    const dependents = {};
-
-    data.layers.forEach(layer => {
-      layer.exposes.forEach(e => {
-        dependsOn[e.id] = [];
-        dependents[e.id] = [];
-      });
-    });
-
-    data.layers.forEach(layer => {
-      layer.abstracts.forEach(a => {
-        if (a.from) {
-          a.from.forEach(fromId => {
-            layer.exposes.forEach(exp => {
-              if (!dependsOn[exp.id]) dependsOn[exp.id] = [];
-              if (!dependsOn[exp.id].includes(fromId)) {
-                dependsOn[exp.id].push(fromId);
-              }
-              if (!dependents[fromId]) dependents[fromId] = [];
-              if (!dependents[fromId].includes(exp.id)) {
-                dependents[fromId].push(exp.id);
-              }
-            });
-          });
-        }
-      });
-    });
-
-    // Sort layers by level
-    const sortedLayers = [...data.layers].sort((a, b) => a.level - b.level);
-
-    // Create wrapper with SVG overlay
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'position: relative; width: 100%;';
-
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(svgNS, 'svg');
-    svg.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;';
-    svg.id = 'tower2-connections';
-
-    const tower = document.createElement('div');
-    tower.className = 'tower2';
-    tower.style.cssText = 'display: flex; flex-direction: column; gap: 4px;';
-
-    const layerElements = {};
-    const itemElements = {};
-    const itemPositions = {};
-
-    // Same layout as Expanding Tower
-    sortedLayers.forEach(layer => {
-      const layerEl = document.createElement('div');
-      layerEl.className = 'tower2-layer';
-      layerEl.dataset.layerId = layer.id;
-      layerEl.style.cssText = `
-        background: ${domainColors[layer.domain]}22;
-        border-left: 4px solid ${domainColors[layer.domain]};
-        border-radius: 4px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-      `;
-
-      // Header
-      const header = document.createElement('div');
-      header.className = 'tower2-header';
-      header.style.cssText = `
-        padding: 8px 12px;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: ${domainColors[layer.domain]}33;
-      `;
-      header.innerHTML = `
-        <span style="color: #e2e8f0; font-weight: 500;">${layer.name}</span>
-        <span style="color: ${domainColors[layer.domain]}; font-size: 11px;">L${layer.level} ▼</span>
-      `;
-
-      // Content - 4 column grid like Expanding Tower
-      const content = document.createElement('div');
-      content.className = 'tower2-content';
-      content.style.cssText = `
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease;
-        padding: 0 12px;
-      `;
-
-      const grid = document.createElement('div');
-      grid.style.cssText = 'display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 12px 0;';
-
-      ['abstracts', 'exposes', 'leaks', 'escapes'].forEach(cat => {
-        const col = document.createElement('div');
-        col.innerHTML = `<div style="color: ${categoryColors[cat]}; font-size: 10px; text-transform: uppercase; margin-bottom: 6px;">${cat}</div>`;
-
-        layer[cat].forEach(item => {
-          const pill = document.createElement('div');
-          pill.className = 'tower2-item';
-          pill.dataset.conceptId = item.id;
-          pill.dataset.layerId = layer.id;
-          pill.dataset.category = cat;
-          pill.style.cssText = `
-            font-size: 10px;
-            color: #94a3b8;
-            padding: 2px 6px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 3px;
-            margin-bottom: 3px;
-            cursor: pointer;
-            transition: all 0.2s;
-          `;
-          pill.textContent = item.name;
-          pill.title = item.desc || '';
-          pill.onmouseenter = () => {
-            if (!pill.classList.contains('selected')) {
-              pill.style.background = `${categoryColors[cat]}33`;
-            }
-          };
-          pill.onmouseleave = () => {
-            if (!pill.classList.contains('selected') && !pill.classList.contains('in-thread')) {
-              pill.style.background = 'rgba(255,255,255,0.05)';
-            }
-          };
-          itemElements[item.id] = pill;
-          col.appendChild(pill);
-        });
-
-        if (layer[cat].length === 0) {
-          col.innerHTML += '<div style="font-size: 10px; color: #475569; font-style: italic;">none</div>';
-        }
-        grid.appendChild(col);
-      });
-
-      content.appendChild(grid);
-      layerEl.appendChild(header);
-      layerEl.appendChild(content);
-      tower.appendChild(layerEl);
-      layerElements[layer.id] = { el: layerEl, header, content, layer };
-
-      // Toggle on header click
-      header.onclick = (e) => {
-        e.stopPropagation();
-        const isOpen = content.style.maxHeight !== '0px' && content.style.maxHeight !== '';
-        content.style.maxHeight = isOpen ? '0' : content.scrollHeight + 'px';
-        // Update positions after expand
-        setTimeout(updatePositions, 350);
+    // Get positions for connection drawing
+    function getPos(id) {
+      const el = conceptElements[id];
+      if (!el) return null;
+      const rect = el.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      return {
+        x: rect.left - containerRect.left + rect.width / 2,
+        y: rect.top - containerRect.top + rect.height / 2,
+        right: rect.right - containerRect.left,
+        left: rect.left - containerRect.left
       };
-    });
-
-    // Clear button
-    const clearBtn = document.createElement('button');
-    clearBtn.textContent = 'Clear';
-    clearBtn.style.cssText = `
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      padding: 4px 12px;
-      font-size: 11px;
-      background: #334155;
-      color: #e2e8f0;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      z-index: 20;
-    `;
-
-    wrapper.appendChild(svg);
-    wrapper.appendChild(tower);
-    wrapper.appendChild(clearBtn);
-    container.appendChild(wrapper);
-
-    // Get positions after render
-    function updatePositions() {
-      const wrapperRect = wrapper.getBoundingClientRect();
-      Object.entries(itemElements).forEach(([id, el]) => {
-        const rect = el.getBoundingClientRect();
-        if (rect.width > 0) {
-          itemPositions[id] = {
-            x: rect.left - wrapperRect.left + rect.width / 2,
-            y: rect.top - wrapperRect.top + rect.height / 2,
-            left: rect.left - wrapperRect.left,
-            right: rect.right - wrapperRect.left
-          };
-        }
-      });
-      svg.setAttribute('viewBox', `0 0 ${wrapper.scrollWidth} ${wrapper.scrollHeight}`);
-      svg.style.width = wrapper.scrollWidth + 'px';
-      svg.style.height = wrapper.scrollHeight + 'px';
     }
 
-    // Trace thread
-    function traceThread(conceptId) {
-      const inThread = new Set([conceptId]);
-      const connections = [];
-      const activeLayers = new Set();
+    // Trace full thread
+    function traceThread(id) {
+      const inThread = new Set([id]);
 
-      function traceDown(id, visited = new Set()) {
-        if (visited.has(id)) return;
-        visited.add(id);
-        const deps = dependsOn[id] || [];
-        deps.forEach(depId => {
-          if (itemElements[depId]) {
-            inThread.add(depId);
-            const sourceLayer = exposeToLayer[depId];
-            if (sourceLayer) activeLayers.add(sourceLayer);
-            connections.push({ from: depId, to: id });
-            traceDown(depId, visited);
+      function down(cid, visited = new Set()) {
+        if (visited.has(cid)) return;
+        visited.add(cid);
+        (dependsOn[cid] || []).forEach(dep => {
+          if (conceptElements[dep]) {
+            inThread.add(dep);
+            down(dep, visited);
           }
         });
       }
 
-      function traceUp(id, visited = new Set()) {
-        if (visited.has(id)) return;
-        visited.add(id);
-        const deps = dependents[id] || [];
-        deps.forEach(depId => {
-          if (itemElements[depId]) {
-            inThread.add(depId);
-            const targetLayer = exposeToLayer[depId];
-            if (targetLayer) activeLayers.add(targetLayer);
-            connections.push({ from: id, to: depId });
-            traceUp(depId, visited);
+      function up(cid, visited = new Set()) {
+        if (visited.has(cid)) return;
+        visited.add(cid);
+        (dependents[cid] || []).forEach(dep => {
+          if (conceptElements[dep]) {
+            inThread.add(dep);
+            up(dep, visited);
           }
         });
       }
 
-      const startLayer = exposeToLayer[conceptId];
-      if (startLayer) activeLayers.add(startLayer);
-      traceDown(conceptId);
-      traceUp(conceptId);
-
-      return { inThread, connections, activeLayers };
+      down(id);
+      up(id);
+      return inThread;
     }
 
-    // Draw connections with domain colors
-    function drawConnections(connections) {
+    // Draw connections on hover
+    function drawConnections(id) {
       svg.innerHTML = '';
+      const fromPos = getPos(id);
+      if (!fromPos) return;
 
-      connections.forEach(({ from, to }) => {
-        const fromPos = itemPositions[from];
-        const toPos = itemPositions[to];
-        if (!fromPos || !toPos) return;
+      const sourceLayer = exposeToLayer[id];
+      const color = sourceLayer ? domainColors[layerById[sourceLayer].domain] : '#f97316';
 
-        const sourceLayer = exposeToLayer[from];
-        const color = sourceLayer ? domainColors[layerById[sourceLayer].domain] : '#f97316';
+      // Draw to dependencies (down)
+      (dependsOn[id] || []).forEach(depId => {
+        const toPos = getPos(depId);
+        if (!toPos) return;
+        drawLine(toPos, fromPos, color);
+      });
 
-        const path = document.createElementNS(svgNS, 'path');
-        const x1 = fromPos.right + 2;
-        const y1 = fromPos.y;
-        const x2 = toPos.left - 2;
-        const y2 = toPos.y;
+      // Draw to dependents (up)
+      (dependents[id] || []).forEach(depId => {
+        const toPos = getPos(depId);
+        if (!toPos) return;
+        drawLine(fromPos, toPos, color);
+      });
+    }
 
-        path.setAttribute('d', `M${x1},${y1} C${x1 + 30},${y1} ${x2 - 30},${y2} ${x2},${y2}`);
-        path.setAttribute('fill', 'none');
-        path.setAttribute('stroke', color);
-        path.setAttribute('stroke-width', '2');
-        path.setAttribute('stroke-opacity', '0.7');
-        svg.appendChild(path);
+    function drawLine(from, to, color) {
+      const path = document.createElementNS(svgNS, 'path');
+      const x1 = from.right || from.x;
+      const y1 = from.y;
+      const x2 = to.left || to.x;
+      const y2 = to.y;
+
+      path.setAttribute('d', `M${x1},${y1} C${x1 + 30},${y1} ${x2 - 30},${y2} ${x2},${y2}`);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', color);
+      path.setAttribute('stroke-width', '1.5');
+      path.setAttribute('stroke-opacity', '0.6');
+      svg.appendChild(path);
+    }
+
+    // Update visual state
+    function updateState(inThread) {
+      Object.entries(conceptElements).forEach(([id, el]) => {
+        el.classList.remove('selected', 'active', 'inactive');
+        if (selectedId === id) {
+          el.classList.add('selected');
+        } else if (inThread && inThread.has(id)) {
+          el.classList.add('active');
+          el.style.color = domainColors[layerById[exposeToLayer[id]]?.domain] || '#e2e8f0';
+        } else if (inThread) {
+          el.classList.add('inactive');
+        }
       });
     }
 
     // Click handler
-    function handleClick(e) {
-      const item = e.target.closest('.tower2-item');
-      if (!item) return;
+    gridDiv.addEventListener('click', (e) => {
+      const concept = e.target.closest('.concept');
+      if (!concept) {
+        // Clicked outside - clear
+        selectedId = null;
+        updateState(null);
+        svg.innerHTML = '';
+        return;
+      }
 
-      const conceptId = item.dataset.conceptId;
-      const { inThread, connections, activeLayers } = traceThread(conceptId);
+      const id = concept.dataset.id;
+      selectedId = id;
+      const inThread = traceThread(id);
+      updateState(inThread);
+    });
 
-      // Hide inactive layers, show active ones collapsed
-      Object.entries(layerElements).forEach(([layerId, { el, content }]) => {
-        if (activeLayers.has(layerId)) {
-          el.style.display = 'block';
-          // Keep collapsed - user can expand manually
-        } else {
-          el.style.display = 'none';
-        }
-      });
-
-      // Update item styles
-      Object.entries(itemElements).forEach(([id, el]) => {
-        el.classList.remove('selected', 'in-thread');
-        if (id === conceptId) {
-          el.classList.add('selected');
-          el.style.background = '#f97316';
-          el.style.color = '#fff';
-          el.style.fontWeight = '600';
-        } else if (inThread.has(id)) {
-          el.classList.add('in-thread');
-          el.style.background = `${categoryColors[el.dataset.category]}44`;
-          el.style.color = '#e2e8f0';
-          el.style.fontWeight = 'normal';
-        } else {
-          el.style.background = 'rgba(255,255,255,0.05)';
-          el.style.color = '#94a3b8';
-          el.style.fontWeight = 'normal';
-        }
-      });
-
-      // Draw arrows after positions settle
-      setTimeout(() => {
-        updatePositions();
-        drawConnections(connections);
-      }, 100);
-    }
-
-    // Clear handler
-    function handleClear() {
-      svg.innerHTML = '';
-
-      // Show all layers, collapse all
-      Object.entries(layerElements).forEach(([layerId, { el, content }]) => {
-        el.style.display = 'block';
-        content.style.maxHeight = '0';
-      });
-
-      // Reset item styles
-      Object.entries(itemElements).forEach(([id, el]) => {
-        el.classList.remove('selected', 'in-thread');
-        el.style.background = 'rgba(255,255,255,0.05)';
-        el.style.color = '#94a3b8';
-        el.style.fontWeight = 'normal';
-      });
-    }
-
-    tower.addEventListener('click', handleClick);
-    clearBtn.addEventListener('click', handleClear);
-
-    setTimeout(updatePositions, 100);
-  }
-
-  function showRadialConnections(layer, g, layerPositions) {
-    g.selectAll('.radial-connection').remove();
-
-    const pos = layerPositions[layer.id];
-    if (!pos) return;
-
-    // Find dependencies
-    const deps = new Set();
-    layer.abstracts.forEach(a => {
-      if (a.from) {
-        a.from.forEach(fromId => {
-          const sourceLayerId = exposeToLayer[fromId];
-          if (sourceLayerId && layerPositions[sourceLayerId]) {
-            deps.add(sourceLayerId);
-          }
-        });
+    // Hover handler
+    gridDiv.addEventListener('mouseover', (e) => {
+      const concept = e.target.closest('.concept');
+      if (concept) {
+        drawConnections(concept.dataset.id);
       }
     });
 
-    // Draw connections
-    deps.forEach(depId => {
-      const depPos = layerPositions[depId];
-      if (!depPos) return;
-
-      g.append('path')
-        .attr('class', 'radial-connection')
-        .attr('d', `M${pos.x},${pos.y} Q0,0 ${depPos.x},${depPos.y}`)
-        .attr('fill', 'none')
-        .attr('stroke', '#f97316')
-        .attr('stroke-width', 2)
-        .attr('stroke-opacity', 0.6);
+    gridDiv.addEventListener('mouseout', (e) => {
+      const concept = e.target.closest('.concept');
+      if (concept) {
+        svg.innerHTML = '';
+      }
     });
+
+    // Clear button
+    clearBtn.addEventListener('click', () => {
+      selectedId = null;
+      updateState(null);
+      svg.innerHTML = '';
+    });
+
+    // Update SVG size
+    setTimeout(() => {
+      svg.setAttribute('viewBox', `0 0 ${container.scrollWidth} ${container.scrollHeight}`);
+      svg.style.width = container.scrollWidth + 'px';
+      svg.style.height = container.scrollHeight + 'px';
+    }, 100);
   }
 
-  // Initialize on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
