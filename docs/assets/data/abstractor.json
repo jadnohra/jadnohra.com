@@ -548,7 +548,7 @@
       "abstracts": [
         { "id": "mem-alloc-jvm", "name": "Memory allocation", "from": ["malloc-free", "pointers"], "desc": "Garbage collection" },
         { "id": "machine-code-jvm", "name": "Machine code generation", "from": ["isa", "mnemonics"], "desc": "JIT compilation" },
-        { "id": "platform-differences", "name": "Platform differences", "from": ["isa-differences"], "desc": "Write once run anywhere" },
+        { "id": "platform-differences", "name": "Platform differences", "from": ["isa", "mnemonics"], "desc": "Write once run anywhere" },
         { "id": "pointer-arithmetic-jvm", "name": "Pointer arithmetic", "from": ["pointers"], "desc": "References only" }
       ],
       "exposes": [
