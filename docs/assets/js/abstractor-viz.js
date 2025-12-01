@@ -337,131 +337,299 @@
   }
 
   // ============================================================
-  // VIZ 3: SANKEY FLOW
+  // VIZ 3: SELECTIVE THREAD SANKEY
   // ============================================================
   function initSankey() {
     const container = document.getElementById('viz-sankey');
     if (!container) return;
 
-    const width = container.clientWidth || 800;
-    const height = 500;
+    container.innerHTML = '';
 
-    const svg = d3.select(container)
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height);
+    // Build dependency maps
+    const dependsOn = {};  // conceptId -> [sourceConceptIds]
+    const dependents = {}; // conceptId -> [dependentConceptIds]
 
-    // Build nodes and links for sankey
-    const nodes = [];
-    const nodeIndex = {};
-    const links = [];
-
-    // Add all concepts as nodes
     data.layers.forEach(layer => {
       layer.exposes.forEach(e => {
-        const id = `${layer.id}:${e.id}`;
-        nodeIndex[id] = nodes.length;
-        nodes.push({
-          id,
-          name: e.name,
-          layer: layer.id,
-          level: layer.level,
-          domain: layer.domain
-        });
+        dependsOn[e.id] = [];
+        dependents[e.id] = [];
       });
     });
 
-    // Add links from abstracts to their sources
+    // Build relationships from abstracts
     data.layers.forEach(layer => {
       layer.abstracts.forEach(a => {
         if (a.from) {
-          // Find what this layer exposes that relates to this abstract
-          const targetExposes = layer.exposes.filter(e =>
-            e.name.toLowerCase().includes(a.name.split(' ')[0].toLowerCase()) ||
-            a.name.toLowerCase().includes(e.name.split(' ')[0].toLowerCase())
-          );
-
           a.from.forEach(fromId => {
-            const sourceLayerId = exposeToLayer[fromId];
-            if (sourceLayerId) {
-              const sourceId = `${sourceLayerId}:${fromId}`;
-              // Connect to first relevant expose or just the layer's first expose
-              const targetExpose = targetExposes[0] || layer.exposes[0];
-              if (targetExpose && nodeIndex[sourceId] !== undefined) {
-                const targetId = `${layer.id}:${targetExpose.id}`;
-                if (nodeIndex[targetId] !== undefined) {
-                  links.push({
-                    source: nodeIndex[sourceId],
-                    target: nodeIndex[targetId],
-                    value: 1
-                  });
-                }
+            // Find which exposes in this layer relate to this abstract
+            layer.exposes.forEach(exp => {
+              if (!dependsOn[exp.id]) dependsOn[exp.id] = [];
+              if (!dependsOn[exp.id].includes(fromId)) {
+                dependsOn[exp.id].push(fromId);
               }
-            }
+              if (!dependents[fromId]) dependents[fromId] = [];
+              if (!dependents[fromId].includes(exp.id)) {
+                dependents[fromId].push(exp.id);
+              }
+            });
           });
         }
       });
     });
 
-    if (links.length === 0) {
-      svg.append('text')
-        .attr('x', width / 2)
-        .attr('y', height / 2)
-        .attr('text-anchor', 'middle')
-        .attr('fill', '#94a3b8')
-        .text('Sankey: Building dependency flow...');
-      return;
-    }
+    // Get unique levels and sort layers
+    const levels = [...new Set(data.layers.map(l => l.level))].sort((a, b) => a - b);
+    const layersByLevel = {};
+    levels.forEach(l => layersByLevel[l] = []);
+    data.layers.forEach(layer => layersByLevel[layer.level].push(layer));
 
-    // Create sankey layout
-    const sankey = d3.sankey()
-      .nodeWidth(15)
-      .nodePadding(10)
-      .extent([[20, 20], [width - 20, height - 20]]);
-
-    const { nodes: sankeyNodes, links: sankeyLinks } = sankey({
-      nodes: nodes.map(d => Object.assign({}, d)),
-      links: links.map(d => Object.assign({}, d))
+    // Flatten to get column order (pick representative layers per level)
+    const columns = [];
+    levels.forEach(level => {
+      layersByLevel[level].forEach(layer => {
+        columns.push(layer);
+      });
     });
 
-    // Draw links
-    svg.append('g')
-      .selectAll('path')
-      .data(sankeyLinks)
-      .join('path')
-      .attr('d', d3.sankeyLinkHorizontal())
-      .attr('fill', 'none')
-      .attr('stroke', d => domainColors[d.source.domain] || '#666')
-      .attr('stroke-width', d => Math.max(1, d.width))
-      .attr('stroke-opacity', 0.3)
-      .on('mouseenter', function() { d3.select(this).attr('stroke-opacity', 0.7); })
-      .on('mouseleave', function() { d3.select(this).attr('stroke-opacity', 0.3); });
+    // Create HTML layout
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position: relative; width: 100%; overflow-x: auto;';
 
-    // Draw nodes
-    svg.append('g')
-      .selectAll('rect')
-      .data(sankeyNodes)
-      .join('rect')
-      .attr('x', d => d.x0)
-      .attr('y', d => d.y0)
-      .attr('width', d => d.x1 - d.x0)
-      .attr('height', d => d.y1 - d.y0)
-      .attr('fill', d => domainColors[d.domain] || '#666')
-      .append('title')
-      .text(d => d.name);
+    // SVG for connections (positioned absolutely)
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;';
+    svg.id = 'sankey-connections';
 
-    // Labels for larger nodes
-    svg.append('g')
-      .selectAll('text')
-      .data(sankeyNodes.filter(d => (d.y1 - d.y0) > 15))
-      .join('text')
-      .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-      .attr('y', d => (d.y0 + d.y1) / 2)
-      .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
-      .attr('dominant-baseline', 'middle')
-      .attr('fill', '#94a3b8')
-      .attr('font-size', '9px')
-      .text(d => d.name.length > 20 ? d.name.slice(0, 18) + '...' : d.name);
+    // Columns container
+    const columnsDiv = document.createElement('div');
+    columnsDiv.style.cssText = 'display: flex; gap: 8px; padding: 10px; min-width: max-content; position: relative; z-index: 2;';
+
+    const conceptElements = {}; // conceptId -> DOM element
+    const conceptPositions = {}; // conceptId -> {x, y}
+
+    // Create columns
+    columns.forEach((layer, colIdx) => {
+      const col = document.createElement('div');
+      col.style.cssText = `
+        min-width: 120px;
+        max-width: 150px;
+        background: ${domainColors[layer.domain]}15;
+        border-radius: 8px;
+        padding: 8px;
+        flex-shrink: 0;
+      `;
+
+      // Header
+      const header = document.createElement('div');
+      header.style.cssText = `
+        font-size: 11px;
+        font-weight: 600;
+        color: ${domainColors[layer.domain]};
+        margin-bottom: 8px;
+        padding-bottom: 4px;
+        border-bottom: 1px solid ${domainColors[layer.domain]}44;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      `;
+      header.textContent = layer.name;
+      header.title = layer.name;
+      col.appendChild(header);
+
+      // Exposes
+      layer.exposes.forEach(exp => {
+        const item = document.createElement('div');
+        item.className = 'sankey-item';
+        item.dataset.conceptId = exp.id;
+        item.dataset.layerId = layer.id;
+        item.style.cssText = `
+          font-size: 10px;
+          color: #94a3b8;
+          padding: 4px 6px;
+          margin: 2px 0;
+          background: rgba(255,255,255,0.05);
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.2s;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        `;
+        item.textContent = exp.name;
+        item.title = exp.desc || exp.name;
+
+        conceptElements[exp.id] = item;
+        col.appendChild(item);
+      });
+
+      columnsDiv.appendChild(col);
+    });
+
+    // Clear button
+    const clearBtn = document.createElement('button');
+    clearBtn.textContent = 'Clear';
+    clearBtn.style.cssText = `
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 4px 12px;
+      font-size: 11px;
+      background: #334155;
+      color: #e2e8f0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 10;
+    `;
+
+    wrapper.appendChild(svg);
+    wrapper.appendChild(columnsDiv);
+    wrapper.appendChild(clearBtn);
+    container.appendChild(wrapper);
+
+    // After layout, get positions
+    setTimeout(() => {
+      Object.entries(conceptElements).forEach(([id, el]) => {
+        const rect = el.getBoundingClientRect();
+        const containerRect = wrapper.getBoundingClientRect();
+        conceptPositions[id] = {
+          x: rect.left - containerRect.left + rect.width / 2,
+          y: rect.top - containerRect.top + rect.height / 2,
+          left: rect.left - containerRect.left,
+          right: rect.right - containerRect.left,
+          el
+        };
+      });
+
+      // Update SVG size
+      const totalHeight = columnsDiv.scrollHeight;
+      const totalWidth = columnsDiv.scrollWidth;
+      svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
+      svg.style.width = totalWidth + 'px';
+      svg.style.height = totalHeight + 'px';
+    }, 100);
+
+    // Trace thread function
+    function traceThread(conceptId) {
+      const inThread = new Set([conceptId]);
+      const connections = [];
+
+      // Trace dependencies (going down/left)
+      function traceDown(id, visited = new Set()) {
+        if (visited.has(id)) return;
+        visited.add(id);
+        const deps = dependsOn[id] || [];
+        deps.forEach(depId => {
+          if (conceptPositions[depId]) {
+            inThread.add(depId);
+            connections.push({ from: depId, to: id, direction: 'up' });
+            traceDown(depId, visited);
+          }
+        });
+      }
+
+      // Trace dependents (going up/right)
+      function traceUp(id, visited = new Set()) {
+        if (visited.has(id)) return;
+        visited.add(id);
+        const deps = dependents[id] || [];
+        deps.forEach(depId => {
+          if (conceptPositions[depId]) {
+            inThread.add(depId);
+            connections.push({ from: id, to: depId, direction: 'up' });
+            traceUp(depId, visited);
+          }
+        });
+      }
+
+      traceDown(conceptId);
+      traceUp(conceptId);
+
+      return { inThread, connections };
+    }
+
+    // Draw connections
+    function drawConnections(connections, selectedId) {
+      svg.innerHTML = '';
+
+      // Add animation style
+      const style = document.createElementNS(svgNS, 'style');
+      style.textContent = `
+        @keyframes flowRight {
+          from { stroke-dashoffset: 20; }
+          to { stroke-dashoffset: 0; }
+        }
+        .flow-line {
+          animation: flowRight 0.5s linear infinite;
+        }
+      `;
+      svg.appendChild(style);
+
+      connections.forEach(({ from, to }) => {
+        const fromPos = conceptPositions[from];
+        const toPos = conceptPositions[to];
+        if (!fromPos || !toPos) return;
+
+        const path = document.createElementNS(svgNS, 'path');
+        const x1 = fromPos.right;
+        const y1 = fromPos.y;
+        const x2 = toPos.left;
+        const y2 = toPos.y;
+        const midX = (x1 + x2) / 2;
+
+        path.setAttribute('d', `M${x1},${y1} C${midX},${y1} ${midX},${y2} ${x2},${y2}`);
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', '#f97316');
+        path.setAttribute('stroke-width', '2');
+        path.setAttribute('stroke-dasharray', '5,5');
+        path.classList.add('flow-line');
+        path.style.opacity = '0.7';
+
+        svg.appendChild(path);
+      });
+    }
+
+    // Click handler
+    function handleClick(e) {
+      const item = e.target.closest('.sankey-item');
+      if (!item) return;
+
+      const conceptId = item.dataset.conceptId;
+      const { inThread, connections } = traceThread(conceptId);
+
+      // Update styles
+      Object.entries(conceptElements).forEach(([id, el]) => {
+        if (id === conceptId) {
+          el.style.background = '#f9731644';
+          el.style.color = '#fff';
+          el.style.fontWeight = '600';
+        } else if (inThread.has(id)) {
+          el.style.background = 'rgba(255,255,255,0.1)';
+          el.style.color = '#e2e8f0';
+          el.style.fontWeight = 'normal';
+        } else {
+          el.style.background = 'rgba(255,255,255,0.02)';
+          el.style.color = '#475569';
+          el.style.fontWeight = 'normal';
+        }
+      });
+
+      drawConnections(connections, conceptId);
+    }
+
+    // Clear handler
+    function handleClear() {
+      svg.innerHTML = '';
+      Object.values(conceptElements).forEach(el => {
+        el.style.background = 'rgba(255,255,255,0.05)';
+        el.style.color = '#94a3b8';
+        el.style.fontWeight = 'normal';
+      });
+    }
+
+    columnsDiv.addEventListener('click', handleClick);
+    clearBtn.addEventListener('click', handleClear);
   }
 
   // ============================================================
