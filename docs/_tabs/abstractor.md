@@ -282,13 +282,32 @@ order: 3
   border-color: #3b82f6;
   color: #e2e8f0;
 }
-.profile-icon {
-  font-size: 14px;
+.profile-layers {
+  font-size: 9px;
+  color: #64748b;
+  background: rgba(255,255,255,0.08);
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin-left: 2px;
+}
+.profile-btn.selected .profile-layers {
+  color: #94a3b8;
+  background: rgba(255,255,255,0.12);
 }
 
 /* Engineer mode concept styling */
 .concept.engineer-highlight {
   border-color: transparent;
+}
+
+/* Visual separation between engineers bar and grid */
+#engineers-bar {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 2px;
+}
+#engineers-bar.expanded {
+  border-bottom: none;
+  margin-bottom: 0;
 }
 </style>
 

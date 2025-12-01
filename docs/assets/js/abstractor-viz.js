@@ -105,7 +105,8 @@
       const btn = document.createElement('button');
       btn.className = 'profile-btn';
       btn.dataset.profileId = profile.id;
-      btn.innerHTML = `<span class="profile-icon">${profile.icon}</span><span>${profile.name}</span>`;
+      const layerBadge = profile.layers ? `<span class="profile-layers">${profile.layers}</span>` : '';
+      btn.innerHTML = `<span>${profile.name}</span>${layerBadge}`;
       btn.title = profile.desc;
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -484,14 +485,12 @@
       el.classList.add('engineer-highlight');
 
       const weight = calculateWeight(id);
-      const layerId = exposeToLayer[id];
-      const domainColor = layerId ? domainColors[layerById[layerId]?.domain] : '#64748b';
 
       if (weight > 0) {
-        // Highlight with weight-based opacity/brightness
-        // Weight 1.0 = full color, weight 0.1 = very dim
+        // Highlight with weight-based opacity/brightness - use grayscale
+        // Weight 1.0 = bright white, weight 0.1 = dim gray
         const brightness = 0.3 + (weight * 0.7); // Range from 0.3 to 1.0
-        el.style.color = domainColor;
+        el.style.color = '#e2e8f0'; // Light gray/white
         el.style.opacity = brightness;
       } else {
         // Not touched by any selected profile
