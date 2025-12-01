@@ -1,5 +1,13 @@
 <!-- Site-wide custom styles -->
 <style>
+/* Hide Home link - Portfolio is the landing page */
+#sidebar .nav-item a[href="/"],
+#sidebar .nav-item a[href="/jadnohra.com/"],
+.sidebar .nav-link[href="/"],
+.sidebar .nav-link[href="/jadnohra.com/"] {
+  display: none !important;
+}
+
 /* Gray out WIP sidebar items */
 #sidebar .nav-item a[href*="categories"],
 #sidebar .nav-item a[href*="tags"],
