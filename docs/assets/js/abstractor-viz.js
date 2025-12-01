@@ -752,42 +752,13 @@
   }
 
   // ============================================================
-  // VIZ 5: EXPANDING TOWER 2 - THREAD EXPLORER
+  // VIZ 5: THREAD EXPLORER (Expanding Tower with arrows)
   // ============================================================
   function initExpandingTower2() {
     const container = document.getElementById('viz-tower2');
     if (!container) return;
 
     container.innerHTML = '';
-
-    // Domain hues for hierarchical coloring
-    const domainHues = {
-      physical: 25,
-      digital: 210,
-      architecture: 270,
-      toolchain: 50,
-      system: 0,
-      runtime: 175,
-      language: 145
-    };
-
-    // Build item colors
-    const itemColors = {};
-    const layerColors = {};
-    data.layers.forEach(layer => {
-      const baseHue = domainHues[layer.domain] || 0;
-      const sat = layer.domain === 'toolchain' ? 20 : 70;
-      layerColors[layer.id] = `hsl(${baseHue}, ${sat}%, 45%)`;
-
-      layer.exposes.forEach((exp, i) => {
-        const hueOffset = (i - layer.exposes.length / 2) * 4;
-        itemColors[exp.id] = `hsl(${baseHue + hueOffset}, ${sat}%, 55%)`;
-      });
-      layer.abstracts.forEach((a, i) => {
-        const hueOffset = (i - layer.abstracts.length / 2) * 4;
-        itemColors[a.id] = `hsl(${baseHue + hueOffset}, ${sat - 10}%, 50%)`;
-      });
-    });
 
     // Build dependency maps
     const dependsOn = {};
@@ -831,25 +802,22 @@
     svg.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;';
     svg.id = 'tower2-connections';
 
-    // Defs for gradients
-    const defs = document.createElementNS(svgNS, 'defs');
-    svg.appendChild(defs);
-
     const tower = document.createElement('div');
     tower.className = 'tower2';
-    tower.style.cssText = 'display: flex; flex-direction: column; gap: 2px;';
+    tower.style.cssText = 'display: flex; flex-direction: column; gap: 4px;';
 
     const layerElements = {};
     const itemElements = {};
     const itemPositions = {};
 
+    // Same layout as Expanding Tower
     sortedLayers.forEach(layer => {
       const layerEl = document.createElement('div');
       layerEl.className = 'tower2-layer';
       layerEl.dataset.layerId = layer.id;
       layerEl.style.cssText = `
-        background: ${layerColors[layer.id]}15;
-        border-left: 3px solid ${layerColors[layer.id]};
+        background: ${domainColors[layer.domain]}22;
+        border-left: 4px solid ${domainColors[layer.domain]};
         border-radius: 4px;
         overflow: hidden;
         transition: all 0.3s ease;
@@ -859,64 +827,86 @@
       const header = document.createElement('div');
       header.className = 'tower2-header';
       header.style.cssText = `
-        padding: 6px 10px;
+        padding: 8px 12px;
+        cursor: pointer;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: ${layerColors[layer.id]}25;
-        cursor: pointer;
+        background: ${domainColors[layer.domain]}33;
       `;
       header.innerHTML = `
-        <span style="color: ${layerColors[layer.id]}; font-weight: 600; font-size: 12px;">${layer.name}</span>
-        <span style="color: ${layerColors[layer.id]}88; font-size: 10px;">L${layer.level}</span>
+        <span style="color: #e2e8f0; font-weight: 500;">${layer.name}</span>
+        <span style="color: ${domainColors[layer.domain]}; font-size: 11px;">L${layer.level} ▼</span>
       `;
 
-      // Content with exposes
+      // Content - 4 column grid like Expanding Tower
       const content = document.createElement('div');
       content.className = 'tower2-content';
       content.style.cssText = `
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.3s ease;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-        padding: 0 8px;
+        padding: 0 12px;
       `;
 
-      layer.exposes.forEach(exp => {
-        const item = document.createElement('div');
-        item.className = 'tower2-item';
-        item.dataset.conceptId = exp.id;
-        item.dataset.layerId = layer.id;
-        item.style.cssText = `
-          font-size: 10px;
-          color: #e2e8f0;
-          padding: 3px 8px;
-          background: ${itemColors[exp.id]}33;
-          border: 1px solid ${itemColors[exp.id]}66;
-          border-radius: 12px;
-          cursor: pointer;
-          transition: all 0.2s;
-          white-space: nowrap;
-        `;
-        item.textContent = exp.name;
-        item.title = exp.desc || exp.name;
-        itemElements[exp.id] = item;
-        content.appendChild(item);
+      const grid = document.createElement('div');
+      grid.style.cssText = 'display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 12px 0;';
+
+      ['abstracts', 'exposes', 'leaks', 'escapes'].forEach(cat => {
+        const col = document.createElement('div');
+        col.innerHTML = `<div style="color: ${categoryColors[cat]}; font-size: 10px; text-transform: uppercase; margin-bottom: 6px;">${cat}</div>`;
+
+        layer[cat].forEach(item => {
+          const pill = document.createElement('div');
+          pill.className = 'tower2-item';
+          pill.dataset.conceptId = item.id;
+          pill.dataset.layerId = layer.id;
+          pill.dataset.category = cat;
+          pill.style.cssText = `
+            font-size: 10px;
+            color: #94a3b8;
+            padding: 2px 6px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+            margin-bottom: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+          `;
+          pill.textContent = item.name;
+          pill.title = item.desc || '';
+          pill.onmouseenter = () => {
+            if (!pill.classList.contains('selected')) {
+              pill.style.background = `${categoryColors[cat]}33`;
+            }
+          };
+          pill.onmouseleave = () => {
+            if (!pill.classList.contains('selected') && !pill.classList.contains('in-thread')) {
+              pill.style.background = 'rgba(255,255,255,0.05)';
+            }
+          };
+          itemElements[item.id] = pill;
+          col.appendChild(pill);
+        });
+
+        if (layer[cat].length === 0) {
+          col.innerHTML += '<div style="font-size: 10px; color: #475569; font-style: italic;">none</div>';
+        }
+        grid.appendChild(col);
       });
 
+      content.appendChild(grid);
       layerEl.appendChild(header);
       layerEl.appendChild(content);
       tower.appendChild(layerEl);
-      layerElements[layer.id] = { el: layerEl, header, content };
+      layerElements[layer.id] = { el: layerEl, header, content, layer };
 
       // Toggle on header click
       header.onclick = (e) => {
         e.stopPropagation();
         const isOpen = content.style.maxHeight !== '0px' && content.style.maxHeight !== '';
-        content.style.maxHeight = isOpen ? '0' : (content.scrollHeight + 16) + 'px';
-        content.style.padding = isOpen ? '0 8px' : '8px';
+        content.style.maxHeight = isOpen ? '0' : content.scrollHeight + 'px';
+        // Update positions after expand
+        setTimeout(updatePositions, 350);
       };
     });
 
@@ -947,14 +937,14 @@
       const wrapperRect = wrapper.getBoundingClientRect();
       Object.entries(itemElements).forEach(([id, el]) => {
         const rect = el.getBoundingClientRect();
-        itemPositions[id] = {
-          x: rect.left - wrapperRect.left + rect.width / 2,
-          y: rect.top - wrapperRect.top + rect.height / 2,
-          left: rect.left - wrapperRect.left,
-          right: rect.right - wrapperRect.left,
-          top: rect.top - wrapperRect.top,
-          bottom: rect.bottom - wrapperRect.top
-        };
+        if (rect.width > 0) {
+          itemPositions[id] = {
+            x: rect.left - wrapperRect.left + rect.width / 2,
+            y: rect.top - wrapperRect.top + rect.height / 2,
+            left: rect.left - wrapperRect.left,
+            right: rect.right - wrapperRect.left
+          };
+        }
       });
       svg.setAttribute('viewBox', `0 0 ${wrapper.scrollWidth} ${wrapper.scrollHeight}`);
       svg.style.width = wrapper.scrollWidth + 'px';
@@ -975,9 +965,7 @@
           if (itemElements[depId]) {
             inThread.add(depId);
             const sourceLayer = exposeToLayer[depId];
-            const targetLayer = exposeToLayer[id];
             if (sourceLayer) activeLayers.add(sourceLayer);
-            if (targetLayer) activeLayers.add(targetLayer);
             connections.push({ from: depId, to: id });
             traceDown(depId, visited);
           }
@@ -991,9 +979,7 @@
         deps.forEach(depId => {
           if (itemElements[depId]) {
             inThread.add(depId);
-            const sourceLayer = exposeToLayer[id];
             const targetLayer = exposeToLayer[depId];
-            if (sourceLayer) activeLayers.add(sourceLayer);
             if (targetLayer) activeLayers.add(targetLayer);
             connections.push({ from: id, to: depId });
             traceUp(depId, visited);
@@ -1009,62 +995,29 @@
       return { inThread, connections, activeLayers };
     }
 
-    // Draw gradient connections
-    function drawConnections(connections, selectedId) {
-      // Clear old
-      while (defs.firstChild) defs.removeChild(defs.firstChild);
-      svg.querySelectorAll('path').forEach(p => p.remove());
+    // Draw connections with domain colors
+    function drawConnections(connections) {
+      svg.innerHTML = '';
 
-      connections.forEach(({ from, to }, i) => {
+      connections.forEach(({ from, to }) => {
         const fromPos = itemPositions[from];
         const toPos = itemPositions[to];
         if (!fromPos || !toPos) return;
 
-        const fromColor = itemColors[from] || '#888';
-        const toColor = itemColors[to] || '#888';
+        const sourceLayer = exposeToLayer[from];
+        const color = sourceLayer ? domainColors[layerById[sourceLayer].domain] : '#f97316';
 
-        // Create gradient
-        const gradId = `grad-${i}`;
-        const grad = document.createElementNS(svgNS, 'linearGradient');
-        grad.id = gradId;
-        grad.setAttribute('x1', '0%');
-        grad.setAttribute('y1', '0%');
-        grad.setAttribute('x2', '100%');
-        grad.setAttribute('y2', '0%');
-
-        const stop1 = document.createElementNS(svgNS, 'stop');
-        stop1.setAttribute('offset', '0%');
-        stop1.setAttribute('stop-color', fromColor);
-        const stop2 = document.createElementNS(svgNS, 'stop');
-        stop2.setAttribute('offset', '100%');
-        stop2.setAttribute('stop-color', toColor);
-        grad.appendChild(stop1);
-        grad.appendChild(stop2);
-        defs.appendChild(grad);
-
-        // Draw bezier
         const path = document.createElementNS(svgNS, 'path');
-        const x1 = fromPos.right;
+        const x1 = fromPos.right + 2;
         const y1 = fromPos.y;
-        const x2 = toPos.left;
+        const x2 = toPos.left - 2;
         const y2 = toPos.y;
 
-        // If same vertical position, curve around
-        const yDiff = Math.abs(y2 - y1);
-        const xMid = (x1 + x2) / 2;
-
-        if (yDiff < 10) {
-          // Horizontal - arc up or down
-          const arcY = y1 - 30;
-          path.setAttribute('d', `M${x1},${y1} Q${xMid},${arcY} ${x2},${y2}`);
-        } else {
-          path.setAttribute('d', `M${x1},${y1} C${x1 + 40},${y1} ${x2 - 40},${y2} ${x2},${y2}`);
-        }
-
+        path.setAttribute('d', `M${x1},${y1} C${x1 + 30},${y1} ${x2 - 30},${y2} ${x2},${y2}`);
         path.setAttribute('fill', 'none');
-        path.setAttribute('stroke', `url(#${gradId})`);
+        path.setAttribute('stroke', color);
         path.setAttribute('stroke-width', '2');
-        path.setAttribute('stroke-opacity', '0.8');
+        path.setAttribute('stroke-opacity', '0.7');
         svg.appendChild(path);
       });
     }
@@ -1077,73 +1030,65 @@
       const conceptId = item.dataset.conceptId;
       const { inThread, connections, activeLayers } = traceThread(conceptId);
 
-      // Update layer visibility
-      Object.entries(layerElements).forEach(([layerId, { el, header, content }]) => {
+      // Hide inactive layers, show active ones collapsed
+      Object.entries(layerElements).forEach(([layerId, { el, content }]) => {
         if (activeLayers.has(layerId)) {
-          el.style.opacity = '1';
-          content.style.maxHeight = (content.scrollHeight + 16) + 'px';
-          content.style.padding = '8px';
+          el.style.display = 'block';
+          // Keep collapsed - user can expand manually
         } else {
-          el.style.opacity = '0.25';
-          content.style.maxHeight = '0';
-          content.style.padding = '0 8px';
+          el.style.display = 'none';
         }
       });
 
       // Update item styles
       Object.entries(itemElements).forEach(([id, el]) => {
+        el.classList.remove('selected', 'in-thread');
         if (id === conceptId) {
-          el.style.background = itemColors[id];
+          el.classList.add('selected');
+          el.style.background = '#f97316';
           el.style.color = '#fff';
           el.style.fontWeight = '600';
-          el.style.transform = 'scale(1.1)';
-          el.style.boxShadow = `0 0 10px ${itemColors[id]}`;
         } else if (inThread.has(id)) {
-          el.style.background = `${itemColors[id]}55`;
+          el.classList.add('in-thread');
+          el.style.background = `${categoryColors[el.dataset.category]}44`;
           el.style.color = '#e2e8f0';
           el.style.fontWeight = 'normal';
-          el.style.transform = 'scale(1)';
-          el.style.boxShadow = 'none';
         } else {
-          el.style.background = 'rgba(100,100,100,0.1)';
-          el.style.color = '#475569';
+          el.style.background = 'rgba(255,255,255,0.05)';
+          el.style.color = '#94a3b8';
           el.style.fontWeight = 'normal';
-          el.style.transform = 'scale(1)';
-          el.style.boxShadow = 'none';
         }
       });
 
-      // Draw after positions update
+      // Draw arrows after positions settle
       setTimeout(() => {
         updatePositions();
-        drawConnections(connections, conceptId);
-      }, 350);
+        drawConnections(connections);
+      }, 100);
     }
 
     // Clear handler
     function handleClear() {
-      while (defs.firstChild) defs.removeChild(defs.firstChild);
-      svg.querySelectorAll('path').forEach(p => p.remove());
+      svg.innerHTML = '';
 
+      // Show all layers, collapse all
       Object.entries(layerElements).forEach(([layerId, { el, content }]) => {
-        el.style.opacity = '1';
+        el.style.display = 'block';
         content.style.maxHeight = '0';
-        content.style.padding = '0 8px';
       });
 
+      // Reset item styles
       Object.entries(itemElements).forEach(([id, el]) => {
-        el.style.background = `${itemColors[id]}33`;
-        el.style.color = '#e2e8f0';
+        el.classList.remove('selected', 'in-thread');
+        el.style.background = 'rgba(255,255,255,0.05)';
+        el.style.color = '#94a3b8';
         el.style.fontWeight = 'normal';
-        el.style.transform = 'scale(1)';
-        el.style.boxShadow = 'none';
       });
     }
 
     tower.addEventListener('click', handleClick);
     clearBtn.addEventListener('click', handleClear);
 
-    // Initial position calc
     setTimeout(updatePositions, 100);
   }
 
