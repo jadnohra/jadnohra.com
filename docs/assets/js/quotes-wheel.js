@@ -46,7 +46,7 @@
         <div id="quote-display" style="
           background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
           border-radius: 16px;
-          padding: 2.5rem 2rem;
+          padding: 2rem 2rem 2.5rem 2rem;
           min-height: 200px;
           display: flex;
           flex-direction: column;
@@ -57,6 +57,14 @@
           position: relative;
           overflow: hidden;
         ">
+          <div id="quote-gene" style="
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            min-height: 28px;
+            font-size: 20px;
+          "></div>
           <div id="quote-text" style="
             color: #e2e8f0;
             font-size: 17px;
@@ -76,16 +84,6 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 0.5rem;
-          "></div>
-          <div id="transition-icon" style="
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 48px;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
           "></div>
         </div>
         <div style="
@@ -120,62 +118,96 @@
     drawQuote();
   }
 
+  const allIcons = Object.values(icons);
+
   function drawQuote(animate = false) {
     const q = data.quotes[Math.floor(Math.random() * data.quotes.length)];
 
+    const geneEl = document.getElementById('quote-gene');
     const textEl = document.getElementById('quote-text');
     const sourceEl = document.getElementById('quote-source');
     const topicsEl = document.getElementById('quote-topics');
-    const iconEl = document.getElementById('transition-icon');
 
-    // Get main topic for icon
-    const mainTopic = q.topics.length > 0 ? q.topics[0].split('/')[0] : 'Philosophy';
-    const icon = icons[mainTopic] || '✨';
-    const color = colors[mainTopic] || '#64748b';
+    // Get unique main topics for this quote's gene
+    const quoteTopics = [...new Set(q.topics.map(t => t.split('/')[0]))];
+    if (q.original_tags && q.original_tags.length > 0) {
+      quoteTopics.push("Jad's System");
+    }
+    const finalGene = [...new Set(quoteTopics)].map(t => ({
+      icon: icons[t] || '◇',
+      color: colors[t] || '#64748b'
+    }));
 
     // Fade out content
     textEl.style.opacity = '0';
     sourceEl.style.opacity = '0';
     topicsEl.style.opacity = '0';
 
-    // Show transition icon if animating
+    // Animate gene icons (computing effect)
     if (animate) {
-      iconEl.innerHTML = icon;
-      iconEl.style.color = color;
-      iconEl.style.opacity = '1';
-      iconEl.style.transform = 'translate(-50%, -50%) scale(1.2)';
-      setTimeout(() => {
-        iconEl.style.opacity = '0';
-        iconEl.style.transform = 'translate(-50%, -50%) scale(0.8)';
-      }, 250);
+      let shuffleCount = 0;
+      const shuffleInterval = setInterval(() => {
+        geneEl.innerHTML = '';
+        const randomCount = Math.floor(Math.random() * 3) + 2;
+        for (let i = 0; i < randomCount; i++) {
+          const randIcon = allIcons[Math.floor(Math.random() * allIcons.length)];
+          const span = document.createElement('span');
+          span.style.cssText = `opacity: 0.5; transition: all 0.1s;`;
+          span.textContent = randIcon;
+          geneEl.appendChild(span);
+        }
+        shuffleCount++;
+        if (shuffleCount >= 8) {
+          clearInterval(shuffleInterval);
+          // Settle on final gene
+          showFinalGene();
+        }
+      }, 80);
+    } else {
+      showFinalGene();
+    }
+
+    function showFinalGene() {
+      geneEl.innerHTML = '';
+      finalGene.forEach((g, i) => {
+        const span = document.createElement('span');
+        span.style.cssText = `
+          color: ${g.color};
+          opacity: 0;
+          transform: scale(0.5);
+          transition: all 0.3s ease;
+          display: inline-block;
+        `;
+        span.textContent = g.icon;
+        geneEl.appendChild(span);
+        setTimeout(() => {
+          span.style.opacity = '1';
+          span.style.transform = 'scale(1)';
+        }, 50 + i * 100);
+      });
     }
 
     setTimeout(() => {
-      // Quote text - full, no truncation
+      // Quote text
       textEl.innerHTML = `"${q.text}"`;
 
       // Source
-      if (q.source) {
-        sourceEl.innerHTML = `— ${q.source}`;
-      } else {
-        sourceEl.innerHTML = '';
-      }
+      sourceEl.innerHTML = q.source ? `— ${q.source}` : '';
 
-      // Build topic pills with stagger animation
+      // Build topic pills (labels at bottom)
       topicsEl.innerHTML = '';
-      const allTopics = [...q.topics];
+      const allTopicsList = [...q.topics];
       if (q.original_tags && q.original_tags.length > 0) {
         for (const tag of q.original_tags) {
-          allTopics.push(`Jad's System/${tag}`);
+          allTopicsList.push(`Jad's System/${tag}`);
         }
       }
 
-      allTopics.forEach((topic, i) => {
+      allTopicsList.forEach((topic, i) => {
         const [main, sub] = topic.split('/');
         const pillColor = colors[main] || '#64748b';
-        const pillIcon = icons[main] || '';
         const isJad = main === "Jad's System";
-        const label = isJad ? `${pillIcon} ${sub}` : `${pillIcon} ${main}${sub ? ' › ' + sub : ''}`;
+        const label = isJad ? sub : `${main}${sub ? ' › ' + sub : ''}`;
 
         const pill = document.createElement('span');
         pill.style.cssText = `
@@ -194,7 +226,6 @@
         pill.textContent = label;
         topicsEl.appendChild(pill);
 
-        // Stagger animation
         setTimeout(() => {
           pill.style.opacity = '1';
           pill.style.transform = 'translateY(0)';
@@ -202,11 +233,11 @@
       });
 
       // Fade in text
-      textEl.style.transition = 'opacity 0.4s, transform 0.4s';
-      sourceEl.style.transition = 'opacity 0.4s, transform 0.4s';
+      textEl.style.transition = 'opacity 0.4s';
+      sourceEl.style.transition = 'opacity 0.4s';
       textEl.style.opacity = '1';
       sourceEl.style.opacity = '1';
-    }, animate ? 300 : 200);
+    }, animate ? 700 : 200);
   }
 
   if (document.readyState === 'loading') {
