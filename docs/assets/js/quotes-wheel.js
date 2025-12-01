@@ -1,7 +1,7 @@
 // Math Quotes - Fortune Cookie
 (function() {
   const colors = {
-    "Jad's System": "#14b8a6",
+    "Special Tags": "#14b8a6",
     "Foundations": "#ef4444",
     "Analysis": "#3b82f6",
     "Algebra": "#22c55e",
@@ -11,7 +11,7 @@
   };
 
   const icons = {
-    "Jad's System": "◈",
+    "Special Tags": "◈",
     "Foundations": "⊢",
     "Analysis": "∞",
     "Algebra": "λ",
@@ -130,7 +130,7 @@
     // Get unique main topics for this quote's gene
     const quoteTopics = [...new Set(q.topics.map(t => t.split('/')[0]))];
     if (q.original_tags && q.original_tags.length > 0) {
-      quoteTopics.push("Jad's System");
+      quoteTopics.push("Special Tags");
     }
     const finalGene = [...new Set(quoteTopics)].map(t => ({
       icon: icons[t] || '◇',
@@ -198,15 +198,15 @@
       const allTopicsList = [...q.topics];
       if (q.original_tags && q.original_tags.length > 0) {
         for (const tag of q.original_tags) {
-          allTopicsList.push(`Jad's System/${tag}`);
+          allTopicsList.push(`Special Tags/${tag}`);
         }
       }
 
       allTopicsList.forEach((topic, i) => {
         const [main, sub] = topic.split('/');
         const pillColor = colors[main] || '#64748b';
-        const isJad = main === "Jad's System";
-        const label = isJad ? sub : `${main}${sub ? ' › ' + sub : ''}`;
+        const isSpecial = main === "Special Tags";
+        const label = isSpecial ? sub : `${main}${sub ? ' › ' + sub : ''}`;
 
         const pill = document.createElement('span');
         pill.style.cssText = `

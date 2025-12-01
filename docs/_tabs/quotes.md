@@ -39,7 +39,7 @@ a:hover {
 
 **520 quotes** collected during 7 years of intensive mathematical self-study (2011-2018), from the [77 Neurons Project Perelman](https://github.com/jadnohra/77-neurons-project-perelman) — a collaborative mathematics study project.
 
-### Jad's Tag System
+### Special Tags
 
 A personal categorization system developed during the study:
 
@@ -74,7 +74,7 @@ After years of self-study, I enrolled in a Mathematics MSc at Emporia State Univ
 | MA728 Vector Spaces | 97.61% | May 2019 |
 | MA735 Advanced Calculus I | 98.47% | Dec 2019 |
 
-### The Deeper Journey
+### The Journey
 
 These three courses represent only a fraction of the actual study. The self-directed curriculum ("[ThePlan](https://github.com/jadnohra/77-neurons-project-perelman/blob/master/export/jad/theplan/theplan.html)") followed a historical, insight-driven approach—understanding *why* mathematics developed the way it did, not just *how* to apply techniques.
 
