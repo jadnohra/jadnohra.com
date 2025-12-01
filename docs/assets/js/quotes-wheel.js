@@ -41,7 +41,9 @@
           display: flex;
           flex-direction: column;
           justify-content: center;
-          margin-bottom: 1.5rem;
+          cursor: pointer;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         ">
           <div id="quote-text" style="
             color: #e2e8f0;
@@ -63,37 +65,37 @@
             justify-content: center;
             gap: 0.5rem;
           "></div>
+          <div id="click-hint" style="
+            margin-top: 1.5rem;
+            color: #475569;
+            font-size: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: color 0.2s;
+          ">click for another · ${data.quotes.length} quotes</div>
         </div>
-        <button id="draw-btn" style="
-          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-          color: white;
-          border: none;
-          padding: 1rem 2.5rem;
-          font-size: 16px;
-          font-weight: 600;
-          border-radius: 12px;
-          cursor: pointer;
-          transition: transform 0.15s, box-shadow 0.15s;
-          box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
-        ">I Love Science</button>
-        <div style="
-          margin-top: 1rem;
-          color: #64748b;
-          font-size: 12px;
-        ">${data.quotes.length} quotes from 7 years of mathematical study</div>
       </div>
     `;
 
-    const btn = document.getElementById('draw-btn');
-    btn.addEventListener('mouseover', () => {
-      btn.style.transform = 'translateY(-2px)';
-      btn.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.5)';
+    const card = document.getElementById('quote-display');
+    const hint = document.getElementById('click-hint');
+
+    card.addEventListener('mouseover', () => {
+      card.style.transform = 'translateY(-3px)';
+      card.style.boxShadow = '0 8px 30px rgba(59, 130, 246, 0.25)';
+      hint.style.color = '#64748b';
     });
-    btn.addEventListener('mouseout', () => {
-      btn.style.transform = 'translateY(0)';
-      btn.style.boxShadow = '0 4px 14px rgba(59, 130, 246, 0.4)';
+    card.addEventListener('mouseout', () => {
+      card.style.transform = 'translateY(0)';
+      card.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+      hint.style.color = '#475569';
     });
-    btn.addEventListener('click', drawQuote);
+    card.addEventListener('click', () => {
+      card.style.transform = 'scale(0.98)';
+      setTimeout(() => {
+        card.style.transform = 'translateY(0)';
+        drawQuote();
+      }, 100);
+    });
 
     // Draw initial quote
     drawQuote();
