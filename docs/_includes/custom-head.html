@@ -1,10 +1,16 @@
 <!-- Site-wide custom styles -->
 <style>
-/* Hide Home link - Portfolio is the landing page */
-#sidebar .nav-item a[href="/"],
-#sidebar .nav-item a[href="/jadnohra.com/"],
-.sidebar .nav-link[href="/"],
-.sidebar .nav-link[href="/jadnohra.com/"] {
+/* Hide Home link completely */
+#sidebar .nav-item:first-child,
+.sidebar .nav-item:first-child,
+#sidebar a[href="/"],
+#sidebar a[href$="/jadnohra.com/"],
+.sidebar a[href="/"],
+.sidebar a[href$="/jadnohra.com/"],
+a.nav-link[href="/"],
+a.nav-link[href$="/jadnohra.com/"],
+.nav-wrapper .nav-item:has(a[href="/"]),
+.nav-wrapper .nav-item:has(a[href$="/jadnohra.com/"]) {
   display: none !important;
 }
 
