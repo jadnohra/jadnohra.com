@@ -16,11 +16,6 @@
   let dependsOn = {};
   let dependents = {};
 
-  // Engineer mode state
-  let engineerMode = false;
-  let selectedProfiles = new Set();
-  let combineMode = 'union'; // 'union' or 'intersection'
-
   async function init() {
     const container = document.getElementById('concept-grid');
     if (!container) return;
@@ -35,7 +30,6 @@
     }
 
     buildLookups();
-    setupEngineersBar();
     renderGrid(container);
   }
 
@@ -69,79 +63,6 @@
     });
   }
 
-  function setupEngineersBar() {
-    const bar = document.getElementById('engineers-bar');
-    if (!bar || !data.profiles) return;
-
-    const header = bar.querySelector('.engineers-header');
-    const content = bar.querySelector('.engineers-content');
-    const toggle = bar.querySelector('.engineers-toggle');
-
-    // Build content
-    // Mode toggle button
-    const modeBtn = document.createElement('button');
-    modeBtn.className = 'mode-toggle union';
-    modeBtn.textContent = '∪';
-    modeBtn.title = 'Union mode: add weights (saturate to 1)';
-    modeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (combineMode === 'union') {
-        combineMode = 'intersection';
-        modeBtn.textContent = '∩';
-        modeBtn.title = 'Intersection mode: multiply weights';
-        modeBtn.className = 'mode-toggle intersection';
-      } else {
-        combineMode = 'union';
-        modeBtn.textContent = '∪';
-        modeBtn.title = 'Union mode: add weights (saturate to 1)';
-        modeBtn.className = 'mode-toggle union';
-      }
-      updateEngineerHighlights();
-    });
-    content.appendChild(modeBtn);
-
-    // Profile buttons
-    data.profiles.forEach(profile => {
-      const btn = document.createElement('button');
-      btn.className = 'profile-btn';
-      btn.dataset.profileId = profile.id;
-      btn.innerHTML = `<span class="profile-icon">${profile.icon}</span><span>${profile.name}</span>`;
-      btn.title = profile.desc;
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (selectedProfiles.has(profile.id)) {
-          selectedProfiles.delete(profile.id);
-          btn.classList.remove('selected');
-        } else {
-          selectedProfiles.add(profile.id);
-          btn.classList.add('selected');
-        }
-        updateEngineerHighlights();
-      });
-      content.appendChild(btn);
-    });
-
-    // Toggle expand/collapse
-    header.addEventListener('click', () => {
-      const wasExpanded = bar.classList.contains('expanded');
-      bar.classList.toggle('expanded');
-      toggle.textContent = bar.classList.contains('expanded') ? '▼' : '▶';
-
-      // Mode switch
-      engineerMode = !wasExpanded;
-
-      if (!engineerMode) {
-        // Exiting engineer mode - clear highlights
-        clearEngineerHighlights();
-      } else {
-        // Entering engineer mode - apply highlights if profiles selected
-        updateEngineerHighlights();
-      }
-    });
-  }
-
-  let conceptElements = {};
-
   function renderGrid(container) {
     container.innerHTML = '';
 
@@ -157,7 +78,7 @@
     // Track highlighted layer groups
     const layerGroups = {};
 
-    conceptElements = {};
+    const conceptElements = {};
     const layerHeaders = {};
     const sortedLayers = [...data.layers].sort((a, b) => a.level - b.level);
 
@@ -376,12 +297,10 @@
       svg.appendChild(path);
     }
 
-    // Update visual state (normal mode)
+    // Update visual state
     function updateState(inThread) {
       Object.entries(conceptElements).forEach(([id, el]) => {
-        el.classList.remove('selected', 'active', 'inactive', 'engineer-highlight');
-        el.style.color = '';
-        el.style.opacity = '';
+        el.classList.remove('selected', 'active', 'inactive');
         if (selectedId === id) {
           el.classList.add('selected');
         } else if (inThread && inThread.has(id)) {
@@ -395,8 +314,6 @@
 
     // Click handler - toggle selection
     gridDiv.addEventListener('click', (e) => {
-      if (engineerMode) return; // Disable in engineer mode
-
       const concept = e.target.closest('.concept');
       if (!concept) {
         // Clicked outside - clear
@@ -424,8 +341,6 @@
 
     // Hover handler
     gridDiv.addEventListener('mouseover', (e) => {
-      if (engineerMode) return; // Disable in engineer mode
-
       const concept = e.target.closest('.concept');
       if (concept) {
         drawConnections(concept.dataset.id);
@@ -433,8 +348,6 @@
     });
 
     gridDiv.addEventListener('mouseout', (e) => {
-      if (engineerMode) return; // Disable in engineer mode
-
       const concept = e.target.closest('.concept');
       if (concept) {
         svg.innerHTML = '';
@@ -448,66 +361,6 @@
       svg.style.width = container.scrollWidth + 'px';
       svg.style.height = container.scrollHeight + 'px';
     }, 100);
-  }
-
-  // Calculate combined weight for a concept based on selected profiles
-  function calculateWeight(conceptId) {
-    if (selectedProfiles.size === 0) return 0;
-
-    const weights = [];
-    selectedProfiles.forEach(profileId => {
-      const profile = data.profiles.find(p => p.id === profileId);
-      if (profile && profile.touchpoints[conceptId] !== undefined) {
-        weights.push(profile.touchpoints[conceptId]);
-      } else {
-        weights.push(0);
-      }
-    });
-
-    if (weights.length === 0) return 0;
-
-    if (combineMode === 'union') {
-      // Add weights, saturate to 1
-      return Math.min(1, weights.reduce((a, b) => a + b, 0));
-    } else {
-      // Multiply weights
-      return weights.reduce((a, b) => a * b, 1);
-    }
-  }
-
-  // Update concept highlighting in engineer mode
-  function updateEngineerHighlights() {
-    if (!engineerMode) return;
-
-    Object.entries(conceptElements).forEach(([id, el]) => {
-      el.classList.remove('selected', 'active', 'inactive');
-      el.classList.add('engineer-highlight');
-
-      const weight = calculateWeight(id);
-      const layerId = exposeToLayer[id];
-      const domainColor = layerId ? domainColors[layerById[layerId]?.domain] : '#64748b';
-
-      if (weight > 0) {
-        // Highlight with weight-based opacity/brightness
-        // Weight 1.0 = full color, weight 0.1 = very dim
-        const brightness = 0.3 + (weight * 0.7); // Range from 0.3 to 1.0
-        el.style.color = domainColor;
-        el.style.opacity = brightness;
-      } else {
-        // Not touched by any selected profile
-        el.style.color = '#64748b';
-        el.style.opacity = '0.15';
-      }
-    });
-  }
-
-  // Clear engineer mode highlights
-  function clearEngineerHighlights() {
-    Object.entries(conceptElements).forEach(([id, el]) => {
-      el.classList.remove('engineer-highlight');
-      el.style.color = '';
-      el.style.opacity = '';
-    });
   }
 
   if (document.readyState === 'loading') {
