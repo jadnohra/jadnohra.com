@@ -76,7 +76,7 @@ After years of self-study, I enrolled in a Mathematics MSc at Emporia State Univ
 
 ### The Deeper Journey
 
-These three courses represent only a fraction of the actual study. The self-directed curriculum ("ThePlan") followed a historical, insight-driven approach—understanding *why* mathematics developed the way it did, not just *how* to apply techniques.
+These three courses represent only a fraction of the actual study. The self-directed curriculum ("[ThePlan](https://github.com/jadnohra/77-neurons-project-perelman/blob/master/export/jad/theplan/theplan.html)") followed a historical, insight-driven approach—understanding *why* mathematics developed the way it did, not just *how* to apply techniques.
 
 **Foundations:** Proof theory, Linear Algebra (Hefferon), Real Analysis I-III (Zakon), Calculus on Manifolds (Spivak), Number Theory, Algebra, Topology (Stillwell)
 
@@ -88,4 +88,4 @@ These three courses represent only a fraction of the actual study. The self-dire
 
 The journey included eigenvalue theory, Lie groups, category theory, algebraic geometry, and the foundations of analysis through constructive mathematics.
 
-*"If I ever finish this, I will be a very pleased person for at least one day."* — ThePlan, 2012
+*"If I ever finish this, I will be a very pleased person for at least one day."* — [ThePlan](https://github.com/jadnohra/77-neurons-project-perelman/blob/master/export/jad/theplan/theplan.html), 2012
