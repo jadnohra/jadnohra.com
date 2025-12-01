@@ -92,7 +92,6 @@
           font-size: 11px;
           font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         ">${data.quotes.length} quotes · click anywhere</div>
-        </div>
       </div>
     `;
 
@@ -232,11 +231,13 @@
         }, 50 + i * 60);
       });
 
-      // Fade in text
+      // Fade in text and topics container
       textEl.style.transition = 'opacity 0.4s';
       sourceEl.style.transition = 'opacity 0.4s';
+      topicsEl.style.transition = 'opacity 0.2s';
       textEl.style.opacity = '1';
       sourceEl.style.opacity = '1';
+      topicsEl.style.opacity = '1';
     }, animate ? 700 : 200);
   }
 
