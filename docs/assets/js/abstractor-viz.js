@@ -81,6 +81,7 @@
     clearBtn.textContent = 'Clear';
 
     const conceptElements = {};
+    const layerHeaders = {};
     const sortedLayers = [...data.layers].sort((a, b) => a.level - b.level);
 
     // Create layer groups
@@ -92,6 +93,8 @@
       header.className = 'layer-header';
       header.style.color = domainColors[layer.domain];
       header.textContent = layer.name;
+      header.dataset.layerId = layer.id;
+      layerHeaders[layer.id] = header;
       group.appendChild(header);
 
       // Add exposes as concepts
@@ -161,7 +164,21 @@
       return inThread;
     }
 
-    // Draw connections on hover
+    // Get position for layer header
+    function getHeaderPos(layerId) {
+      const el = layerHeaders[layerId];
+      if (!el) return null;
+      const rect = el.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      return {
+        x: rect.left - containerRect.left + rect.width / 2,
+        y: rect.top - containerRect.top + rect.height / 2,
+        right: rect.right - containerRect.left,
+        left: rect.left - containerRect.left
+      };
+    }
+
+    // Draw connections on hover - collapse to layer if >50% connected
     function drawConnections(id) {
       svg.innerHTML = '';
       const fromPos = getPos(id);
@@ -170,18 +187,58 @@
       const sourceLayer = exposeToLayer[id];
       const color = sourceLayer ? domainColors[layerById[sourceLayer].domain] : '#f97316';
 
-      // Draw to dependencies (down)
+      // Group dependencies by layer
+      const depsByLayer = {};
       (dependsOn[id] || []).forEach(depId => {
-        const toPos = getPos(depId);
-        if (!toPos) return;
-        drawLine(toPos, fromPos, color);
+        const layerId = exposeToLayer[depId];
+        if (layerId) {
+          if (!depsByLayer[layerId]) depsByLayer[layerId] = [];
+          depsByLayer[layerId].push(depId);
+        }
       });
 
-      // Draw to dependents (up)
+      // Draw dependencies - collapse if >50% of layer
+      Object.entries(depsByLayer).forEach(([layerId, deps]) => {
+        const layer = layerById[layerId];
+        const threshold = Math.ceil(layer.exposes.length * 0.5);
+        if (deps.length >= threshold && layer.exposes.length > 2) {
+          // Draw to layer header instead
+          const headerPos = getHeaderPos(layerId);
+          if (headerPos) drawLine(headerPos, fromPos, color);
+        } else {
+          // Draw to individual concepts
+          deps.forEach(depId => {
+            const toPos = getPos(depId);
+            if (toPos) drawLine(toPos, fromPos, color);
+          });
+        }
+      });
+
+      // Group dependents by layer
+      const dentsByLayer = {};
       (dependents[id] || []).forEach(depId => {
-        const toPos = getPos(depId);
-        if (!toPos) return;
-        drawLine(fromPos, toPos, color);
+        const layerId = exposeToLayer[depId];
+        if (layerId) {
+          if (!dentsByLayer[layerId]) dentsByLayer[layerId] = [];
+          dentsByLayer[layerId].push(depId);
+        }
+      });
+
+      // Draw dependents - collapse if >50% of layer
+      Object.entries(dentsByLayer).forEach(([layerId, deps]) => {
+        const layer = layerById[layerId];
+        const threshold = Math.ceil(layer.exposes.length * 0.5);
+        if (deps.length >= threshold && layer.exposes.length > 2) {
+          // Draw to layer header instead
+          const headerPos = getHeaderPos(layerId);
+          if (headerPos) drawLine(fromPos, headerPos, color);
+        } else {
+          // Draw to individual concepts
+          deps.forEach(depId => {
+            const toPos = getPos(depId);
+            if (toPos) drawLine(fromPos, toPos, color);
+          });
+        }
       });
     }
 
