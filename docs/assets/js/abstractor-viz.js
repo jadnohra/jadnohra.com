@@ -209,13 +209,14 @@
       Object.entries(depsByLayer).forEach(([layerId, deps]) => {
         const layer = layerById[layerId];
         const threshold = Math.ceil(layer.exposes.length * 0.5);
+        const layerColor = domainColors[layer.domain] || '#64748b';
         if (deps.length >= threshold && layer.exposes.length > 2) {
           // Draw to layer header instead and highlight the layer group
           const headerPos = getHeaderPos(layerId);
           if (headerPos) {
             drawLine(headerPos, fromPos, color);
             layerGroups[layerId].classList.add('highlighted');
-            layerGroups[layerId].style.color = color;
+            layerGroups[layerId].style.color = layerColor;
           }
         } else {
           // Draw to individual concepts
@@ -240,13 +241,14 @@
       Object.entries(dentsByLayer).forEach(([layerId, deps]) => {
         const layer = layerById[layerId];
         const threshold = Math.ceil(layer.exposes.length * 0.5);
+        const layerColor = domainColors[layer.domain] || '#64748b';
         if (deps.length >= threshold && layer.exposes.length > 2) {
           // Draw to layer header instead and highlight the layer group
           const headerPos = getHeaderPos(layerId);
           if (headerPos) {
             drawLine(fromPos, headerPos, color);
             layerGroups[layerId].classList.add('highlighted');
-            layerGroups[layerId].style.color = color;
+            layerGroups[layerId].style.color = layerColor;
           }
         } else {
           // Draw to individual concepts
