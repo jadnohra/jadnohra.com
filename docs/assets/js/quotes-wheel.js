@@ -67,11 +67,11 @@
           "></div>
           <div id="click-hint" style="
             margin-top: 1.5rem;
-            color: #475569;
-            font-size: 12px;
+            color: #64748b;
+            font-size: 13px;
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            transition: color 0.2s;
-          ">click for another · ${data.quotes.length} quotes</div>
+            transition: all 0.3s;
+          ">✨ I Love Science · ${data.quotes.length} quotes</div>
         </div>
       </div>
     `;
@@ -80,14 +80,16 @@
     const hint = document.getElementById('click-hint');
 
     card.addEventListener('mouseover', () => {
-      card.style.transform = 'translateY(-3px)';
-      card.style.boxShadow = '0 8px 30px rgba(59, 130, 246, 0.25)';
-      hint.style.color = '#64748b';
+      card.style.transform = 'translateY(-4px)';
+      card.style.boxShadow = '0 12px 40px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.1)';
+      hint.style.color = '#94a3b8';
+      hint.style.transform = 'scale(1.02)';
     });
     card.addEventListener('mouseout', () => {
       card.style.transform = 'translateY(0)';
       card.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
-      hint.style.color = '#475569';
+      hint.style.color = '#64748b';
+      hint.style.transform = 'scale(1)';
     });
     card.addEventListener('click', () => {
       card.style.transform = 'scale(0.98)';
