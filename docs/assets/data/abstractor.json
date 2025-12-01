@@ -1,0 +1,811 @@
+{
+  "meta": {
+    "title": "Abstractor Stack",
+    "description": "Complete inventory of hardware/software abstraction layers",
+    "version": "0.2"
+  },
+  "layers": [
+    {
+      "id": "physics",
+      "name": "Physics",
+      "level": 0,
+      "domain": "physical",
+      "abstracts": [],
+      "exposes": [
+        { "id": "electron-flow", "name": "Electron flow", "desc": "Movement of charge carriers" },
+        { "id": "voltage-potential", "name": "Voltage potential", "desc": "Electric potential difference" },
+        { "id": "capacitance", "name": "Capacitance", "desc": "Ability to store charge" },
+        { "id": "inductance", "name": "Inductance", "desc": "Magnetic field energy storage" },
+        { "id": "resistance", "name": "Resistance", "desc": "Opposition to current flow" },
+        { "id": "em-radiation", "name": "EM radiation", "desc": "Electromagnetic wave propagation" },
+        { "id": "thermal-energy", "name": "Thermal energy", "desc": "Heat from electron collisions" }
+      ],
+      "leaks": [],
+      "escapes": []
+    },
+    {
+      "id": "semiconductor",
+      "name": "Semiconductor Physics",
+      "level": 1,
+      "domain": "physical",
+      "abstracts": [
+        { "id": "quantum-tunneling", "name": "Quantum tunneling", "from": ["electron-flow"], "desc": "Probability of electron passing through barrier" },
+        { "id": "band-gap", "name": "Band gap energies", "from": ["electron-flow", "voltage-potential"], "desc": "Energy required to free electron" },
+        { "id": "carrier-mobility", "name": "Carrier mobility", "from": ["electron-flow", "thermal-energy"], "desc": "How fast carriers move in field" },
+        { "id": "doping-concentrations", "name": "Doping concentrations", "from": ["electron-flow"], "desc": "Impurity atom densities" },
+        { "id": "depletion-regions", "name": "Depletion regions", "from": ["electron-flow", "voltage-potential"], "desc": "Carrier-free zones at junctions" }
+      ],
+      "exposes": [
+        { "id": "pn-junction", "name": "PN junction behavior", "desc": "Diode-like current/voltage relationship" },
+        { "id": "field-effect", "name": "Field effect", "desc": "Voltage controls conductivity" },
+        { "id": "breakdown-voltage", "name": "Breakdown voltage", "desc": "Maximum voltage before failure" }
+      ],
+      "leaks": [
+        { "id": "temp-sensitivity", "name": "Temperature sensitivity", "desc": "Behavior changes with temperature" },
+        { "id": "process-variation", "name": "Process variation", "desc": "Each device slightly different" }
+      ],
+      "escapes": []
+    },
+    {
+      "id": "transistor",
+      "name": "Transistor",
+      "level": 2,
+      "domain": "physical",
+      "abstracts": [
+        { "id": "junction-physics", "name": "Junction physics", "from": ["pn-junction", "field-effect"], "desc": "Internal semiconductor behavior" },
+        { "id": "analog-voltages", "name": "Analog voltage levels", "from": ["voltage-potential"], "desc": "Continuous voltage values" },
+        { "id": "subthreshold-leakage", "name": "Subthreshold leakage", "from": ["electron-flow", "quantum-tunneling"], "desc": "Current when 'off'" },
+        { "id": "gate-capacitance", "name": "Gate capacitance", "from": ["capacitance", "field-effect"], "desc": "Charge needed to switch" },
+        { "id": "channel-formation", "name": "Channel formation", "from": ["field-effect", "carrier-mobility"], "desc": "How conduction path forms" }
+      ],
+      "exposes": [
+        { "id": "binary-switching", "name": "Binary switching (on/off)", "desc": "Two stable states" },
+        { "id": "threshold-voltage", "name": "Threshold voltage (Vth)", "desc": "Voltage to turn on" },
+        { "id": "switching-speed", "name": "Switching speed", "desc": "Time to change state" },
+        { "id": "drive-strength", "name": "Drive strength", "desc": "Current sourcing/sinking capability" },
+        { "id": "on-resistance", "name": "On resistance (Ron)", "desc": "Resistance when conducting" }
+      ],
+      "leaks": [
+        { "id": "power-consumption", "name": "Power consumption", "desc": "Reveals switching activity" },
+        { "id": "heat-generation", "name": "Heat generation", "desc": "Thermal side channel" },
+        { "id": "timing-variation", "name": "Timing variation", "desc": "Speed varies with conditions" },
+        { "id": "em-emission", "name": "EM emission", "desc": "Electromagnetic side channel" }
+      ],
+      "escapes": []
+    },
+    {
+      "id": "gates",
+      "name": "Digital Logic (Gates)",
+      "level": 3,
+      "domain": "digital",
+      "abstracts": [
+        { "id": "transistor-topology", "name": "Transistor topology", "from": ["binary-switching"], "desc": "Which transistors form the gate" },
+        { "id": "cmos-implementation", "name": "CMOS pull-up/pull-down", "from": ["binary-switching", "drive-strength"], "desc": "Complementary transistor networks" },
+        { "id": "noise-margins", "name": "Noise margins", "from": ["threshold-voltage", "binary-switching"], "desc": "Tolerance to voltage noise" },
+        { "id": "fanout-limits", "name": "Fan-out limitations", "from": ["drive-strength", "gate-capacitance"], "desc": "How many gates can be driven" },
+        { "id": "prop-delay-details", "name": "Propagation delay internals", "from": ["switching-speed", "on-resistance"], "desc": "RC delay through gate" },
+        { "id": "rise-fall-asymmetry", "name": "Rise/fall time asymmetry", "from": ["drive-strength"], "desc": "PMOS vs NMOS speed difference" },
+        { "id": "static-power", "name": "Static power consumption", "from": ["subthreshold-leakage"], "desc": "Power when not switching" },
+        { "id": "dynamic-power", "name": "Dynamic power consumption", "from": ["gate-capacitance", "switching-speed"], "desc": "Power during transitions" },
+        { "id": "glitch-hazards", "name": "Glitches / hazards", "from": ["prop-delay-details"], "desc": "Transient incorrect outputs" }
+      ],
+      "exposes": [
+        { "id": "boolean-functions", "name": "Boolean functions", "desc": "AND, OR, NOT, XOR, NAND, NOR" },
+        { "id": "deterministic-logic", "name": "Deterministic logic", "desc": "Same inputs always give same output" },
+        { "id": "gate-delay", "name": "Gate delay (single number)", "desc": "Abstracted propagation time" },
+        { "id": "logic-levels", "name": "Logic levels (0 and 1)", "desc": "Binary abstraction of voltage" }
+      ],
+      "leaks": [
+        { "id": "timing-paths", "name": "Critical timing paths", "desc": "Some paths slower than others" },
+        { "id": "power-activity", "name": "Activity-dependent power", "desc": "More switching = more power" },
+        { "id": "glitch-propagation", "name": "Glitch propagation", "desc": "Transients can cause errors" }
+      ],
+      "escapes": []
+    },
+    {
+      "id": "sequential",
+      "name": "Sequential Logic (Registers/Flip-flops)",
+      "level": 4,
+      "domain": "digital",
+      "abstracts": [
+        { "id": "feedback-loops", "name": "Feedback loop implementation", "from": ["boolean-functions", "deterministic-logic"], "desc": "Cross-coupled gates for memory" },
+        { "id": "setup-time", "name": "Setup time", "from": ["gate-delay", "prop-delay-details"], "desc": "Data must be stable before clock" },
+        { "id": "hold-time", "name": "Hold time", "from": ["gate-delay"], "desc": "Data must be stable after clock" },
+        { "id": "clock-to-q", "name": "Clock-to-Q delay", "from": ["gate-delay"], "desc": "Time from clock to output change" },
+        { "id": "metastability-window", "name": "Metastability window", "from": ["analog-voltages", "deterministic-logic"], "desc": "When flip-flop can't decide" },
+        { "id": "recovery-time", "name": "Metastability recovery time", "from": ["metastability-window"], "desc": "Time to resolve metastable state" },
+        { "id": "clock-skew", "name": "Clock skew between registers", "from": ["gate-delay", "timing-paths"], "desc": "Clock arrives at different times" },
+        { "id": "reset-sync", "name": "Reset synchronization", "from": ["metastability-window"], "desc": "Async reset crossing clock domain" }
+      ],
+      "exposes": [
+        { "id": "state-storage", "name": "Stable state storage", "desc": "Bit is remembered until changed" },
+        { "id": "clocked-updates", "name": "Clocked updates", "desc": "State changes only on clock edge" },
+        { "id": "synchronous-behavior", "name": "Synchronous behavior", "desc": "All state changes together" },
+        { "id": "register-file", "name": "Register arrays", "desc": "Multiple bits stored together" }
+      ],
+      "leaks": [
+        { "id": "metastability-failure", "name": "Metastability failure", "desc": "Rare but catastrophic" },
+        { "id": "clock-domain-issues", "name": "Clock domain crossing issues", "desc": "Data between clock domains" },
+        { "id": "max-frequency", "name": "Maximum clock frequency", "desc": "Limited by slowest path" },
+        { "id": "clock-jitter", "name": "Clock jitter", "desc": "Timing uncertainty in clock" }
+      ],
+      "escapes": [
+        { "id": "async-design", "name": "Asynchronous design", "desc": "Avoid clocks entirely" }
+      ]
+    },
+    {
+      "id": "rtl",
+      "name": "RTL / HDL (Verilog/VHDL)",
+      "level": 5,
+      "domain": "digital",
+      "abstracts": [
+        { "id": "gate-netlists", "name": "Gate-level netlists", "from": ["boolean-functions", "state-storage"], "desc": "Specific gate instances and wires" },
+        { "id": "timing-constraints", "name": "Detailed timing constraints", "from": ["setup-time", "hold-time", "clock-to-q"], "desc": "Synthesis handles timing" },
+        { "id": "physical-placement", "name": "Physical placement", "from": ["gate-delay", "clock-skew"], "desc": "Where gates go on die" },
+        { "id": "routing", "name": "Wire routing", "from": ["gate-delay"], "desc": "How signals connect" }
+      ],
+      "exposes": [
+        { "id": "behavioral-desc", "name": "Behavioral description", "desc": "What logic does, not how" },
+        { "id": "always-blocks", "name": "Always blocks / processes", "desc": "Concurrent procedural code" },
+        { "id": "module-hierarchy", "name": "Module hierarchy", "desc": "Structural decomposition" },
+        { "id": "wire-reg-types", "name": "Wire and reg types", "desc": "Combinational vs sequential" },
+        { "id": "parameterization", "name": "Parameterized modules", "desc": "Configurable hardware" }
+      ],
+      "leaks": [
+        { "id": "synthesis-quality", "name": "Synthesis tool quality", "desc": "Different tools, different results" },
+        { "id": "timing-closure", "name": "Timing closure difficulty", "desc": "Meeting timing constraints" },
+        { "id": "simulation-synthesis-mismatch", "name": "Simulation/synthesis mismatch", "desc": "Behavior differs" }
+      ],
+      "escapes": [
+        { "id": "gate-instantiation", "name": "Direct gate instantiation", "desc": "Bypass behavioral synthesis" }
+      ]
+    },
+    {
+      "id": "microarch",
+      "name": "Microarchitecture",
+      "level": 6,
+      "domain": "architecture",
+      "abstracts": [
+        { "id": "pipeline-stages", "name": "Pipeline stages", "from": ["clocked-updates", "state-storage", "register-file"], "desc": "Fetch, decode, execute, memory, writeback" },
+        { "id": "pipeline-hazards", "name": "Pipeline hazards", "from": ["clocked-updates", "synchronous-behavior"], "desc": "Data, control, structural hazards" },
+        { "id": "branch-prediction", "name": "Branch prediction", "from": ["state-storage"], "desc": "BTB, PHT, RAS structures" },
+        { "id": "branch-mispredict-recovery", "name": "Branch misprediction recovery", "from": ["state-storage", "register-file"], "desc": "Squashing wrong-path work" },
+        { "id": "ooo-execution", "name": "Out-of-order execution", "from": ["state-storage", "register-file"], "desc": "Dynamic instruction scheduling" },
+        { "id": "register-renaming", "name": "Register renaming", "from": ["register-file"], "desc": "Physical vs architectural registers" },
+        { "id": "reorder-buffer", "name": "Reorder buffer", "from": ["state-storage"], "desc": "In-order retirement" },
+        { "id": "reservation-stations", "name": "Reservation stations", "from": ["state-storage"], "desc": "Waiting for operands" },
+        { "id": "speculative-execution", "name": "Speculative execution", "from": ["state-storage", "branch-prediction"], "desc": "Execute before knowing if needed" },
+        { "id": "store-buffer", "name": "Store buffer", "from": ["state-storage"], "desc": "Pending stores" },
+        { "id": "load-queue", "name": "Load queue", "from": ["state-storage"], "desc": "Pending loads, forwarding" },
+        { "id": "memory-ordering", "name": "Memory ordering enforcement", "from": ["store-buffer", "load-queue"], "desc": "Ensuring correct memory semantics" },
+        { "id": "cache-hierarchy", "name": "Cache hierarchy", "from": ["state-storage", "register-file"], "desc": "L1, L2, L3 caches" },
+        { "id": "cache-coherence", "name": "Cache coherence protocol", "from": ["cache-hierarchy"], "desc": "MESI, MOESI protocols" },
+        { "id": "tlb", "name": "TLB", "from": ["state-storage"], "desc": "Translation lookaside buffer" },
+        { "id": "prefetchers", "name": "Prefetchers", "from": ["cache-hierarchy"], "desc": "Stride, stream, spatial prefetch" },
+        { "id": "micro-op-decomposition", "name": "Micro-op decomposition", "from": ["state-storage"], "desc": "Complex instructions split" },
+        { "id": "micro-op-fusion", "name": "Micro-op fusion", "from": ["micro-op-decomposition"], "desc": "Combining micro-ops" },
+        { "id": "smt", "name": "Simultaneous multithreading", "from": ["register-file", "ooo-execution"], "desc": "Hyperthreading" },
+        { "id": "interrupt-microcode", "name": "Interrupt handling microcode", "from": ["state-storage"], "desc": "Microcode for exceptions" }
+      ],
+      "exposes": [
+        { "id": "isa", "name": "ISA (Instruction Set Architecture)", "desc": "Programmer-visible instruction set" },
+        { "id": "arch-registers", "name": "Architectural registers", "desc": "Fixed number, named registers" },
+        { "id": "arch-memory-model", "name": "Architectural memory model", "desc": "Sequential consistency or relaxed" },
+        { "id": "interrupt-model", "name": "Interrupt/exception model", "desc": "Precise exceptions" },
+        { "id": "privilege-levels", "name": "Privilege levels", "desc": "Ring 0, ring 3, etc." },
+        { "id": "virtual-memory-support", "name": "Virtual memory support", "desc": "Page tables, MMU" }
+      ],
+      "leaks": [
+        { "id": "cache-timing", "name": "Cache timing", "desc": "Hit ~4 cycles, miss ~200 cycles" },
+        { "id": "spectre-meltdown", "name": "Spectre/Meltdown", "desc": "Speculative execution side channels" },
+        { "id": "branch-prediction-state", "name": "Branch prediction state", "desc": "Observable via timing" },
+        { "id": "memory-access-patterns", "name": "Memory access patterns", "desc": "Cache timing reveals access" },
+        { "id": "microarch-timing", "name": "Microarchitectural timing", "desc": "Instruction latency varies" }
+      ],
+      "escapes": [
+        { "id": "performance-counters", "name": "Performance counters", "desc": "Observe microarch state" },
+        { "id": "cache-flush", "name": "Cache flush instructions", "desc": "CLFLUSH, etc." }
+      ]
+    },
+    {
+      "id": "isa",
+      "name": "ISA / Assembly",
+      "level": 7,
+      "domain": "architecture",
+      "abstracts": [
+        { "id": "instruction-encoding", "name": "Instruction encoding", "from": ["isa"], "desc": "Binary format of instructions" },
+        { "id": "instruction-length", "name": "Instruction length variability", "from": ["isa"], "desc": "Variable length (x86) vs fixed (ARM)" },
+        { "id": "opcode-maps", "name": "Opcode maps", "from": ["isa"], "desc": "Opcode to instruction mapping" },
+        { "id": "modrm-sib", "name": "ModR/M, SIB bytes (x86)", "from": ["isa"], "desc": "Addressing mode encoding" },
+        { "id": "immediate-encoding", "name": "Immediate encoding", "from": ["isa"], "desc": "How constants are encoded" },
+        { "id": "microcode-rom", "name": "Microcode ROM", "from": ["micro-op-decomposition"], "desc": "Complex instruction implementation" },
+        { "id": "undocumented-instructions", "name": "Undocumented instructions", "from": ["isa"], "desc": "CPU-specific hidden features" },
+        { "id": "processor-errata", "name": "Processor errata", "from": ["isa"], "desc": "Known CPU bugs" }
+      ],
+      "exposes": [
+        { "id": "mnemonics", "name": "Mnemonics", "desc": "MOV, ADD, JMP, CALL, RET" },
+        { "id": "register-names", "name": "Register names", "desc": "RAX, RSP, RIP, XMM0, etc." },
+        { "id": "addressing-modes", "name": "Addressing modes", "desc": "Immediate, register, memory, indexed" },
+        { "id": "condition-codes", "name": "Condition codes / flags", "desc": "Zero, carry, overflow, sign" },
+        { "id": "control-flow-insns", "name": "Control flow instructions", "desc": "JMP, JZ, CALL, RET" },
+        { "id": "memory-operands", "name": "Memory operand syntax", "desc": "[base + index*scale + disp]" },
+        { "id": "simd-instructions", "name": "SIMD instructions", "desc": "SSE, AVX, NEON" },
+        { "id": "atomic-instructions", "name": "Atomic instructions", "desc": "LOCK prefix, CMPXCHG" }
+      ],
+      "leaks": [
+        { "id": "instruction-latency", "name": "Instruction latency", "desc": "Some instructions slower" },
+        { "id": "instruction-throughput", "name": "Instruction throughput", "desc": "Superscalar effects" },
+        { "id": "alignment-effects", "name": "Alignment effects", "desc": "Misaligned access penalty" },
+        { "id": "code-size-icache", "name": "Code size / I-cache", "desc": "Larger code = more misses" }
+      ],
+      "escapes": []
+    },
+    {
+      "id": "assembler-linker",
+      "name": "Assembler / Linker / Loader",
+      "level": 8,
+      "domain": "toolchain",
+      "abstracts": [
+        { "id": "symbol-resolution", "name": "Symbol resolution", "from": ["mnemonics", "control-flow-insns"], "desc": "Name to address mapping" },
+        { "id": "relocation", "name": "Relocation", "from": ["memory-operands", "addressing-modes"], "desc": "Patching addresses at link/load" },
+        { "id": "section-placement", "name": "Section placement", "from": ["memory-operands"], "desc": ".text, .data, .bss, .rodata" },
+        { "id": "library-binding", "name": "Library binding", "from": ["control-flow-insns"], "desc": "Static vs dynamic linking" },
+        { "id": "plt-got", "name": "PLT/GOT mechanism", "from": ["control-flow-insns", "memory-operands"], "desc": "Lazy binding for shared libs" },
+        { "id": "object-format", "name": "Object file format", "from": ["instruction-encoding"], "desc": "ELF, Mach-O, PE/COFF" }
+      ],
+      "exposes": [
+        { "id": "executable-image", "name": "Executable image", "desc": "Loadable program file" },
+        { "id": "entry-point", "name": "Entry point", "desc": "_start, main" },
+        { "id": "memory-regions", "name": "Defined memory regions", "desc": "Code, data, BSS segments" },
+        { "id": "external-symbols", "name": "External symbols", "desc": "For dynamic linking" },
+        { "id": "debug-info", "name": "Debug information", "desc": "DWARF, PDB" }
+      ],
+      "leaks": [
+        { "id": "aslr-relative", "name": "ASLR relative offsets", "desc": "Base randomized, offsets fixed" },
+        { "id": "symbol-visibility", "name": "Symbol visibility", "desc": "Exported symbols visible" },
+        { "id": "abi-compat", "name": "ABI compatibility", "desc": "Binary interface constraints" }
+      ],
+      "escapes": [
+        { "id": "linker-scripts", "name": "Linker scripts", "desc": "Fine control over layout" },
+        { "id": "dlopen", "name": "dlopen/dlsym", "desc": "Runtime library loading" }
+      ]
+    },
+    {
+      "id": "os-kernel",
+      "name": "Operating System (Kernel)",
+      "level": 9,
+      "domain": "system",
+      "abstracts": [
+        { "id": "physical-memory", "name": "Physical memory addresses", "from": ["arch-memory-model", "memory-operands"], "desc": "Actual RAM addresses" },
+        { "id": "page-table-mgmt", "name": "Page table management", "from": ["virtual-memory-support", "tlb"], "desc": "MMU programming" },
+        { "id": "idt", "name": "Interrupt descriptor table", "from": ["interrupt-model"], "desc": "Interrupt vector setup" },
+        { "id": "device-registers", "name": "Device registers", "from": ["memory-operands"], "desc": "MMIO, port I/O" },
+        { "id": "dma-config", "name": "DMA configuration", "from": ["physical-memory"], "desc": "Direct memory access setup" },
+        { "id": "irq-handling", "name": "Interrupt handling / IRQ routing", "from": ["interrupt-model", "idt"], "desc": "Hardware interrupt dispatch" },
+        { "id": "context-switch-impl", "name": "Context switch mechanics", "from": ["arch-registers", "register-names"], "desc": "Save/restore register state" },
+        { "id": "scheduler-internals", "name": "Scheduler internals", "from": ["context-switch-impl"], "desc": "Run queues, CFS, priorities" },
+        { "id": "smp-sync", "name": "SMP synchronization", "from": ["atomic-instructions", "cache-coherence"], "desc": "Kernel spinlocks, RCU" },
+        { "id": "power-states", "name": "Power state management", "from": ["privilege-levels"], "desc": "C-states, P-states" },
+        { "id": "hw-timers", "name": "Hardware timers", "from": ["interrupt-model"], "desc": "HPET, TSC, timekeeping" },
+        { "id": "bios-uefi", "name": "BIOS/UEFI interfaces", "from": ["privilege-levels"], "desc": "Firmware services" },
+        { "id": "acpi-tables", "name": "ACPI tables", "from": ["bios-uefi"], "desc": "Platform configuration" },
+        { "id": "platform-quirks", "name": "Platform-specific quirks", "from": ["acpi-tables", "processor-errata"], "desc": "Hardware workarounds" }
+      ],
+      "exposes": [
+        { "id": "processes", "name": "Processes", "desc": "Isolated execution contexts" },
+        { "id": "threads", "name": "Threads", "desc": "Concurrent execution within process" },
+        { "id": "virtual-memory", "name": "Virtual memory", "desc": "Private address space per process" },
+        { "id": "file-descriptors", "name": "File descriptors", "desc": "Uniform handle for I/O" },
+        { "id": "syscalls", "name": "System calls", "desc": "Kernel interface" },
+        { "id": "signals", "name": "Signals", "desc": "Async notification mechanism" },
+        { "id": "sockets", "name": "Sockets", "desc": "Network abstraction" },
+        { "id": "users-permissions", "name": "Users/permissions", "desc": "Access control" },
+        { "id": "filesystem-api", "name": "Filesystem API", "desc": "open, read, write, close" },
+        { "id": "mmap", "name": "Memory mapping (mmap)", "desc": "Map files/devices to memory" }
+      ],
+      "leaks": [
+        { "id": "scheduling-latency", "name": "Scheduling latency", "desc": "Jitter in process execution" },
+        { "id": "context-switch-cost", "name": "Context switch cost", "desc": "~1-10 μs" },
+        { "id": "page-fault-cost", "name": "Page fault cost", "desc": "~10 μs" },
+        { "id": "syscall-overhead", "name": "System call overhead", "desc": "~100ns - 1μs" },
+        { "id": "cpu-affinity", "name": "CPU affinity effects", "desc": "Migration costs" },
+        { "id": "numa-topology", "name": "NUMA topology", "desc": "Memory access asymmetry" },
+        { "id": "kernel-lock-contention", "name": "Kernel lock contention", "desc": "Scalability limits" },
+        { "id": "proc-sys-exposure", "name": "/proc, /sys exposure", "desc": "Kernel internals visible" }
+      ],
+      "escapes": [
+        { "id": "ioctl", "name": "ioctl", "desc": "Device-specific operations" },
+        { "id": "proc-sys", "name": "/proc, /sys", "desc": "Kernel state access" },
+        { "id": "kernel-modules", "name": "Kernel modules", "desc": "Extend kernel at runtime" },
+        { "id": "ebpf", "name": "eBPF", "desc": "In-kernel programmability" }
+      ]
+    },
+    {
+      "id": "libc",
+      "name": "libc / POSIX",
+      "level": 10,
+      "domain": "runtime",
+      "abstracts": [
+        { "id": "syscall-numbers", "name": "System call numbers", "from": ["syscalls"], "desc": "Platform-specific syscall IDs" },
+        { "id": "syscall-convention", "name": "System call convention", "from": ["syscalls", "register-names"], "desc": "Which registers for args/return" },
+        { "id": "errno-location", "name": "errno location", "from": ["threads"], "desc": "Thread-local error storage" },
+        { "id": "fd-table-internals", "name": "File descriptor table internals", "from": ["file-descriptors"], "desc": "Kernel FD implementation" },
+        { "id": "signal-impl", "name": "Signal implementation", "from": ["signals"], "desc": "Signal delivery mechanics" }
+      ],
+      "exposes": [
+        { "id": "posix-file-api", "name": "POSIX file API", "desc": "open, close, read, write" },
+        { "id": "posix-mmap", "name": "mmap interface", "desc": "Memory mapping" },
+        { "id": "poll-select-epoll", "name": "poll/select/epoll", "desc": "I/O multiplexing" },
+        { "id": "socket-api", "name": "Socket API", "desc": "socket, bind, listen, accept, connect" },
+        { "id": "pthread-api", "name": "pthread API", "desc": "Thread creation and synchronization" },
+        { "id": "stdio", "name": "stdio", "desc": "FILE*, buffered I/O" },
+        { "id": "malloc-free", "name": "malloc/free", "desc": "Heap memory allocation" },
+        { "id": "errno", "name": "errno", "desc": "Error reporting" }
+      ],
+      "leaks": [
+        { "id": "errno-thread-local", "name": "errno thread-locality", "desc": "Must be thread-local" },
+        { "id": "signal-handler-restrict", "name": "Signal handler restrictions", "desc": "Async-signal-safety" },
+        { "id": "stdio-buffering", "name": "Buffering behavior", "desc": "Line vs full buffering" }
+      ],
+      "escapes": [
+        { "id": "syscall-direct", "name": "Direct syscall", "desc": "syscall() function" },
+        { "id": "inline-asm-libc", "name": "Inline assembly", "desc": "Bypass libc entirely" }
+      ]
+    },
+    {
+      "id": "c",
+      "name": "C Language",
+      "level": 11,
+      "domain": "language",
+      "abstracts": [
+        { "id": "register-allocation", "name": "Register allocation", "from": ["register-names", "arch-registers"], "desc": "Compiler assigns registers" },
+        { "id": "instruction-selection", "name": "Instruction selection", "from": ["mnemonics", "isa"], "desc": "Compiler chooses instructions" },
+        { "id": "calling-convention", "name": "Calling convention", "from": ["register-names", "addressing-modes"], "desc": "cdecl, System V, etc." },
+        { "id": "stack-frame-layout", "name": "Stack frame layout", "from": ["register-names", "memory-operands"], "desc": "Prologue/epilogue generation" },
+        { "id": "isa-differences", "name": "ISA differences", "from": ["isa", "mnemonics"], "desc": "Cross-platform compilation" },
+        { "id": "endianness-partial", "name": "Endianness (partial)", "from": ["memory-operands"], "desc": "Byte order differences" }
+      ],
+      "exposes": [
+        { "id": "variables", "name": "Variables", "desc": "Named storage locations" },
+        { "id": "c-types", "name": "Types", "desc": "int, char, float, struct, union, enum" },
+        { "id": "functions", "name": "Functions", "desc": "Named code blocks" },
+        { "id": "expressions", "name": "Expressions", "desc": "Arithmetic, logical, bitwise" },
+        { "id": "control-flow", "name": "Control flow", "desc": "if, while, for, switch, goto" },
+        { "id": "pointers", "name": "Pointers", "desc": "Typed memory addresses" },
+        { "id": "arrays", "name": "Arrays", "desc": "Contiguous typed sequences" },
+        { "id": "preprocessor", "name": "Preprocessor", "desc": "#include, #define, #ifdef" },
+        { "id": "c-structs", "name": "Structs", "desc": "Aggregate data types" }
+      ],
+      "leaks": [
+        { "id": "undefined-behavior", "name": "Undefined behavior", "desc": "Signed overflow, null deref, aliasing, etc." },
+        { "id": "impl-defined", "name": "Implementation-defined behavior", "desc": "sizeof(int), etc." },
+        { "id": "pointer-size", "name": "Pointer size", "desc": "Platform-dependent" },
+        { "id": "alignment-req", "name": "Alignment requirements", "desc": "Type-specific alignment" },
+        { "id": "struct-padding", "name": "Struct padding", "desc": "Invisible padding bytes" },
+        { "id": "stack-vs-heap", "name": "Memory layout", "desc": "Stack vs heap location" }
+      ],
+      "escapes": [
+        { "id": "inline-asm", "name": "Inline assembly", "desc": "asm keyword" },
+        { "id": "volatile", "name": "volatile", "desc": "Prevent optimization" },
+        { "id": "compiler-intrinsics", "name": "Compiler intrinsics", "desc": "__builtin_*, _mm_*" }
+      ]
+    },
+    {
+      "id": "cpp",
+      "name": "C++",
+      "level": 12,
+      "domain": "language",
+      "parent": "c",
+      "abstracts": [
+        { "id": "manual-vtable", "name": "Manual vtable construction", "from": ["pointers", "c-structs"], "desc": "Virtual dispatch mechanism" },
+        { "id": "manual-raii", "name": "Manual RAII patterns", "from": ["functions", "control-flow"], "desc": "Resource cleanup" },
+        { "id": "manual-containers", "name": "Manual type-safe containers", "from": ["pointers", "arrays"], "desc": "Generic data structures" },
+        { "id": "manual-polymorphism", "name": "Manual polymorphism dispatch", "from": ["pointers", "functions"], "desc": "Function pointer tables" }
+      ],
+      "exposes": [
+        { "id": "classes", "name": "Classes", "desc": "Encapsulation, access control" },
+        { "id": "inheritance", "name": "Inheritance", "desc": "Is-a relationships" },
+        { "id": "virtual-functions", "name": "Virtual functions", "desc": "Dynamic dispatch" },
+        { "id": "templates", "name": "Templates", "desc": "Compile-time polymorphism" },
+        { "id": "raii", "name": "RAII", "desc": "Destructor-based cleanup" },
+        { "id": "exceptions", "name": "Exceptions", "desc": "Error propagation" },
+        { "id": "references", "name": "References", "desc": "Safer aliases" },
+        { "id": "namespaces", "name": "Namespaces", "desc": "Name scoping" },
+        { "id": "operator-overloading", "name": "Operator overloading", "desc": "Custom operators" },
+        { "id": "stl", "name": "STL containers", "desc": "vector, map, string, etc." },
+        { "id": "move-semantics", "name": "Move semantics", "desc": "Efficient transfers" },
+        { "id": "smart-pointers", "name": "Smart pointers", "desc": "unique_ptr, shared_ptr" }
+      ],
+      "leaks": [
+        { "id": "abi-instability", "name": "ABI instability", "desc": "Different compilers incompatible" },
+        { "id": "exception-overhead", "name": "Exception overhead", "desc": "Table-based unwinding cost" },
+        { "id": "rtti-overhead", "name": "RTTI overhead", "desc": "Runtime type information" },
+        { "id": "template-bloat", "name": "Template code bloat", "desc": "Instantiation explosion" },
+        { "id": "header-compile-cost", "name": "Header compilation cost", "desc": "Include explosion" },
+        { "id": "implicit-copies", "name": "Implicit copies", "desc": "Hidden expensive copies" }
+      ],
+      "escapes": [
+        { "id": "c-compat", "name": "C compatibility", "desc": "extern \"C\", C-style casts" },
+        { "id": "placement-new", "name": "Placement new", "desc": "Manual memory control" }
+      ]
+    },
+    {
+      "id": "rust",
+      "name": "Rust",
+      "level": 12,
+      "domain": "language",
+      "parent": "c",
+      "abstracts": [
+        { "id": "use-after-free", "name": "Use-after-free", "from": ["pointers", "variables", "malloc-free"], "desc": "Impossible without unsafe" },
+        { "id": "double-free", "name": "Double-free", "from": ["pointers", "malloc-free"], "desc": "Impossible without unsafe" },
+        { "id": "data-races", "name": "Data races", "from": ["threads", "pointers"], "desc": "Impossible without unsafe" },
+        { "id": "null-deref", "name": "Null pointer deref", "from": ["pointers"], "desc": "No null pointers, use Option" },
+        { "id": "buffer-overflow", "name": "Buffer overflows", "from": ["pointers", "arrays"], "desc": "Bounds checking" },
+        { "id": "uninitialized-mem", "name": "Uninitialized memory", "from": ["variables"], "desc": "Must initialize" },
+        { "id": "iterator-invalidation", "name": "Iterator invalidation", "from": ["pointers", "arrays"], "desc": "Borrow checker prevents" }
+      ],
+      "exposes": [
+        { "id": "ownership", "name": "Ownership", "desc": "Single owner per value" },
+        { "id": "borrowing", "name": "Borrowing", "desc": "References with lifetimes" },
+        { "id": "lifetimes", "name": "Lifetimes", "desc": "Explicit scope annotations" },
+        { "id": "move-semantics-rust", "name": "Move semantics (default)", "desc": "Values move, not copy" },
+        { "id": "traits", "name": "Traits", "desc": "Interface abstraction" },
+        { "id": "pattern-matching", "name": "Pattern matching", "desc": "Exhaustive matching" },
+        { "id": "result-option", "name": "Result/Option", "desc": "Explicit error handling" },
+        { "id": "unsafe-blocks", "name": "unsafe blocks", "desc": "Escape hatch, explicitly marked" },
+        { "id": "zero-cost-abstractions", "name": "Zero-cost abstractions", "desc": "No runtime overhead" },
+        { "id": "cargo", "name": "Cargo ecosystem", "desc": "Package management" }
+      ],
+      "leaks": [
+        { "id": "borrow-checker-limits", "name": "Borrow checker limits", "desc": "Some valid programs rejected" },
+        { "id": "lifetime-verbosity", "name": "Lifetime annotation verbosity", "desc": "Complex signatures" },
+        { "id": "interior-mutability", "name": "Interior mutability patterns", "desc": "Cell, RefCell, Mutex" },
+        { "id": "unsafe-exists", "name": "unsafe exists", "desc": "Escape hatch is necessary" },
+        { "id": "compile-time-rust", "name": "Compilation time", "desc": "Slow builds" }
+      ],
+      "escapes": [
+        { "id": "unsafe-rust", "name": "unsafe keyword", "desc": "Raw pointers, FFI" },
+        { "id": "ffi-rust", "name": "FFI", "desc": "Call C code" }
+      ]
+    },
+    {
+      "id": "go",
+      "name": "Go",
+      "level": 12,
+      "domain": "language",
+      "parent": "c",
+      "abstracts": [
+        { "id": "manual-mem-go", "name": "Manual memory management", "from": ["pointers", "malloc-free"], "desc": "GC handles it" },
+        { "id": "thread-creation", "name": "Thread creation/management", "from": ["threads", "pthread-api"], "desc": "Goroutine scheduler" },
+        { "id": "thread-pool-sizing", "name": "Thread pool sizing", "from": ["threads"], "desc": "Runtime manages" },
+        { "id": "header-files", "name": "Header files", "from": ["preprocessor"], "desc": "Package system instead" }
+      ],
+      "exposes": [
+        { "id": "goroutines", "name": "Goroutines", "desc": "Lightweight green threads" },
+        { "id": "channels", "name": "Channels", "desc": "Typed communication" },
+        { "id": "interfaces-go", "name": "Interfaces", "desc": "Structural typing" },
+        { "id": "slices", "name": "Slices", "desc": "Fat pointers to arrays" },
+        { "id": "maps-go", "name": "Maps", "desc": "Built-in hash tables" },
+        { "id": "defer", "name": "defer", "desc": "Cleanup scheduling" },
+        { "id": "multiple-return", "name": "Multiple return values", "desc": "Error handling pattern" },
+        { "id": "packages-go", "name": "Package system", "desc": "Import paths" }
+      ],
+      "leaks": [
+        { "id": "gc-pauses", "name": "GC pauses", "desc": "Stop-the-world (improved but exists)" },
+        { "id": "goroutine-scheduling", "name": "Goroutine scheduling", "desc": "Non-deterministic" },
+        { "id": "stack-copying", "name": "Stack copying", "desc": "Goroutine stacks grow" },
+        { "id": "escape-analysis", "name": "Escape analysis", "desc": "Heap vs stack decision" },
+        { "id": "race-detector-gaps", "name": "Race detector gaps", "desc": "Doesn't catch everything" }
+      ],
+      "escapes": [
+        { "id": "unsafe-go", "name": "unsafe package", "desc": "Pointer arithmetic" },
+        { "id": "cgo", "name": "cgo", "desc": "Call C code" },
+        { "id": "runtime-go", "name": "runtime package", "desc": "Scheduler control" }
+      ]
+    },
+    {
+      "id": "python",
+      "name": "Python (CPython)",
+      "level": 13,
+      "domain": "language",
+      "abstracts": [
+        { "id": "mem-alloc-py", "name": "Memory allocation", "from": ["pointers", "malloc-free", "virtual-memory"], "desc": "Reference counting + GC" },
+        { "id": "type-repr-py", "name": "Type representation", "from": ["c-types", "c-structs"], "desc": "Everything is PyObject" },
+        { "id": "method-dispatch", "name": "Method dispatch", "from": ["functions", "pointers"], "desc": "Dynamic lookup" },
+        { "id": "int-overflow-py", "name": "Integer overflow", "from": ["c-types"], "desc": "Arbitrary precision" },
+        { "id": "buffer-mgmt", "name": "Buffer management", "from": ["arrays", "pointers"], "desc": "String/bytes internals" }
+      ],
+      "exposes": [
+        { "id": "objects-py", "name": "Everything is an object", "desc": "Uniform object model" },
+        { "id": "dynamic-typing", "name": "Dynamic typing", "desc": "Types checked at runtime" },
+        { "id": "duck-typing", "name": "Duck typing", "desc": "Interface by convention" },
+        { "id": "collections-py", "name": "High-level collections", "desc": "list, dict, set, tuple" },
+        { "id": "iterators-generators", "name": "Iterators/generators", "desc": "Lazy evaluation" },
+        { "id": "exceptions-py", "name": "Exceptions", "desc": "Pervasive error handling" },
+        { "id": "classes-py", "name": "Classes", "desc": "With dynamic attributes" },
+        { "id": "decorators", "name": "Decorators", "desc": "Function transformation" },
+        { "id": "context-managers", "name": "Context managers", "desc": "with statement" },
+        { "id": "comprehensions", "name": "Comprehensions", "desc": "Declarative collection building" }
+      ],
+      "leaks": [
+        { "id": "performance-py", "name": "Performance", "desc": "~10-100x slower than C" },
+        { "id": "gil", "name": "GIL", "desc": "No true thread parallelism" },
+        { "id": "reference-cycles", "name": "Reference cycles", "desc": "Need gc module" },
+        { "id": "object-overhead", "name": "Object overhead", "desc": "~28 bytes per object baseline" }
+      ],
+      "escapes": [
+        { "id": "c-extension-api", "name": "C extension API", "desc": "Write extensions in C" },
+        { "id": "ctypes", "name": "ctypes", "desc": "Call C libraries" },
+        { "id": "cffi", "name": "cffi", "desc": "Foreign function interface" },
+        { "id": "cython", "name": "Cython", "desc": "Compile to C" }
+      ]
+    },
+    {
+      "id": "jvm",
+      "name": "JVM / Java / Kotlin",
+      "level": 13,
+      "domain": "language",
+      "abstracts": [
+        { "id": "mem-alloc-jvm", "name": "Memory allocation", "from": ["malloc-free", "pointers"], "desc": "Garbage collection" },
+        { "id": "machine-code-jvm", "name": "Machine code generation", "from": ["isa", "mnemonics"], "desc": "JIT compilation" },
+        { "id": "platform-differences", "name": "Platform differences", "from": ["isa-differences"], "desc": "Write once run anywhere" },
+        { "id": "pointer-arithmetic-jvm", "name": "Pointer arithmetic", "from": ["pointers"], "desc": "References only" }
+      ],
+      "exposes": [
+        { "id": "bytecode", "name": "Bytecode", "desc": "Platform-independent instructions" },
+        { "id": "classes-jvm", "name": "Classes", "desc": "OOP model" },
+        { "id": "interfaces-jvm", "name": "Interfaces", "desc": "Multiple inheritance of type" },
+        { "id": "generics-jvm", "name": "Generics", "desc": "Type parameterization" },
+        { "id": "exceptions-jvm", "name": "Exceptions", "desc": "Checked and unchecked" },
+        { "id": "classloader", "name": "Class loading", "desc": "Dynamic code loading" },
+        { "id": "reflection-jvm", "name": "Reflection", "desc": "Runtime type inspection" },
+        { "id": "jni", "name": "JNI", "desc": "Native code interface" }
+      ],
+      "leaks": [
+        { "id": "gc-pauses-jvm", "name": "GC pauses", "desc": "Stop-the-world (tunable)" },
+        { "id": "warmup-time", "name": "Warmup time", "desc": "JIT compilation delay" },
+        { "id": "memory-footprint", "name": "Memory footprint", "desc": "JVM overhead" },
+        { "id": "type-erasure", "name": "Type erasure", "desc": "Generics not reified" }
+      ],
+      "escapes": [
+        { "id": "jni-escape", "name": "JNI", "desc": "Call native code" },
+        { "id": "unsafe-jvm", "name": "sun.misc.Unsafe", "desc": "Direct memory access" }
+      ]
+    },
+    {
+      "id": "linux-drivers",
+      "name": "Linux Device Drivers",
+      "level": 10,
+      "domain": "system",
+      "abstracts": [
+        { "id": "hw-register-addr", "name": "Hardware register addresses", "from": ["device-registers", "memory-operands"], "desc": "MMIO addresses" },
+        { "id": "interrupt-numbers", "name": "Interrupt numbers", "from": ["irq-handling"], "desc": "IRQ assignment" },
+        { "id": "dma-setup", "name": "DMA setup", "from": ["dma-config", "physical-memory"], "desc": "DMA descriptors" },
+        { "id": "init-sequence", "name": "Device init sequence", "from": ["device-registers"], "desc": "Power-on, reset, config" },
+        { "id": "power-mgmt", "name": "Power management", "from": ["power-states"], "desc": "Suspend/resume" },
+        { "id": "bus-protocols-phys", "name": "Bus physical layer", "from": ["device-registers"], "desc": "PCI, USB, I2C, SPI signaling" }
+      ],
+      "exposes": [
+        { "id": "dev-file", "name": "/dev/xxx device file", "desc": "Character or block device" },
+        { "id": "file-ops", "name": "File operations", "desc": "read, write, ioctl, mmap" },
+        { "id": "sysfs-attrs", "name": "sysfs attributes", "desc": "/sys/class/xxx" },
+        { "id": "udev-events", "name": "udev events", "desc": "Hotplug notification" },
+        { "id": "netdev", "name": "Network device", "desc": "For network drivers" }
+      ],
+      "leaks": [
+        { "id": "no-realtime", "name": "No hard real-time", "desc": "Kernel latency" },
+        { "id": "ioctl-magic", "name": "ioctl magic numbers", "desc": "Device-specific" },
+        { "id": "buffer-constraints", "name": "Buffer size constraints", "desc": "Device limitations" },
+        { "id": "device-error-codes", "name": "Device-specific errors", "desc": "Beyond POSIX errno" }
+      ],
+      "escapes": [
+        { "id": "mmap-registers", "name": "mmap registers", "desc": "Userspace MMIO" },
+        { "id": "uio", "name": "UIO", "desc": "Userspace I/O drivers" },
+        { "id": "vfio", "name": "VFIO", "desc": "Userspace with IOMMU" }
+      ]
+    },
+    {
+      "id": "virtualization",
+      "name": "Virtualization (Hypervisor)",
+      "level": 9,
+      "domain": "system",
+      "abstracts": [
+        { "id": "real-hardware", "name": "Real hardware", "from": ["device-registers", "interrupt-model"], "desc": "Physical devices" },
+        { "id": "physical-cpu", "name": "Physical CPU", "from": ["arch-registers", "privilege-levels"], "desc": "Actual cores" },
+        { "id": "physical-mem-hyp", "name": "Physical memory", "from": ["arch-memory-model"], "desc": "Actual RAM" },
+        { "id": "host-os", "name": "Host OS (Type 2)", "from": ["processes", "virtual-memory"], "desc": "For hosted hypervisors" }
+      ],
+      "exposes": [
+        { "id": "virtual-cpu", "name": "Virtual CPU", "desc": "vCPUs" },
+        { "id": "virtual-memory-hyp", "name": "Virtual memory (guest physical)", "desc": "Guest physical address space" },
+        { "id": "virtual-devices", "name": "Virtual devices", "desc": "Emulated or paravirt" },
+        { "id": "vm-isolation", "name": "VM isolation", "desc": "Separate guests" },
+        { "id": "live-migration", "name": "Live migration", "desc": "Move VMs between hosts" }
+      ],
+      "leaks": [
+        { "id": "vm-exit-cost", "name": "VM exit cost", "desc": "Trap to hypervisor overhead" },
+        { "id": "nested-paging", "name": "Nested paging overhead", "desc": "EPT/NPT walk" },
+        { "id": "interrupt-virtualization", "name": "Interrupt virtualization overhead", "desc": "Virtual APIC" },
+        { "id": "side-channels-vm", "name": "Cross-VM side channels", "desc": "Cache timing attacks" }
+      ],
+      "escapes": [
+        { "id": "paravirt", "name": "Paravirtualization", "desc": "Guest-aware optimizations" },
+        { "id": "device-passthrough", "name": "Device passthrough", "desc": "Direct hardware access" },
+        { "id": "hypercalls", "name": "Hypercalls", "desc": "Guest to hypervisor calls" }
+      ]
+    },
+    {
+      "id": "containers",
+      "name": "Containers (Linux)",
+      "level": 10,
+      "domain": "system",
+      "abstracts": [
+        { "id": "host-filesystem", "name": "Host filesystem", "from": ["filesystem-api"], "desc": "Mount namespaces" },
+        { "id": "host-network", "name": "Host network", "from": ["sockets"], "desc": "Network namespaces" },
+        { "id": "host-pids", "name": "Host PIDs", "from": ["processes"], "desc": "PID namespaces" },
+        { "id": "host-users", "name": "Host users", "from": ["users-permissions"], "desc": "User namespaces" },
+        { "id": "resource-limits", "name": "Unlimited resources", "from": ["processes", "virtual-memory"], "desc": "cgroups limits" }
+      ],
+      "exposes": [
+        { "id": "container-rootfs", "name": "Container rootfs", "desc": "Isolated filesystem view" },
+        { "id": "container-network", "name": "Container network", "desc": "Virtual network interface" },
+        { "id": "container-pids", "name": "Container PID space", "desc": "PID 1 in container" },
+        { "id": "resource-quotas", "name": "Resource quotas", "desc": "CPU, memory limits" },
+        { "id": "image-layers", "name": "Image layers", "desc": "Union filesystem" }
+      ],
+      "leaks": [
+        { "id": "shared-kernel", "name": "Shared kernel", "desc": "Same kernel as host" },
+        { "id": "kernel-exploits", "name": "Kernel exploit exposure", "desc": "Container escape risk" },
+        { "id": "side-channels-container", "name": "Side channels", "desc": "Cache, timing attacks" },
+        { "id": "noisy-neighbor", "name": "Noisy neighbor", "desc": "Resource contention" }
+      ],
+      "escapes": [
+        { "id": "privileged-mode", "name": "Privileged mode", "desc": "Full capabilities" },
+        { "id": "host-mounts", "name": "Host mounts", "desc": "Bind mount host paths" },
+        { "id": "host-network-mode", "name": "Host network mode", "desc": "Share host network namespace" }
+      ]
+    }
+  ],
+  "cross_cutting": {
+    "networking": {
+      "name": "Networking Stack",
+      "layers": [
+        {
+          "id": "net-physical",
+          "name": "Physical (PHY)",
+          "abstracts": ["EM signaling", "modulation", "symbol timing"],
+          "exposes": ["bit stream", "link status", "auto-negotiation"]
+        },
+        {
+          "id": "net-link",
+          "name": "Link (MAC/Ethernet)",
+          "abstracts": ["bit stream", "collision detection", "framing"],
+          "exposes": ["frames", "MAC addresses", "VLAN tags", "MTU"]
+        },
+        {
+          "id": "net-network",
+          "name": "Network (IP)",
+          "abstracts": ["MAC addresses", "local topology", "ARP"],
+          "exposes": ["IP addresses", "routing", "fragmentation", "TTL"]
+        },
+        {
+          "id": "net-transport",
+          "name": "Transport (TCP/UDP)",
+          "abstracts": ["packet loss", "reordering", "duplication", "flow control"],
+          "exposes": ["ports", "reliable streams (TCP)", "datagrams (UDP)"]
+        },
+        {
+          "id": "net-session",
+          "name": "Session/Security (TLS)",
+          "abstracts": ["key exchange", "cipher negotiation", "certificate validation"],
+          "exposes": ["encrypted channel", "peer identity"]
+        },
+        {
+          "id": "net-application",
+          "name": "Application (HTTP)",
+          "abstracts": ["connection management", "framing", "compression"],
+          "exposes": ["request/response", "headers", "methods", "status codes"]
+        }
+      ]
+    },
+    "storage": {
+      "name": "Storage Stack",
+      "layers": [
+        {
+          "id": "store-physical",
+          "name": "Physical Media",
+          "abstracts": ["magnetic domains", "NAND cells", "wear leveling"],
+          "exposes": ["sectors/pages", "read/write/erase"]
+        },
+        {
+          "id": "store-block",
+          "name": "Block Device",
+          "abstracts": ["sector addressing", "DMA", "command queuing"],
+          "exposes": ["block read/write", "/dev/sdX"]
+        },
+        {
+          "id": "store-fs",
+          "name": "Filesystem",
+          "abstracts": ["block allocation", "journaling", "inodes"],
+          "exposes": ["files", "directories", "permissions", "paths"]
+        },
+        {
+          "id": "store-vfs",
+          "name": "VFS",
+          "abstracts": ["filesystem differences", "mount points"],
+          "exposes": ["uniform file API", "file descriptors"]
+        }
+      ]
+    },
+    "graphics": {
+      "name": "Graphics Stack",
+      "layers": [
+        {
+          "id": "gfx-display",
+          "name": "Display",
+          "abstracts": ["LCD/OLED physics", "pixel timing", "gamma"],
+          "exposes": ["framebuffer", "resolution", "refresh rate"]
+        },
+        {
+          "id": "gfx-gpu-hw",
+          "name": "GPU Hardware",
+          "abstracts": ["shader cores", "memory controllers", "command processors"],
+          "exposes": ["command buffers", "memory objects", "synchronization"]
+        },
+        {
+          "id": "gfx-driver",
+          "name": "GPU Driver",
+          "abstracts": ["hardware registers", "memory management", "scheduling"],
+          "exposes": ["kernel mode setting", "DRM/DRI", "command submission"]
+        },
+        {
+          "id": "gfx-api",
+          "name": "Graphics API (Vulkan/OpenGL)",
+          "abstracts": ["driver differences", "command buffer building"],
+          "exposes": ["draw calls", "shaders", "textures", "pipelines"]
+        },
+        {
+          "id": "gfx-engine",
+          "name": "Game Engine / UI Toolkit",
+          "abstracts": ["draw call batching", "shader management", "GPU sync"],
+          "exposes": ["scene graph", "widgets", "materials"]
+        }
+      ]
+    },
+    "embedded-io": {
+      "name": "Embedded I/O (SPI Example)",
+      "layers": [
+        {
+          "id": "spi-electrical",
+          "name": "Electrical",
+          "abstracts": ["signal integrity", "termination", "crosstalk"],
+          "exposes": ["MOSI, MISO, CLK, CS lines", "voltage levels"]
+        },
+        {
+          "id": "spi-protocol",
+          "name": "Protocol",
+          "abstracts": ["bit timing", "clock polarity/phase"],
+          "exposes": ["byte/word transfer", "CS framing", "full duplex"]
+        },
+        {
+          "id": "spi-peripheral",
+          "name": "SoC Peripheral",
+          "abstracts": ["FIFO depth", "interrupt flags", "DMA descriptors"],
+          "exposes": ["register interface", "transfer complete status"]
+        },
+        {
+          "id": "spi-driver",
+          "name": "Linux Driver",
+          "abstracts": ["registers", "DMA", "interrupts"],
+          "exposes": ["/dev/spidevX.Y", "ioctl interface"]
+        },
+        {
+          "id": "spi-userspace",
+          "name": "Userspace Library",
+          "abstracts": ["ioctl details", "buffer management"],
+          "exposes": ["spi.xfer([bytes])", "mode/speed config"]
+        }
+      ]
+    }
+  }
+}
