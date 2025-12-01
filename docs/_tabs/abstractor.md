@@ -74,4 +74,14 @@ Physics at center, higher abstractions in outer rings.
   <div id="viz-radial" class="viz-container"></div>
 </div>
 
+---
+
+## 5. Thread Explorer
+
+Click any concept to trace its thread. Hierarchical colors with gradient connections.
+
+<div class="viz-section">
+  <div id="viz-tower2" class="viz-container"></div>
+</div>
+
 <script src="{{ '/assets/js/abstractor-viz.js' | relative_url }}"></script>
