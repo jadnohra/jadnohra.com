@@ -282,18 +282,6 @@ order: 3
   border-color: #3b82f6;
   color: #e2e8f0;
 }
-.profile-layers {
-  font-size: 9px;
-  color: #64748b;
-  background: rgba(255,255,255,0.08);
-  padding: 2px 5px;
-  border-radius: 3px;
-  margin-left: 2px;
-}
-.profile-btn.selected .profile-layers {
-  color: #94a3b8;
-  background: rgba(255,255,255,0.12);
-}
 
 /* Engineer mode concept styling */
 .concept.engineer-highlight {
@@ -318,7 +306,7 @@ Every layer in computing—hardware or software—can be understood as an **abst
 <div id="engineers-bar">
   <div class="engineers-header">
     <span class="engineers-toggle">▶</span>
-    <span>Engineers</span>
+    <span>Engineering Profiles</span>
   </div>
   <div class="engineers-content"></div>
 </div>

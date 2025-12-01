@@ -105,8 +105,7 @@
       const btn = document.createElement('button');
       btn.className = 'profile-btn';
       btn.dataset.profileId = profile.id;
-      const layerBadge = profile.layers ? `<span class="profile-layers">${profile.layers}</span>` : '';
-      btn.innerHTML = `<span>${profile.name}</span>${layerBadge}`;
+      btn.innerHTML = `<span>${profile.name}</span>`;
       btn.title = profile.desc;
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
