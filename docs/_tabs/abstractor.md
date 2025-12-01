@@ -69,22 +69,9 @@ order: 3
 .concept.inactive {
   opacity: 0.15;
 }
-.clear-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 4px 12px;
-  font-size: 11px;
-  font-family: inherit;
-  background: #334155;
-  color: #e2e8f0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 20;
-}
-.clear-btn:hover {
-  background: #475569;
+.layer-group.highlighted {
+  border: 1px solid currentColor;
+  box-shadow: 0 0 8px currentColor;
 }
 </style>
 

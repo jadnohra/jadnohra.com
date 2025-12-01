@@ -75,10 +75,8 @@
     const gridDiv = document.createElement('div');
     gridDiv.className = 'grid-container';
 
-    // Clear button
-    const clearBtn = document.createElement('button');
-    clearBtn.className = 'clear-btn';
-    clearBtn.textContent = 'Clear';
+    // Track highlighted layer groups
+    const layerGroups = {};
 
     const conceptElements = {};
     const layerHeaders = {};
@@ -88,6 +86,8 @@
     sortedLayers.forEach(layer => {
       const group = document.createElement('div');
       group.className = 'layer-group';
+      group.dataset.layerId = layer.id;
+      layerGroups[layer.id] = group;
 
       const header = document.createElement('div');
       header.className = 'layer-header';
@@ -114,7 +114,6 @@
 
     container.appendChild(svg);
     container.appendChild(gridDiv);
-    container.appendChild(clearBtn);
 
     // State
     let selectedId = null;
@@ -178,9 +177,18 @@
       };
     }
 
+    // Clear layer highlights
+    function clearLayerHighlights() {
+      Object.values(layerGroups).forEach(group => {
+        group.classList.remove('highlighted');
+        group.style.color = '';
+      });
+    }
+
     // Draw connections on hover - collapse to layer if >50% connected
     function drawConnections(id) {
       svg.innerHTML = '';
+      clearLayerHighlights();
       const fromPos = getPos(id);
       if (!fromPos) return;
 
@@ -202,9 +210,13 @@
         const layer = layerById[layerId];
         const threshold = Math.ceil(layer.exposes.length * 0.5);
         if (deps.length >= threshold && layer.exposes.length > 2) {
-          // Draw to layer header instead
+          // Draw to layer header instead and highlight the layer group
           const headerPos = getHeaderPos(layerId);
-          if (headerPos) drawLine(headerPos, fromPos, color);
+          if (headerPos) {
+            drawLine(headerPos, fromPos, color);
+            layerGroups[layerId].classList.add('highlighted');
+            layerGroups[layerId].style.color = color;
+          }
         } else {
           // Draw to individual concepts
           deps.forEach(depId => {
@@ -229,9 +241,13 @@
         const layer = layerById[layerId];
         const threshold = Math.ceil(layer.exposes.length * 0.5);
         if (deps.length >= threshold && layer.exposes.length > 2) {
-          // Draw to layer header instead
+          // Draw to layer header instead and highlight the layer group
           const headerPos = getHeaderPos(layerId);
-          if (headerPos) drawLine(fromPos, headerPos, color);
+          if (headerPos) {
+            drawLine(fromPos, headerPos, color);
+            layerGroups[layerId].classList.add('highlighted');
+            layerGroups[layerId].style.color = color;
+          }
         } else {
           // Draw to individual concepts
           deps.forEach(depId => {
@@ -244,12 +260,34 @@
 
     function drawLine(from, to, color) {
       const path = document.createElementNS(svgNS, 'path');
-      const x1 = from.right || from.x;
+      // Use center points for more flexible curves
+      const x1 = from.x;
       const y1 = from.y;
-      const x2 = to.left || to.x;
+      const x2 = to.x;
       const y2 = to.y;
 
-      path.setAttribute('d', `M${x1},${y1} C${x1 + 30},${y1} ${x2 - 30},${y2} ${x2},${y2}`);
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const offset = Math.min(50, Math.max(20, dist * 0.3));
+
+      // Adaptive control points based on direction
+      let cx1, cy1, cx2, cy2;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        // More horizontal - curve horizontally
+        cx1 = x1 + (dx > 0 ? offset : -offset);
+        cy1 = y1;
+        cx2 = x2 + (dx > 0 ? -offset : offset);
+        cy2 = y2;
+      } else {
+        // More vertical - curve vertically
+        cx1 = x1;
+        cy1 = y1 + (dy > 0 ? offset : -offset);
+        cx2 = x2;
+        cy2 = y2 + (dy > 0 ? -offset : offset);
+      }
+
+      path.setAttribute('d', `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`);
       path.setAttribute('fill', 'none');
       path.setAttribute('stroke', color);
       path.setAttribute('stroke-width', '1.5');
@@ -272,7 +310,7 @@
       });
     }
 
-    // Click handler
+    // Click handler - toggle selection
     gridDiv.addEventListener('click', (e) => {
       const concept = e.target.closest('.concept');
       if (!concept) {
@@ -280,13 +318,23 @@
         selectedId = null;
         updateState(null);
         svg.innerHTML = '';
+        clearLayerHighlights();
         return;
       }
 
       const id = concept.dataset.id;
-      selectedId = id;
-      const inThread = traceThread(id);
-      updateState(inThread);
+      if (selectedId === id) {
+        // Toggle off if clicking same concept
+        selectedId = null;
+        updateState(null);
+        svg.innerHTML = '';
+        clearLayerHighlights();
+      } else {
+        // Select new concept
+        selectedId = id;
+        const inThread = traceThread(id);
+        updateState(inThread);
+      }
     });
 
     // Hover handler
@@ -301,14 +349,8 @@
       const concept = e.target.closest('.concept');
       if (concept) {
         svg.innerHTML = '';
+        clearLayerHighlights();
       }
-    });
-
-    // Clear button
-    clearBtn.addEventListener('click', () => {
-      selectedId = null;
-      updateState(null);
-      svg.innerHTML = '';
     });
 
     // Update SVG size
