@@ -54,9 +54,9 @@
       "abstracts": [
         { "id": "junction-physics", "name": "Junction physics", "from": ["pn-junction", "field-effect"], "desc": "Internal semiconductor behavior" },
         { "id": "analog-voltages", "name": "Analog voltage levels", "from": ["voltage-potential"], "desc": "Continuous voltage values" },
-        { "id": "subthreshold-leakage", "name": "Subthreshold leakage", "from": ["electron-flow", "quantum-tunneling"], "desc": "Current when 'off'" },
+        { "id": "subthreshold-leakage", "name": "Subthreshold leakage", "from": ["electron-flow"], "desc": "Current when 'off'" },
         { "id": "gate-capacitance", "name": "Gate capacitance", "from": ["capacitance", "field-effect"], "desc": "Charge needed to switch" },
-        { "id": "channel-formation", "name": "Channel formation", "from": ["field-effect", "carrier-mobility"], "desc": "How conduction path forms" }
+        { "id": "channel-formation", "name": "Channel formation", "from": ["field-effect"], "desc": "How conduction path forms" }
       ],
       "exposes": [
         { "id": "binary-switching", "name": "Binary switching (on/off)", "desc": "Two stable states" },
@@ -82,12 +82,12 @@
         { "id": "transistor-topology", "name": "Transistor topology", "from": ["binary-switching"], "desc": "Which transistors form the gate" },
         { "id": "cmos-implementation", "name": "CMOS pull-up/pull-down", "from": ["binary-switching", "drive-strength"], "desc": "Complementary transistor networks" },
         { "id": "noise-margins", "name": "Noise margins", "from": ["threshold-voltage", "binary-switching"], "desc": "Tolerance to voltage noise" },
-        { "id": "fanout-limits", "name": "Fan-out limitations", "from": ["drive-strength", "gate-capacitance"], "desc": "How many gates can be driven" },
+        { "id": "fanout-limits", "name": "Fan-out limitations", "from": ["drive-strength", "switching-speed"], "desc": "How many gates can be driven" },
         { "id": "prop-delay-details", "name": "Propagation delay internals", "from": ["switching-speed", "on-resistance"], "desc": "RC delay through gate" },
         { "id": "rise-fall-asymmetry", "name": "Rise/fall time asymmetry", "from": ["drive-strength"], "desc": "PMOS vs NMOS speed difference" },
-        { "id": "static-power", "name": "Static power consumption", "from": ["subthreshold-leakage"], "desc": "Power when not switching" },
-        { "id": "dynamic-power", "name": "Dynamic power consumption", "from": ["gate-capacitance", "switching-speed"], "desc": "Power during transitions" },
-        { "id": "glitch-hazards", "name": "Glitches / hazards", "from": ["prop-delay-details"], "desc": "Transient incorrect outputs" }
+        { "id": "static-power", "name": "Static power consumption", "from": ["binary-switching"], "desc": "Power when not switching" },
+        { "id": "dynamic-power", "name": "Dynamic power consumption", "from": ["switching-speed"], "desc": "Power during transitions" },
+        { "id": "glitch-hazards", "name": "Glitches / hazards", "from": ["switching-speed"], "desc": "Transient incorrect outputs" }
       ],
       "exposes": [
         { "id": "boolean-functions", "name": "Boolean functions", "desc": "AND, OR, NOT, XOR, NAND, NOR" },
@@ -109,13 +109,13 @@
       "domain": "digital",
       "abstracts": [
         { "id": "feedback-loops", "name": "Feedback loop implementation", "from": ["boolean-functions", "deterministic-logic"], "desc": "Cross-coupled gates for memory" },
-        { "id": "setup-time", "name": "Setup time", "from": ["gate-delay", "prop-delay-details"], "desc": "Data must be stable before clock" },
+        { "id": "setup-time", "name": "Setup time", "from": ["gate-delay"], "desc": "Data must be stable before clock" },
         { "id": "hold-time", "name": "Hold time", "from": ["gate-delay"], "desc": "Data must be stable after clock" },
         { "id": "clock-to-q", "name": "Clock-to-Q delay", "from": ["gate-delay"], "desc": "Time from clock to output change" },
-        { "id": "metastability-window", "name": "Metastability window", "from": ["analog-voltages", "deterministic-logic"], "desc": "When flip-flop can't decide" },
-        { "id": "recovery-time", "name": "Metastability recovery time", "from": ["metastability-window"], "desc": "Time to resolve metastable state" },
+        { "id": "metastability-window", "name": "Metastability window", "from": ["logic-levels", "deterministic-logic"], "desc": "When flip-flop can't decide" },
+        { "id": "recovery-time", "name": "Metastability recovery time", "from": ["logic-levels", "gate-delay"], "desc": "Time to resolve metastable state" },
         { "id": "clock-skew", "name": "Clock skew between registers", "from": ["gate-delay", "timing-paths"], "desc": "Clock arrives at different times" },
-        { "id": "reset-sync", "name": "Reset synchronization", "from": ["metastability-window"], "desc": "Async reset crossing clock domain" }
+        { "id": "reset-sync", "name": "Reset synchronization", "from": ["logic-levels", "deterministic-logic"], "desc": "Async reset crossing clock domain" }
       ],
       "exposes": [
         { "id": "state-storage", "name": "Stable state storage", "desc": "Bit is remembered until changed" },
@@ -140,8 +140,8 @@
       "domain": "digital",
       "abstracts": [
         { "id": "gate-netlists", "name": "Gate-level netlists", "from": ["boolean-functions", "state-storage"], "desc": "Specific gate instances and wires" },
-        { "id": "timing-constraints", "name": "Detailed timing constraints", "from": ["setup-time", "hold-time", "clock-to-q"], "desc": "Synthesis handles timing" },
-        { "id": "physical-placement", "name": "Physical placement", "from": ["gate-delay", "clock-skew"], "desc": "Where gates go on die" },
+        { "id": "timing-constraints", "name": "Detailed timing constraints", "from": ["clocked-updates", "synchronous-behavior"], "desc": "Synthesis handles timing" },
+        { "id": "physical-placement", "name": "Physical placement", "from": ["gate-delay", "synchronous-behavior"], "desc": "Where gates go on die" },
         { "id": "routing", "name": "Wire routing", "from": ["gate-delay"], "desc": "How signals connect" }
       ],
       "exposes": [
@@ -174,17 +174,17 @@
         { "id": "register-renaming", "name": "Register renaming", "from": ["register-file"], "desc": "Physical vs architectural registers" },
         { "id": "reorder-buffer", "name": "Reorder buffer", "from": ["state-storage"], "desc": "In-order retirement" },
         { "id": "reservation-stations", "name": "Reservation stations", "from": ["state-storage"], "desc": "Waiting for operands" },
-        { "id": "speculative-execution", "name": "Speculative execution", "from": ["state-storage", "branch-prediction"], "desc": "Execute before knowing if needed" },
+        { "id": "speculative-execution", "name": "Speculative execution", "from": ["state-storage", "register-file"], "desc": "Execute before knowing if needed" },
         { "id": "store-buffer", "name": "Store buffer", "from": ["state-storage"], "desc": "Pending stores" },
         { "id": "load-queue", "name": "Load queue", "from": ["state-storage"], "desc": "Pending loads, forwarding" },
-        { "id": "memory-ordering", "name": "Memory ordering enforcement", "from": ["store-buffer", "load-queue"], "desc": "Ensuring correct memory semantics" },
+        { "id": "memory-ordering", "name": "Memory ordering enforcement", "from": ["state-storage", "synchronous-behavior"], "desc": "Ensuring correct memory semantics" },
         { "id": "cache-hierarchy", "name": "Cache hierarchy", "from": ["state-storage", "register-file"], "desc": "L1, L2, L3 caches" },
-        { "id": "cache-coherence", "name": "Cache coherence protocol", "from": ["cache-hierarchy"], "desc": "MESI, MOESI protocols" },
+        { "id": "cache-coherence", "name": "Cache coherence protocol", "from": ["state-storage", "register-file"], "desc": "MESI, MOESI protocols" },
         { "id": "tlb", "name": "TLB", "from": ["state-storage"], "desc": "Translation lookaside buffer" },
-        { "id": "prefetchers", "name": "Prefetchers", "from": ["cache-hierarchy"], "desc": "Stride, stream, spatial prefetch" },
+        { "id": "prefetchers", "name": "Prefetchers", "from": ["state-storage"], "desc": "Stride, stream, spatial prefetch" },
         { "id": "micro-op-decomposition", "name": "Micro-op decomposition", "from": ["state-storage"], "desc": "Complex instructions split" },
-        { "id": "micro-op-fusion", "name": "Micro-op fusion", "from": ["micro-op-decomposition"], "desc": "Combining micro-ops" },
-        { "id": "smt", "name": "Simultaneous multithreading", "from": ["register-file", "ooo-execution"], "desc": "Hyperthreading" },
+        { "id": "micro-op-fusion", "name": "Micro-op fusion", "from": ["state-storage"], "desc": "Combining micro-ops" },
+        { "id": "smt", "name": "Simultaneous multithreading", "from": ["register-file", "state-storage"], "desc": "Hyperthreading" },
         { "id": "interrupt-microcode", "name": "Interrupt handling microcode", "from": ["state-storage"], "desc": "Microcode for exceptions" }
       ],
       "exposes": [
@@ -218,7 +218,7 @@
         { "id": "opcode-maps", "name": "Opcode maps", "from": ["isa"], "desc": "Opcode to instruction mapping" },
         { "id": "modrm-sib", "name": "ModR/M, SIB bytes (x86)", "from": ["isa"], "desc": "Addressing mode encoding" },
         { "id": "immediate-encoding", "name": "Immediate encoding", "from": ["isa"], "desc": "How constants are encoded" },
-        { "id": "microcode-rom", "name": "Microcode ROM", "from": ["micro-op-decomposition"], "desc": "Complex instruction implementation" },
+        { "id": "microcode-rom", "name": "Microcode ROM", "from": ["isa"], "desc": "Complex instruction implementation" },
         { "id": "undocumented-instructions", "name": "Undocumented instructions", "from": ["isa"], "desc": "CPU-specific hidden features" },
         { "id": "processor-errata", "name": "Processor errata", "from": ["isa"], "desc": "Known CPU bugs" }
       ],
@@ -251,7 +251,7 @@
         { "id": "section-placement", "name": "Section placement", "from": ["memory-operands"], "desc": ".text, .data, .bss, .rodata" },
         { "id": "library-binding", "name": "Library binding", "from": ["control-flow-insns"], "desc": "Static vs dynamic linking" },
         { "id": "plt-got", "name": "PLT/GOT mechanism", "from": ["control-flow-insns", "memory-operands"], "desc": "Lazy binding for shared libs" },
-        { "id": "object-format", "name": "Object file format", "from": ["instruction-encoding"], "desc": "ELF, Mach-O, PE/COFF" }
+        { "id": "object-format", "name": "Object file format", "from": ["mnemonics"], "desc": "ELF, Mach-O, PE/COFF" }
       ],
       "exposes": [
         { "id": "executable-image", "name": "Executable image", "desc": "Loadable program file" },
@@ -277,19 +277,19 @@
       "domain": "system",
       "abstracts": [
         { "id": "physical-memory", "name": "Physical memory addresses", "from": ["arch-memory-model", "memory-operands"], "desc": "Actual RAM addresses" },
-        { "id": "page-table-mgmt", "name": "Page table management", "from": ["virtual-memory-support", "tlb"], "desc": "MMU programming" },
+        { "id": "page-table-mgmt", "name": "Page table management", "from": ["virtual-memory-support"], "desc": "MMU programming" },
         { "id": "idt", "name": "Interrupt descriptor table", "from": ["interrupt-model"], "desc": "Interrupt vector setup" },
         { "id": "device-registers", "name": "Device registers", "from": ["memory-operands"], "desc": "MMIO, port I/O" },
-        { "id": "dma-config", "name": "DMA configuration", "from": ["physical-memory"], "desc": "Direct memory access setup" },
-        { "id": "irq-handling", "name": "Interrupt handling / IRQ routing", "from": ["interrupt-model", "idt"], "desc": "Hardware interrupt dispatch" },
+        { "id": "dma-config", "name": "DMA configuration", "from": ["arch-memory-model"], "desc": "Direct memory access setup" },
+        { "id": "irq-handling", "name": "Interrupt handling / IRQ routing", "from": ["interrupt-model"], "desc": "Hardware interrupt dispatch" },
         { "id": "context-switch-impl", "name": "Context switch mechanics", "from": ["arch-registers", "register-names"], "desc": "Save/restore register state" },
-        { "id": "scheduler-internals", "name": "Scheduler internals", "from": ["context-switch-impl"], "desc": "Run queues, CFS, priorities" },
-        { "id": "smp-sync", "name": "SMP synchronization", "from": ["atomic-instructions", "cache-coherence"], "desc": "Kernel spinlocks, RCU" },
+        { "id": "scheduler-internals", "name": "Scheduler internals", "from": ["arch-registers"], "desc": "Run queues, CFS, priorities" },
+        { "id": "smp-sync", "name": "SMP synchronization", "from": ["atomic-instructions", "arch-memory-model"], "desc": "Kernel spinlocks, RCU" },
         { "id": "power-states", "name": "Power state management", "from": ["privilege-levels"], "desc": "C-states, P-states" },
         { "id": "hw-timers", "name": "Hardware timers", "from": ["interrupt-model"], "desc": "HPET, TSC, timekeeping" },
         { "id": "bios-uefi", "name": "BIOS/UEFI interfaces", "from": ["privilege-levels"], "desc": "Firmware services" },
-        { "id": "acpi-tables", "name": "ACPI tables", "from": ["bios-uefi"], "desc": "Platform configuration" },
-        { "id": "platform-quirks", "name": "Platform-specific quirks", "from": ["acpi-tables", "processor-errata"], "desc": "Hardware workarounds" }
+        { "id": "acpi-tables", "name": "ACPI tables", "from": ["privilege-levels"], "desc": "Platform configuration" },
+        { "id": "platform-quirks", "name": "Platform-specific quirks", "from": ["privilege-levels", "isa"], "desc": "Hardware workarounds" }
       ],
       "exposes": [
         { "id": "processes", "name": "Processes", "desc": "Isolated execution contexts" },
@@ -578,12 +578,12 @@
       "level": 10,
       "domain": "system",
       "abstracts": [
-        { "id": "hw-register-addr", "name": "Hardware register addresses", "from": ["device-registers", "memory-operands"], "desc": "MMIO addresses" },
-        { "id": "interrupt-numbers", "name": "Interrupt numbers", "from": ["irq-handling"], "desc": "IRQ assignment" },
-        { "id": "dma-setup", "name": "DMA setup", "from": ["dma-config", "physical-memory"], "desc": "DMA descriptors" },
-        { "id": "init-sequence", "name": "Device init sequence", "from": ["device-registers"], "desc": "Power-on, reset, config" },
-        { "id": "power-mgmt", "name": "Power management", "from": ["power-states"], "desc": "Suspend/resume" },
-        { "id": "bus-protocols-phys", "name": "Bus physical layer", "from": ["device-registers"], "desc": "PCI, USB, I2C, SPI signaling" }
+        { "id": "hw-register-addr", "name": "Hardware register addresses", "from": ["memory-operands", "mmap"], "desc": "MMIO addresses" },
+        { "id": "interrupt-numbers", "name": "Interrupt numbers", "from": ["syscalls"], "desc": "IRQ assignment" },
+        { "id": "dma-setup", "name": "DMA setup", "from": ["mmap"], "desc": "DMA descriptors" },
+        { "id": "init-sequence", "name": "Device init sequence", "from": ["mmap"], "desc": "Power-on, reset, config" },
+        { "id": "power-mgmt", "name": "Power management", "from": ["syscalls"], "desc": "Suspend/resume" },
+        { "id": "bus-protocols-phys", "name": "Bus physical layer", "from": ["mmap"], "desc": "PCI, USB, I2C, SPI signaling" }
       ],
       "exposes": [
         { "id": "dev-file", "name": "/dev/xxx device file", "desc": "Character or block device" },
