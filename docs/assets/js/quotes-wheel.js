@@ -10,6 +10,16 @@
     "Philosophy": "#ec4899"
   };
 
+  const icons = {
+    "Jad's System": "◈",
+    "Foundations": "⊢",
+    "Analysis": "∞",
+    "Algebra": "λ",
+    "Geometry": "△",
+    "Physics": "⚛",
+    "Philosophy": "φ"
+  };
+
   let data = null;
   let container = null;
 
@@ -44,6 +54,8 @@
           cursor: pointer;
           transition: transform 0.2s ease, box-shadow 0.2s ease;
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+          position: relative;
+          overflow: hidden;
         ">
           <div id="quote-text" style="
             color: #e2e8f0;
@@ -65,37 +77,42 @@
             justify-content: center;
             gap: 0.5rem;
           "></div>
-          <div id="click-hint" style="
-            margin-top: 1.5rem;
-            color: #64748b;
-            font-size: 13px;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            transition: all 0.3s;
-          ">✨ I Love Science · ${data.quotes.length} quotes</div>
+          <div id="transition-icon" style="
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+          "></div>
+        </div>
+        <div style="
+          margin-top: 1rem;
+          color: #475569;
+          font-size: 11px;
+          font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        ">${data.quotes.length} quotes · click anywhere</div>
         </div>
       </div>
     `;
 
     const card = document.getElementById('quote-display');
-    const hint = document.getElementById('click-hint');
 
     card.addEventListener('mouseover', () => {
       card.style.transform = 'translateY(-4px)';
       card.style.boxShadow = '0 12px 40px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.1)';
-      hint.style.color = '#94a3b8';
-      hint.style.transform = 'scale(1.02)';
     });
     card.addEventListener('mouseout', () => {
       card.style.transform = 'translateY(0)';
       card.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
-      hint.style.color = '#64748b';
-      hint.style.transform = 'scale(1)';
     });
     card.addEventListener('click', () => {
       card.style.transform = 'scale(0.98)';
       setTimeout(() => {
         card.style.transform = 'translateY(0)';
-        drawQuote();
+        drawQuote(true);
       }, 100);
     });
 
@@ -103,17 +120,35 @@
     drawQuote();
   }
 
-  function drawQuote() {
+  function drawQuote(animate = false) {
     const q = data.quotes[Math.floor(Math.random() * data.quotes.length)];
 
     const textEl = document.getElementById('quote-text');
     const sourceEl = document.getElementById('quote-source');
     const topicsEl = document.getElementById('quote-topics');
+    const iconEl = document.getElementById('transition-icon');
 
-    // Fade out
+    // Get main topic for icon
+    const mainTopic = q.topics.length > 0 ? q.topics[0].split('/')[0] : 'Philosophy';
+    const icon = icons[mainTopic] || '✨';
+    const color = colors[mainTopic] || '#64748b';
+
+    // Fade out content
     textEl.style.opacity = '0';
     sourceEl.style.opacity = '0';
     topicsEl.style.opacity = '0';
+
+    // Show transition icon if animating
+    if (animate) {
+      iconEl.innerHTML = icon;
+      iconEl.style.color = color;
+      iconEl.style.opacity = '1';
+      iconEl.style.transform = 'translate(-50%, -50%) scale(1.2)';
+      setTimeout(() => {
+        iconEl.style.opacity = '0';
+        iconEl.style.transform = 'translate(-50%, -50%) scale(0.8)';
+      }, 250);
+    }
 
     setTimeout(() => {
       // Quote text - full, no truncation
@@ -126,50 +161,52 @@
         sourceEl.innerHTML = '';
       }
 
-      // Topics as colored pills
-      let topicsHtml = '';
-      for (const topic of q.topics) {
+      // Build topic pills with stagger animation
+      topicsEl.innerHTML = '';
+      const allTopics = [...q.topics];
+      if (q.original_tags && q.original_tags.length > 0) {
+        for (const tag of q.original_tags) {
+          allTopics.push(`Jad's System/${tag}`);
+        }
+      }
+
+      allTopics.forEach((topic, i) => {
         const [main, sub] = topic.split('/');
-        const color = colors[main] || '#64748b';
-        topicsHtml += `<span style="
+        const pillColor = colors[main] || '#64748b';
+        const pillIcon = icons[main] || '';
+        const isJad = main === "Jad's System";
+        const label = isJad ? `${pillIcon} ${sub}` : `${pillIcon} ${main}${sub ? ' › ' + sub : ''}`;
+
+        const pill = document.createElement('span');
+        pill.style.cssText = `
           display: inline-block;
           padding: 0.25rem 0.75rem;
-          background: ${color}22;
-          color: ${color};
+          background: ${pillColor}22;
+          color: ${pillColor};
           border-radius: 20px;
           font-size: 11px;
           font-family: -apple-system, BlinkMacSystemFont, sans-serif;
           font-weight: 500;
-        ">${main}${sub ? ' › ' + sub : ''}</span>`;
-      }
+          opacity: 0;
+          transform: translateY(10px);
+          transition: all 0.3s ease;
+        `;
+        pill.textContent = label;
+        topicsEl.appendChild(pill);
 
-      // Add Jad's tags if any
-      if (q.original_tags && q.original_tags.length > 0) {
-        for (const tag of q.original_tags) {
-          const color = colors["Jad's System"];
-          topicsHtml += `<span style="
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: ${color}22;
-            color: ${color};
-            border-radius: 20px;
-            font-size: 11px;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            font-weight: 500;
-          ">Jad: ${tag}</span>`;
-        }
-      }
+        // Stagger animation
+        setTimeout(() => {
+          pill.style.opacity = '1';
+          pill.style.transform = 'translateY(0)';
+        }, 50 + i * 60);
+      });
 
-      topicsEl.innerHTML = topicsHtml;
-
-      // Fade in
-      textEl.style.transition = 'opacity 0.4s';
-      sourceEl.style.transition = 'opacity 0.4s';
-      topicsEl.style.transition = 'opacity 0.4s';
+      // Fade in text
+      textEl.style.transition = 'opacity 0.4s, transform 0.4s';
+      sourceEl.style.transition = 'opacity 0.4s, transform 0.4s';
       textEl.style.opacity = '1';
       sourceEl.style.opacity = '1';
-      topicsEl.style.opacity = '1';
-    }, 200);
+    }, animate ? 300 : 200);
   }
 
   if (document.readyState === 'loading') {
