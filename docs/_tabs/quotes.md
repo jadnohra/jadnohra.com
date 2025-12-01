@@ -37,7 +37,7 @@ a:hover {
 
 ## About
 
-**446 quotes** collected during 7 years of intensive mathematical self-study (2011-2018), from the [77 Neurons Project Perelman](https://github.com/jadnohra/77-neurons-project-perelman) — a collaborative mathematics study project.
+**520 quotes** collected during 7 years of intensive mathematical self-study (2011-2018), from the [77 Neurons Project Perelman](https://github.com/jadnohra/77-neurons-project-perelman) — a collaborative mathematics study project.
 
 ### Jad's Tag System
 

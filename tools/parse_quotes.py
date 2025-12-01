@@ -103,6 +103,76 @@ def extract_quotes_from_html(html_content):
 
     return quotes
 
+
+def extract_quotes_from_motivation(html_content):
+    """Extract quotes from motivation.html which uses paragraph-based format."""
+    from bs4 import BeautifulSoup
+
+    quotes = []
+    soup = BeautifulSoup(html_content, 'html.parser')
+
+    # Get all text and split into blocks
+    text = soup.get_text(separator='\n')
+    lines = text.split('\n')
+
+    current_block = ''
+    seen_texts = set()
+
+    for line in lines:
+        line = line.strip()
+        if len(line) < 5:
+            # End of block - process it
+            if len(current_block) > 100:
+                block = ' '.join(current_block.split())  # normalize whitespace
+
+                # Skip navigation/headers
+                if block.startswith('Week') or 'LinAlg' in block[:30]:
+                    current_block = ''
+                    continue
+                if block.startswith('1.') or block.startswith('2.') or block.startswith('3.'):
+                    current_block = ''
+                    continue
+                if 'Motivation' in block[:20] and len(block) < 200:
+                    current_block = ''
+                    continue
+
+                # Skip duplicates
+                block_hash = block[:100]
+                if block_hash in seen_texts:
+                    current_block = ''
+                    continue
+                seen_texts.add(block_hash)
+
+                # Look for quote-like content (has attribution pattern)
+                # Must have substantial content and some form of attribution
+                has_attribution = bool(re.search(r'\([A-Za-z][^)]{3,50}\)', block))
+                has_quote_marker = '"' in block or '"' in block or "'" in block
+
+                if has_attribution or (has_quote_marker and len(block) > 150):
+                    # Try to extract source
+                    source_match = re.search(r'\(([^)]+)\)\s*$', block)
+                    source = source_match.group(1) if source_match else "motivation.html"
+
+                    # Extract any Jad tags
+                    tags = []
+                    for tag in JAD_TAGS:
+                        if f'<{tag}>' in block or f'&lt;{tag}&gt;' in block:
+                            tags.append(tag)
+
+                    quotes.append({
+                        'text': block,
+                        'source': source,
+                        'original_tags': tags,
+                        'topics': [],
+                        'from_motivation': True
+                    })
+
+            current_block = ''
+        else:
+            current_block += ' ' + line
+
+    return quotes
+
 def categorize_quote(quote):
     """Auto-categorize a quote based on keywords and original tags."""
     text_lower = quote['text'].lower()
@@ -151,6 +221,16 @@ def main():
             quotes = extract_quotes_from_html(html_content)
             print(f"  Found {len(quotes)} quotes")
             all_quotes.extend(quotes)
+
+    # Process motivation.html (different format - paragraphs instead of list items)
+    motivation_path = base_path / "motivation.html"
+    if motivation_path.exists():
+        print(f"Processing motivation.html (paragraph format)...")
+        with open(motivation_path, 'r', encoding='utf-8', errors='ignore') as f:
+            html_content = f.read()
+        motivation_quotes = extract_quotes_from_motivation(html_content)
+        print(f"  Found {len(motivation_quotes)} quotes from motivation")
+        all_quotes.extend(motivation_quotes)
 
     # Categorize all quotes
     print(f"\nCategorizing {len(all_quotes)} quotes...")
