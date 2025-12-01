@@ -487,8 +487,10 @@
 
       if (weight > 0) {
         // Highlight with weight-based opacity/brightness - use grayscale
-        // Weight 1.0 = bright white, weight 0.1 = dim gray
-        const brightness = 0.3 + (weight * 0.7); // Range from 0.3 to 1.0
+        // Apply sqrt (gamma 0.5) to expand differences in lower weights
+        // This makes intersection mode results more distinguishable
+        const gamma = Math.sqrt(weight); // 0.64 -> 0.8, 0.25 -> 0.5
+        const brightness = 0.25 + (gamma * 0.75); // Range from 0.25 to 1.0
         el.style.color = '#e2e8f0'; // Light gray/white
         el.style.opacity = brightness;
       } else {
