@@ -1,6 +1,6 @@
 ---
 title: "Why Merge Sort Beats Insertion Sort: The Search for Fundamental Reasons"
-date: 2025-05-01
+date: 2025-12-04
 categories: [Mathematics, Computer Science]
 tags: [algorithms, sorting, information-theory, fundamentals]
 math: true
