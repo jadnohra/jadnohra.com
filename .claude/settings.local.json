@@ -11,7 +11,8 @@
       "Bash(brew install:*)",
       "Bash(tree:*)",
       "WebSearch",
-      "Bash(git clone:*)"
+      "Bash(git clone:*)",
+      "Bash(git submodule:*)"
     ],
     "deny": [],
     "ask": []
