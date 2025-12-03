@@ -35,6 +35,8 @@ strong a { text-decoration: underline; }
 
 # Learning Journey
 
+- **2016 → 2025**: Work in progress
+
 Technical tree showing projects, algorithms, study, and career connections.
 
 ## Knowledge Graph
