@@ -19,8 +19,8 @@ description: >-
   Personal site of Jad Nohra - Mathematics, Physics, Code, Humans, Machines, and Systems Thinking
 
 # Site URL
-url: "https://jadnohra.github.io"
-baseurl: "/jadnohra.com"
+url: "https://notes.jadnohra.com"
+baseurl: ""
 
 # Social links (shown in sidebar)
 github:
