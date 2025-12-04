@@ -144,7 +144,13 @@ Before sorting, your array is in *some* order — one of n! possible permutation
 
 Each comparison is a yes/no question. A perfect question halves the remaining possibilities. How many halvings to get from n! down to 1?
 
-**log₂(n!) ≈ n log n.**
+**log₂(n!).**
+
+That's it. That's the whole argument.
+
+And log₂(n!) ≈ n log n (Stirling's approximation: n! ≈ (n/e)ⁿ, take the log).
+
+So the "n log n bits" just means: there are n! possible inputs, and you're playing 20 Questions to figure out which one you have. You can't win in fewer than log₂(n!) questions. Each comparison is one question.
 
 That's the floor. No comparison-based sort can beat it.
 
