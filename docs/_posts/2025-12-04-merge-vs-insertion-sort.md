@@ -96,7 +96,9 @@ Flip it around. If I give you k bits, how many things can you distinguish?
 
 So if you have N things, you need k bits where 2ᵏ = N. Solve for k: k = log₂(N).
 
-Bits and possibilities are just two views of the same thing, related by the log.
+Bits and possibilities are just two views of the same thing, related by the log.*
+
+_*Note to self: but how come? It's because the position of a bit is information as well — think of tuple constructions from sets._
 
 ---
 
