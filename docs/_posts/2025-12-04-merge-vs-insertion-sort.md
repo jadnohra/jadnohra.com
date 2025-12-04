@@ -13,7 +13,7 @@ Studying, in particular studying math, in particular studying math without const
 ![Studying notes](https://github.com/user-attachments/assets/288381f1-4ef0-4b0f-85de-9fb81d1c00d1){: .w-75 .shadow .rounded-10 }
 _Scribblings from my mathematical explorations_
 
-Below is a series of screenshots from 2016, from my [TheNotes collection](https://github.com/jadnohra/TheNotes/tree/master/2016) in which I hopelessly try to cram linear notation into a graphical proof notation, that tries to be consistent and as powerful as first order logic, but much more dense, carrying a lot of information by being 2 dimensional (graphical) and not purely textual.
+Below is a series of screenshots from 2016, from my [TheNotes](https://github.com/jadnohra/TheNotes?tab=readme-ov-file#thenotes) collection in which I hopelessly try to cram linear notation into a graphical proof notation, that tries to be consistent and as powerful as first order logic, but much more dense, carrying a lot of information by being 2 dimensional (graphical) and not purely textual.
 
 ![Graphical notation 1](https://github.com/user-attachments/assets/c16af764-34ea-4391-8535-23256923892b){: .w-75 .shadow .rounded-10 }
 
