@@ -35,8 +35,6 @@ strong a { text-decoration: underline; }
 
 # Learning Journey
 
-- **2016 → 2025**: Work in progress
-
 Technical tree showing projects, algorithms, study, and career connections.
 
 ## Knowledge Graph
@@ -48,6 +46,8 @@ Interactive visualization of connections between career, projects, algorithms, a
 <script src="{{ '/assets/js/portfolio-viz.js' | relative_url }}"></script>
 
 ## Projects
+
+- **2016 → 2025**: Work in progress
 
 - **May 2019 - [TheNotes](https://github.com/jadnohra/TheNotes)** — Study notes 2013-2018 published to GitHub
   - Collection of mathematical and technical study notes accumulated over 5+ years, covering physics foundations, linear algebra, analysis, and formal logic — a personal reference and learning archive.
