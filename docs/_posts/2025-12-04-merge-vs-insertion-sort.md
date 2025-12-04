@@ -50,6 +50,24 @@ In merge sort, each element participates in exactly log n merges — one per lev
 
 **The deep truth is that merge sort's tree structure *caps* per-element re-examination at log n. Insertion sort has no such cap — and that missing ceiling is exactly where you pay.**
 
+---
+
+> Shouldn't merge sorting two arrays of size k/2 be MORE expensive than insertion sorting k-1 with 1 new?
+
+Here's the insight: look at what fraction of the O(k) work is "new progress."
+
+**Insertion sort:** You pay O(k) to place 1 new element. The other k-1 elements were already sorted — you're re-scanning them just to find where the new guy goes. **Efficiency: 1/k of your work is "new."**
+
+**Merge sort:** You pay O(k) to place k elements. Both halves need interleaving — every comparison emits one element into its final position at this level. **Efficiency: k/k = 100% of your work is "new."**
+
+So the deep answer: insertion sort keeps re-examining already-sorted elements. Every time you insert, you're paying a "tax" to traverse the sorted prefix again. Element #1 gets looked at n-1 times. Element #2 gets looked at n-2 times. Etc.
+
+Merge sort never re-examines within a level. Each element participates in exactly log n merge operations total (once per level), and at each level the total work across all merges is O(n).
+
+**The root cause:** insertion is "read-heavy" on old data. Merge is "write-balanced" — every comparison emits one element, no wasted scans.
+
+---
+
 ## The Information-Theoretic View
 
 There's an even deeper way to see this. To fully sort n elements, you need to determine the total ordering. There are n! possible orderings, so you need log₂(n!) ≈ n log n bits of information. Each comparison yields at most 1 bit. So you need at least n log n comparisons. That's the theoretical floor.
