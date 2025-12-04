@@ -36,7 +36,7 @@ This studying was always trying to understand the deep reasons why things work o
 
 One of the really good uses of how LLMs embed information and the fact that they contain so much information crammed into a single entity, is that sometimes after a lot of iteration, I do manage to refine intuitions I had about fundamental answers to such questions. I wish I had access to LLMs when I was still deeply engaged in studying mathematics.
 
-So let's get to it, **Why?** Here is how I would have wished the two algorithms would be contrasted when teaching them (with Claude).
+So let's get to it, **Why?** Here is how I would have wished the two algorithms would be contrasted when teaching them. (with Claude)
 
 ---
 
@@ -159,3 +159,7 @@ Merge sort asks near-perfect questions — when comparing heads of two sorted ar
 Insertion sort (linear scan) asks redundant questions — ones whose answers were already implied by transitivity. It pays n² for n log n bits of actual information.
 
 **The algorithm that asks the right questions, at the right time, with data structures that can keep up — that's the one that wins.**
+
+---
+
+How's that? That's good Claude, that's good.
