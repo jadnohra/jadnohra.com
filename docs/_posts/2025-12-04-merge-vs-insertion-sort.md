@@ -27,6 +27,9 @@ Below is a series of screenshots from 2016, from my [TheNotes](https://github.co
 
 I failed miserably, but the scribblings evoke very good feelings of emersion and brain involvement. This led though to some really nice figures, one of them I liked so much that I digitized it (see the [TheNotes README](https://github.com/jadnohra/TheNotes?tab=readme-ov-file#thenotes)) and made it the symbol of my Notes collection — it is a graphical 'machine' that almost mechanistically tries to express how a Taylor series power expansion 'produces' terms.
 
+![TheNotes symbol](https://raw.githubusercontent.com/jadnohra/TheNotes/40948df73393f2c7b06dd7389d826bbbfd4533c8/TheNotes.png){: .w-50 .shadow .rounded-10 .mx-auto .d-block }
+_The Taylor series 'machine' — symbol of TheNotes_
+
 ## Merge Sort versus Insertion Sort
 
 This studying was always trying to understand the deep reasons why things work out the way they do. And I noticed that my gripe with how computer science is (at least usually) taught, does not really provide such deep reasons. I was reminded of that when I stumbled once more on Insertion sort (O(n²)) versus merge sort (O(n log n)). Why is that so? Almost all answers go into showing that this is true, but do not address the simple fundamental question of **why**. The question a Greek mentor would want their students to ask.
