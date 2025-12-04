@@ -36,7 +36,7 @@ This studying was always trying to understand the deep reasons why things work o
 
 One of the really good uses of how LLMs embed information and the fact that they contain so much information crammed into a single entity, is that sometimes after a lot of iteration, I do manage to refine intuitions I had about fundamental answers to such questions. I wish I had access to LLMs when I was still deeply engaged in studying mathematics.
 
-So let's get to it, **Why?** Here is how I would have wished the two algorithms would be contrasted when teaching them.
+So let's get to it, **Why?** Here is how I would have wished the two algorithms would be contrasted when teaching them (with Claude).
 
 ---
 
