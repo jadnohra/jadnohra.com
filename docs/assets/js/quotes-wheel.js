@@ -29,7 +29,7 @@
 
     try {
       let resp = await fetch('./assets/data/quotes.json');
-      if (!resp.ok) resp = await fetch('/jadnohra.com/assets/data/quotes.json');
+      if (!resp.ok) resp = await fetch('/assets/data/quotes.json');
       data = await resp.json();
     } catch (e) {
       container.innerHTML = '<p style="color:red;">Failed to load quotes.</p>';
