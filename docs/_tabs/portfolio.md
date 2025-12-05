@@ -49,6 +49,16 @@ Interactive visualization of connections between career, projects, algorithms, a
 
 - **2016 → 2025**: Work in progress
 
+- **2018-2020 - [daisy](https://github.com/jadnohra/daisy)** — Traffic simulator
+  - Traffic flow simulation for autonomous vehicle testing scenarios — built during AV work to model realistic traffic patterns and edge cases.
+  - <span class="algo">Tech: Python. Algos: Agent-based simulation, traffic flow modeling.</span>
+  - Applied at <span class="career">[#4 Audi AID](#career)</span>.
+
+- **2018-2020 - [PaCoS](https://github.com/jadnohra/PaCoS)** — Concurrency determinism simulator
+  - Deterministic concurrency simulator for debugging distributed systems — ensuring reproducible behavior in parallel AV software stacks.
+  - <span class="algo">Tech: Python. Algos: Discrete event simulation, deterministic scheduling.</span>
+  - Applied at <span class="career">[#4 Audi AID](#career)</span>.
+
 - **May 2019 - [TheNotes](https://github.com/jadnohra/TheNotes)** — Study notes 2013-2018 published to GitHub
   - Collection of mathematical and technical study notes accumulated over 5+ years, covering physics foundations, linear algebra, analysis, and formal logic — a personal reference and learning archive.
   - Covers physics, linear algebra, geometry, logic across 90+ documents.
@@ -119,6 +129,56 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Notes: <span class="study">[Differential Forms](https://github.com/jadnohra/TheNotes/blob/master/2016/dform.pdf), [road_dform](https://github.com/jadnohra/TheNotes/blob/master/2017/road_dform.pdf), [Manifolds](https://github.com/jadnohra/TheNotes/blob/master/2016/mfold_short.pdf), [Lagrange proof](https://github.com/jadnohra/TheNotes/blob/master/2016/proof_lagrmul.pdf), [Analysis](https://github.com/jadnohra/TheNotes/blob/master/2016/treat_analy_1.pdf), [MVT/IVT/Taylor](https://github.com/jadnohra/TheNotes/blob/master/2016/hand_mvt_ivt_taylor_onot.pdf), [Measure](https://github.com/jadnohra/TheNotes/blob/master/2016/meas_short.pdf), [Continuity](https://github.com/jadnohra/TheNotes/blob/master/2016/cont_short.pdf), [pointillistic](https://github.com/jadnohra/TheNotes/blob/master/2016/pointillistic.pdf)</span>
   - <span class="ref">[tag_export](https://github.com/jadnohra/tag_export): DiffGeom, Calculus of Variations, Real Analysis, NSA</span>
   - Applied at <span class="career">[#5 Havok](#career)</span> for solver formalization.
+
+- **~2016 - HKDS High-Fidelity Solver** at <span class="career">[#5 Havok](#career)</span>
+  - R&D for high-fidelity constraint solver targeting robotics and machinery simulation — going beyond game physics to industrial precision.
+  - <span class="algo">Tech: C++. Algos: [MLCP](https://en.wikipedia.org/wiki/Linear_complementarity_problem), substepping, co-simulation.</span>
+  - Key documents: HKDS overview, constraint detail, substepping algorithm.
+  - Notes: <span class="study">[Rotations and Basics (TheMathematicsOfHavoksSolver.pdf)](https://github.com/jadnohra/TheNotes/blob/master/2017/treat_rbd_1.pdf), [treat_rbd_1](https://github.com/jadnohra/TheNotes/blob/master/2017/treat_rbd_1.pdf)</span>
+  - Prototype videos: Titan arm, excavator digger.
+
+- **~2016 - TOI Argument** at <span class="career">[#5 Havok](#career)</span>
+  - Formal proof that the Time-Of-Impact tunneling problem has no complete solution — proving an open problem unsolvable, redirecting team focus from finding a solution to managing trade-offs.
+  - <span class="algo">Algos: [Continuous collision detection](https://en.wikipedia.org/wiki/Collision_detection#A_posteriori_(discrete)_versus_a_priori_(continuous)), TOI analysis.</span>
+  - Effect: stopped searching for impossible solution, focused on artifact trade-off management.
+
+- **~2015 - Network Physics R&D** at <span class="career">[#5 Havok](#career)</span>
+  - Research and prototyping for networked multiplayer physics — synchronization, prediction, and rollback for distributed rigid body simulation.
+  - <span class="algo">Tech: C++. Algos: Client-server physics, state synchronization, sector partitioning.</span>
+  - Deliverables: Research report with proposed architectures, working prototype.
+
+- **~2015 - [hinges_py](https://github.com/jadnohra/hinges_py)** — RBD simulator
+  - Python rigid body dynamics simulator for research and prototyping — exploring constraint formulations and numerical methods outside the main codebase.
+  - <span class="algo">Tech: Python. Algos: [Rigid body dynamics](https://en.wikipedia.org/wiki/Rigid_body_dynamics), constraint solving, forward Euler.</span>
+  - Used for HKDS research and arxiv publication validation.
+
+- **~2015 - [trace](https://github.com/jadnohra/trace)** — Real-time data plotting
+  - Real-time data visualization tool for physics debugging — plotting solver convergence, constraint forces, and numerical residuals.
+  - <span class="algo">Tech: Python. Algos: Streaming data visualization.</span>
+  - Applied at <span class="career">[#5 Havok](#career)</span> for dynamics debugging.
+
+- **2015 - [arxiv: Uniqueness of Minima](https://arxiv.org/pdf/1605.08221.pdf)** at <span class="career">[#10 Guided Knowledge](#career)</span>
+  - Published mathematical paper proving uniqueness conditions for certain least squares problems — theoretical foundations for IMU sensor fusion optimization.
+  - <span class="algo">Algos: [Least squares](https://en.wikipedia.org/wiki/Least_squares), optimization theory, uniqueness proofs.</span>
+  - Notes: <span class="study">[Project GK notes](https://gitlab.com/jadnohra/project_gk/blob/master/simp-hing-analyt/simp-hing-analyt.pdf)</span>
+
+- **~2014 - Physics-2014 Contact Solver** at <span class="career">[#5 Havok](#career)</span>
+  - Complete rewrite of Havok's contact constraint solver — shipped in all games since ~2014, optimized for branch prediction and cache efficiency.
+  - <span class="algo">Tech: C++, SIMD. Algos: [Gauss-Seidel](https://en.wikipedia.org/wiki/Gauss%E2%80%93Seidel_method), sequential impulse, constraint solving.</span>
+  - Key achievements: No bugs ever reported, tunable defensiveness, found slow-accumulation bugs in other code.
+  - Critical component in all Havok-powered games for a decade.
+
+- **~2013-2015 - Geometry Numerical Issues** at <span class="career">[#5 Havok](#career)</span>
+  - Deep investigation of floating-point numerical issues in collision geometry — ray-triangle, ray-sphere intersection with robust epsilon handling.
+  - <span class="algo">Tech: C++. Algos: [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754), interval arithmetic, [ULP](https://en.wikipedia.org/wiki/Unit_in_the_last_place) analysis.</span>
+  - Built interval math library (2x slower than normal arithmetic) for guaranteed bounds.
+  - Notes: <span class="study">[Residuals](https://github.com/jadnohra/TheNotes/blob/master/2016/asymp_not.pdf)</span>
+  - Led to deep interest in numerical analysis and studying.
+
+- **~2012 - Nintendo WiiU Math Library** at <span class="career">[#5 Havok](#career)</span>
+  - Low-level math library optimization for Nintendo WiiU's PowerPC-based CPU — working around buggy compiler optimizations and limited SIMD.
+  - <span class="algo">Tech: C++, PowerPC assembly. Algos: [SIMD](https://en.wikipedia.org/wiki/SIMD) vectorization, instruction scheduling.</span>
+  - Instruction-level ARM (handicapped two-float SIMD), workarounds for compiler bugs.
 
 - **2015 - Study: Foundations & Logic**
   - Study of mathematical foundations — set theory, logic, and the philosophical underpinnings of mathematics itself.
@@ -210,6 +270,23 @@ Interactive visualization of connections between career, projects, algorithms, a
 └── line_err.py
   </pre>
   </details>
+
+- **2009-2011 - Killzone 3 AI Systems** at <span class="career">[#6 Guerrilla Games](#career)</span>
+  - Environment-aware AI physical behavior for Killzone 3 — jetpack navigation, owl patrol AI, environment interaction.
+  - <span class="algo">Tech: C++, PS3/SPU. Algos: Behavior trees, environment queries, physical animation.</span>
+  - [Video: Jetpack and Owl AI](https://www.youtube.com/watch?v=_mXYAPUIAqg).
+  - Also: SPU + PS3 multithreading/DMA tricky bug chasing.
+
+- **2009-2011 - Killzone 3 Vehicle AI** at <span class="career">[#6 Guerrilla Games](#career)</span>
+  - Vehicle pathfinding and motion planning for AI-controlled vehicles in Killzone 3.
+  - <span class="algo">Tech: C++. Algos: Motion planning, vehicle dynamics, path following.</span>
+  - [Video: Vehicle AI](https://www.youtube.com/watch?v=QjmRA2Obu9I).
+  - Prototyping and planner development.
+
+- **2009-2011 - Automatic Region Generation** at <span class="career">[#6 Guerrilla Games](#career)</span>
+  - Automated navmesh region generation using skeletonization — improving on Recast's "ugly and cryptic" code with better corner case handling.
+  - <span class="algo">Tech: C++. Algos: [Skeletonization](https://en.wikipedia.org/wiki/Topological_skeleton), [Medial axis transform](https://en.wikipedia.org/wiki/Medial_axis), region decomposition.</span>
+  - Improvements on corner cases that other companies presented as challenges during GDC.
 
 - **Nov 2010 - [RecastMOD](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/AI/RecastMOD)** — Navigation mesh system
   - Modified version of Recast & Detour — the industry-standard navmesh library used in AAA games for AI pathfinding through voxelization and mesh generation.
