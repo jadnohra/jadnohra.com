@@ -49,6 +49,14 @@ Interactive visualization of connections between career, projects, algorithms, a
 
 - **2016 → 2025**: Work in progress
 
+- **2021-2022 - VTT Simulation Platform** at <span class="career">[#3 Argo AI](#career)</span>
+  - Engineering Manager for Virtual Test Tooling — comprehensive simulation platform for autonomous vehicle testing enabling separate testing of perception, prediction, and planning subsystems.
+  - **Layered Simulation Architecture:** Multi-layer Environment State (ES) system with Transformation Functions (TF) — Layer 0 ground truth, detection layers with noise modeling, enabling component isolation testing.
+  - **ModelLib Suite:** Led development of simulation models — AV Compute Model (8-dimension timing/latency), Driver Model (Specialist Driver concept with ABM validation), Trajectory Model (path assessment), Sensing Model.
+  - **Resimulation System:** Cross-team infrastructure for replaying AV software with recorded sensor data — Transform Graph DAG, MTR (Multi-Task Resim Director) orchestration, deterministic discrete-event scheduling.
+  - <span class="algo">Tech: C++, Python. Algos: [Discrete-event simulation](https://en.wikipedia.org/wiki/Discrete-event_simulation), [Model Predictive Control](https://en.wikipedia.org/wiki/Model_predictive_control), [Quadratic Programming](https://en.wikipedia.org/wiki/Quadratic_programming), [Agent-based modeling](https://en.wikipedia.org/wiki/Agent-based_model), [Intelligent Driver Model](https://en.wikipedia.org/wiki/Intelligent_driver_model).</span>
+  - UL4600 safety certification requirements for simulation tools.
+
 - **2018-2020 - [daisy](https://github.com/jadnohra/daisy)** — Traffic simulator
   - Traffic flow simulation for autonomous vehicle testing scenarios — built during AV work to model realistic traffic patterns and edge cases.
   - <span class="algo">Tech: Python. Algos: Agent-based simulation, traffic flow modeling.</span>
