@@ -11,7 +11,8 @@
     career: "#dc2626",      // red
     project: "#2563eb",     // blue
     algo: "#059669",        // green
-    theory: "#7c3aed"       // purple
+    theory: "#7c3aed",      // purple
+    books: "#f59e0b"        // amber/orange
   };
 
   // Create the visualization
@@ -207,7 +208,8 @@
       {label: "Career", color: colors.career},
       {label: "Project", color: colors.project},
       {label: "Algorithm", color: colors.algo},
-      {label: "Theory", color: colors.theory}
+      {label: "Theory", color: colors.theory},
+      {label: "Books", color: colors.books}
     ];
 
     legend.selectAll("g")

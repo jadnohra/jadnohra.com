@@ -20,6 +20,7 @@ a:hover {
 .study, .study a { color: #059669; text-decoration: underline; }
 .ref, .ref a { color: #7c3aed; text-decoration: underline; }
 .career, .career a { color: #dc2626; text-decoration: underline; }
+.book, .book a { color: #f59e0b; text-decoration: underline; }
 strong a { text-decoration: underline; }
 #portfolio-viz {
   display: flex;
@@ -57,7 +58,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   - **Statistical Test Strategy:** Coverage dimensions as strata in stratified sampling. Equivalence classes as expert-opinion factorial design. DVP (Design Verification Plan) from DoE perspective. Integration of white-box analysis with statistical validation. Documents: "AV Testing From a Design of Experiments Perspective", "DVP Coverage from a DoE Perspective".
   - **Model Validation & Uncertainty Quantification:** [Gaussian process](https://en.wikipedia.org/wiki/Gaussian_process) model discrepancy quantification. Parameter uncertainty vs model inadequacy. Sequential calibration approaches. Bayesian [uncertainty quantification](https://en.wikipedia.org/wiki/Uncertainty_quantification) methods.
   - <span class="algo">Tech: Python, SciPy, Statsmodels. Algos: [Binomial confidence intervals](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval), [Wilson score](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval), [Hypothesis testing](https://en.wikipedia.org/wiki/Statistical_hypothesis_testing), [Design of Experiments](https://en.wikipedia.org/wiki/Design_of_experiments), [Stratified sampling](https://en.wikipedia.org/wiki/Stratified_sampling), [Factorial design](https://en.wikipedia.org/wiki/Factorial_experiment), [Plackett-Burman](https://en.wikipedia.org/wiki/Plackett%E2%80%93Burman_design), [Gaussian processes](https://en.wikipedia.org/wiki/Gaussian_process), [Uncertainty quantification](https://en.wikipedia.org/wiki/Uncertainty_quantification).</span>
-  - Books studied: [Statistics for Experimenters](https://www.wiley.com/en-us/Statistics+for+Experimenters%3A+Design%2C+Innovation%2C+and+Discovery%2C+2nd+Edition-p-9780471718130) (Box, Hunter, Hunter), [Probabilistic Safety Assessment in the Chemical and Nuclear Industries](https://books.google.de/books/about/Probabilistic_safety_assessment_in_the_c.html?id=CAUuWcTmNrQC) (Fullwood).
+  - Books: <span class="book">[#1 Statistics for Experimenters](#books)</span>, <span class="book">[#2 Probabilistic Safety Assessment](#books)</span>.
   - Integration with SOTIF, UL4600, safety case documentation.
   - Patent: [US20230030474A1 - Scenario-based safety validation](https://patents.google.com/patent/US20230030474A1/en).
   - Applied at <span class="career">[#3 Argo AI](#career)</span>.
@@ -462,7 +463,7 @@ Interactive visualization of connections between career, projects, algorithms, a
 - **2008-2010 - [AI Sandbox](https://web.archive.org/web/20190719084901/http://aigamedev.com/articles/?tx_ttnews%5Bcat%5D=17&cHash=93c15cd059)** at <span class="career">[#7 AiGameDev](#career)</span>
   - Open-source game AI development framework — main programmer for a platform used by the AI game development community for research and education.
   - <span class="algo">Tech: C++. Algos: [HPA*](https://en.wikipedia.org/wiki/Hierarchical_pathfinding), locomotion system, [Reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning).</span>
-  - Notes: <span class="study">AI Game Programming Wisdom (4 vols, sold $500), [ml_survey](https://github.com/jadnohra/TheNotes/blob/master/2016/ml_survey.pdf)</span>
+  - Notes: <span class="study">[ml_survey](https://github.com/jadnohra/TheNotes/blob/master/2016/ml_survey.pdf)</span>. Books: <span class="book">[#3 AI Game Programming Wisdom](#books)</span>
   - Main programmer; co-authored "Parallel Pathfinding on Modern Hardware". Applied at <span class="career">[#6](#career), [#5](#career)</span>.
 
 - **Apr 2009 - [Obstacle Avoidance](https://github.com/jadnohra/jad-pre-2015-dabblings/tree/master/Labs/AI)** — Steering behaviors
@@ -682,3 +683,13 @@ Interactive visualization of connections between career, projects, algorithms, a
 8. **Sixteen Tons** (2008) Nintendo DS engine
 9. **Kimera Studios** (2006-08) Indie engine
 10. **Guided Knowledge** (2015) IMU optimization
+
+---
+
+## Books
+
+Favorite technical books studied throughout career.
+
+1. **[Statistics for Experimenters](https://www.wiley.com/en-us/Statistics+for+Experimenters%3A+Design%2C+Innovation%2C+and+Discovery%2C+2nd+Edition-p-9780471718130)** (Box, Hunter, Hunter) — Design of experiments, hypothesis testing, confidence intervals
+2. **[Probabilistic Safety Assessment in the Chemical and Nuclear Industries](https://books.google.de/books/about/Probabilistic_safety_assessment_in_the_c.html?id=CAUuWcTmNrQC)** (Fullwood) — Safety analysis for chemical and nuclear industries
+3. **AI Game Programming Wisdom** (4 volumes) — Game AI algorithms and techniques
