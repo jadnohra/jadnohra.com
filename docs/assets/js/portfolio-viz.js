@@ -75,8 +75,8 @@
       .data(links)
       .join("path")
       .attr("stroke", d => {
-        const sourceType = d.source.data.name.split('.')[0];
-        return colors[sourceType] || "#999";
+        const targetType = d.target.data.name.split('.')[0];
+        return colors[targetType] || "#999";
       })
       .attr("stroke-width", 1.5)
       .attr("d", d => {
@@ -120,8 +120,8 @@
       link.attr("stroke", l => {
         if (l.source === d) return "#ef4444"; // red for outgoing
         if (l.target === d) return "#22c55e"; // green for incoming
-        const sourceType = l.source.data.name.split('.')[0];
-        return colors[sourceType] || "#999";
+        const targetType = l.target.data.name.split('.')[0];
+        return colors[targetType] || "#999";
       });
 
       // Highlight connected nodes
@@ -140,8 +140,8 @@
       link.attr("stroke-opacity", 0.6);
       link.attr("stroke-width", 1.5);
       link.attr("stroke", d => {
-        const sourceType = d.source.data.name.split('.')[0];
-        return colors[sourceType] || "#999";
+        const targetType = d.target.data.name.split('.')[0];
+        return colors[targetType] || "#999";
       });
       node.attr("fill-opacity", 1);
       node.attr("font-weight", "500");
