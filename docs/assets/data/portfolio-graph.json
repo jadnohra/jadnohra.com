@@ -19,7 +19,7 @@
     {
       "name": "project",
       "children": [
-        {"name": "project.vtt", "label": "VTT Platform", "imports": ["career.argo", "algo.discreteeventsim", "algo.mpc", "algo.abm", "algo.idm", "algo.qp", "theory.constraintsolving"]},
+        {"name": "project.vtt", "label": "VTT Platform", "imports": ["career.argo", "algo.discreteeventsim", "algo.mpc", "algo.abm", "algo.idm", "algo.qp", "algo.bicyclemodel", "algo.timeseries", "algo.convexopt", "algo.reachability", "algo.ttc", "theory.constraintsolving", "theory.rbd"]},
         {"name": "project.daisy", "label": "daisy", "imports": ["career.audi", "algo.trafficsim"]},
         {"name": "project.pacos", "label": "PaCoS", "imports": ["career.audi", "algo.concurrency"]},
         {"name": "project.thenotes", "label": "TheNotes", "imports": ["career.havok", "theory.rbd", "theory.linalg", "theory.settheory", "theory.fol"]},
@@ -101,7 +101,12 @@
         {"name": "algo.mpc", "label": "Model Predictive Control", "imports": ["theory.constraintsolving", "theory.linalg"]},
         {"name": "algo.qp", "label": "Quadratic Programming", "imports": ["theory.linalg", "theory.constraintsolving"]},
         {"name": "algo.abm", "label": "Agent-Based Modeling", "imports": []},
-        {"name": "algo.idm", "label": "Intelligent Driver Model", "imports": ["algo.abm"]}
+        {"name": "algo.idm", "label": "Intelligent Driver Model", "imports": ["algo.abm"]},
+        {"name": "algo.bicyclemodel", "label": "Bicycle Model", "imports": ["theory.rbd"]},
+        {"name": "algo.timeseries", "label": "Time Series", "imports": []},
+        {"name": "algo.convexopt", "label": "Convex Optimization", "imports": ["theory.linalg", "theory.constraintsolving"]},
+        {"name": "algo.reachability", "label": "Reachability Analysis", "imports": []},
+        {"name": "algo.ttc", "label": "Time-To-Collision", "imports": []}
       ]
     },
     {
