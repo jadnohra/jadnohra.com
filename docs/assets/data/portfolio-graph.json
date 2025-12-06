@@ -19,6 +19,7 @@
     {
       "name": "project",
       "children": [
+        {"name": "project.stattestdesign", "label": "Statistical Test Design", "imports": ["career.argo", "algo.binomialci", "algo.wilsonscore", "algo.hypothesistesting", "algo.doe", "algo.stratifiedsampling", "algo.factorialdesign", "algo.plackettburman", "algo.gp", "algo.uq", "theory.statistics", "theory.probability", "theory.expdesign"]},
         {"name": "project.vtt", "label": "VTT Platform", "imports": ["career.argo", "algo.discreteeventsim", "algo.mpc", "algo.abm", "algo.idm", "algo.qp", "algo.bicyclemodel", "algo.timeseries", "algo.convexopt", "algo.reachability", "algo.ttc", "theory.constraintsolving", "theory.rbd"]},
         {"name": "project.daisy", "label": "daisy", "imports": ["career.audi", "algo.trafficsim"]},
         {"name": "project.pacos", "label": "PaCoS", "imports": ["career.audi", "algo.concurrency"]},
@@ -106,29 +107,41 @@
         {"name": "algo.timeseries", "label": "Time Series", "imports": []},
         {"name": "algo.convexopt", "label": "Convex Optimization", "imports": ["theory.linalg", "theory.constraintsolving"]},
         {"name": "algo.reachability", "label": "Reachability Analysis", "imports": []},
-        {"name": "algo.ttc", "label": "Time-To-Collision", "imports": []}
+        {"name": "algo.ttc", "label": "Time-To-Collision", "imports": []},
+        {"name": "algo.binomialci", "label": "Binomial Confidence Intervals", "imports": ["theory.statistics", "theory.probability"]},
+        {"name": "algo.wilsonscore", "label": "Wilson Score Interval", "imports": ["algo.binomialci", "theory.statistics"]},
+        {"name": "algo.hypothesistesting", "label": "Hypothesis Testing", "imports": ["theory.statistics", "theory.probability"]},
+        {"name": "algo.doe", "label": "Design of Experiments", "imports": ["theory.expdesign", "theory.statistics"]},
+        {"name": "algo.stratifiedsampling", "label": "Stratified Sampling", "imports": ["theory.statistics", "theory.expdesign"]},
+        {"name": "algo.factorialdesign", "label": "Factorial Design", "imports": ["algo.doe", "theory.expdesign"]},
+        {"name": "algo.plackettburman", "label": "Plackett-Burman", "imports": ["algo.factorialdesign", "theory.expdesign"]},
+        {"name": "algo.gp", "label": "Gaussian Processes", "imports": ["theory.probability", "theory.statistics"]},
+        {"name": "algo.uq", "label": "Uncertainty Quantification", "imports": ["theory.probability", "theory.statistics"]}
       ]
     },
     {
       "name": "theory",
       "children": [
-        {"name": "theory.rbd", "label": "Rigid Body Dynamics", "imports": ["theory.lagrangian", "theory.linalg"]},
-        {"name": "theory.lagrangian", "label": "Lagrangian Mechanics", "imports": ["theory.calcvar"]},
-        {"name": "theory.constraintsolving", "label": "Constraint Solving", "imports": ["theory.linalg"]},
-        {"name": "theory.diffgeom", "label": "Differential Geometry", "imports": ["theory.manifolds"]},
-        {"name": "theory.diffforms", "label": "Differential Forms", "imports": ["theory.diffgeom"]},
-        {"name": "theory.manifolds", "label": "Manifolds", "imports": ["theory.realanalysis"]},
+        {"name": "theory.numbertheory", "label": "Number Theory", "imports": []},
+        {"name": "theory.linalg", "label": "Linear Algebra", "imports": []},
+        {"name": "theory.settheory", "label": "Set Theory", "imports": []},
+        {"name": "theory.fol", "label": "First-Order Logic", "imports": ["theory.settheory"]},
+        {"name": "theory.modeltheory", "label": "Model Theory", "imports": ["theory.fol"]},
+        {"name": "theory.prooftheory", "label": "Proof Theory", "imports": ["theory.fol"]},
         {"name": "theory.realanalysis", "label": "Real Analysis", "imports": []},
         {"name": "theory.measuretheory", "label": "Measure Theory", "imports": ["theory.realanalysis"]},
         {"name": "theory.calcvar", "label": "Calculus of Variations", "imports": ["theory.realanalysis"]},
-        {"name": "theory.fol", "label": "First-Order Logic", "imports": ["theory.settheory"]},
-        {"name": "theory.settheory", "label": "Set Theory", "imports": []},
-        {"name": "theory.modeltheory", "label": "Model Theory", "imports": ["theory.fol"]},
-        {"name": "theory.prooftheory", "label": "Proof Theory", "imports": ["theory.fol"]},
+        {"name": "theory.diffgeom", "label": "Differential Geometry", "imports": ["theory.manifolds"]},
+        {"name": "theory.diffforms", "label": "Differential Forms", "imports": ["theory.diffgeom"]},
+        {"name": "theory.manifolds", "label": "Manifolds", "imports": ["theory.realanalysis"]},
         {"name": "theory.lambdacalc", "label": "Lambda Calculus", "imports": []},
         {"name": "theory.typetheory", "label": "Type Theory", "imports": ["theory.lambdacalc"]},
-        {"name": "theory.linalg", "label": "Linear Algebra", "imports": []},
-        {"name": "theory.numbertheory", "label": "Number Theory", "imports": []}
+        {"name": "theory.lagrangian", "label": "Lagrangian Mechanics", "imports": ["theory.calcvar"]},
+        {"name": "theory.rbd", "label": "Rigid Body Dynamics", "imports": ["theory.lagrangian", "theory.linalg"]},
+        {"name": "theory.constraintsolving", "label": "Constraint Solving", "imports": ["theory.linalg"]},
+        {"name": "theory.probability", "label": "Probability Theory", "imports": []},
+        {"name": "theory.statistics", "label": "Statistics", "imports": ["theory.probability"]},
+        {"name": "theory.expdesign", "label": "Experimental Design", "imports": ["theory.statistics"]}
       ]
     }
   ]
