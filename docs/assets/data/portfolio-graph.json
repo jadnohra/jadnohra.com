@@ -17,14 +17,6 @@
       ]
     },
     {
-      "name": "books",
-      "children": [
-        {"name": "books.statsforexp", "label": "Statistics for Experimenters", "imports": []},
-        {"name": "books.probsafety", "label": "Probabilistic Safety Assessment", "imports": []},
-        {"name": "books.aigameprog", "label": "AI Game Programming Wisdom", "imports": []}
-      ]
-    },
-    {
       "name": "project",
       "children": [
         {"name": "project.vtt", "label": "VTT Platform", "imports": ["career.argo", "algo.discreteeventsim", "algo.mpc", "algo.abm", "algo.idm", "algo.qp", "algo.bicyclemodel", "algo.timeseries", "algo.convexopt", "algo.reachability", "algo.ttc", "theory.constraintsolving", "theory.rbd"]},
@@ -150,6 +142,14 @@
         {"name": "theory.settheory", "label": "Set Theory", "imports": []},
         {"name": "theory.linalg", "label": "Linear Algebra", "imports": []},
         {"name": "theory.numbertheory", "label": "Number Theory", "imports": []}
+      ]
+    },
+    {
+      "name": "books",
+      "children": [
+        {"name": "books.statsforexp", "label": "Statistics for Experimenters", "imports": []},
+        {"name": "books.probsafety", "label": "Probabilistic Safety Assessment", "imports": []},
+        {"name": "books.aigameprog", "label": "AI Game Programming Wisdom", "imports": []}
       ]
     }
   ]
