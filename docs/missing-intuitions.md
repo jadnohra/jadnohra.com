@@ -37,3 +37,5 @@ Note: we're walking the space of sums in an interesting way — neither from sma
 ![Two-pointer Two Sum](/assets/img/missing-intuitions/two-pointer-two-sum.png)
 
 The image shows why the typical framing is counterintuitive: if you think of being at some `sᵢ` and comparing to the target, you have 4 choices (increment or decrement either pointer). But from the elimination view, there's only one safe move — eliminate the candidate that cannot possibly work.
+
+![Navigation path through sum space](/assets/img/missing-intuitions/two-pointer-navigation-path.png)
