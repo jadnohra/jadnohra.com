@@ -1,8 +1,9 @@
 ---
-layout: page
+layout: post
 title: Abstractor
 icon: fas fa-layer-group
 order: 3
+toc: true
 ---
 
 <style>

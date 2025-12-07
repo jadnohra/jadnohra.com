@@ -1,8 +1,9 @@
 ---
-layout: page
+layout: post
 title: Portfolio
 icon: fas fa-folder-tree
 order: 1
+toc: true
 ---
 
 <style>

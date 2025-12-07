@@ -1,8 +1,9 @@
 ---
-layout: page
+layout: post
 title: Math Quotes
 icon: fas fa-quote-left
 order: 2
+toc: true
 ---
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
