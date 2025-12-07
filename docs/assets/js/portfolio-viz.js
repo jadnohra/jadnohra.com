@@ -108,14 +108,22 @@
     function highlightNode(d) {
       if (!d) return;
 
-      // Build adjacency for BFS (undirected) from links
+      // Build full adjacency from raw imports (undirected)
       const adjacency = new Map();
       for (const leaf of leaves) {
         adjacency.set(leaf, new Set());
       }
-      for (const l of links) {
-        adjacency.get(l.source).add(l.target);
-        adjacency.get(l.target).add(l.source);
+      // Add edges from all imports (both directions)
+      for (const leaf of leaves) {
+        if (leaf.data.imports) {
+          for (const imp of leaf.data.imports) {
+            const target = nodeByName.get(imp);
+            if (target) {
+              adjacency.get(leaf).add(target);
+              adjacency.get(target).add(leaf);
+            }
+          }
+        }
       }
 
       // BFS to find distances
@@ -126,20 +134,13 @@
       while (queue.length > 0) {
         const current = queue.shift();
         const currentDist = distances.get(current);
-        const neighbors = adjacency.get(current);
-        if (neighbors) {
-          for (const neighbor of neighbors) {
-            if (!distances.has(neighbor)) {
-              distances.set(neighbor, currentDist + 1);
-              queue.push(neighbor);
-            }
+        for (const neighbor of adjacency.get(current)) {
+          if (!distances.has(neighbor)) {
+            distances.set(neighbor, currentDist + 1);
+            queue.push(neighbor);
           }
         }
       }
-
-      // Debug
-      const found = Array.from(distances.entries()).map(([n, dist]) => `${n.data.name}:${dist}`);
-      console.log('BFS from', d.data.name, '→', found.join(', '));
 
       // Opacity based on distance
       function opacityForDistance(dist) {
