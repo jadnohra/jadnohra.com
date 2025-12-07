@@ -70,7 +70,9 @@ Common applications:
 - **Partitioning** - Swap elements around a pivot
 - **Cycle detection** - Slow/fast pointers in linked lists
 
-### Missing Intuition
+### Better Intuition (close to a proof)
+
+**TL;DR:** It's an elimination argument, not a search. Each step safely eliminates one element that cannot possibly be part of any solution.
 
 For Two Sum on a sorted array, explanations say "if sum is too large, move right pointer left" without explaining *why* this is safe.
 
