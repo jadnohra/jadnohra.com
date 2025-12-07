@@ -126,7 +126,8 @@
         }
       }
 
-      // BFS to find distances
+      // BFS to find distances (limited to maxHops)
+      const maxHops = 2;
       const distances = new Map();
       distances.set(d, 0);
       const queue = [d];
@@ -134,10 +135,12 @@
       while (queue.length > 0) {
         const current = queue.shift();
         const currentDist = distances.get(current);
-        for (const neighbor of adjacency.get(current)) {
-          if (!distances.has(neighbor)) {
-            distances.set(neighbor, currentDist + 1);
-            queue.push(neighbor);
+        if (currentDist < maxHops) {
+          for (const neighbor of adjacency.get(current)) {
+            if (!distances.has(neighbor)) {
+              distances.set(neighbor, currentDist + 1);
+              queue.push(neighbor);
+            }
           }
         }
       }
