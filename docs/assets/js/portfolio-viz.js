@@ -142,14 +142,14 @@
         }
       }
 
-      // Opacity based on distance - much fainter for distant nodes
+      // Opacity based on distance
       function opacityForDistance(dist) {
-        if (dist === undefined) return 0.05;  // unconnected
+        if (dist === undefined) return 0.08;  // unconnected
         if (dist === 0) return 1.0;           // hovered node
-        if (dist === 1) return 0.9;           // direct neighbors
-        if (dist === 2) return 0.25;          // 2 hops
-        if (dist === 3) return 0.15;          // 3 hops
-        return 0.1;                           // 4+ hops
+        if (dist === 1) return 1.0;           // direct neighbors
+        if (dist === 2) return 0.5;           // 2 hops
+        if (dist === 3) return 0.35;          // 3 hops
+        return 0.25;                          // 4+ hops
       }
 
       // Apply to nodes
