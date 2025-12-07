@@ -97,7 +97,7 @@
         {"name": "algo.parsing", "label": "Expression Parsing", "imports": []},
         {"name": "algo.fol", "label": "FOL Prover", "imports": ["theory.fol", "theory.settheory"]},
         {"name": "algo.concurrency", "label": "Concurrency Sim", "imports": []},
-        {"name": "algo.trafficsim", "label": "Traffic Simulation", "imports": []},
+        {"name": "algo.trafficsim", "label": "Traffic Simulation", "imports": ["algo.abm", "algo.idm"]},
         {"name": "algo.discreteeventsim", "label": "Discrete Event Sim", "imports": []},
         {"name": "algo.mpc", "label": "Model Predictive Control", "imports": ["theory.constraintsolving", "theory.linalg"]},
         {"name": "algo.qp", "label": "Quadratic Programming", "imports": ["theory.linalg", "theory.constraintsolving"]},
