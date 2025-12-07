@@ -1,12 +1,13 @@
 ---
+layout: post
 icon: fas fa-info-circle
 order: 8
 title: About
 ---
 
 <style>
-a { color: #2563eb !important; text-decoration: underline !important; }
-a:hover { color: #1d4ed8 !important; }
+a { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: #1d4ed8; }
 </style>
 
 Check out:
