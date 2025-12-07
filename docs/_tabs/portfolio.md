@@ -7,6 +7,15 @@ toc: true
 ---
 
 <style>
+/* Compact layout */
+.content p { margin-bottom: 0.5rem; }
+.content h2 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+.content h3 { margin-top: 1rem; margin-bottom: 0.3rem; }
+.content ul, .content ol { margin-bottom: 0.5rem; }
+.content li { margin-bottom: 0.2rem; }
+.content blockquote { margin: 0.5rem 0; }
+.content hr { margin: 1rem 0; }
+
 /* All links should be blue and underlined by default */
 a {
   color: #2563eb;
@@ -51,7 +60,7 @@ Interactive visualization of connections between career, projects, algorithms, a
 
 - **2016 → 2025**: Work in progress
 
-- **2024-2025 - Linerate ZK Hardware Acceleration** at <span class="career">[#1 Irreducible](#career)</span>
+- **2024-2025 - Linerate ZK Hardware Acceleration**
   - Hardware acceleration framework for zero-knowledge proof systems. Designed unified API supporting emulated (CPU), verilated (RTL simulation), and FPGA device execution modes. Implemented emulated mode and core interfaces; led architecture decisions for team-developed verilated and FPGA modes.
   - **Three-Mode Architecture:** Designed unified device abstraction across emulated (pure software), verilated ([Verilator](https://en.wikipedia.org/wiki/Verilator) RTL simulation), and FPGA hardware. Implemented emulated mode; led team on verilated and FPGA modes. Single codebase. Hardware-software co-design enabling algorithm development on CPU, cycle-accurate validation on Verilator, deployment on FPGA.
   - **Xlang Compiler:** Led development of domain-specific language and compiler for xcheck accelerator. [Computation graph](https://en.wikipedia.org/wiki/Dataflow_programming) construction (DAG). Operations: Load/Store, Add2/Add3, Mul, MAC ([multiply-accumulate](https://en.wikipedia.org/wiki/Multiply%E2%80%93accumulate_operation)), Interleave, Constants. Compiler pipeline: detriangulation → [instruction scheduling](https://en.wikipedia.org/wiki/Instruction_scheduling) → [register allocation](https://en.wikipedia.org/wiki/Register_allocation) → [VLIW](https://en.wikipedia.org/wiki/Very_long_instruction_word) code generation. Register bank allocation with coloring. ALU/LSU instruction encoding. Emulator for validation.

@@ -104,20 +104,59 @@
       .text(d => d.data.label || d.data.name.split('.')[1])
       .call(text => text.append("title").text(d => d.data.name));
 
-    // Highlight function for a node
+    // Highlight function for a node with transitive BFS
     function highlightNode(d) {
       if (!d) return;
 
-      // Highlight connected links
+      // Build adjacency for BFS (undirected)
+      const adjacency = new Map();
+      for (const leaf of leaves) {
+        adjacency.set(leaf, new Set());
+      }
+      for (const l of links) {
+        adjacency.get(l.source).add(l.target);
+        adjacency.get(l.target).add(l.source);
+      }
+
+      // BFS to find distances
+      const distances = new Map();
+      distances.set(d, 0);
+      const queue = [d];
+
+      while (queue.length > 0) {
+        const current = queue.shift();
+        const currentDist = distances.get(current);
+        for (const neighbor of adjacency.get(current)) {
+          if (!distances.has(neighbor)) {
+            distances.set(neighbor, currentDist + 1);
+            queue.push(neighbor);
+          }
+        }
+      }
+
+      // Opacity based on distance
+      function opacityForDistance(dist) {
+        if (dist === undefined) return 0.1;  // unconnected
+        if (dist <= 1) return 1.0;
+        if (dist === 2) return 0.7;
+        if (dist === 3) return 0.5;
+        return 0.3;
+      }
+
+      // Apply to nodes
+      node.attr("fill-opacity", n => opacityForDistance(distances.get(n)));
+      node.attr("font-weight", n => distances.get(n) <= 1 ? "bold" : "normal");
+
+      // Apply to links - show if both endpoints are in connected component
       link.attr("stroke-opacity", l => {
-        if (l.source === d || l.target === d) return 1;
-        return 0.1;
+        const srcDist = distances.get(l.source);
+        const tgtDist = distances.get(l.target);
+        if (srcDist === undefined || tgtDist === undefined) return 0.05;
+        const maxDist = Math.max(srcDist, tgtDist);
+        return opacityForDistance(maxDist);
       });
-      link.attr("stroke-width", l => {
-        if (l.source === d) return 2.5; // outgoing
-        if (l.target === d) return 2.5; // incoming
-        return 1;
-      });
+
+      // Keep existing coloring for direct connections
       link.attr("stroke", l => {
         if (l.source === d) return "#ef4444"; // red for outgoing
         if (l.target === d) return "#22c55e"; // green for incoming
@@ -125,16 +164,10 @@
         return colors[targetType] || "#999";
       });
 
-      // Highlight connected nodes
-      const connected = new Set();
-      for (const l of links) {
-        if (l.source === d) connected.add(l.target);
-        if (l.target === d) connected.add(l.source);
-      }
-      connected.add(d);
-
-      node.attr("fill-opacity", n => connected.has(n) ? 1 : 0.2);
-      node.attr("font-weight", n => connected.has(n) ? "bold" : "normal");
+      link.attr("stroke-width", l => {
+        if (l.source === d || l.target === d) return 2.5;
+        return 1.5;
+      });
     }
 
     function resetHighlight() {
