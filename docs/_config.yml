@@ -46,9 +46,9 @@ analytics:
   goatcounter:
     id: "jadnohra"
 
-# Page views counter on posts
-pageviews:
-  provider: goatcounter
+# Page views counter on posts (disabled - blocked by ad blockers)
+# pageviews:
+#   provider: goatcounter
 
 # Theme mode: light, dark, or blank for auto
 theme_mode: ""
