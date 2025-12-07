@@ -32,4 +32,8 @@ Given sorted array `[a₀, a₁, ..., aₙ]` and target sum `T`:
 
 After safely eliminating one candidate, check `s₁` on the remaining array. Repeat.
 
-![Merge sort intuition](/assets/img/missing-intuitions/merge-sort-intuition.png)
+Note: we're walking the space of sums in an interesting way — neither from smallest to largest nor largest to smallest, but along a path informed by the min/max elimination.
+
+![Two-pointer Two Sum](/assets/img/missing-intuitions/two-pointer-two-sum.png)
+
+The image shows why the typical framing is counterintuitive: if you think of being at some `sᵢ` and comparing to the target, you have 4 choices (increment or decrement either pointer). But from the elimination view, there's only one safe move — eliminate the candidate that cannot possibly work.
