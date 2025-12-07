@@ -4,6 +4,11 @@ order: 8
 title: About
 ---
 
+<style>
+a { color: #2563eb !important; text-decoration: underline !important; }
+a:hover { color: #1d4ed8 !important; }
+</style>
+
 Check out:
 
 - **Profiles:** [LinkedIn](https://www.linkedin.com/in/jadnohra/) · [GitHub](https://github.com/jadnohra)
