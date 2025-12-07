@@ -4,6 +4,30 @@ title: Missing Intuitions
 permalink: /missing-intuitions/
 ---
 
+<style>
+.thumb {
+  display: block;
+  margin: 1rem auto;
+  max-width: 200px;
+  cursor: zoom-in;
+  transition: max-width 0.3s ease;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.thumb.expanded {
+  max-width: 100%;
+  cursor: zoom-out;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.thumb').forEach(img => {
+    img.addEventListener('click', () => img.classList.toggle('expanded'));
+  });
+});
+</script>
+
 ## Two-Pointer Technique (Two Sum on Sorted Array)
 
 ### About
@@ -34,8 +58,8 @@ After safely eliminating one candidate, check `s₁` on the remaining array. Rep
 
 Note: we're walking the space of sums in an interesting way — neither from smallest to largest nor largest to smallest, but along a path informed by the min/max elimination.
 
-![Two-pointer Two Sum](/assets/img/missing-intuitions/two-pointer-two-sum.png)
+<img src="/assets/img/missing-intuitions/two-pointer-two-sum.png" alt="Two-pointer Two Sum" class="thumb">
 
 The image shows why the typical framing is counterintuitive: if you think of being at some `sᵢ` and comparing to the target, you have 4 choices (increment or decrement either pointer). But from the elimination view, there's only one safe move — eliminate the candidate that cannot possibly work.
 
-![Navigation path through sum space](/assets/img/missing-intuitions/two-pointer-navigation-path.png)
+<img src="/assets/img/missing-intuitions/two-pointer-navigation-path.png" alt="Navigation path through sum space" class="thumb">
