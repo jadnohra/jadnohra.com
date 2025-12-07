@@ -38,7 +38,10 @@ toc: true
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.thumb').forEach(img => {
-    img.addEventListener('click', function() {
+    img.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (document.querySelector('.lightbox')) return;
       var lightbox = document.createElement('div');
       lightbox.className = 'lightbox';
       var bigImg = document.createElement('img');
