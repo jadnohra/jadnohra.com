@@ -7,6 +7,15 @@ toc: true
 ---
 
 <style>
+/* Compact layout */
+.content p { margin-bottom: 0.5rem; }
+.content h2 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+.content h3 { margin-top: 1rem; margin-bottom: 0.3rem; }
+.content ul, .content ol { margin-bottom: 0.5rem; }
+.content li { margin-bottom: 0.2rem; }
+.content blockquote { margin: 0.5rem 0; }
+.content hr { margin: 1rem 0; }
+
 .thumb {
   display: block;
   margin: 1rem auto;
