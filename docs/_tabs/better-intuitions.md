@@ -3,6 +3,7 @@ layout: page
 title: Better Intuitions
 icon: fas fa-lightbulb
 order: 4
+toc: true
 ---
 
 <style>
