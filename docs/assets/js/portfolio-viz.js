@@ -108,7 +108,7 @@
     function highlightNode(d) {
       if (!d) return;
 
-      // Build adjacency for BFS (undirected)
+      // Build adjacency for BFS (undirected) from links
       const adjacency = new Map();
       for (const leaf of leaves) {
         adjacency.set(leaf, new Set());
@@ -126,13 +126,20 @@
       while (queue.length > 0) {
         const current = queue.shift();
         const currentDist = distances.get(current);
-        for (const neighbor of adjacency.get(current)) {
-          if (!distances.has(neighbor)) {
-            distances.set(neighbor, currentDist + 1);
-            queue.push(neighbor);
+        const neighbors = adjacency.get(current);
+        if (neighbors) {
+          for (const neighbor of neighbors) {
+            if (!distances.has(neighbor)) {
+              distances.set(neighbor, currentDist + 1);
+              queue.push(neighbor);
+            }
           }
         }
       }
+
+      // Debug
+      const found = Array.from(distances.entries()).map(([n, dist]) => `${n.data.name}:${dist}`);
+      console.log('BFS from', d.data.name, '→', found.join(', '));
 
       // Opacity based on distance
       function opacityForDistance(dist) {
