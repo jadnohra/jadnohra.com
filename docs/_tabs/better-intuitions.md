@@ -12,8 +12,8 @@ toc: true
   margin: 1rem auto;
   width: 200px;
   cursor: zoom-in;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .lightbox {
   position: fixed;
@@ -31,7 +31,8 @@ toc: true
 .lightbox img {
   max-width: 90%;
   max-height: 90%;
-  border-radius: 4px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 </style>
 
