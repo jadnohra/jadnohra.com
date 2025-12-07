@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Better Intuitions
+title: Intuitions
 icon: fas fa-lightbulb
 order: 4
 toc: true
