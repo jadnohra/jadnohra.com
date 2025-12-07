@@ -10,6 +10,7 @@ toc: true
 .thumb {
   display: block;
   margin: 1rem auto;
+  width: 200px;
   cursor: pointer;
   transition: width 0.3s ease;
   border: 1px solid #ddd;
@@ -20,8 +21,6 @@ toc: true
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.thumb').forEach(img => {
-    // Set initial small size
-    img.style.width = '200px';
     img.dataset.expanded = 'false';
 
     img.addEventListener('click', function() {
