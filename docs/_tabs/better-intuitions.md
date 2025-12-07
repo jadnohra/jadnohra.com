@@ -11,9 +11,26 @@ toc: true
   display: block;
   margin: 1rem auto;
   width: 200px;
-  cursor: pointer;
-  transition: width 0.3s ease;
+  cursor: zoom-in;
   border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  cursor: zoom-out;
+}
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
   border-radius: 4px;
 }
 </style>
@@ -21,16 +38,16 @@ toc: true
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.thumb').forEach(img => {
-    img.dataset.expanded = 'false';
-
     img.addEventListener('click', function() {
-      if (this.dataset.expanded === 'false') {
-        this.style.width = '100%';
-        this.dataset.expanded = 'true';
-      } else {
-        this.style.width = '200px';
-        this.dataset.expanded = 'false';
-      }
+      var lightbox = document.createElement('div');
+      lightbox.className = 'lightbox';
+      var bigImg = document.createElement('img');
+      bigImg.src = this.src;
+      lightbox.appendChild(bigImg);
+      document.body.appendChild(lightbox);
+      lightbox.addEventListener('click', function() {
+        this.remove();
+      });
     });
   });
 });
