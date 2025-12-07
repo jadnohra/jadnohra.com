@@ -13,16 +13,20 @@
 }
 
 /* Global link styling - blue with underline for content */
-#main-wrapper a:not(.nav-link):not(.btn):not(.card-link):not(.tag):not(.category):not(.archive-item):not(.toc-link),
-#core-wrapper a:not(.nav-link):not(.btn):not(.card-link):not(.tag):not(.category):not(.archive-item):not(.toc-link),
-.col-12 a:not(.nav-link):not(.btn):not(.card-link):not(.tag):not(.category):not(.archive-item):not(.toc-link) {
+div[class*="col-"] > ul a,
+div[class*="col-"] > ol a,
+div[class*="col-"] > p a,
+.post-content a,
+.px-1 a {
   color: #2563eb !important;
   text-decoration: underline !important;
   text-underline-offset: 2px;
 }
-#main-wrapper a:not(.nav-link):not(.btn):not(.card-link):not(.tag):not(.category):not(.archive-item):not(.toc-link):hover,
-#core-wrapper a:not(.nav-link):not(.btn):not(.card-link):not(.tag):not(.category):not(.archive-item):not(.toc-link):hover,
-.col-12 a:not(.nav-link):not(.btn):not(.card-link):not(.tag):not(.category):not(.archive-item):not(.toc-link):hover {
+div[class*="col-"] > ul a:hover,
+div[class*="col-"] > ol a:hover,
+div[class*="col-"] > p a:hover,
+.post-content a:hover,
+.px-1 a:hover {
   color: #1d4ed8 !important;
 }
 
