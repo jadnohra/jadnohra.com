@@ -174,8 +174,13 @@
       });
 
       link.attr("stroke-width", l => {
-        if (l.source === d || l.target === d) return 2.5;
-        return 1.5;
+        if (l.source === d || l.target === d) return 2;
+        const srcDist = distances.get(l.source);
+        const tgtDist = distances.get(l.target);
+        if (srcDist === undefined || tgtDist === undefined) return 0.5;
+        const maxDist = Math.max(srcDist, tgtDist);
+        if (maxDist <= 1) return 1.5;
+        return 0.8;  // thinner for distant links
       });
     }
 
