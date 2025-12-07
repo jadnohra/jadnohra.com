@@ -8,26 +8,30 @@ toc: true
 
 <style>
 .thumb {
-  display: block !important;
-  margin: 1rem auto !important;
-  width: 200px !important;
-  height: auto !important;
-  cursor: zoom-in;
+  display: block;
+  margin: 1rem auto;
+  cursor: pointer;
   transition: width 0.3s ease;
   border: 1px solid #ddd;
   border-radius: 4px;
-}
-.thumb.expanded {
-  width: 100% !important;
-  cursor: zoom-out;
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.thumb').forEach(img => {
+    // Set initial small size
+    img.style.width = '200px';
+    img.dataset.expanded = 'false';
+
     img.addEventListener('click', function() {
-      this.classList.toggle('expanded');
+      if (this.dataset.expanded === 'false') {
+        this.style.width = '100%';
+        this.dataset.expanded = 'true';
+      } else {
+        this.style.width = '200px';
+        this.dataset.expanded = 'false';
+      }
     });
   });
 });
