@@ -10,13 +10,15 @@ toc: true
 .thumb {
   display: block;
   margin: 1rem auto;
+  width: 200px;
   max-width: 200px;
   cursor: zoom-in;
-  transition: max-width 0.3s ease;
+  transition: all 0.3s ease;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 .thumb.expanded {
+  width: auto;
   max-width: 100%;
   cursor: zoom-out;
 }
