@@ -142,27 +142,33 @@
         }
       }
 
-      // Opacity based on distance
-      function opacityForDistance(dist) {
-        if (dist === undefined) return 0.08;  // unconnected
-        if (dist === 0) return 1.0;           // hovered node
-        if (dist === 1) return 1.0;           // direct neighbors
-        if (dist === 2) return 0.5;           // 2 hops
-        if (dist === 3) return 0.35;          // 3 hops
-        return 0.25;                          // 4+ hops
+      // Opacity for links - gradual falloff
+      function linkOpacity(dist) {
+        if (dist === undefined) return 0.08;
+        if (dist <= 1) return 1.0;
+        if (dist === 2) return 0.5;
+        if (dist === 3) return 0.35;
+        return 0.25;
+      }
+
+      // Opacity for text - more binary (connected vs not)
+      function textOpacity(dist) {
+        if (dist === undefined) return 0.1;
+        if (dist <= 2) return 1.0;
+        return 0.4;
       }
 
       // Apply to nodes
-      node.attr("fill-opacity", n => opacityForDistance(distances.get(n)));
+      node.attr("fill-opacity", n => textOpacity(distances.get(n)));
       node.attr("font-weight", n => distances.get(n) <= 1 ? "bold" : "normal");
 
-      // Apply to links - show if both endpoints are in connected component
+      // Apply to links
       link.attr("stroke-opacity", l => {
         const srcDist = distances.get(l.source);
         const tgtDist = distances.get(l.target);
         if (srcDist === undefined || tgtDist === undefined) return 0.05;
         const maxDist = Math.max(srcDist, tgtDist);
-        return opacityForDistance(maxDist);
+        return linkOpacity(maxDist);
       });
 
       // Keep existing coloring for direct connections
