@@ -151,11 +151,10 @@
         return 0.25;
       }
 
-      // Opacity for text - more binary (connected vs not)
+      // Opacity for text - binary (connected vs not)
       function textOpacity(dist) {
-        if (dist === undefined) return 0.1;
-        if (dist <= 2) return 1.0;
-        return 0.4;
+        if (dist === undefined) return 0.15;
+        return 1.0;
       }
 
       // Apply to nodes
