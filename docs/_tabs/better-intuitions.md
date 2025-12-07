@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: post
 title: Better Intuitions
 icon: fas fa-lightbulb
 order: 4
@@ -8,18 +8,17 @@ toc: true
 
 <style>
 .thumb {
-  display: block;
-  margin: 1rem auto;
-  width: 200px;
-  max-width: 200px;
+  display: block !important;
+  margin: 1rem auto !important;
+  width: 200px !important;
+  height: auto !important;
   cursor: zoom-in;
-  transition: all 0.3s ease;
+  transition: width 0.3s ease;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 .thumb.expanded {
-  width: auto;
-  max-width: 100%;
+  width: 100% !important;
   cursor: zoom-out;
 }
 </style>
@@ -27,7 +26,9 @@ toc: true
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.thumb').forEach(img => {
-    img.addEventListener('click', () => img.classList.toggle('expanded'));
+    img.addEventListener('click', function() {
+      this.classList.toggle('expanded');
+    });
   });
 });
 </script>
