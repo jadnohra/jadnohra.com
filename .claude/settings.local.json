@@ -12,7 +12,8 @@
       "Bash(tree:*)",
       "WebSearch",
       "Bash(git clone:*)",
-      "Bash(git submodule:*)"
+      "Bash(git submodule:*)",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []
