@@ -151,15 +151,9 @@
         return 0.25;
       }
 
-      // Opacity for text - binary (connected vs not)
-      function textOpacity(dist) {
-        if (dist === undefined) return 0.15;
-        return 1.0;
-      }
-
-      // Apply to nodes
-      node.attr("fill-opacity", n => textOpacity(distances.get(n)));
-      node.attr("font-weight", n => distances.get(n) <= 1 ? "bold" : "normal");
+      // Apply to nodes - connected = bold, not connected = normal
+      node.attr("fill-opacity", 1);
+      node.attr("font-weight", n => distances.has(n) ? "bold" : "normal");
 
       // Apply to links
       link.attr("stroke-opacity", l => {
