@@ -104,6 +104,78 @@ The image shows why the typical framing is counterintuitive: if you think of bei
 
 <img src="/assets/img/better-intuitions/two-pointer-navigation-path.png" alt="Navigation path through sum space" class="thumb">
 
+## Tree/Graph Traversal, Recursion, Data Strucutues, Traversal Order
+
+A tree is a graph. For traversal, what makes a graph more complex is that nodes can be reached from multiple parents (including forming loops). This is why we must track which nodes were visited, while in a tree, a node will natrually be visited once.
+
+<img src="/assets/img/better-intuitions/graph-tree-traversal.png" alt="Graph/Tree Traversal" class="thumb">
+
+### Core: Two Node States
+
+Every traversal algorithm is about managing two sets:
+
+| State | Meaning | Where it lives |
+|-------|---------|----------------|
+| **Discovered** | "I know you exist, you're on my list" | Frontier (stack/queue/call stack) |
+| **Visited** | "I've processed you and your neighbors" | Visited set (explicit or implicit) |
+
+The traversal is just a loop:
+```
+while frontier is not empty:
+    take node from frontier
+    mark as visited
+    discover its unvisited neighbors → add to frontier
+```
+
+That's all. DFS, BFS, Dijkstra, A* — all variations on this theme.
+
+### What data structure holds discovered nodes?
+
+| Structure | Retrieval Order | Algorithm | Gives You |
+|-----------|-----------------|-----------|-----------|
+| **Stack**  | Last discovered, first out | DFS | Deep paths first |
+| **Queue**  | First discovered, first out | BFS | Level-by-level, shortest path |
+| **Priority Queue** | Lowest cost first | Dijkstra/A* | Optimal path by weight |
+
+### Recursion or explicit data structure?
+
+| Approach | Pros | Cons |
+|----------|------|------|
+| **Recursion** | Elegant, flexible, parent stays "live" | Stack depth limits, harder to pause/resume |
+| **Explicit Stack** | No stack overflow, full control | More verbose, must capture all children eagerly |
+| **Queue** | Required for BFS | Can't use recursion naturally |
+
+
+**Recursion feels more natural** for tree problems — you don't need to eagerly capture everything before moving on
+  - **DS:** Once you pop a node, it's gone. You **must** record all children into the frontier immediately, or you lose access to them forever.
+  - **Recursion:** The parent stays on the call stack while you explore. You have full flexibility — process children one at a time, in any order, with the parent context always available.
+
+### The State Transition Diagram
+
+```
+                    ┌─────────────┐
+                    │  UNKNOWN    │
+                    │ (not seen)  │
+                    └──────┬──────┘
+                           │ neighbor of visited node
+                           ▼
+                    ┌─────────────┐
+        ┌──────────│ DISCOVERED  │◄─────────┐
+        │          │ (in frontier)│          │
+        │          └──────┬──────┘          │
+        │                 │ popped from      │
+        │                 │ frontier         │
+        │                 ▼                  │
+        │          ┌─────────────┐          │
+        │          │  VISITED    │──────────┘
+        │          │ (processed) │ discovers neighbors
+        │          └─────────────┘
+        │
+        └── In graphs: check before adding!
+            "if not visited and not in frontier"
+```
+
+
 ## The Mental Obstacle to Queue-Based Traversal
 
 The core difficulty in using a Queue for Breadth-First Search (BFS) is the contrast between the Call Stack's safety netand the Queue's explicit amnesiaS).
