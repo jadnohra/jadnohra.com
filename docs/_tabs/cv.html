@@ -251,8 +251,22 @@ permalink: /cv/
 <body>
     <div class="actions">
         <button onclick="window.print()">Print</button>
-        <a href="/cv/" download="jad_nohra_cv.html"><button type="button">Save as HTML</button></a>
+        <button type="button" onclick="saveAsHTML()">Save as HTML</button>
     </div>
+
+    <script>
+    function saveAsHTML() {
+        const clone = document.documentElement.cloneNode(true);
+        clone.querySelector('.actions').remove();
+        clone.querySelectorAll('script').forEach(s => s.remove());
+        const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+        const blob = new Blob([html], {type: 'text/html'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'jad_nohra_cv.html';
+        a.click();
+    }
+    </script>
 
     <div class="container">
         <header>
