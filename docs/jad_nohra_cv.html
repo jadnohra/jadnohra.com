@@ -1,0 +1,382 @@
+---
+layout: none
+permalink: /cv/
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jad Nohra - CV</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Calibri', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            color: #1a1a1a;
+            background: white;
+        }
+
+        /* Action buttons */
+        .actions {
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 12px 0.5in 0 0.5in;
+            display: flex;
+            gap: 10px;
+        }
+
+        .actions button {
+            padding: 8px 16px;
+            font-size: 10pt;
+            cursor: pointer;
+            border: 1px solid #2980b9;
+            background: #2980b9;
+            color: white;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .actions button:hover {
+            background: #1d6fa5;
+        }
+
+        .container {
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.4in 0.5in;
+        }
+
+        /* Header - More Professional */
+        header {
+            border-bottom: 1.5px solid #2980b9;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .header-line {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+
+        h1 {
+            font-size: 22pt;
+            font-weight: 600;
+            color: #0a0a0a;
+            letter-spacing: 0.5px;
+        }
+
+        .links {
+            font-size: 10.5pt;
+        }
+
+        .links a {
+            color: #2980b9;
+            text-decoration: none;
+            margin: 0 3px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .links a:first-child {
+            margin-left: 0;
+        }
+
+        .contact {
+            font-size: 10pt;
+            color: #333;
+        }
+
+        .contact a {
+            color: #2980b9;
+            text-decoration: none;
+            margin: 0 3px;
+        }
+
+        .contact a:hover {
+            text-decoration: underline;
+        }
+
+        /* Sections - More Readable */
+        h2 {
+            font-size: 12pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 1px solid #bdc3c7;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            padding-bottom: 3px;
+            color: #0a0a0a;
+            letter-spacing: 0.5px;
+        }
+
+        /* Experience - Better Spacing */
+        .job {
+            margin-bottom: 12px;
+        }
+
+        .job-line {
+            font-weight: 600;
+            font-size: 10.5pt;
+            margin-bottom: 4px;
+            color: #1a1a1a;
+        }
+
+        .company {
+            color: #1a1a1a;
+        }
+
+        .dates {
+            float: right;
+            font-weight: normal;
+            color: #555;
+            font-size: 10pt;
+        }
+
+        ul {
+            margin-left: 14px;
+            margin-bottom: 6px;
+        }
+
+        li {
+            margin-bottom: 3px;
+            line-height: 1.35;
+            color: #2c2c2c;
+        }
+
+        /* Better bullet style */
+        ul li::marker {
+            color: #666;
+            font-size: 9pt;
+        }
+
+        /* Earlier roles - One line each */
+        .compact-role {
+            font-size: 9.5pt;
+            margin-bottom: 3px;
+        }
+
+        .compact-role strong {
+            font-weight: 600;
+        }
+
+        /* Skills - Inline */
+        .skills-section {
+            font-size: 10pt;
+            line-height: 1.5;
+            margin: 6px 0;
+        }
+
+        .skills-section strong {
+            font-weight: bold;
+            color: #0a0a0a;
+        }
+
+        /* Patents & Publications - Compact */
+        .pub-item {
+            font-size: 10pt;
+            margin-bottom: 3px;
+        }
+
+        /* Two column for earlier work */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            font-size: 9.5pt;
+            line-height: 1.4;
+        }
+
+        /* Summary - Very compact */
+        .summary {
+            font-size: 10.5pt;
+            line-height: 1.45;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .summary p {
+            margin: 0;
+            font-size: 10.5pt;
+            line-height: 1.45;
+        }
+
+        /* Print optimization */
+        @media print {
+            .actions {
+                display: none;
+            }
+            body {
+                font-size: 10.5pt;
+            }
+            .container {
+                padding: 0.35in 0.45in;
+            }
+            .dates {
+                color: #444;
+            }
+            a {
+                color: #2980b9;
+                text-decoration: none;
+            }
+            h2 {
+                page-break-after: avoid;
+            }
+            .job {
+                page-break-inside: avoid;
+            }
+            /* Adjust margins for better page filling */
+            .job {
+                margin-bottom: 13px;
+            }
+            h2 {
+                margin-top: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="actions">
+        <button onclick="window.print()">Print</button>
+        <a href="/jad_nohra_cv.html" download="jad_nohra_cv.html"><button type="button">Save as HTML</button></a>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="header-line">
+                <h1>Jad Nohra</h1>
+                <div class="links">
+                    <a href="https://notes.jadnohra.com">Portfolio</a> •
+                    <a href="https://linkedin.com/in/jadnohra">LinkedIn</a> •
+                    <a href="https://github.com/jadnohra">GitHub</a> •
+                    <a href="https://patents.google.com/?inventor=Jad+NOHRA">Patents</a> •
+                    <a href="https://scholar.google.com/citations?user=0pae59AAAAAJ">Articles</a>
+                </div>
+            </div>
+            <div class="contact">
+                jadnohra@gmail.com • +4915787735162 • @jadnohra (X/TG) • Berlin/Munich
+            </div>
+        </header>
+
+        <div class="summary">
+            <p>Engineering leader with 25+ years spanning gaming physics (Sony/Microsoft), autonomous vehicles (Argo AI/Audi), and cryptographic hardware (Irreducible). Built and led organizations up to 25 engineers while staying hands-on with code and architecture. Equally drawn to IC deep-dives, team building, or hybrid technical leadership roles.</p>
+        </div>
+
+        <h2>Experience</h2>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="dates">Sep 2024 - Present</span>
+                <span class="company">Irreducible (ZK-crypto/hardware)</span>, Berlin • Engineering Director
+            </div>
+            <ul>
+                <li>Built high-performance systems team for hardware-accelerated Zero-Knowledge Proofs; managing global remote team</li>
+                <li>Hands-on Rust: Contributed to bespoke ZK circuit compiler, developed FPGA embedded interfaces and acceleration tooling</li>
+                <li>Guided founder technical decisions on team scaling, architectural tradeoffs, and execution risks while maintaining startup velocity</li>
+                <li>Drove strategic product pivot through comprehensive hardware acceleration feasibility analysis</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="dates">Jan 2023 - Sep 2024</span>
+                <span class="company">FERNRIDE (autonomous trucking)</span>, Munich • Principal Engineer / Senior Engineering Manager
+            </div>
+            <ul>
+                <li>Built and led team developing ASIL-D compliant autonomous trucks; designed safe perception for LiDAR/Radar sensors</li>
+                <li>Designed system requirements framework with close code ties; collaborated with systems engineers on safety case for TÜV SÜD</li>
+                <li>Engineering leadership team: strategic decisions on safety/performance compute, feature selection for ODDs, release feasibility</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="dates">Jun 2021 - Dec 2022</span>
+                <span class="company">Argo AI (Ford/VW-backed AV)</span>, Munich • Engineering Manager & Staff Software Engineer
+            </div>
+            <ul>
+                <li><strong>Systems Engineering & Safety Validation:</strong> Led critical bridge between software implementation and formal systems engineering; broke silos between V&V, safety, and development teams; earned request from systems engineers to join their organization to formalize test-to-requirements traceability</li>
+                <li><strong>Simulation Lead:</strong> Bootstrapped validation effort; assembled team; secured cross-functional buy-in; delivered comprehensive model library (compute, vehicle, traffic, scenario generation-patent pending, AV sensing) with theoretical/empirical validity boundaries</li>
+                <li>Managed Munich teams while coordinating with multiple US offices across time zones and cultures; presented to VW/Ford for EU requirements</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="dates">Apr 2018 - Jun 2020</span>
+                <span class="company">Autonomous Intelligent Driving (Audi)</span>, Munich • Simulation Tech Lead
+            </div>
+            <ul>
+                <li>Built 4 teams (20 senior engineers) covering SIL framework, traffic sim, sensor sim, scenario diagnostics</li>
+                <li>Delivered full-stack SIL for replay/simulation; owned vision, strategy, roadmap, execution while staying hands-on with code and prototyping</li>
+                <li>Empowered teams while getting hands dirty; managed technology scouting and vendor partnerships until acquisition by Argo AI</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="dates">Jun 2011 - Mar 2018</span>
+                <span class="company">Microsoft/Havok</span>, Munich • Lead Physics R&D
+            </div>
+            <ul>
+                <li><strong>Havok Destruction Lead</strong> (2017-18): Interim lead; requirements via data/interviews/surveys; identified problematic features through technical proof; developed/presented roadmap; maintenance and debugging</li>
+                <li><strong>Real-time Physics</strong> (2015-17): HoloLens integration R&D; co-invented localization algorithm (US10672159B2); prototyped cloud-distributed physics</li>
+                <li><strong>Core Physics Engine</strong> (2011-15): Low-level optimization (SIMD/vectorization, multi-threading); geometric queries; numerical analysis/optimization using linear programming in physics solvers; published "Parallel Pathfinding on Modern Computer Hardware"</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="dates">2009 - 2011</span>
+                <span class="company">Guerrilla Games (Sony)</span>, Amsterdam • Senior AI Programmer
+            </div>
+            <ul>
+                <li>Killzone 3 (PlayStation 3) AI: motion planning for navigation/behavior (humanoids, land/air vehicles); multiplayer bots with complex behavioral systems; automated navigable space generation and tools; Maya animation tooling; automated AI testing</li>
+            </ul>
+        </div>
+
+        <strong style="font-size: 10pt;">Earlier:</strong>
+        <div class="two-col">
+            <div>
+                • <strong>Kimera Studios</strong> (2006-08): Indie game developer; built complete engine: rendering, physics, animation, NN based goalkeeper AI, spatial partitioning<br>
+                • <strong>AiGameDev</strong> (2008-09): Main contributor to open source AI framework: Motion Graphs, Locomotion Planning, Reinforcement Learning, A*/Hierarchical A*, Terrain Clustering<br>
+                • <strong>Guided Knowledge</strong> (2015): Nonlinear optimization consultant for IMU sensors
+            </div>
+            <div>
+                • <strong>Sixteen Tons</strong> (2008): Nintendo DS game engine, graphics, optimization, stochastic game AI<br>
+                • <strong>ACT-Kern</strong> (2002-03): Stereoscopic screen software suite, OpenGL/DirectX wrappers, video streaming<br>
+                • <strong>Living Systems</strong> (2001-02): Agent-based software<br>
+                • <strong>Gaming Logix</strong> (1999-2001): Online casino game engine, server/client architecture, C++/DirectX/Java
+            </div>
+        </div>
+
+        <div style="margin-top: 12px; margin-bottom: 12px; font-size: 10pt;">
+            <strong>Advisory:</strong> Coach tech leads and engineering managers on technical leadership and team scaling
+        </div>
+
+        <h2>Technical Skills</h2>
+        <div class="skills-section">
+            <strong>Technologies and methods applied in production systems:</strong><br>
+            <strong>Technologies:</strong> Rust, C++, Python • FPGA • Embedded Systems • Distributed Computing • SIMD • Multi-threading<br>
+            <strong>Specializations:</strong> Zero-Knowledge Proofs • Autonomous Vehicles (ISO 26262/SOTIF/ASIL-D) • Real-time Physics Engines • Rigid-body Dynamics • Traffic/Sensor Simulation • Safety-critical software development • Mathematical modeling and numerical analysis (linear programming, nonlinear optimization) • Patent development and technical innovation • Reinforcement Learning, Neural Networks, Motion Planning, A*/Hierarchical A*
+        </div>
+
+        <h2>Background & Credentials</h2>
+        <div class="skills-section">
+            <strong>Education:</strong> MS Mathematics coursework (Emporia State 2018, 33% complete, 98%+ avg) • BE Computer Engineering (AUB 1995-99)<br>
+            <strong>Patents & Publications:</strong> <a href="https://patents.google.com/patent/US20230030474A1/en">AV training simulations (2023)</a> • <a href="https://patents.google.com/patent/US10672159B2">Anchor graph spatial optimization (2020)</a> • "Parallel Pathfinding on Modern Hardware" • "Uniqueness of Minima in Least Squares" • "Who is Psychotron" (flash fiction, <a href="https://www.amazon.de/-/en/Jad-Nohra-ebook/dp/B0C9FLY7Z7">ebook</a>, <a href="https://play.google.com/store/audiobooks/details/Who_is_Psychotron?id=AQAAAEDit1D3oM&hl=en">audio</a>)<br>
+            <strong>Languages:</strong> English (Fluent) • German, French (Working) • Arabic (Conversational) • Czech (Basic)
+        </div>
+    </div>
+</body>
+</html>
