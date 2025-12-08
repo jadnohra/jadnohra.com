@@ -159,13 +159,13 @@ That's all. DFS, BFS, Dijkstra, A* — all variations on this theme.
                     └──────┬──────┘
                            │ neighbor of visited node
                            ▼
-                    ┌─────────────┐
-        ┌──────────│ DISCOVERED  │◄─────────┐
-        │          │ (in frontier)│          │
-        │          └──────┬──────┘          │
-        │                 │ popped from      │
-        │                 │ frontier         │
-        │                 ▼                  │
+                   ┌──────────────┐
+        ┌──────────│ DISCOVERED   │◄────────┐
+        │          │ (in frontier)│         │
+        │          └──────┬───────┘         │
+        │                 │ popped from     │
+        │                 │ frontier        │
+        │                 ▼                 │
         │          ┌─────────────┐          │
         │          │  VISITED    │──────────┘
         │          │ (processed) │ discovers neighbors
