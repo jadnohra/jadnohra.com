@@ -171,10 +171,66 @@ That's all. DFS, BFS, Dijkstra, A* — all variations on this theme.
         │          │ (processed) │ discovers neighbors
         │          └─────────────┘
         │
-        └── In graphs: check before adding!
-            "if not visited and not in frontier"
+        └── In graphs: check before adding.
 ```
 
+## Deriving the Two-Heap Streaming Median
+
+When we start with a couple of elements, it seems easy, let's follow that, and try to hang on to the simple setup that we have, let's try to "Hang on to the middle" — at every step, we need the median available.
+
+<img src="/assets/img/better-intuitions/streaming-median-two-heaps.png" alt="Graph/Tree Traversal" class="thumb">
+
+### Start From Initial Conditions
+
+We have 2 elements, adding a 3rd. Now we have:
+- A middle element
+- A left side (one element)
+- A right side (one element)
+
+### The Subtle Moment
+
+Stop here. Be subtle enough to notice: **each side has exactly one element right now.**
+
+Maybe, the element is part of some data structure that woudl allow us to maintain what we are hanging on to. At this point, the DS could be an array, maybe sorted, a graph, a tree, a heap...
+
+Let's ask: **as more elements arrive, what property will each side need to maintain?**
+
+The left side: a collection where **all elements are less than middle** (`<<<<`)
+The right side: a collection where **all elements are greater than middle** (`>>>>`)
+
+| Structure | Property | Fits? |
+|-----------|----------|-------|
+| Array | No ordering guarantee | ✗ |
+| Sorted array | Full ordering (overkill, O(n) insert) | ✗ |
+| BST | Left < root < right, but structure is scattered | ✗ |
+| Map | Key-value lookup, not about ordering | ✗ |
+| **Heap** | All descendants < root (max) or > root (min) | ✓ |
+
+The heap property is exactly the "all less than" / "all greater than" property we need!
+
+- Left side (`<<<<` toward middle) → **max-heap** (root is largest = closest to middle)
+- Right side (`>>>>` away from middle) → **min-heap** (root is smallest = closest to middle)
+
+```
+    MAX-HEAP          MIDDLE          MIN-HEAP
+
+       [5]              7               [9]
+      /   \                            /   \
+    [3]   [4]                       [12]  [15]
+
+    <<<<<<<            M              >>>>>>>
+```
+
+The median lives at the boundary: top of one heap, or average of both tops.
+
+### This seems to work out
+
+We need to keep the two sides balanced (equal size, or off by one). This means sometimes moving elements across the middle.
+
+We seem to be lucky: rebalancing preserves the properties we need.
+
+- Pop from max-heap → gives us the largest of the left side (the one closest to middle)
+- Push to min-heap → it's smaller than everything already there ✓
 
 ## The Mental Obstacle to Queue-Based Traversal
 
