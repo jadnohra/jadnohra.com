@@ -189,9 +189,7 @@ We have 2 elements, adding a 3rd. Now we have:
 
 ### The Subtle Moment
 
-Stop here. Be subtle enough to notice: **each side has exactly one element right now.**
-
-Maybe, the element is part of some data structure that woudl allow us to maintain what we are hanging on to. At this point, the DS could be an array, maybe sorted, a graph, a tree, a heap...
+Stop here. Be subtle enough to notice: each side has exactly one element right now. Maybe, the element is part of some data structure that would allow us to maintain what we are hanging on to. At this point, the DS could be an array, maybe sorted, a graph, a tree, a heap...
 
 Let's ask: **as more elements arrive, what property will each side need to maintain?**
 
