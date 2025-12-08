@@ -104,6 +104,27 @@ The image shows why the typical framing is counterintuitive: if you think of bei
 
 <img src="/assets/img/better-intuitions/two-pointer-navigation-path.png" alt="Navigation path through sum space" class="thumb">
 
+## The Mental Obstacle to Queue-Based Traversal
+
+The core difficulty in using a Queue for Breadth-First Search (BFS) is the contrast between the Call Stack's safety netand the Queue's explicit amnesiaS).
+
+### Recursion Feels Natural
+
+Recursion for tree traversal feels intuitive because the control structure is isomorphic (has the same shape) as the data structure.
+
+* **State Storage:** When a recursive call is made, the operating system pauses the parent function's state and pushes it onto the Call Stack. The stack grows as you descend the tree and shrinks as you return.
+* **Ancestry is Preserved:** The history (ancestry) is preserved because the parent's function call is simply paused. The stack **mirrors the tree structure**.
+
+### Queue: The Obstacle of Amnesia
+
+The Queue mechanism of traversal is destructive and stateless regarding ancestry.
+
+* **Amnesic Operation:** When you process a node you call `popleft()` (dequeue). The Queue only holds the immediate frontier of nodes to visit next.
+* **The Worry is True:** The intuition—that the Queue cannot hold the state (ancestry)—is correct. The Queue is a destructive tool for discovery.
+* **Auxiliary Vector:** Any problem requiring a structured result (like Level Order Traversal) needs an auxiliary data structure. One must manually archive the popped nodes (or values) into this external memory.
+
+The Queue handles Traversal Order; the external Vector handles Context Preservation.
+
 ---
 
 ## [DRAFT] Why Merge Sort Beats Insertion Sort
