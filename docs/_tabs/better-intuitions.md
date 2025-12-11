@@ -372,13 +372,39 @@ x86 SHA-512 ext         ~2-3 GB/s            ~2+ GB/s
 ARM + crypto ext        ~2-3 GB/s            ~3-5 GB/s
 ─────────────────────────────────────────────────────────────────────────────────
 
+================================================================================
+                                 GAPS
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 1. AMD SHA-512                                                              │
+│    No hardware support across all Zen architectures (Zen 1-5, 2017-2024)    │
+│    Must use AVX2/AVX-512 SIMD software implementations                      │
+│    ARM has ~3-5x throughput advantage                                       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 2. Intel SHA-512 (different older than 2024)                                      │
+│    Arrow Lake and Lunar Lake only (2024)                                    │
+│    Alder Lake, Raptor Lake, all Xeons: software only                        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 3. x86 SHA-256 Compression Granularity                                      │
+│    sha256rnds2 does 2 rounds (ARM sha256h/h2 does 4)                        │
+│    x86 needs 2x more instructions for same work                             │
+│    Partially offset by higher x86 clock speeds                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 4. SHA-3 / Keccak (all platforms)                                           │
+│    No dedicated instructions on ARM, Intel, or AMD                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 5. BLAKE2 / BLAKE3 (all platforms)                                          │
+│    No dedicated instructions anywhere                                       │
+│    Relies on general SIMD (AVX2/AVX-512/NEON)                               │
+└─────────────────────────────────────────────────────────────────────────────┘
 
 ================================================================================
                               COVERAGE SUMMARY
 ================================================================================
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│  Algorithm       Intel 2024+    Intel <2024    AMD           ARM v8.2+     │
+│  Algorithm       Intel 2024+    Intel <2024    AMD           ARM v8.2+      │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │  SHA-1              ✅             ✅             ✅           ✅            │
 │  SHA-224            ✅             ✅             ✅           ✅            │
@@ -458,47 +484,6 @@ Rotate e value              sha1h               sha1nexte           Similar
 ─────────────────────────────────────────────────────────────────────────────────
 ARM: ARMv8-A 2011 | x86: Intel 2016, AMD 2017
 
-
-================================================================================
-                              COVERAGE SUMMARY
-================================================================================
-
-                     ARM              Intel            Intel           AMD
-                     ARMv8.2+ 2016    2024+            2016-2023       2017+
-                   ──────────────  ──────────────   ──────────────  ──────────
-SHA-1                   ✅              ✅               ✅             ✅
-SHA-256                 ✅              ✅               ✅             ✅
-SHA-512                 ✅              ✅               ❌             ❌
-SHA-3/Keccak            ❌              ❌               ❌             ❌
-BLAKE2/3                ❌              ❌               ❌             ❌
-
-
-================================================================================
-                                 GAPS
-================================================================================
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ 1. AMD SHA-512                                                              │
-│    No hardware support across all Zen architectures (Zen 1-5, 2017-2024)    │
-│    Must use AVX2/AVX-512 SIMD software implementations                      │
-│    ARM has ~3-5x throughput advantage                                       │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ 2. Intel SHA-512 (different older than 2024)                                      │
-│    Arrow Lake and Lunar Lake only (2024)                                    │
-│    Alder Lake, Raptor Lake, all Xeons: software only                        │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ 3. x86 SHA-256 Compression Granularity                                      │
-│    sha256rnds2 does 2 rounds (ARM sha256h/h2 does 4)                        │
-│    x86 needs 2x more instructions for same work                             │
-│    Partially offset by higher x86 clock speeds                              │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ 4. SHA-3 / Keccak (all platforms)                                           │
-│    No dedicated instructions on ARM, Intel, or AMD                          │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ 5. BLAKE2 / BLAKE3 (all platforms)                                          │
-│    No dedicated instructions anywhere                                       │
-│    Relies on general SIMD (AVX2/AVX-512/NEON)                               │
-└─────────────────────────────────────────────────────────────────────────────┘
 
 ================================================================================
 ```
