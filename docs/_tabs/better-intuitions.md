@@ -251,6 +251,497 @@ The Queue mechanism of traversal is destructive and stateless regarding ancestry
 
 The Queue handles Traversal Order; the external Vector handles Context Preservation.
 
+## SHA Hardware Acceleration Instruction Cheat Sheat
+
+### SHA Hardware Acceleration Instructions
+```
+================================================================================
+                    SHA HARDWARE ACCELERATION INSTRUCTIONS
+================================================================================
+
+ARM (ARMv8 Crypto Extensions)
+─────────────────────────────────────────────────────────────────────────────────
+Instruction     Data Width    Purpose                          Rounds/Words
+─────────────────────────────────────────────────────────────────────────────────
+sha256su0       128-bit       Message schedule σ0 + W[i-16]    4 words
+sha256su1       128-bit       Message schedule σ1 + W[i-7]     4 words
+sha256h         128-bit       Compression (first half)         4 rounds
+sha256h2        128-bit       Compression (second half)        4 rounds
+
+sha512su0       128-bit       Message schedule σ0 + W[i-16]    2 words
+sha512su1       128-bit       Message schedule σ1 + W[i-7]     2 words
+sha512h         128-bit       Compression (first half)         2 rounds
+sha512h2        128-bit       Compression (second half)        2 rounds
+
+sha1c           128-bit       SHA-1 rounds (choice)            4 rounds
+sha1p           128-bit       SHA-1 rounds (parity)            4 rounds
+sha1m           128-bit       SHA-1 rounds (majority)          4 rounds
+sha1su0         128-bit       SHA-1 schedule part 1            4 words
+sha1su1         128-bit       SHA-1 schedule part 2            4 words
+sha1h           32-bit        SHA-1 fixed rotate               1 word
+─────────────────────────────────────────────────────────────────────────────────
+Introduced: ARMv8-A 2011 (SHA-1/256), ARMv8.2-A 2016 (SHA-512)
+
+
+x86 Intel SHA-NI
+─────────────────────────────────────────────────────────────────────────────────
+Instruction     Data Width    Purpose                          Rounds/Words
+─────────────────────────────────────────────────────────────────────────────────
+sha256rnds2     128-bit       Compression rounds               2 rounds
+sha256msg1      128-bit       Message schedule (σ0 part)       4 words
+sha256msg2      128-bit       Message schedule (σ1 part)       4 words
+
+sha1rnds4       128-bit       SHA-1 compression rounds         4 rounds
+sha1nexte       128-bit       SHA-1 e accumulate + rotate      -
+sha1msg1        128-bit       SHA-1 schedule part 1            4 words
+sha1msg2        128-bit       SHA-1 schedule part 2            4 words
+─────────────────────────────────────────────────────────────────────────────────
+Introduced: Intel Goldmont 2016, AMD Zen 2017
+
+
+x86 Intel SHA-512 Extensions
+─────────────────────────────────────────────────────────────────────────────────
+Instruction     Data Width    Purpose                          Rounds/Words
+─────────────────────────────────────────────────────────────────────────────────
+VSHA512MSG1     256-bit YMM   Message schedule (σ0 part)       2 words
+VSHA512MSG2     256-bit YMM   Message schedule (σ1 part)       2 words
+VSHA512RNDS2    256-bit YMM   Compression rounds               2 rounds
+─────────────────────────────────────────────────────────────────────────────────
+Introduced: Intel Arrow Lake / Lunar Lake 2024 — EVEX encoded
+Detection: CPUID (EAX=07H, ECX=1) → EAX bit 0
+
+
+x86 AVX Variants (V-prefixed)
+─────────────────────────────────────────────────────────────────────────────────
+Instruction     Data Width    Purpose                          Rounds/Words
+─────────────────────────────────────────────────────────────────────────────────
+VSHA256RNDS2    128-bit XMM   Compression rounds               2 rounds
+VSHA256MSG1     128-bit XMM   Message schedule (σ0 part)       4 words
+VSHA256MSG2     128-bit XMM   Message schedule (σ1 part)       4 words
+─────────────────────────────────────────────────────────────────────────────────
+Introduced: alongside SHA-512 extensions 2024
+
+
+================================================================================
+                         PROCESSOR SUPPORT MATRIX
+================================================================================
+
+Vendor              Year    SHA-1/256    SHA-512
+─────────────────────────────────────────────────────────────────────────────────
+Intel Goldmont      2016       ✅           ❌         Atom low-power
+Intel Ice Lake      2019       ✅           ❌         Mobile
+Intel Rocket Lake   2021       ✅           ❌         Desktop
+Intel Alder Lake    2021       ✅           ❌         Desktop/Mobile
+Intel Raptor Lake   2022       ✅           ❌         Desktop/Mobile
+Intel Arrow Lake    2024       ✅           ✅         Desktop (Core Ultra 200S)
+Intel Lunar Lake    2024       ✅           ✅         Mobile (Core Ultra 200V)
+─────────────────────────────────────────────────────────────────────────────────
+AMD Zen 1           2017       ✅           ❌         Ryzen 1000
+AMD Zen 2           2019       ✅           ❌         Ryzen 3000
+AMD Zen 3           2020       ✅           ❌         Ryzen 5000
+AMD Zen 4           2022       ✅           ❌         Ryzen 7000
+AMD Zen 5           2024       ✅           ❌         Ryzen 9000
+─────────────────────────────────────────────────────────────────────────────────
+ARM Cortex-A53+     2012       ✅           ❌         ARMv8-A
+ARM Cortex-A75+     2016       ✅           ✅         ARMv8.2-A
+Apple M1            2020       ✅           ✅
+Apple M2            2022       ✅           ✅
+Apple M3            2023       ✅           ✅
+Apple M4            2024       ✅           ✅
+─────────────────────────────────────────────────────────────────────────────────
+
+
+================================================================================
+                         THROUGHPUT COMPARISON
+================================================================================
+
+Algorithm    Scalar Ops/Block    HW Instructions    Theoretical Speedup
+─────────────────────────────────────────────────────────────────────────────────
+SHA-1             ~1200              ~40                  ~30x
+SHA-256           ~2000              ~56                  ~35x
+SHA-512           ~2500              ~36                  ~70x
+─────────────────────────────────────────────────────────────────────────────────
+
+Real-world throughput (approximate):
+─────────────────────────────────────────────────────────────────────────────────
+                        SHA-256              SHA-512
+─────────────────────────────────────────────────────────────────────────────────
+Software (scalar)       ~500 MB/s            ~300-500 MB/s
+x86 SHA-NI              ~2-3 GB/s            N/A (software only)
+x86 SHA-512 ext         ~2-3 GB/s            ~2+ GB/s
+ARM + crypto ext        ~2-3 GB/s            ~3-5 GB/s
+─────────────────────────────────────────────────────────────────────────────────
+
+
+================================================================================
+                              COVERAGE SUMMARY
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  Algorithm       Intel 2024+    Intel <2024    AMD           ARM v8.2+
+├─────────────────────────────────────────────────────────────────────────────┤
+│  SHA-1              ✅             ✅             ✅           ✅
+│  SHA-224            ✅             ✅             ✅           ✅
+│  SHA-256            ✅             ✅             ✅           ✅
+│  SHA-384            ✅             ❌              ❌            ✅
+│  SHA-512            ✅             ❌              ❌            ✅
+│  SHA-512/256        ✅             ❌              ❌            ✅
+│  SHA-3 (Keccak)     ❌              ❌              ❌            ❌
+│  BLAKE2/3           ❌              ❌              ❌            ❌
+└─────────────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+```
+
+### ARM vs x86 SHA Instruction Comparison
+
+```
+================================================================================
+                        ARM vs x86 SHA INSTRUCTION COMPARISON
+================================================================================
+
+SHA-256 Message Schedule
+─────────────────────────────────────────────────────────────────────────────────
+Operation                    ARM                 x86                 Notes
+─────────────────────────────────────────────────────────────────────────────────
+W[i-16] + σ0(W[i-15])       sha256su0           sha256msg1          Equivalent
+                                                VSHA256MSG1 (AVX)
+σ1(W[i-2]) + W[i-7]         sha256su1           sha256msg2          Equivalent
+                                                VSHA256MSG2 (AVX)
+─────────────────────────────────────────────────────────────────────────────────
+ARM: ARMv8-A 2011 | x86: Intel 2016, AMD 2017
+
+
+SHA-256 Compression
+─────────────────────────────────────────────────────────────────────────────────
+Operation                    ARM                 x86                 Notes
+─────────────────────────────────────────────────────────────────────────────────
+Compression rounds          sha256h + sha256h2   sha256rnds2         Different
+                            (4 rounds)          (2 rounds)          ARM 2x wider
+                                                VSHA256RNDS2 (AVX)
+─────────────────────────────────────────────────────────────────────────────────
+ARM: ARMv8-A 2011 | x86: Intel 2016, AMD 2017
+
+
+SHA-512 Message Schedule
+─────────────────────────────────────────────────────────────────────────────────
+Operation                    ARM                 x86                 Notes
+─────────────────────────────────────────────────────────────────────────────────
+W[i-16] + σ0(W[i-15])       sha512su0           VSHA512MSG1         Equivalent
+σ1(W[i-2]) + W[i-7]         sha512su1           VSHA512MSG2         Equivalent
+─────────────────────────────────────────────────────────────────────────────────
+ARM: ARMv8.2-A 2016 | x86: Intel Arrow/Lunar Lake 2024, AMD ❌
+
+
+SHA-512 Compression
+─────────────────────────────────────────────────────────────────────────────────
+Operation                    ARM                 x86                 Notes
+─────────────────────────────────────────────────────────────────────────────────
+Compression rounds          sha512h + sha512h2   VSHA512RNDS2        Different
+                            (2 rounds)          (2 rounds)          Same width
+─────────────────────────────────────────────────────────────────────────────────
+ARM: ARMv8.2-A 2016 | x86: Intel Arrow/Lunar Lake 2024, AMD ❌
+
+
+SHA-1
+─────────────────────────────────────────────────────────────────────────────────
+Operation                    ARM                 x86                 Notes
+─────────────────────────────────────────────────────────────────────────────────
+Rounds (choice, f=0)        sha1c               sha1rnds4 (imm=0)   Equivalent
+Rounds (parity, f=1)        sha1p               sha1rnds4 (imm=1)   Equivalent
+Rounds (majority, f=2)      sha1m               sha1rnds4 (imm=2)   Equivalent
+Rounds (parity, f=3)        sha1p               sha1rnds4 (imm=3)   Equivalent
+Schedule part 1             sha1su0             sha1msg1            Equivalent
+Schedule part 2             sha1su1             sha1msg2            Equivalent
+Rotate e value              sha1h               sha1nexte           Similar
+─────────────────────────────────────────────────────────────────────────────────
+ARM: ARMv8-A 2011 | x86: Intel 2016, AMD 2017
+
+
+================================================================================
+                              COVERAGE SUMMARY
+================================================================================
+
+                     ARM              Intel            Intel           AMD
+                     ARMv8.2+ 2016    2024+            2016-2023       2017+
+                   ──────────────  ──────────────   ──────────────  ──────────
+SHA-1                   ✅              ✅               ✅             ✅
+SHA-256                 ✅              ✅               ✅             ✅
+SHA-512                 ✅              ✅               ❌             ❌
+SHA-3/Keccak            ❌              ❌               ❌             ❌
+BLAKE2/3                ❌              ❌               ❌             ❌
+
+
+================================================================================
+                                 GAPS
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 1. AMD SHA-512                                                              │
+│    No hardware support across all Zen architectures (Zen 1-5, 2017-2024)    │
+│    Must use AVX2/AVX-512 SIMD software implementations                      │
+│    ARM has ~3-5x throughput advantage                                       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 2. Intel SHA-512 (different older than 2024)                                      │
+│    Arrow Lake and Lunar Lake only (2024)                                    │
+│    Alder Lake, Raptor Lake, all Xeons: software only                        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 3. x86 SHA-256 Compression Granularity                                      │
+│    sha256rnds2 does 2 rounds (ARM sha256h/h2 does 4)                        │
+│    x86 needs 2x more instructions for same work                             │
+│    Partially offset by higher x86 clock speeds                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 4. SHA-3 / Keccak (all platforms)                                           │
+│    No dedicated instructions on ARM, Intel, or AMD                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 5. BLAKE2 / BLAKE3 (all platforms)                                          │
+│    No dedicated instructions anywhere                                       │
+│    Relies on general SIMD (AVX2/AVX-512/NEON)                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+```
+
+### Example Accelertions using SHA Hardware Instrusctions
+
+```
+================================================================================
+                    SHA-256 MESSAGE SCHEDULE (one word)
+                           SCALAR VERSION
+================================================================================
+
+                    Computing W[16] from previous words
+
+     W[0]          W[1]           W[9]          W[14]
+       │            │              │              │
+       │            ▼              │              ▼
+       │     ┌─────────────┐       │       ┌─────────────┐
+       │     │ rotr(7)     │       │       │ rotr(17)    │
+       │     │ rotr(18)    │       │       │ rotr(19)    │
+       │     │ shr(3)      │       │       │ shr(10)     │
+       │     │ XOR all     │       │       │ XOR all     │
+       │     └──────┬──────┘       │       └──────┬──────┘
+       │            │              │              │
+       │            ▼              │              ▼
+       │         σ0(W[1])          │          σ1(W[14])
+       │            │              │              │
+       │      (5 ops)              │         (5 ops)
+       │            │              │              │
+       └────────┐   │   ┌──────────┘              │
+                │   │   │                         │
+                ▼   ▼   ▼                         │
+              ┌─────────────┐                     │
+              │ ADD three   │◄────────────────────┘
+              │ values      │
+              │ (3 ops)     │
+              └──────┬──────┘
+                     │
+                     ▼
+                  W[16]
+
+         TOTAL: 13 operations for ONE word
+         Need 48 words → 624 operations
+
+
+================================================================================
+                    SHA-256 MESSAGE SCHEDULE (four words)
+                          HARDWARE VERSION
+================================================================================
+
+        W[0:3]            W[4:7]           W[8:11]         W[12:15]
+    ┌──┬──┬──┬──┐     ┌──┬──┬──┬──┐    ┌──┬──┬──┬──┐    ┌──┬──┬──┬──┐
+    │0 │1 │2 │3 │     │4 │5 │6 │7 │    │8 │9 │10│11│    │12│13│14│15│
+    └──┴──┴──┴──┘     └──┴──┴──┴──┘    └──┴──┴──┴──┘    └──┴──┴──┴──┘
+          │                 │                │                │
+          │                 │                │                │
+          └────────┬────────┘                │                │
+                   │                         │                │
+                   ▼                         │                │
+          ┌─────────────────┐                │                │
+          │   sha256su0     │                │                │
+          │                 │                │                │
+          │ Internally does:│                │                │
+          │ W[i-16]+σ0(...) │                │                │
+          │ for 4 words     │                │                │
+          │ IN PARALLEL     │                │                │
+          └────────┬────────┘                │                │
+                   │                         │                │
+                   ▼                         │                │
+             partial[0:3]                    │                │
+                   │                         │                │
+                   └──────────────┬──────────┴────────────────┘
+                                  │
+                                  ▼
+                         ┌─────────────────┐
+                         │   sha256su1     │
+                         │                 │
+                         │ Adds remaining: │
+                         │ σ1(...)+W[i-7]  │
+                         │ for 4 words     │
+                         │ IN PARALLEL     │
+                         └────────┬────────┘
+                                  │
+                                  ▼
+                          ┌──┬──┬──┬──┐
+                          │16│17│18│19│
+                          └──┴──┴──┴──┘
+                            W[16:19]
+
+                TOTAL: 2 instructions for FOUR words
+                Need 48 words → 24 instructions
+
+
+================================================================================
+                      SHA-256 COMPRESSION (one round)
+                            SCALAR VERSION
+================================================================================
+
+                           STATE (8 words)
+          ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+          │  a  │  b  │  c  │  d  │  e  │  f  │  g  │  h  │
+          └──┬──┴──┬──┴──┬──┴─────┴──┬──┴──┬──┴──┬──┴──┬──┘
+             │     │     │           │     │     │     │
+             │     │     │           │     │     │     │
+    ┌────────┴─────┴─────┴───┐    ┌──┴─────┴─────┴──┐  │
+    │                        │    │                 │  │
+    ▼                        │    ▼                 │  │
+┌────────┐                   │ ┌────────┐           │  │
+│Σ0(a)   │                   │ │Σ1(e)   │           │  │
+│rotr(2) │                   │ │rotr(6) │           │  │
+│rotr(13)│                   │ │rotr(11)│           │  │
+│rotr(22)│                   │ │rotr(25)│           │  │
+│XOR all │                   │ │XOR all │           │  │
+└───┬────┘                   │ └───┬────┘           │  │
+    │ (5 ops)                │     │ (5 ops)        │  │
+    │                        │     │                │  │
+    │  ┌─────────────────────┘     │    ┌───────────┘  │
+    │  │                           │    │              │
+    │  ▼                           │    ▼              │
+    │ ┌────────┐                   │  ┌────────┐       │
+    │ │Maj     │                   │  │Ch      │       │
+    │ │(a&b)^  │                   │  │(e&f)^  │       │
+    │ │(a&c)^  │                   │  │(~e&g)  │       │
+    │ │(b&c)   │                   │  └───┬────┘       │
+    │ └───┬────┘                   │      │ (4 ops)    │
+    │     │ (4 ops)                │      │            │
+    │     │                        │      │            │
+    └──┬──┘                        │      │            │
+       │                           │      │            │
+       ▼                           │      │            │
+    ┌──────┐                       │      │            │
+    │ T2   │                       │      │            │
+    │Σ0+Maj│                       ▼      ▼            ▼
+    └──┬───┘           K[i]──►┌─────────────────────────┐
+       │               W[i]──►│    T1 = h+Σ1+Ch+K+W    │
+       │                      └───────────┬────────────┘
+       │                                  │ (4 ops)
+       │                                  │
+       ▼                                  ▼
+    ┌──────────────────────────────────────────────┐
+    │              Update State                     │
+    │  new_a = T1 + T2                             │
+    │  new_e = d + T1                              │
+    │  others shift: b←a, c←b, d←c, f←e, g←f, h←g │
+    └──────────────────────────────────────────────┘
+                         │
+                         ▼
+          ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+          │  a' │  b' │  c' │  d' │  e' │  f' │  g' │  h' │
+          └─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+                       NEW STATE
+
+              TOTAL: ~22 operations for ONE round
+              Need 64 rounds → ~1,400 operations
+
+
+================================================================================
+                     SHA-256 COMPRESSION (four rounds)
+                           HARDWARE VERSION
+================================================================================
+
+                           STATE (8 words)
+          ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+          │  a  │  b  │  c  │  d  │  e  │  f  │  g  │  h  │
+          └─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+                      │                       │
+                      ▼                       ▼
+              ┌───────────────┐       ┌───────────────┐
+              │  X register   │       │  Y register   │
+              │ (128-bit vec) │       │ (128-bit vec) │
+              │ holds a,b,c,d │       │ holds e,f,g,h │
+              └───────┬───────┘       └───────┬───────┘
+                      │                       │
+                      └───────────┬───────────┘
+                                  │
+          ┌───────────────────────┼───────────────────────┐
+          │                       │                       │
+          │                       ▼                       │
+          │    ┌──────────────────────────────────────┐   │
+          │    │  W[i]+K[i], W[i+1]+K, W[i+2]+K, ...  │   │
+          │    │         (pre-added constants)        │   │
+          │    └──────────────────┬───────────────────┘   │
+          │                       │                       │
+          │                       ▼                       │
+          │            ┌────────────────────┐             │
+          │            │     sha256h        │             │
+          │            │                    │             │
+          │            │ Internally does:   │             │
+          │            │ • 4x Σ0, Σ1        │             │
+          │            │ • 4x Ch, Maj       │             │
+          │            │ • All the adds     │             │
+          │            │ • State mixing     │             │
+          │            │                    │             │
+          │            │ FOR 4 ROUNDS       │             │
+          │            │ IN ONE INSTRUCTION │             │
+          │            └─────────┬──────────┘             │
+          │                      │                        │
+          │                      ▼                        │
+          │            ┌────────────────────┐             │
+          │            │     sha256h2       │             │
+          │            │                    │             │
+          │            │ Completes the      │             │
+          │            │ 4-round update     │             │
+          │            └─────────┬──────────┘             │
+          │                      │                        │
+          └──────────────────────┼────────────────────────┘
+                                 │
+                                 ▼
+          ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+          │  a' │  b' │  c' │  d' │  e' │  f' │  g' │  h' │
+          └─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+                    NEW STATE (after 4 rounds!)
+
+              TOTAL: 2 instructions for FOUR rounds
+              Need 64 rounds → 32 instructions
+
+
+================================================================================
+                              SUMMARY
+================================================================================
+
+                         SCALAR          HARDWARE        RATIO
+                        ─────────       ──────────      ───────
+  Schedule (48 words)    624 ops        24 instr        26x
+  Compress (64 rounds)  1408 ops        32 instr        44x
+                        ─────────       ──────────      ───────
+  TOTAL PER BLOCK       ~2000 ops       ~56 instr       ~35x
+
+
+  YOUR BENCHMARK (SHA-512):
+
+  ┌─────────────────────────────────────────────────────────────┐
+  │  Zig SHA-512:   390 MB/s   (pure scalar, no SIMD)          │
+  │  Rust SHA-512: 1450 MB/s   (LLVM auto-vectorizes a bit)    │
+  │                                                             │
+  │  Gap: 3.7x — just from better software optimization         │
+  │                                                             │
+  │  With HW instructions (sha512h, etc): would be ~5000 MB/s   │
+  │  That's another 3-4x on top!                                │
+  └─────────────────────────────────────────────────────────────┘
+
+================================================================================
+```
+
 ---
 
 ## [DRAFT] Why Merge Sort Beats Insertion Sort
