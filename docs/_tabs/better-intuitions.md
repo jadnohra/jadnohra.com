@@ -728,6 +728,136 @@ ARM: ARMv8-A 2011 | x86: Intel 2016, AMD 2017
 ================================================================================
 ```
 
+## Tail Recursion is about Iterative State Clobbering
+
+### The Process Model is Flat
+
+A running process has:
+- **Registers** — fixed set (R1, R2, R3...)
+- **Memory** — flat array of bytes (includes your code)
+
+That's it. No nesting. No hierarchy. Just a flat state that gets mutated step by step.
+
+The call stack allows to snapshot register state for later reuse.
+
+### A recursive function has only a single-version compiler
+
+When a function is compiled, there's one version with a fixed mapping of variables to registers.
+Though in such a function, each variable is actually n (number of iteration) variables. In other words, each variable is a list, indexed by the iteration.
+
+```
+n[0], n[1], n[2]...  all map to the same register
+a[0], a[1], a[2]...  all map to the same register
+```
+
+The question will become:: **at iteration i, do you need any state from iterations < i?**
+
+### A loop
+
+A loop is such that computation is terated over a fixed set of registers (variables) over and over again.
+
+## Tail-optimizable: your computation fits the flat model
+
+A function is tail-recusrive (tail optimizable) (can be turned into a loop), when the computation is such that only the latest version of the variables are used and nothing else.
+
+The computation has a wavefront forward only like behavior.
+
+Note: By turning a function into a loop, we mean a loop that does not use additional data structures such as stacks. See the theory section in the last paragraph.
+
+## Why This Matters: One Function, One Register Mapping
+
+When a function is compiled, there's **one version** with a **fixed mapping** of variables to registers.
+
+But think about what recursion means: each variable is implicitly indexed by call depth:
+
+```
+n[0], n[1], n[2]...  all map to the same register
+a[0], a[1], a[2]...  all map to the same register
+```
+
+## Forward-Only vs Backward-Needing
+
+```
+FORWARD-ONLY (tail-optimizable):
+
+                          ║
+    n[0]    n[1]    n[2]  ║  n[3]
+    a[0]    a[1]    a[2]  ║  a[3] → compute result
+                          ║
+    ├──── clobberable ────║──────┤
+                        front
+
+    Nothing before the front is needed.
+
+
+BACKWARD-NEEDING (not tail-optimizable):
+
+    n[0] ──→ n[1] ──→ n[2] ──→ n[3]
+      │        │        │        │
+      │        │        │        ↓
+      │        │        │      return
+      │        │        ↓        │
+      │        │     need n[2] ←─┘
+      │        ↓        │
+      │     need n[1] ←─┘
+      ↓        │
+   need n[0] ←─┘
+      │
+      ↓
+    result
+
+    ALL n[i] must survive → stack required
+```
+
+### Spotting tail-recursive functions
+
+```
+def factorial(n):
+    if n == 0: return 1
+    return n * factorial(n - 1)  # n[i] is not clobberable, not tail-recursive
+```
+
+We can modify factorial to become tail recursive by accumulating  `n`
+
+```
+def factorial(n, acc=1):
+    if n == 0: return acc
+    return factorial(n - 1, n * acc)
+```
+
+### Brief Theory (it's about the size of the non-clobberable state)
+
+Good instinct—there's definitely theory here. Let me search for the formal foundations:Found the theory. Here's the situation:
+
+**The CPS Transformation Theorem**
+
+Any program can be converted to Continuation-Passing Style where *all* calls are tail calls. This is a mechanical transformation.
+
+**But here's the catch** (from Cornell's CS 3110):
+
+> "Even though [the CPS] version is tail recursive, it does not really save any space... Both versions must remember the deferred operations, but they do so in different places: the first on the runtime stack, the [second] in the closures of continuations."
+
+The space doesn't disappear—it moves. The continuation parameter *grows* with recursion depth.
+
+**The Real Distinction: Linear vs Tree Recursion**
+
+| Type | Recursive calls | True O(1) possible? |
+|------|-----------------|---------------------|
+| Linear | 1 call per frame | ✅ Yes (accumulator) |
+| Tree | 2+ calls per frame | ❌ No, O(depth) minimum |
+
+Linear recursion can always be converted to tail recursion with O(1) space via accumulators.
+
+Tree recursion (like naive Fibonacci, tree traversal) *inherently* needs O(depth) space—whether on the stack, in closures, or in an explicit data structure.
+
+**The Automata Connection**
+
+This maps to the Chomsky hierarchy:
+- **Finite automata** = O(1) state = what tail recursion can express
+- **Pushdown automata** = needs stack = general recursion
+
+So the theoretical answer: you can make any recursion *syntactically* tail-recursive via CPS, but you can only get *true* O(1) space for linear recursion. Tree recursion has an irreducible space requirement.
+
 ---
 
 ## [DRAFT] Why Merge Sort Beats Insertion Sort
