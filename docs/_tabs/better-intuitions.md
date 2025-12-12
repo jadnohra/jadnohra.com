@@ -756,7 +756,7 @@ The question will become:: **at iteration i, do you need any state from iteratio
 
 A loop is such that computation is terated over a fixed set of registers (variables) over and over again.
 
-## Tail-optimizable: your computation fits the flat model
+### Tail-optimizable: your computation fits the flat model
 
 A function is tail-recusrive (tail optimizable) (can be turned into a loop), when the computation is such that only the latest version of the variables are used and nothing else.
 
@@ -764,7 +764,7 @@ The computation has a wavefront forward only like behavior.
 
 Note: By turning a function into a loop, we mean a loop that does not use additional data structures such as stacks. See the theory section in the last paragraph.
 
-## Why This Matters: One Function, One Register Mapping
+### One Function, One Register Mapping
 
 When a function is compiled, there's **one version** with a **fixed mapping** of variables to registers.
 
@@ -775,7 +775,7 @@ n[0], n[1], n[2]...  all map to the same register
 a[0], a[1], a[2]...  all map to the same register
 ```
 
-## Forward-Only vs Backward-Needing
+### Forward-Only vs Backward-Needing
 
 ```
 FORWARD-ONLY (tail-optimizable):
