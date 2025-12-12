@@ -736,9 +736,9 @@ A running process has:
 - **Registers** — fixed set (R1, R2, R3...)
 - **Memory** — flat array of bytes (includes your code)
 
-That's it. No nesting. No hierarchy. Just a flat state that gets mutated step by step.
+No nesting. No hierarchy. Just a flat state that gets mutated step by step. The call stack allows to snapshot register state for later reuse.
 
-The call stack allows to snapshot register state for later reuse.
+To clobber a register: To overwrite it with a new value.
 
 ### A recursive function has only a single-version compiler
 
