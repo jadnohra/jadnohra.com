@@ -189,6 +189,15 @@ toc: true
 }
 
 /* Derived Data */
+.derived-intro {
+  font-size: 16px;
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.derived-intro b {
+  color: #f97316;
+}
 .derived-box {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   border-radius: 6px;
@@ -204,27 +213,27 @@ toc: true
 }
 .derived-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 8px;
-  margin: 1rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 12px;
+  margin: 1.5rem 0;
 }
 .derived-card {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  border-radius: 6px;
-  padding: 12px 14px;
+  border-radius: 8px;
+  padding: 16px 18px;
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
-  font-size: 12px;
+  font-size: 13px;
 }
 .derived-card-title {
   font-weight: 600;
   color: #f1f5f9;
-  margin-bottom: 8px;
-  font-size: 13px;
+  margin-bottom: 12px;
+  font-size: 14px;
 }
 .derived-card-item {
-  color: #cbd5e1;
-  margin-bottom: 4px;
-  line-height: 1.5;
+  color: #e2e8f0;
+  margin-bottom: 8px;
+  line-height: 1.6;
 }
 .derived-card-item b {
   color: #94a3b8;
@@ -243,8 +252,56 @@ toc: true
   font-size: 12px;
   color: #cbd5e1;
 }
-.derived-explains span b {
+.derived-list {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 8px;
+  padding: 14px 14px 14px 32px;
+  margin: 1rem 0;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 13px;
+  list-style: disc;
+}
+.derived-list li {
+  color: #cbd5e1;
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+.derived-list li:last-child {
+  margin-bottom: 0;
+}
+.derived-list b {
   color: #f1f5f9;
+}
+
+/* Derived Data Table */
+.derived-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 12px;
+  margin: 1rem 0;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.derived-table th {
+  background: rgba(255,255,255,0.05);
+  color: #f1f5f9;
+  font-weight: 600;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.derived-table td {
+  padding: 8px 12px;
+  color: #cbd5e1;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.derived-table tr:last-child td {
+  border-bottom: none;
+}
+.derived-table tr:hover td {
+  background: rgba(255,255,255,0.02);
 }
 
 #concept-grid {
@@ -540,6 +597,8 @@ toc: true
 }
 </style>
 
+<div></div>
+
 ## System Primitives
 
 These constraints are rooted in physics and fundamental CS. They apply at every layer. Abstractions can defer them, transform them, or trade one for another — but never eliminate them.
@@ -552,7 +611,9 @@ These constraints are rooted in physics and fundamental CS. They apply at every 
 
 ## Derived Data
 
-Physics creates distance. Distance forces copies. Copies require coherence.
+<div class="derived-intro">
+<b>Physics creates distance.</b> Distance forces copies. <b>Copies require coherence.</b>
+</div>
 
 Computation and storage are separated by distance — in the memory hierarchy, across the network, even in time. When crossing that distance repeatedly is too expensive, you store a copy closer. That copy is **derived data**.
 
@@ -591,29 +652,30 @@ Every cache, replica, index, materialized view, denormalized table, and memoized
 
 ### Unification
 
-| Name | Transform | Location | Sync |
-|------|-----------|----------|------|
-| CPU L1 cache | identity | RAM → L1 | coherence protocol |
-| CDN | identity | origin → edge | TTL / purge |
-| Redis cache | identity / projection | disk → RAM | TTL / invalidate |
-| Database replica | identity | primary → secondary | sync / async |
-| Materialized view | aggregation | compute → storage | refresh / periodic |
-| Index | projection + structure | scan → lookup | sync on write |
-| Denormalized table | join | join-time → storage | dual write |
-| Memoization | full result | compute → lookup | none (pure) |
-| Bloom filter | lossy projection | set → bits | rebuild |
+<table class="derived-table">
+<tr><th>Name</th><th>Transform</th><th>Location</th><th>Sync</th></tr>
+<tr><td>CPU L1 cache</td><td>identity</td><td>RAM → L1</td><td>coherence protocol</td></tr>
+<tr><td>CDN</td><td>identity</td><td>origin → edge</td><td>TTL / purge</td></tr>
+<tr><td>Redis cache</td><td>identity / projection</td><td>disk → RAM</td><td>TTL / invalidate</td></tr>
+<tr><td>Database replica</td><td>identity</td><td>primary → secondary</td><td>sync / async</td></tr>
+<tr><td>Materialized view</td><td>aggregation</td><td>compute → storage</td><td>refresh / periodic</td></tr>
+<tr><td>Index</td><td>projection + structure</td><td>scan → lookup</td><td>sync on write</td></tr>
+<tr><td>Denormalized table</td><td>join</td><td>join-time → storage</td><td>dual write</td></tr>
+<tr><td>Memoization</td><td>full result</td><td>compute → lookup</td><td>none (pure)</td></tr>
+<tr><td>Bloom filter</td><td>lossy projection</td><td>set → bits</td><td>rebuild</td></tr>
+</table>
 
 ### What This Explains
 
-<div class="derived-explains">
-<span><b>Cache invalidation is hard</b> — distributed coordination</span>
-<span><b>Immutability is powerful</b> — no sync needed</span>
-<span><b>Indexes slow writes</b> — sync on every mutation</span>
-<span><b>Eventual consistency exists</b> — coordination is expensive</span>
-<span><b>CDNs use TTL</b> — bounded staleness avoids coordination</span>
-<span><b>Denormalization is dangerous</b> — multiple sync points</span>
-<span><b>Memoization is easy</b> — pure functions, immutable inputs</span>
-</div>
+<ul class="derived-list">
+<li><b>Cache invalidation is hard</b> — it's distributed coordination</li>
+<li><b>Immutability is powerful</b> — no sync needed, copies are forever valid</li>
+<li><b>Indexes slow writes</b> — sync obligation on every mutation</li>
+<li><b>Eventual consistency exists</b> — coordination is expensive, defer it</li>
+<li><b>CDNs use TTL</b> — bounded staleness avoids coordination</li>
+<li><b>Denormalization is dangerous</b> — multiple sync points, easy to diverge</li>
+<li><b>Memoization is easy</b> — pure functions have immutable inputs</li>
+</ul>
 
 ---
 
