@@ -64,7 +64,11 @@ toc: true
   transition: color 0.15s;
 }
 .primitive-item:hover .primitive-name {
-  color: var(--category-color, #f1f5f9);
+  color: var(--category-color);
+}
+.primitive-item:hover .primitive-implication {
+  color: var(--category-color);
+  filter: brightness(1.4) saturate(0.7);
 }
 .primitive-name .expand-icon {
   font-size: 10px;
