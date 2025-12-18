@@ -53,12 +53,6 @@
     popover.className = 'primitive-popover';
     document.body.appendChild(popover);
 
-    // Title
-    const title = document.createElement('h2');
-    title.textContent = 'System Primitives';
-    title.id = 'system-primitives-title';
-    container.appendChild(title);
-
     // Intro text
     const intro = document.createElement('p');
     intro.className = 'primitives-intro';
