@@ -407,6 +407,8 @@ toc: true
 
 ## System Primitives
 
+These constraints are rooted in physics and fundamental CS. They apply at every layer. Abstractions can defer them, transform them, or trade one for another — but never eliminate them.
+
 <div id="system-primitives"></div>
 
 <script src="{{ '/assets/js/primitives.js' | relative_url }}"></script>
