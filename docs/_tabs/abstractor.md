@@ -135,8 +135,8 @@ toc: true
   border: 1px solid transparent;
 }
 .tradeoff-item:hover {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.1);
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-color: rgba(255,255,255,0.2);
 }
 .tradeoff-name {
   color: #f1f5f9;
