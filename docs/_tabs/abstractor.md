@@ -48,16 +48,21 @@ toc: true
 .primitive-item:last-child {
   border-bottom: none;
 }
+.primitive-item.has-explanation {
+  cursor: pointer;
+}
+.primitive-item.has-explanation:hover {
+  background: rgba(255,255,255,0.02);
+}
 .primitive-name {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-weight: 600;
   color: #e2e8f0;
-  cursor: pointer;
   transition: color 0.15s;
 }
-.primitive-name:hover {
+.primitive-item:hover .primitive-name {
   color: var(--category-color, #e2e8f0);
 }
 .primitive-name .expand-icon {
@@ -92,6 +97,7 @@ toc: true
   font-size: 11px;
   border-left: 2px solid var(--category-color, #64748b);
 }
+.primitive-item:hover .primitive-explanation,
 .primitive-item.expanded .primitive-explanation {
   display: block;
   animation: slideDown 0.2s ease-out;

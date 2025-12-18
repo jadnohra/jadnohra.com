@@ -44,19 +44,14 @@
         const item = document.createElement('div');
         item.className = 'primitive-item';
 
-        // Name (clickable if has explanation)
+        // Name
         const hasExplanation = primitive.explanation && primitive.explanation.trim() !== '';
         const name = document.createElement('div');
         name.className = 'primitive-name';
+        name.textContent = primitive.name;
 
         if (hasExplanation) {
-          name.innerHTML = `<span class="expand-icon">▶</span>${escapeHtml(primitive.name)}`;
-          name.addEventListener('click', () => {
-            item.classList.toggle('expanded');
-          });
-        } else {
-          name.innerHTML = escapeHtml(primitive.name);
-          name.style.cursor = 'default';
+          item.classList.add('has-explanation');
         }
         item.appendChild(name);
 
