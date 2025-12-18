@@ -107,6 +107,7 @@ toc: true
   opacity: 0;
   transition: opacity 0.12s ease;
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  white-space: pre-line;
 }
 .primitive-popover.visible {
   opacity: 1;

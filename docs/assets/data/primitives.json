@@ -11,7 +11,7 @@
             "network latency floor (~1μs PCIe, ~1ms local, ~100ms cross-continent)",
             "you cannot avoid round-trips, only reduce them"
           ],
-          "explanation": "Latency has a floor set by physics: ~1μs for PCIe round-trip, ~1ms same-datacenter, ~100ms cross-continent. You can't optimize below this — only amortize it. Every protocol that seems slow is usually paying for round-trips, not computation. This is why batching exists everywhere: the cost is per-transaction, not per-byte."
+          "explanation": "Latency has a floor set by physics: ~1μs for PCIe round-trip, ~1ms same-datacenter, ~100ms cross-continent.\n\nYou can't optimize below this — only amortize it. Every protocol that seems slow is usually paying for round-trips, not computation.\n\nThis is why batching exists everywhere: the cost is per-transaction, not per-byte."
         },
         {
           "name": "Memory hierarchy",
@@ -19,7 +19,7 @@
             "registers < L1 < L2 < L3 < RAM < SSD < HDD < network",
             "~1ns → ~3ns → ~10ns → ~40ns → ~100ns → ~100μs → ~10ms → ~1-100ms"
           ],
-          "explanation": "Each level is ~10x slower and ~10x larger. Algorithms that seem O(n) identical can differ 100x based on access patterns. Cache-oblivious algorithms exist precisely because this hierarchy is universal. On FPGA, the hierarchy extends: BRAM (on-chip) → DDR (on-card) → host RAM (PCIe)."
+          "explanation": "Each level is ~10x slower and ~10x larger.\n\nAlgorithms that seem O(n) identical can differ 100x based on access patterns. Cache-oblivious algorithms exist precisely because this hierarchy is universal.\n\nOn FPGA, the hierarchy extends: BRAM (on-chip) → DDR (on-card) → host RAM (PCIe)."
         },
         {
           "name": "Bandwidth ≠ latency",
@@ -27,7 +27,7 @@
             "high throughput, still pay per-round-trip",
             "pipeline/batch to amortize"
           ],
-          "explanation": "You can have 100 Gbps and still wait 1ms for first byte. Bandwidth is asymptotic throughput; latency is fixed cost per operation. High bandwidth only helps if you're moving enough data to amortize the latency. Small messages are latency-bound; large transfers are bandwidth-bound."
+          "explanation": "You can have 100 Gbps and still wait 1ms for first byte.\n\nBandwidth is asymptotic throughput; latency is fixed cost per operation. High bandwidth only helps if you're moving enough data to amortize the latency.\n\nSmall messages are latency-bound; large transfers are bandwidth-bound."
         },
         {
           "name": "Failure",
@@ -35,7 +35,7 @@
             "everything fails: disks, nodes, networks, datacenters",
             "MTBF matters at scale (1000 disks = daily failures)"
           ],
-          "explanation": "At scale, failure is certain. P(at least one failure) = 1 - (1-p)^n. With 1000 nodes at 0.1% daily failure rate, expect ~1 failure/day. Design must assume failure, not prevent it. MTBF determines redundancy requirements. Blast radius determines how much fails together."
+          "explanation": "At scale, failure is certain.\n\nP(at least one failure) = 1 - (1-p)^n. With 1000 nodes at 0.1% daily failure rate, expect ~1 failure/day.\n\nDesign must assume failure, not prevent it. MTBF determines redundancy requirements. Blast radius determines how much fails together."
         },
         {
           "name": "Energy / memory wall",
@@ -43,7 +43,7 @@
             "computation costs power",
             "moving data costs more than computing on it"
           ],
-          "explanation": "Compute is essentially free; moving data costs energy and time. FLOP: ~1 pJ. 64B from DRAM: ~1000 pJ. Modern CPUs spend most transistors on cache, not ALUs. Memory bandwidth is the bottleneck for most workloads. This is why custom hardware (FPGA/ASIC) wins: you build datapaths that keep data local."
+          "explanation": "Compute is essentially free; moving data costs energy and time.\n\nFLOP: ~1 pJ. 64B from DRAM: ~1000 pJ.\n\nModern CPUs spend most transistors on cache, not ALUs. Memory bandwidth is the bottleneck for most workloads.\n\nThis is why custom hardware (FPGA/ASIC) wins: you build datapaths that keep data local."
         }
       ]
     },
@@ -57,14 +57,14 @@
           "implications": [
             "caching, precomputation, indexes, materialized views"
           ],
-          "explanation": "Store precomputed results (space) or recompute on demand (time). Every cache, index, and materialized view is this tradeoff. Memoization trades O(n) space for O(1) lookup. Compression trades CPU for storage/bandwidth."
+          "explanation": "Store precomputed results (space) or recompute on demand (time).\n\nEvery cache, index, and materialized view is this tradeoff.\n\nMemoization trades O(n) space for O(1) lookup. Compression trades CPU for storage/bandwidth."
         },
         {
           "name": "Sequential vs random access",
           "implications": [
             "10x-1000x difference (disk, RAM, prefetch)"
           ],
-          "explanation": "Sequential is 10-1000x faster than random, everywhere. SSD: ~500K random IOPS vs ~3GB/s sequential. RAM: prefetcher handles sequential, stalls on random. This is why append-only logs, LSM trees, and column stores exist — they turn random writes into sequential."
+          "explanation": "Sequential is 10-1000x faster than random, everywhere.\n\nSSD: ~500K random IOPS vs ~3GB/s sequential.\nRAM: prefetcher handles sequential, stalls on random.\n\nThis is why append-only logs, LSM trees, and column stores exist — they turn random writes into sequential."
         },
         {
           "name": "Coordination cost",
@@ -72,14 +72,14 @@
             "total order is expensive (consensus, locks)",
             "partial order cheaper (CRDTs, vector clocks)"
           ],
-          "explanation": "Total order requires communication. Locks serialize. Consensus needs quorum round-trips. Partial order (vector clocks, CRDTs) avoids coordination but limits what you can express. The CAP theorem is really: coordination costs latency, and partitions force you to choose."
+          "explanation": "Total order requires communication. Locks serialize. Consensus needs quorum round-trips.\n\nPartial order (vector clocks, CRDTs) avoids coordination but limits what you can express.\n\nThe CAP theorem is really: coordination costs latency, and partitions force you to choose."
         },
         {
           "name": "Amortized vs worst-case",
           "implications": [
             "batching helps throughput, hurts tail latency"
           ],
-          "explanation": "Batching improves throughput at the cost of tail latency. Amortized O(1) means occasional O(n) spike. For real-time systems, worst-case matters. For throughput systems, amortized matters."
+          "explanation": "Batching improves throughput at the cost of tail latency.\n\nAmortized O(1) means occasional O(n) spike.\n\nFor real-time systems, worst-case matters.\nFor throughput systems, amortized matters."
         },
         {
           "name": "Immutability",
@@ -87,7 +87,7 @@
             "enables sharing, caching, replication, rollback",
             "append-only = sequential = fast"
           ],
-          "explanation": "Immutable data can be freely shared, cached, replicated, and rolled back. No synchronization needed for readers. Append-only structures (logs, persistent data structures) get these benefits. Copy-on-write gives immutability semantics with mutation performance."
+          "explanation": "Immutable data can be freely shared, cached, replicated, and rolled back. No synchronization needed for readers.\n\nAppend-only structures (logs, persistent data structures) get these benefits.\n\nCopy-on-write gives immutability semantics with mutation performance."
         },
         {
           "name": "Hashing",
@@ -95,7 +95,7 @@
             "O(1) lookup, uniform distribution",
             "but: no ordering, no range queries"
           ],
-          "explanation": "O(1) average lookup, uniform distribution. But: no ordering, no range queries, hash collisions in adversarial input. Cryptographic hashes add one-wayness and collision resistance at CPU cost."
+          "explanation": "O(1) average lookup, uniform distribution.\n\nBut: no ordering, no range queries, hash collisions in adversarial input.\n\nCryptographic hashes add one-wayness and collision resistance at CPU cost."
         },
         {
           "name": "Compression",
@@ -103,7 +103,7 @@
             "trades CPU for space/bandwidth",
             "entropy is the limit"
           ],
-          "explanation": "Trades CPU for space/bandwidth. Entropy is the floor — you can't compress below information content. Dictionary methods (LZ) exploit repetition. Entropy coders (Huffman, ANS) approach entropy limit."
+          "explanation": "Trades CPU for space/bandwidth.\n\nEntropy is the floor — you can't compress below information content.\n\nDictionary methods (LZ) exploit repetition.\nEntropy coders (Huffman, ANS) approach entropy limit."
         }
       ]
     },
@@ -117,7 +117,7 @@
           "implications": [
             "index or scan? tree or hash?"
           ],
-          "explanation": "Index or scan? Tree or hash? The constant factors matter at small n; the asymptotic wins at large n. But memory access patterns can flip this — O(log n) with cache-friendly access beats O(1) with random access at moderate n."
+          "explanation": "Index or scan? Tree or hash?\n\nThe constant factors matter at small n; the asymptotic wins at large n.\n\nBut memory access patterns can flip this — O(log n) with cache-friendly access beats O(1) with random access at moderate n."
         },
         {
           "name": "Write amplification",
@@ -125,7 +125,7 @@
             "LSM: batch writes, pay on compaction",
             "B-tree: pay on write, cheaper reads"
           ],
-          "explanation": "LSM (Log-Structured Merge): writes go to memory buffer, flush sequentially, compact later. Write is O(1) amortized but each record is written multiple times across levels. B-tree: write in place, one write per record, but random I/O. LSM wins write-heavy; B-tree wins read-heavy."
+          "explanation": "LSM (Log-Structured Merge): writes go to memory buffer, flush sequentially, compact later. Write is O(1) amortized but each record is written multiple times across levels.\n\nB-tree: write in place, one write per record, but random I/O.\n\nLSM wins write-heavy; B-tree wins read-heavy."
         },
         {
           "name": "Read vs write optimization",
@@ -133,7 +133,7 @@
             "cannot optimize both fully",
             "normalize (write-friendly) vs denormalize (read-friendly)"
           ],
-          "explanation": "You cannot optimize both fully. Normalization: single source of truth, writes are clean, reads require joins. Denormalization: redundant copies, writes must update all copies, reads are fast. Event sourcing is extreme write-optimize (append-only); materialized views are read-optimize (precomputed)."
+          "explanation": "You cannot optimize both fully.\n\nNormalization: single source of truth, writes are clean, reads require joins.\n\nDenormalization: redundant copies, writes must update all copies, reads are fast.\n\nEvent sourcing is extreme write-optimize (append-only); materialized views are read-optimize (precomputed)."
         },
         {
           "name": "Fan-out",
@@ -142,7 +142,7 @@
             "latency = max(children), not sum",
             "tail latency dominates"
           ],
-          "explanation": "1 request → N downstream. Latency = max(children), not sum. Tail latency of children dominates. If each child has 1% chance of slow response, with 100 children you're almost certain to be slow."
+          "explanation": "1 request → N downstream.\n\nLatency = max(children), not sum. Tail latency of children dominates.\n\nIf each child has 1% chance of slow response, with 100 children you're almost certain to be slow."
         },
         {
           "name": "Fan-in",
@@ -150,7 +150,7 @@
             "N sources → 1 sink",
             "backpressure, bottleneck risk"
           ],
-          "explanation": "N sources → 1 sink. Backpressure risk. If sink is slower than combined input rate, queue grows unbounded. Need admission control or load shedding."
+          "explanation": "N sources → 1 sink.\n\nBackpressure risk. If sink is slower than combined input rate, queue grows unbounded.\n\nNeed admission control or load shedding."
         },
         {
           "name": "Hot spots / skew",
@@ -158,7 +158,7 @@
             "uniform distribution is a fantasy",
             "popular keys, time-based clustering"
           ],
-          "explanation": "Uniform distribution is a fantasy. Zipf is everywhere: popular keys, time-based clustering, celebrity users. A \"balanced\" hash ring still has hot spots because some keys are accessed 1000x more."
+          "explanation": "Uniform distribution is a fantasy.\n\nZipf is everywhere: popular keys, time-based clustering, celebrity users.\n\nA \"balanced\" hash ring still has hot spots because some keys are accessed 1000x more."
         },
         {
           "name": "Failure domains",
@@ -166,7 +166,7 @@
             "what dies together?",
             "redundancy must cross failure boundaries"
           ],
-          "explanation": "What dies together? Redundancy must cross failure boundaries. Two replicas on same rack: rack switch failure kills both. Two replicas in same AZ: AZ failure kills both. Correlated failures must be modeled."
+          "explanation": "What dies together? Redundancy must cross failure boundaries.\n\nTwo replicas on same rack: rack switch failure kills both.\nTwo replicas in same AZ: AZ failure kills both.\n\nCorrelated failures must be modeled."
         }
       ]
     },
@@ -181,7 +181,7 @@
             "partition is physics (network fails)",
             "choice: consistency or availability during partition"
           ],
-          "explanation": "Partition is physics — network fails. During partition, choose: reject writes (consistency) or accept writes that may diverge (availability). Most systems aren't \"CP or AP\" globally — they make different choices for different operations."
+          "explanation": "Partition is physics — network fails.\n\nDuring partition, choose: reject writes (consistency) or accept writes that may diverge (availability).\n\nMost systems aren't \"CP or AP\" globally — they make different choices for different operations."
         },
         {
           "name": "Consensus",
@@ -189,7 +189,7 @@
             "total order across nodes = round-trips = latency floor",
             "Paxos/Raft = 2 RTTs minimum"
           ],
-          "explanation": "Total order across nodes requires communication. Paxos/Raft: 2 RTT minimum. Leader-based: 1 RTT but leader is bottleneck and single point of failure. Leaderless (EPaxos): more complex, potentially lower latency for non-conflicting operations."
+          "explanation": "Total order across nodes requires communication.\n\nPaxos/Raft: 2 RTT minimum.\nLeader-based: 1 RTT but leader is bottleneck and single point of failure.\nLeaderless (EPaxos): more complex, potentially lower latency for non-conflicting operations."
         },
         {
           "name": "Replication",
@@ -197,7 +197,7 @@
             "redundancy for durability/availability",
             "sync (slow, safe) vs async (fast, lossy)"
           ],
-          "explanation": "Redundancy for durability (don't lose data) and availability (keep serving). Sync replication: write waits for all replicas, safe but slow. Async replication: write returns immediately, replicas may lag, risk of data loss on failure."
+          "explanation": "Redundancy for durability (don't lose data) and availability (keep serving).\n\nSync replication: write waits for all replicas, safe but slow.\nAsync replication: write returns immediately, replicas may lag, risk of data loss on failure."
         },
         {
           "name": "Partitioning / sharding",
@@ -205,7 +205,7 @@
             "horizontal scale",
             "cross-partition = coordination cost"
           ],
-          "explanation": "Horizontal scale — data split across nodes. But cross-partition operations require coordination. Partition key choice determines what's cheap (same partition) vs expensive (scatter-gather)."
+          "explanation": "Horizontal scale — data split across nodes.\n\nBut cross-partition operations require coordination.\n\nPartition key choice determines what's cheap (same partition) vs expensive (scatter-gather)."
         }
       ]
     },
@@ -220,14 +220,14 @@
             "latency explodes as utilization → 100%",
             "rule of thumb: ≤70% for stable latency"
           ],
-          "explanation": "Latency explodes as utilization approaches 100%. M/M/1 queue: mean wait = service_time / (1 - utilization). At 90% utilization, wait is 9x service time. At 99%, wait is 99x. Rule of thumb: keep utilization ≤70% for stable latency."
+          "explanation": "Latency explodes as utilization approaches 100%.\n\nM/M/1 queue: mean wait = service_time / (1 - utilization).\nAt 90% utilization, wait is 9x service time.\nAt 99%, wait is 99x.\n\nRule of thumb: keep utilization ≤70% for stable latency."
         },
         {
           "name": "Little's Law",
           "implications": [
             "L = λW (items in system = arrival rate × time in system)"
           ],
-          "explanation": "L = λW. Items in system = arrival rate × time in system. Works for any stable system. Useful for back-of-envelope capacity planning."
+          "explanation": "L = λW\n\nItems in system = arrival rate × time in system.\n\nWorks for any stable system. Useful for back-of-envelope capacity planning."
         }
       ]
     }
