@@ -23,9 +23,12 @@ toc: true
   margin-bottom: 2rem;
 }
 .primitives-intro {
-  color: #f1f5f9;
+  color: #e2e8f0;
   margin-bottom: 1rem;
   line-height: 1.6;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 8px;
 }
 .category-card {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
