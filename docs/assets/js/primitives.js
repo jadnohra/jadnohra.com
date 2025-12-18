@@ -1,6 +1,7 @@
 // System Primitives Visualization
 (function() {
   let data = null;
+  let popover = null;
 
   async function init() {
     const container = document.getElementById('system-primitives');
@@ -20,6 +21,12 @@
 
   function render(container) {
     container.innerHTML = '';
+
+    // Create shared popover element
+    popover = document.createElement('div');
+    popover.className = 'primitive-popover';
+    popover.innerHTML = '<div class="primitive-popover-title"></div><div class="primitive-popover-text"></div>';
+    document.body.appendChild(popover);
 
     // Intro text
     const intro = document.createElement('div');
@@ -44,15 +51,12 @@
         const item = document.createElement('div');
         item.className = 'primitive-item';
 
-        // Name
         const hasExplanation = primitive.explanation && primitive.explanation.trim() !== '';
+
+        // Name
         const name = document.createElement('div');
         name.className = 'primitive-name';
         name.textContent = primitive.name;
-
-        if (hasExplanation) {
-          item.classList.add('has-explanation');
-        }
         item.appendChild(name);
 
         // Implications (always visible)
@@ -66,12 +70,17 @@
         });
         item.appendChild(implications);
 
-        // Explanation (hidden by default)
+        // Hover events for popover
         if (hasExplanation) {
-          const explanation = document.createElement('div');
-          explanation.className = 'primitive-explanation';
-          explanation.textContent = primitive.explanation;
-          item.appendChild(explanation);
+          item.classList.add('has-explanation');
+
+          item.addEventListener('mouseenter', (e) => {
+            showPopover(primitive.name, primitive.explanation, category.color, item);
+          });
+
+          item.addEventListener('mouseleave', () => {
+            hidePopover();
+          });
         }
 
         card.appendChild(item);
@@ -81,10 +90,49 @@
     });
   }
 
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+  function showPopover(title, text, color, targetEl) {
+    const titleEl = popover.querySelector('.primitive-popover-title');
+    const textEl = popover.querySelector('.primitive-popover-text');
+
+    titleEl.textContent = title;
+    textEl.textContent = text;
+    popover.style.setProperty('--popover-color', color);
+
+    // Position popover
+    const rect = targetEl.getBoundingClientRect();
+    const popoverWidth = 420;
+    const margin = 12;
+
+    // Horizontal: try to align left with item, but keep in viewport
+    let left = rect.left;
+    if (left + popoverWidth > window.innerWidth - margin) {
+      left = window.innerWidth - popoverWidth - margin;
+    }
+    if (left < margin) left = margin;
+
+    // Vertical: prefer above, but show below if not enough space
+    popover.style.visibility = 'hidden';
+    popover.style.display = 'block';
+    const popoverHeight = popover.offsetHeight;
+    popover.style.display = '';
+    popover.style.visibility = '';
+
+    let top;
+    if (rect.top - popoverHeight - margin > 0) {
+      // Show above
+      top = rect.top - popoverHeight - margin;
+    } else {
+      // Show below
+      top = rect.bottom + margin;
+    }
+
+    popover.style.left = left + 'px';
+    popover.style.top = top + 'px';
+    popover.classList.add('visible');
+  }
+
+  function hidePopover() {
+    popover.classList.remove('visible');
   }
 
   if (document.readyState === 'loading') {

@@ -79,39 +79,39 @@ toc: true
   padding-left: 12px;
 }
 .primitive-implication {
-  color: #94a3b8;
+  color: var(--category-color, #94a3b8);
   font-size: 13px;
   line-height: 1.7;
 }
 .primitive-implication::before {
   content: "→ ";
-  color: #64748b;
+  opacity: 0.6;
 }
-.primitive-explanation {
-  display: none;
-  margin-top: 12px;
-  padding: 14px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 4px;
+/* Popover for explanations */
+.primitive-popover {
+  position: fixed;
+  max-width: 420px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid var(--popover-color, #64748b);
+  border-radius: 6px;
   color: #e2e8f0;
-  line-height: 1.7;
   font-size: 13px;
-  border-left: 2px solid var(--category-color, #64748b);
+  line-height: 1.7;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
 }
-.primitive-item:hover .primitive-explanation,
-.primitive-item.expanded .primitive-explanation {
-  display: block;
-  animation: slideDown 0.2s ease-out;
+.primitive-popover.visible {
+  opacity: 1;
 }
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.primitive-popover-title {
+  font-weight: 600;
+  color: var(--popover-color, #e2e8f0);
+  margin-bottom: 8px;
+  font-size: 14px;
 }
 
 #concept-grid {
