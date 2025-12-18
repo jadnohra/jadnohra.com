@@ -1,0 +1,293 @@
+{
+  "cards": [
+    {
+      "name": "Redis vs Postgres",
+      "tradeoffs": [
+        {"primitive": "Memory hierarchy", "explanation": "RAM is 1000x faster than SSD. Redis pays for that speed with $/GB; Postgres trades latency for cheaper storage. The hierarchy dictates this — there's no free fast+cheap."},
+        {"primitive": "Durability", "explanation": "Durability means surviving failure, which means bits must hit non-volatile storage. Redis defaults to async persistence (fast, can lose data); Postgres fsyncs WAL (slower, durable). You're choosing where on the memory hierarchy your commit point lives."},
+        {"primitive": "Failure", "explanation": "Redis async replication means the replica may be behind when the primary dies — data in flight is lost. Postgres sync replication waits for replica ack, so you pay RTT but survive failure."},
+        {"primitive": "Time vs space", "explanation": "Redis stores everything in RAM (space cost) to avoid recomputation latency (time). Postgres stores on disk (cheap space) and pays access time. Classic trade — you're renting faster storage."}
+      ]
+    },
+    {
+      "name": "RocksDB vs Postgres (InnoDB)",
+      "tradeoffs": [
+        {"primitive": "Write amplification", "explanation": "LSM trades write volume for sequential I/O — each record is written ~10-30x across compaction levels, but always append-only. B-tree writes once but random. Sequential is 100x faster than random, so LSM wins on write-heavy despite more bytes written."},
+        {"primitive": "Sequential vs random", "explanation": "Disks and SSDs both prefer sequential. LSM forces all writes into sequential appends. B-tree does random page updates. This is why write-heavy workloads favor LSM even though it writes more total bytes."},
+        {"primitive": "Read vs write optimization", "explanation": "You can't optimize both — LSM optimizes writes (fast append) but reads may check multiple levels. B-tree optimizes reads (one lookup path) but writes do random I/O. Pick based on your workload."},
+        {"primitive": "Amortized vs worst-case", "explanation": "LSM compaction is background work that can spike latency and CPU. B-tree pays upfront on each write. LSM has better average, worse tail; B-tree has consistent cost."}
+      ]
+    },
+    {
+      "name": "Kafka vs RabbitMQ",
+      "tradeoffs": [
+        {"primitive": "Immutability", "explanation": "Immutable data can be shared without coordination — Kafka consumers read the same log independently, no locking needed. RabbitMQ mutates (deletes on ack), so consumers must coordinate on who gets which message."},
+        {"primitive": "Sequential vs random", "explanation": "Kafka is append-only, sequential writes and reads. The disk prefetcher loves this — Kafka can saturate disk bandwidth. RabbitMQ has more random access patterns for queue management."},
+        {"primitive": "Time vs space", "explanation": "Kafka retains messages for days/weeks — you're paying storage to enable replay (time travel). RabbitMQ deletes on consume, saving space but losing history."},
+        {"primitive": "Fan-out", "explanation": "Kafka's immutable log means N consumers can read independently — fan-out is free, just pointer arithmetic. RabbitMQ competing consumers split the stream — fan-out requires multiple queues or exchanges."},
+        {"primitive": "Failure", "explanation": "Kafka can replay from any offset — failure recovery is just \"seek and resume.\" RabbitMQ must re-enqueue failed messages, adding coordination."}
+      ]
+    },
+    {
+      "name": "Row store vs Column store",
+      "tradeoffs": [
+        {"primitive": "Sequential vs random", "explanation": "Row store fetches entire row in one sequential read — good when you need all columns. Column store fetches one column across all rows sequentially — good for aggregating one column across millions of rows."},
+        {"primitive": "Read vs write optimization", "explanation": "Row store is write-friendly (append one row = one sequential write). Column store is read-friendly for analytics (scan one column = one sequential read). OLTP vs OLAP."},
+        {"primitive": "Compression", "explanation": "Column stores compress 10x better because adjacent values are same type — run-length encoding, dictionary encoding work well. Row stores mix types, compress poorly."},
+        {"primitive": "Fan-out", "explanation": "\"SELECT * FROM users WHERE id=1\" in row store: fetch one row. In column store: fetch one value from every column file, then merge. Row stores minimize fan-out for point queries."}
+      ]
+    },
+    {
+      "name": "Normalized vs Denormalized",
+      "tradeoffs": [
+        {"primitive": "Read vs write optimization", "explanation": "Can't optimize both. Normalized writes once to single source of truth (writes are clean), reads require joins (reads are slow). Denormalized pre-joins data (reads are fast), writes must update all copies (writes are complex)."},
+        {"primitive": "Time vs space", "explanation": "Normalized computes joins at read time (spend time). Denormalized stores redundant data (spend space). You're trading one for the other."},
+        {"primitive": "Coordination cost", "explanation": "Normalized has one place to update — no coordination needed. Denormalized has copies — you need to keep them in sync, which is a coordination problem."},
+        {"primitive": "Failure", "explanation": "Normalized update is atomic — one row changes. Denormalized update touches multiple rows; if you fail midway, copies are inconsistent. You've turned a single write into a distributed consistency problem."}
+      ]
+    },
+    {
+      "name": "TCP vs UDP",
+      "tradeoffs": [
+        {"primitive": "Coordination cost", "explanation": "Reliability requires coordination — TCP must establish shared state (sequence numbers) and confirm receipt (acks), which costs RTTs. UDP has no shared state, so no coordination, so no RTT overhead."},
+        {"primitive": "Amortized vs worst-case", "explanation": "TCP retransmits lost packets — latency spikes when packets drop. UDP just loses them — latency is consistent but data isn't. Real-time systems often prefer consistent latency over reliable delivery."},
+        {"primitive": "Bandwidth ≠ latency", "explanation": "TCP congestion control paces sends to maximize throughput, which can add latency. UDP sends immediately at whatever rate you want — you control the bandwidth/latency trade."},
+        {"primitive": "Failure", "explanation": "TCP connection state can get stuck (half-open connections, TIME_WAIT). UDP is stateless — nothing to get stuck. Failure modes are simpler."}
+      ]
+    },
+    {
+      "name": "HTTP/1.1 vs HTTP/2",
+      "tradeoffs": [
+        {"primitive": "Bandwidth ≠ latency", "explanation": "HTTP/1.1 sends requests sequentially per connection — one slow response blocks everything behind it (head-of-line blocking). HTTP/2 multiplexes — responses arrive independently, latency of one doesn't block others."},
+        {"primitive": "Amortized vs worst-case", "explanation": "HTTP/1.1 uses multiple connections to parallelize, each with handshake cost. HTTP/2 amortizes one handshake across all streams. Connection setup cost is paid once."},
+        {"primitive": "Compression", "explanation": "Headers repeat on every HTTP/1.1 request (cookies, auth, etc). HTTP/2 HPACK compresses headers, sending only diffs. Bandwidth savings compound on chatty protocols."},
+        {"primitive": "Fan-out", "explanation": "HTTP/1.1 parallelism requires multiple TCP connections (browsers limit to ~6). HTTP/2 does unlimited streams on one connection. Fan-out without connection explosion."}
+      ]
+    },
+    {
+      "name": "REST vs gRPC",
+      "tradeoffs": [
+        {"primitive": "Compression", "explanation": "JSON is text with field names repeated, quotes, braces — 2-10x larger than Protobuf binary. More bytes = more bandwidth = more latency on the wire."},
+        {"primitive": "Bandwidth ≠ latency", "explanation": "REST is typically request-response; gRPC supports streaming. Streaming amortizes connection overhead and allows server to push without polling."},
+        {"primitive": "Time vs space", "explanation": "JSON is self-describing (field names inline) — human-readable but redundant. Protobuf uses field numbers with separate schema — compact but requires schema to decode. Parse time vs wire size."},
+        {"primitive": "Coordination cost", "explanation": "REST is stateless — each request is independent. gRPC streaming maintains connection state, enabling bidirectional flow but adding connection lifecycle complexity."}
+      ]
+    },
+    {
+      "name": "Polling vs Push/Websocket",
+      "tradeoffs": [
+        {"primitive": "Speed of light", "explanation": "Polling pays full RTT on every poll, even when there's nothing new. Push pays RTT once to establish, then server-to-client is half an RTT. If you poll every second, you're burning 1 RTT/sec for nothing most of the time."},
+        {"primitive": "Bandwidth ≠ latency", "explanation": "Polling sends full request headers every interval, gets empty responses. Bandwidth wasted. Push sends only when there's data — no wasted bytes."},
+        {"primitive": "Utilization vs latency", "explanation": "Poll every 1s = up to 1s latency. Poll every 100ms = 10x more requests for 10x less latency. Push = instant delivery, no tradeoff needed."},
+        {"primitive": "Failure", "explanation": "Polling is stateless — failure recovery is just \"poll again.\" Push requires reconnect and figuring out what you missed. Simpler failure model vs better performance."}
+      ]
+    },
+    {
+      "name": "Sync request vs Async message",
+      "tradeoffs": [
+        {"primitive": "Speed of light", "explanation": "Sync blocks caller for full RTT to downstream and back. Async drops message in queue and returns — caller latency is decoupled from downstream latency."},
+        {"primitive": "Coordination cost", "explanation": "Sync creates tight coupling — caller and callee must be alive at the same time. Async decouples via queue — no simultaneous availability required, which is coordination avoidance."},
+        {"primitive": "Failure", "explanation": "Sync caller fails if downstream fails. Async queue buffers the message — downstream can recover and process later. Queue absorbs failure."},
+        {"primitive": "Fan-in", "explanation": "Sync backpressure is immediate — slow callee slows caller. Async queue buffers bursts, smoothing fan-in. But unbounded queue just moves the problem."}
+      ]
+    },
+    {
+      "name": "Hash table vs B-tree",
+      "tradeoffs": [
+        {"primitive": "Hashing", "explanation": "Hash computes array index directly — O(1) average. B-tree walks a tree — O(log n). But hash can't answer \"all keys between A and B\" because hashing destroys order."},
+        {"primitive": "Sequential vs random", "explanation": "Hash computes address directly — random access, cache prefetcher can't help. B-tree walks nodes top-down — sequential within each node, prefetcher stays ahead. At moderate n, cache wins over O(1)."},
+        {"primitive": "Hot spots", "explanation": "Hash function might cluster keys into few buckets (bad hash or adversarial input). B-tree stays balanced by construction — no hot spots possible."},
+        {"primitive": "Amortized vs worst-case", "explanation": "Hash table resize copies everything — O(n) spike. B-tree splits are O(log n) and local. Hash has better average, worse worst-case."}
+      ]
+    },
+    {
+      "name": "Hash partitioning vs Range partitioning",
+      "tradeoffs": [
+        {"primitive": "Hashing", "explanation": "Hash spreads keys uniformly by design — even sequential keys land on different partitions. Range keeps adjacent keys together — sequential writes hit one partition."},
+        {"primitive": "Hot spots", "explanation": "Sequential keys (timestamps, auto-increment IDs) with range partitioning = all writes hit one shard. Hash partitioning spreads them. But hash destroys locality for range scans."},
+        {"primitive": "Fan-out", "explanation": "\"All keys between A and B\" with hash partitioning = ask every shard (full scatter). Range partitioning = ask only the shards covering that range. Range scans drive the choice."},
+        {"primitive": "Coordination cost", "explanation": "Adding a node with hash partitioning requires rehashing and moving many keys. Range partitioning just splits one range — less data movement."}
+      ]
+    },
+    {
+      "name": "Local cache vs Distributed cache",
+      "tradeoffs": [
+        {"primitive": "Memory hierarchy", "explanation": "Local cache is RAM on the same machine — ~100ns. Distributed cache is RAM across the network — ~1ms. That's 10,000x difference. Use local for hot path."},
+        {"primitive": "Coordination cost", "explanation": "Local cache per instance means N instances have N copies that can diverge — stale reads. Distributed cache is shared — one version, but you pay network RTT to check it."},
+        {"primitive": "Failure", "explanation": "Local cache dies with the process — cold restart is slow. Distributed cache survives instance failures — new instances hit warm cache."},
+        {"primitive": "Time vs space", "explanation": "Local cache duplicates per instance (N copies, N × memory). Distributed cache stores once. Space cost vs coordination cost."}
+      ]
+    },
+    {
+      "name": "Bloom filter vs Hash set",
+      "tradeoffs": [
+        {"primitive": "Time vs space", "explanation": "Bloom filter uses ~10 bits per element regardless of element size. Hash set stores the full element. For millions of items, bloom uses 1/100th the space."},
+        {"primitive": "Hashing", "explanation": "Bloom filter hashes and sets bits — different elements can set same bits, causing false positives. Hash set stores actual values, so lookup is exact. You're trading accuracy for space."},
+        {"primitive": "Immutability", "explanation": "Bloom filter can add but not delete — deleting would affect other elements sharing those bits. This constraint is fundamental to how it compresses."}
+      ]
+    },
+    {
+      "name": "JSON vs Protobuf",
+      "tradeoffs": [
+        {"primitive": "Compression", "explanation": "JSON repeats field names on every object, uses quotes and braces. Protobuf uses field numbers (1-2 bytes) and no delimiters. 2-10x size difference."},
+        {"primitive": "Time vs space", "explanation": "JSON parsing walks strings, allocates objects, does type conversion. Protobuf is binary — integers are just bytes, strings are length-prefixed. 10-100x parse speed difference."},
+        {"primitive": "Coordination cost", "explanation": "JSON needs no schema — producer and consumer agree implicitly. Protobuf requires shared schema — breaking changes require coordination, but are explicit."},
+        {"primitive": "Failure", "explanation": "JSON is human-readable — you can debug with eyes. Protobuf is binary — without schema, it's opaque. Debuggability vs efficiency."}
+      ]
+    },
+    {
+      "name": "Strong consistency vs Eventual",
+      "tradeoffs": [
+        {"primitive": "CAP", "explanation": "Network partitions are physics — they happen. During partition, strong consistency rejects writes to preserve consistency. Eventual accepts writes everywhere, lets them diverge, reconciles later."},
+        {"primitive": "Coordination cost", "explanation": "Strong consistency requires coordination — quorum must agree before write is visible. Eventual skips coordination — write locally, sync later. Coordination costs RTTs."},
+        {"primitive": "Speed of light", "explanation": "Strong consistency can't return until replicas acknowledge, which requires round-trips. Cross-region strong consistency adds 100ms+ per write. Eventual returns immediately."},
+        {"primitive": "Failure", "explanation": "Strong consistency may be unavailable during partition (CP). Eventual is always available but may return stale or conflicting data (AP). Pick your failure mode."}
+      ]
+    },
+    {
+      "name": "Pessimistic locking vs Optimistic concurrency",
+      "tradeoffs": [
+        {"primitive": "Coordination cost", "explanation": "Pessimistic acquires locks upfront — total ordering via serialization. Every lock is a coordination point. Optimistic skips coordination, checks at commit — if conflict, retry."},
+        {"primitive": "Amortized vs worst-case", "explanation": "Pessimistic has predictable wait time — you queue behind lock holder. Optimistic can have retry storms under high contention — many transactions abort and redo work."},
+        {"primitive": "Hot spots", "explanation": "Pessimistic on hot row = everyone queues = serialized throughput. Optimistic on hot row = everyone races, most abort = wasted work. Neither wins, but failure modes differ."},
+        {"primitive": "Utilization vs latency", "explanation": "Pessimistic holds locks while doing work — lock duration includes business logic. Optimistic holds nothing until commit — short critical section, but may redo everything."}
+      ]
+    },
+    {
+      "name": "2PC vs Saga",
+      "tradeoffs": [
+        {"primitive": "Coordination cost", "explanation": "Atomicity across nodes requires total order — 2PC forces all participants to wait at the same logical moment (prepare phase). Saga breaks the transaction into steps that don't need global coordination, but you give up atomicity."},
+        {"primitive": "Failure", "explanation": "2PC coordinator is single point of failure — if it dies during commit, participants are stuck holding locks. Saga has no central coordinator, but partial failure means some steps done, some not."},
+        {"primitive": "Speed of light", "explanation": "2PC needs synchronous round-trips to all participants: prepare, then commit. That's 2 RTT minimum across all nodes. Saga steps can be async — latency is sum of steps, but steps can pipeline."},
+        {"primitive": "Complexity", "explanation": "2PC is simple mental model — all or nothing. Saga requires designing compensating actions for every step — \"undo\" logic is often harder than \"do\" logic."}
+      ]
+    },
+    {
+      "name": "Single leader vs Multi-leader",
+      "tradeoffs": [
+        {"primitive": "Consensus", "explanation": "Single leader means one source of truth — all writes serialize through one node, no conflicts possible. Multi-leader means concurrent writes to different leaders, which can conflict — you need conflict resolution logic."},
+        {"primitive": "Coordination cost", "explanation": "Single leader funnels all writes through one node — that node is coordination point. Multi-leader writes anywhere without coordination, but defers coordination to conflict resolution."},
+        {"primitive": "Speed of light", "explanation": "Single leader for geo-distributed system means writes cross regions — 100ms+ RTT per write. Multi-leader writes locally — fast. But replication is async, so conflicts can emerge."},
+        {"primitive": "Failure", "explanation": "Single leader needs failover when leader dies — downtime during election. Multi-leader continues on other leaders — better availability but split-brain risk."}
+      ]
+    },
+    {
+      "name": "Sync replication vs Async",
+      "tradeoffs": [
+        {"primitive": "Failure", "explanation": "Sync guarantees replica has the data before returning — if primary dies, replica is up to date, zero data loss. Async returns before replica confirms — data in flight can be lost."},
+        {"primitive": "Speed of light", "explanation": "Sync can't return until bits travel to replica and back — that's physics, ~1ms same-region, ~100ms cross-region. Async returns before that round-trip, trading durability for latency."},
+        {"primitive": "Utilization vs latency", "explanation": "Sync writes are slower (wait for replica), so throughput is lower. Async writes are fast. If your write rate exceeds sync capacity, you must go async or slow down."}
+      ]
+    },
+    {
+      "name": "Raft vs EPaxos",
+      "tradeoffs": [
+        {"primitive": "Consensus", "explanation": "Raft serializes all writes through a leader — simple, one total order. EPaxos allows any node to propose, establishes order only when needed — complex, but no single bottleneck."},
+        {"primitive": "Speed of light", "explanation": "Raft needs client→leader→followers→leader→client: 2 RTTs. EPaxos for non-conflicting operations: proposer→acceptors→proposer: 1 RTT. Half the latency for the common case."},
+        {"primitive": "Hot spots", "explanation": "Raft leader handles all writes — it's a throughput bottleneck. EPaxos distributes proposals — no single hot spot."},
+        {"primitive": "Complexity", "explanation": "Raft was designed to be understandable — it's implemented correctly in dozens of systems. EPaxos is notoriously hard to implement — few correct implementations exist. Correctness has value."}
+      ]
+    },
+    {
+      "name": "CPU vs GPU",
+      "tradeoffs": [
+        {"primitive": "Energy / memory wall", "explanation": "CPU moves data through cache hierarchy — lots of energy moving bytes. GPU has high bandwidth memory and thousands of simple cores — better FLOPS per watt for parallel work."},
+        {"primitive": "Fan-out", "explanation": "CPU is optimized for few complex threads with branch prediction, speculation, out-of-order. GPU runs thousands of simple threads in lockstep. Serial/branchy → CPU. Parallel/uniform → GPU."},
+        {"primitive": "Memory hierarchy", "explanation": "CPU has deep cache (L1/L2/L3) optimized for latency. GPU has high bandwidth memory optimized for throughput, but higher latency. Different hierarchies for different access patterns."},
+        {"primitive": "Amortized vs worst-case", "explanation": "GPU kernel launch has overhead (~10μs). You amortize this across large batches. Small tasks are faster on CPU — launch overhead dominates."}
+      ]
+    },
+    {
+      "name": "GPU vs FPGA",
+      "tradeoffs": [
+        {"primitive": "Energy / memory wall", "explanation": "GPU is fixed architecture running software — flexible but not optimal. FPGA is custom datapath — each operation moves data exactly where needed, no wasted movement. 10x efficiency possible."},
+        {"primitive": "Memory hierarchy", "explanation": "GPU uses HBM with caches and memory controllers designed for graphics/ML. FPGA has on-chip BRAM you fully control — no cache misses if you manage it right."},
+        {"primitive": "Amortized vs worst-case", "explanation": "GPU batches for throughput — latency varies. FPGA is deterministic — every operation takes exactly the cycles you designed. Hard real-time needs FPGA."},
+        {"primitive": "Time vs space", "explanation": "GPU programs in CUDA/OpenCL — days to prototype. FPGA requires RTL or HLS — weeks to months. You're trading development time for runtime efficiency."}
+      ]
+    },
+    {
+      "name": "Threads vs Async/Event-loop",
+      "tradeoffs": [
+        {"primitive": "Coordination cost", "explanation": "Threads share memory — concurrent access needs locks, and every lock is a serialization point you pay for. Async isolates state per task, eliminating the need for coordination."},
+        {"primitive": "Memory hierarchy", "explanation": "Each thread needs stack space (~1MB default). 10,000 threads = 10GB just for stacks. Async tasks are small state machines — 10,000 tasks might use 10MB. Memory hierarchy limits thread count."},
+        {"primitive": "Amortized vs worst-case", "explanation": "Thread context switch is ~1-10μs (save/restore registers, TLB flush). Async task switch is just a function call. But async task that blocks stops the whole event loop — one bad actor blocks everyone."},
+        {"primitive": "Fan-in", "explanation": "Thread pool has fixed concurrency — 100 threads = 100 concurrent operations max. Event loop handles thousands of connections on one thread — fan-in limited only by memory for connection state."}
+      ]
+    },
+    {
+      "name": "Stream vs Batch processing",
+      "tradeoffs": [
+        {"primitive": "Amortized vs worst-case", "explanation": "Batch accumulates data, processes in bulk — high throughput but you wait for batch to fill. Streaming processes each record as it arrives — low latency but less efficient."},
+        {"primitive": "Bandwidth ≠ latency", "explanation": "Batch optimizes bandwidth (process lots at once, amortize overhead). Streaming optimizes latency (don't wait). Can't optimize both."},
+        {"primitive": "Time vs space", "explanation": "Streaming maintains incremental state — running sums, windows. Batch recomputes from full dataset — stateless but redundant work. Incremental trading space (state) for time (recompute)."},
+        {"primitive": "Failure", "explanation": "Streaming checkpoints incrementally — recovery replays from checkpoint. Batch restarts entire job. Streaming has faster recovery but checkpoint overhead. Batch is simpler but slower to recover."}
+      ]
+    },
+    {
+      "name": "Hedged requests vs Single",
+      "tradeoffs": [
+        {"primitive": "Fan-out", "explanation": "Latency = max(children). If one replica is slow, you wait. Hedging exploits redundancy — send to two, take the faster, your expected latency drops from max to ~min."},
+        {"primitive": "Failure", "explanation": "Hedging masks transient failures — if one replica hiccups, the other answers. You've turned a failure into a non-event."},
+        {"primitive": "Utilization vs latency", "explanation": "Hedging uses 2x+ resources for one logical request. You're buying tail latency with capacity. Worth it if latency matters more than cost."}
+      ]
+    },
+    {
+      "name": "Retry + backoff vs Fail fast",
+      "tradeoffs": [
+        {"primitive": "Failure", "explanation": "Transient failures (network blip, GC pause) are recoverable — retry helps availability. But if downstream is overloaded, retries make it worse — pile-on effect."},
+        {"primitive": "Utilization vs latency", "explanation": "Retries during downstream recovery add load exactly when the system can least handle it. Fail fast sheds load, letting downstream recover."},
+        {"primitive": "Fan-out", "explanation": "One caller retrying is fine. Thousands of callers retrying in sync is thundering herd. Backoff randomization (jitter) desynchronizes the herd."}
+      ]
+    },
+    {
+      "name": "Circuit breaker vs None",
+      "tradeoffs": [
+        {"primitive": "Failure", "explanation": "If downstream is failing, continuing to call it wastes resources and adds latency. Circuit breaker stops calling, gives downstream time to recover."},
+        {"primitive": "Fan-out", "explanation": "Latency = max(children). Slow downstream makes every request slow. Circuit breaker removes that child from the fan-out — you fail fast instead of waiting for the slowest."},
+        {"primitive": "Amortized vs worst-case", "explanation": "Circuit breaker occasionally probes (half-open state) to check recovery. Probe overhead is small; benefit is avoiding continuous failure cost."}
+      ]
+    },
+    {
+      "name": "WAL + fsync vs In-memory",
+      "tradeoffs": [
+        {"primitive": "Failure", "explanation": "WAL survives crashes because bits are on disk before commit returns. In-memory loses everything in power failure. Durability means writes live in non-volatile storage."},
+        {"primitive": "Sequential vs random", "explanation": "WAL is append-only sequential writes — even HDDs can do 100MB/s sequential. Random writes would be 100x slower. WAL's performance comes from sequential access."},
+        {"primitive": "Speed of light", "explanation": "fsync waits for disk to confirm write — ~1ms for SSD, ~10ms for HDD. In-memory returns in nanoseconds. You're choosing where on the memory hierarchy your durability guarantee lives."}
+      ]
+    },
+    {
+      "name": "LRU vs LFU",
+      "tradeoffs": [
+        {"primitive": "Hot spots", "explanation": "LRU evicts least recently used — good for temporal locality (what's recent is likely accessed again). LFU evicts least frequently used — good for stable hot set (popular items stay regardless of when accessed)."},
+        {"primitive": "Time vs space", "explanation": "LRU is simple doubly-linked list — O(1) with small overhead. LFU needs frequency counters — more bookkeeping per item."},
+        {"primitive": "Amortized vs worst-case", "explanation": "LRU promotion is pointer move — O(1) always. LFU may need to update frequency and resort — depends on implementation."}
+      ]
+    },
+    {
+      "name": "Checkpointing vs Restart-from-zero",
+      "tradeoffs": [
+        {"primitive": "Failure", "explanation": "Checkpoint saves state periodically — recovery replays from last checkpoint. Restart-from-zero recomputes everything. Recovery time is checkpoint-interval vs full-job-time."},
+        {"primitive": "Time vs space", "explanation": "Checkpointing stores intermediate state (space) to save recomputation (time). No checkpoint means spending time instead of space."},
+        {"primitive": "Coordination cost", "explanation": "Consistent checkpoint across distributed state is hard — you need all nodes at a consistent cut. Single-node checkpoint is easy; distributed checkpoint is a coordination problem."}
+      ]
+    },
+    {
+      "name": "Active-passive vs Active-active",
+      "tradeoffs": [
+        {"primitive": "Failure domains", "explanation": "Active-passive has cold standby — failover takes time to start up, warm caches, etc. Active-active has both running — failover is instant, just redirect traffic."},
+        {"primitive": "Coordination cost", "explanation": "Active-passive has no conflicts — one node is authoritative. Active-active may have concurrent writes to both — you need conflict resolution or partitioning to avoid coordination."},
+        {"primitive": "Utilization", "explanation": "Active-passive wastes standby capacity — it sits idle until failure. Active-active uses all capacity all the time."},
+        {"primitive": "Speed of light", "explanation": "Active-passive failover includes detection time + startup time. Active-active failover is just detection time — the other node is already running."}
+      ]
+    },
+    {
+      "name": "Single-AZ vs Multi-AZ",
+      "tradeoffs": [
+        {"primitive": "Failure domains", "explanation": "AZ is a failure domain — power, network, cooling can fail together. Single-AZ means AZ failure = total outage. Multi-AZ means AZ failure = partial degradation."},
+        {"primitive": "Speed of light", "explanation": "Same-AZ latency is <1ms. Cross-AZ latency is 1-5ms. Sync replication across AZs pays this on every write."},
+        {"primitive": "Cost", "explanation": "Multi-AZ means 2-3x storage (data replicated), plus cross-AZ transfer costs. You're buying availability with money."}
+      ]
+    }
+  ]
+}

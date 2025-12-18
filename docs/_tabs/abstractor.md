@@ -112,6 +112,82 @@ toc: true
   opacity: 1;
 }
 
+/* Tradeoff Cards */
+#tradeoff-cards {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 14px;
+  margin-bottom: 2rem;
+}
+.tradeoff-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tradeoff-item {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+}
+.tradeoff-item:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1);
+}
+.tradeoff-name {
+  color: #f1f5f9;
+  font-weight: 500;
+}
+.tradeoff-count {
+  color: #64748b;
+  font-size: 11px;
+  background: rgba(255,255,255,0.05);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+.tradeoff-popover {
+  position: fixed;
+  max-width: 520px;
+  padding: 14px 16px;
+  background: #0f172a;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 14px;
+  line-height: 1.6;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.tradeoff-popover.visible {
+  opacity: 1;
+}
+.tradeoff-popover-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: #f1f5f9;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.tradeoff-popover-item {
+  margin-bottom: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.tradeoff-popover-item:last-child {
+  margin-bottom: 0;
+}
+.tradeoff-popover-item b {
+  color: #94a3b8;
+}
+
 #concept-grid {
   position: relative;
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
@@ -412,6 +488,16 @@ These constraints are rooted in physics and fundamental CS. They apply at every 
 <div id="system-primitives"></div>
 
 <script src="{{ '/assets/js/primitives.js' | relative_url }}"></script>
+
+---
+
+## Tradeoff Cards
+
+Real-world technology choices mapped to the primitives above. Hover to see which constraints apply.
+
+<div id="tradeoff-cards"></div>
+
+<script src="{{ '/assets/js/tradeoffs.js' | relative_url }}"></script>
 
 ---
 
