@@ -79,13 +79,13 @@ toc: true
   padding-left: 12px;
 }
 .primitive-implication {
-  color: #94a3b8;
+  color: #e2e8f0;
   font-size: 13px;
   line-height: 1.7;
 }
 .primitive-implication::before {
   content: "→ ";
-  color: #64748b;
+  color: var(--category-color);
 }
 /* Popover bubble */
 .primitive-popover {
