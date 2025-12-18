@@ -19,13 +19,13 @@ toc: true
 /* System Primitives */
 #system-primitives {
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
-  font-size: 12px;
+  font-size: 14px;
   margin-bottom: 2rem;
 }
 .primitives-intro {
-  color: #94a3b8;
+  color: #cbd5e1;
   margin-bottom: 1rem;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 .category-card {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -35,14 +35,14 @@ toc: true
   border-left: 3px solid var(--category-color, #64748b);
 }
 .category-header {
-  padding: 12px 16px;
+  padding: 14px 16px;
   font-weight: 600;
   color: var(--category-color, #e2e8f0);
-  font-size: 13px;
+  font-size: 15px;
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 .primitive-item {
-  padding: 10px 16px;
+  padding: 12px 16px;
   border-bottom: 1px solid rgba(255,255,255,0.03);
 }
 .primitive-item:last-child {
@@ -59,11 +59,12 @@ toc: true
   align-items: center;
   gap: 6px;
   font-weight: 600;
-  color: #e2e8f0;
+  font-size: 14px;
+  color: #f1f5f9;
   transition: color 0.15s;
 }
 .primitive-item:hover .primitive-name {
-  color: var(--category-color, #e2e8f0);
+  color: var(--category-color, #f1f5f9);
 }
 .primitive-name .expand-icon {
   font-size: 10px;
@@ -78,23 +79,23 @@ toc: true
   padding-left: 12px;
 }
 .primitive-implication {
-  color: #64748b;
-  font-size: 11px;
-  line-height: 1.6;
+  color: #94a3b8;
+  font-size: 13px;
+  line-height: 1.7;
 }
 .primitive-implication::before {
   content: "→ ";
-  color: #475569;
+  color: #64748b;
 }
 .primitive-explanation {
   display: none;
-  margin-top: 10px;
-  padding: 12px;
+  margin-top: 12px;
+  padding: 14px;
   background: rgba(255,255,255,0.03);
   border-radius: 4px;
-  color: #94a3b8;
-  line-height: 1.6;
-  font-size: 11px;
+  color: #e2e8f0;
+  line-height: 1.7;
+  font-size: 13px;
   border-left: 2px solid var(--category-color, #64748b);
 }
 .primitive-item:hover .primitive-explanation,
