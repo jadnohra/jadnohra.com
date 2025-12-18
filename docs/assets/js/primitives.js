@@ -19,6 +19,32 @@
     render(container);
   }
 
+  function positionPopover(mouseX, mouseY) {
+    const offset = 16;
+    const popWidth = 400;
+    const margin = 12;
+
+    // Position to the right of mouse
+    let left = mouseX + offset;
+    let top = mouseY;
+
+    // If overflows right, show on left of mouse
+    if (left + popWidth > window.innerWidth - margin) {
+      left = mouseX - popWidth - offset;
+    }
+    if (left < margin) left = margin;
+
+    // Keep in vertical bounds
+    const popHeight = popover.offsetHeight || 100;
+    if (top + popHeight > window.innerHeight - margin) {
+      top = window.innerHeight - popHeight - margin;
+    }
+    if (top < margin) top = margin;
+
+    popover.style.left = left + 'px';
+    popover.style.top = top + 'px';
+  }
+
   function render(container) {
     container.innerHTML = '';
 
@@ -74,25 +100,16 @@
 
         // Hover for popover
         if (hasExplanation) {
-          item.addEventListener('mouseenter', () => {
+          item.addEventListener('mouseenter', (e) => {
             popover.textContent = primitive.explanation;
             popover.style.setProperty('--popover-color', category.color);
-
-            const rect = item.getBoundingClientRect();
-            const popWidth = Math.min(500, window.innerWidth - 24);
-
-            // Position above
-            let left = rect.left;
-            if (left + popWidth > window.innerWidth - 12) {
-              left = window.innerWidth - popWidth - 12;
-            }
-            if (left < 12) left = 12;
-
-            popover.style.left = left + 'px';
-            popover.style.width = popWidth + 'px';
-            popover.style.top = (rect.top - 8) + 'px';
-            popover.style.transform = 'translateY(-100%)';
+            popover.style.transform = '';
+            positionPopover(e.clientX, e.clientY);
             popover.classList.add('visible');
+          });
+
+          item.addEventListener('mousemove', (e) => {
+            positionPopover(e.clientX, e.clientY);
           });
 
           item.addEventListener('mouseleave', () => {
