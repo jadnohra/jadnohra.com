@@ -42,7 +42,7 @@ toc: true
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 .primitive-item {
-  padding: 12px 16px;
+  padding: 6px 16px;
   border-bottom: 1px solid rgba(255,255,255,0.03);
 }
 .primitive-item:last-child {
