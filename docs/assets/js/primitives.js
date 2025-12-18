@@ -101,7 +101,7 @@
         // Hover for popover
         if (hasExplanation) {
           item.addEventListener('mouseenter', (e) => {
-            popover.textContent = primitive.explanation;
+            popover.innerHTML = primitive.explanation;
             popover.style.setProperty('--popover-color', category.color);
             popover.style.transform = '';
             positionPopover(e.clientX, e.clientY);
