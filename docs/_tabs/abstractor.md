@@ -16,6 +16,97 @@ toc: true
 .content blockquote { margin: 0.5rem 0; }
 .content hr { margin: 1rem 0; }
 
+/* System Primitives */
+#system-primitives {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 12px;
+  margin-bottom: 2rem;
+}
+.primitives-intro {
+  color: #94a3b8;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+.category-card {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border-left: 3px solid var(--category-color, #64748b);
+}
+.category-header {
+  padding: 12px 16px;
+  font-weight: 600;
+  color: var(--category-color, #e2e8f0);
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.primitive-item {
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.primitive-item:last-child {
+  border-bottom: none;
+}
+.primitive-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.primitive-name:hover {
+  color: var(--category-color, #e2e8f0);
+}
+.primitive-name .expand-icon {
+  font-size: 10px;
+  color: #64748b;
+  transition: transform 0.2s;
+}
+.primitive-item.expanded .primitive-name .expand-icon {
+  transform: rotate(90deg);
+}
+.primitive-implications {
+  margin-top: 4px;
+  padding-left: 12px;
+}
+.primitive-implication {
+  color: #64748b;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.primitive-implication::before {
+  content: "→ ";
+  color: #475569;
+}
+.primitive-explanation {
+  display: none;
+  margin-top: 10px;
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 4px;
+  color: #94a3b8;
+  line-height: 1.6;
+  font-size: 11px;
+  border-left: 2px solid var(--category-color, #64748b);
+}
+.primitive-item.expanded .primitive-explanation {
+  display: block;
+  animation: slideDown 0.2s ease-out;
+}
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 #concept-grid {
   position: relative;
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
@@ -308,6 +399,16 @@ toc: true
   margin-bottom: 0;
 }
 </style>
+
+## System Primitives
+
+<div id="system-primitives"></div>
+
+<script src="{{ '/assets/js/primitives.js' | relative_url }}"></script>
+
+---
+
+## Abstraction Layers
 
 Every layer in computing—hardware or software—can be understood as an **abstractor**: hiding complexity below while exposing a simpler interface above.
 
