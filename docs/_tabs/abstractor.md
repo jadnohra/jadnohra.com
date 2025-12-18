@@ -405,8 +405,6 @@ toc: true
 }
 </style>
 
-## System Primitives
-
 <div id="system-primitives"></div>
 
 <script src="{{ '/assets/js/primitives.js' | relative_url }}"></script>

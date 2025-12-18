@@ -53,8 +53,14 @@
     popover.className = 'primitive-popover';
     document.body.appendChild(popover);
 
+    // Title
+    const title = document.createElement('h2');
+    title.textContent = 'System Primitives';
+    title.id = 'system-primitives-title';
+    container.appendChild(title);
+
     // Intro text
-    const intro = document.createElement('div');
+    const intro = document.createElement('p');
     intro.className = 'primitives-intro';
     intro.innerHTML = 'These constraints are rooted in physics and fundamental CS. They apply at every layer. Abstractions can defer them, transform them, or trade one for another — but never eliminate them.';
     container.appendChild(intro);
