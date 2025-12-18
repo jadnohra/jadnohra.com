@@ -79,39 +79,33 @@ toc: true
   padding-left: 12px;
 }
 .primitive-implication {
-  color: var(--category-color, #94a3b8);
+  color: #94a3b8;
   font-size: 13px;
   line-height: 1.7;
 }
 .primitive-implication::before {
   content: "→ ";
-  opacity: 0.6;
+  color: #64748b;
 }
-/* Popover for explanations */
+/* Popover bubble */
 .primitive-popover {
   position: fixed;
-  max-width: 420px;
-  padding: 14px 16px;
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  border: 1px solid var(--popover-color, #64748b);
+  max-width: 500px;
+  padding: 12px 14px;
+  background: #0f172a;
+  border: 1px solid var(--popover-color, #475569);
   border-radius: 6px;
   color: #e2e8f0;
   font-size: 13px;
-  line-height: 1.7;
-  z-index: 1000;
+  line-height: 1.6;
+  z-index: 9999;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.15s ease;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  transition: opacity 0.12s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 .primitive-popover.visible {
   opacity: 1;
-}
-.primitive-popover-title {
-  font-weight: 600;
-  color: var(--popover-color, #e2e8f0);
-  margin-bottom: 8px;
-  font-size: 14px;
 }
 
 #concept-grid {

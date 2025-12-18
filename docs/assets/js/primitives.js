@@ -22,10 +22,9 @@
   function render(container) {
     container.innerHTML = '';
 
-    // Create shared popover element
+    // Create popover
     popover = document.createElement('div');
     popover.className = 'primitive-popover';
-    popover.innerHTML = '<div class="primitive-popover-title"></div><div class="primitive-popover-text"></div>';
     document.body.appendChild(popover);
 
     // Intro text
@@ -57,9 +56,12 @@
         const name = document.createElement('div');
         name.className = 'primitive-name';
         name.textContent = primitive.name;
+        if (hasExplanation) {
+          item.classList.add('has-explanation');
+        }
         item.appendChild(name);
 
-        // Implications (always visible)
+        // Implications
         const implications = document.createElement('div');
         implications.className = 'primitive-implications';
         primitive.implications.forEach(imp => {
@@ -70,16 +72,31 @@
         });
         item.appendChild(implications);
 
-        // Hover events for popover
+        // Hover for popover
         if (hasExplanation) {
-          item.classList.add('has-explanation');
+          item.addEventListener('mouseenter', () => {
+            popover.textContent = primitive.explanation;
+            popover.style.setProperty('--popover-color', category.color);
 
-          item.addEventListener('mouseenter', (e) => {
-            showPopover(primitive.name, primitive.explanation, category.color, item);
+            const rect = item.getBoundingClientRect();
+            const popWidth = Math.min(500, window.innerWidth - 24);
+
+            // Position above
+            let left = rect.left;
+            if (left + popWidth > window.innerWidth - 12) {
+              left = window.innerWidth - popWidth - 12;
+            }
+            if (left < 12) left = 12;
+
+            popover.style.left = left + 'px';
+            popover.style.width = popWidth + 'px';
+            popover.style.top = (rect.top - 8) + 'px';
+            popover.style.transform = 'translateY(-100%)';
+            popover.classList.add('visible');
           });
 
           item.addEventListener('mouseleave', () => {
-            hidePopover();
+            popover.classList.remove('visible');
           });
         }
 
@@ -88,51 +105,6 @@
 
       container.appendChild(card);
     });
-  }
-
-  function showPopover(title, text, color, targetEl) {
-    const titleEl = popover.querySelector('.primitive-popover-title');
-    const textEl = popover.querySelector('.primitive-popover-text');
-
-    titleEl.textContent = title;
-    textEl.textContent = text;
-    popover.style.setProperty('--popover-color', color);
-
-    // Position popover
-    const rect = targetEl.getBoundingClientRect();
-    const popoverWidth = 420;
-    const margin = 12;
-
-    // Horizontal: try to align left with item, but keep in viewport
-    let left = rect.left;
-    if (left + popoverWidth > window.innerWidth - margin) {
-      left = window.innerWidth - popoverWidth - margin;
-    }
-    if (left < margin) left = margin;
-
-    // Vertical: prefer above, but show below if not enough space
-    popover.style.visibility = 'hidden';
-    popover.style.display = 'block';
-    const popoverHeight = popover.offsetHeight;
-    popover.style.display = '';
-    popover.style.visibility = '';
-
-    let top;
-    if (rect.top - popoverHeight - margin > 0) {
-      // Show above
-      top = rect.top - popoverHeight - margin;
-    } else {
-      // Show below
-      top = rect.bottom + margin;
-    }
-
-    popover.style.left = left + 'px';
-    popover.style.top = top + 'px';
-    popover.classList.add('visible');
-  }
-
-  function hidePopover() {
-    popover.classList.remove('visible');
   }
 
   if (document.readyState === 'loading') {
