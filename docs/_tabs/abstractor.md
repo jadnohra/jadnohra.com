@@ -9,8 +9,8 @@ toc: true
 <style>
 /* Compact layout */
 .content p { margin-bottom: 0.5rem; }
-.content h2 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
-.content h3 { margin-top: 1rem; margin-bottom: 0.3rem; }
+.content h2 { margin-top: 1.5rem; margin-bottom: 0.5rem; display: block !important; visibility: visible !important; }
+.content h3 { margin-top: 1rem; margin-bottom: 0.3rem; display: block !important; visibility: visible !important; }
 .content ul, .content ol { margin-bottom: 0.5rem; }
 .content li { margin-bottom: 0.2rem; }
 .content blockquote { margin: 0.5rem 0; }
@@ -212,8 +212,8 @@ toc: true
   color: #f97316;
 }
 .derived-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 12px;
   margin: 1.5rem 0;
 }
@@ -255,22 +255,37 @@ toc: true
 .derived-list {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   border-radius: 8px;
-  padding: 14px 14px 14px 32px;
+  padding: 16px 16px 16px 36px;
   margin: 1rem 0;
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
   font-size: 13px;
   list-style: disc;
 }
-.derived-list li {
-  color: #cbd5e1;
-  margin-bottom: 8px;
+.derived-list > li {
+  color: #f1f5f9;
+  margin-bottom: 12px;
   line-height: 1.6;
+  list-style: none;
+  margin-left: -18px;
 }
-.derived-list li:last-child {
+.derived-list > li:last-child {
   margin-bottom: 0;
+}
+.derived-list ul {
+  margin-top: 6px;
+  padding-left: 20px;
+  list-style: disc;
+}
+.derived-list ul li {
+  color: #cbd5e1;
+  margin-bottom: 4px;
+  line-height: 1.5;
 }
 .derived-list b {
   color: #f1f5f9;
+}
+.derived-list ul b {
+  color: #94a3b8;
 }
 
 /* Derived Data Table */
@@ -611,7 +626,7 @@ These constraints are rooted in physics and fundamental CS. They apply at every 
 
 ## Derived Data
 
-<div class="derived-intro">
+<div class="derived-box">
 <b>Physics creates distance.</b> Distance forces copies. <b>Copies require coherence.</b>
 </div>
 
@@ -625,30 +640,33 @@ Every cache, replica, index, materialized view, denormalized table, and memoized
 
 ### The Three Choices
 
-<div class="derived-grid">
-<div class="derived-card">
-<div class="derived-card-title">1. What transform?</div>
-<div class="derived-card-item"><b>Identity</b> → CPU cache, CDN, replica</div>
-<div class="derived-card-item"><b>Projection</b> → covering index, column store</div>
-<div class="derived-card-item"><b>Aggregation</b> → materialized view, rollup</div>
-<div class="derived-card-item"><b>Structure change</b> → B-tree, hash, inverted index</div>
-<div class="derived-card-item"><b>Lossy</b> → bloom filter, HyperLogLog, sketch</div>
-</div>
-<div class="derived-card">
-<div class="derived-card-title">2. Where to store?</div>
-<div class="derived-card-item"><b>Memory</b> → register → L1 → L2 → L3 → RAM → SSD → disk</div>
-<div class="derived-card-item"><b>Network</b> → same-process → machine → rack → DC → region → edge</div>
-<div class="derived-card-item"><b>Time</b> → precomputed → on-demand → lazy</div>
-</div>
-<div class="derived-card">
-<div class="derived-card-title">3. How to sync?</div>
-<div class="derived-card-item"><b>Sync on write</b> → strong consistency, write pays RTT</div>
-<div class="derived-card-item"><b>Invalidate</b> → strong consistency, invalidation fanout</div>
-<div class="derived-card-item"><b>TTL</b> → bounded staleness, no coordination</div>
-<div class="derived-card-item"><b>Version on read</b> → strong consistency, read pays check</div>
-<div class="derived-card-item"><b>Never</b> → immutable source, no cost</div>
-</div>
-</div>
+<ul class="derived-list">
+<li><b>1. What transform?</b>
+  <ul>
+    <li><b>Identity</b> → CPU cache, CDN, replica</li>
+    <li><b>Projection</b> → covering index, column store</li>
+    <li><b>Aggregation</b> → materialized view, rollup</li>
+    <li><b>Structure change</b> → B-tree, hash, inverted index</li>
+    <li><b>Lossy</b> → bloom filter, HyperLogLog, sketch</li>
+  </ul>
+</li>
+<li><b>2. Where to store?</b>
+  <ul>
+    <li><b>Memory</b> → register → L1 → L2 → L3 → RAM → SSD → disk</li>
+    <li><b>Network</b> → same-process → machine → rack → DC → region → edge</li>
+    <li><b>Time</b> → precomputed → on-demand → lazy</li>
+  </ul>
+</li>
+<li><b>3. How to sync?</b>
+  <ul>
+    <li><b>Sync on write</b> → strong consistency, write pays RTT</li>
+    <li><b>Invalidate</b> → strong consistency, invalidation fanout</li>
+    <li><b>TTL</b> → bounded staleness, no coordination</li>
+    <li><b>Version on read</b> → strong consistency, read pays check</li>
+    <li><b>Never</b> → immutable source, no cost</li>
+  </ul>
+</li>
+</ul>
 
 ### Unification
 
