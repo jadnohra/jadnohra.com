@@ -501,6 +501,136 @@ Real-world technology choices mapped to the primitives above. Hover to see which
 
 ---
 
+## Derived Data
+
+Physics creates distance. Distance forces copies. Copies require coherence.
+
+Computation and storage are separated by distance — in the memory hierarchy, across the network, even in time. When crossing that distance repeatedly is too expensive, you store a copy closer. That copy is derived data.
+
+```
+Source
+  → transform (identity, projection, aggregation, index, ...)
+  → store at location (register, L1, RAM, local DC, edge, ...)
+  → faster access
+  → but now two representations exist
+  → sync obligation
+```
+
+Every cache, replica, index, materialized view, denormalized table, and memoized result is the same pattern:
+
+> Store a transform of source data closer to consumption. Pay for sync.
+
+---
+
+### The Three Choices
+
+**1. What transform?**
+
+```
+Identity          → CPU cache, CDN, replica
+                    (space for proximity)
+Projection        → covering index, column store
+                    (space for access pattern)
+Aggregation       → materialized view, rollup table
+                    (precompute for read speed)
+Structure change  → B-tree, hash index, inverted index
+                    (space + write cost for read pattern)
+Lossy             → bloom filter, HyperLogLog, sketch
+                    (accuracy for space)
+```
+
+**2. Where to store?**
+
+```
+Memory hierarchy:
+  register → L1 → L2 → L3 → RAM → SSD → disk → network
+  (~1ns)   (~3ns)(~10ns)(~40ns)(~100ns)(~100μs)(~10ms)(~1-100ms)
+
+Network topology:
+  same-process → same-machine → same-rack → same-DC → same-region → edge
+
+Time:
+  precomputed → on-demand → lazy
+  (before need)  (at need)   (after first need)
+```
+
+**3. How to sync?**
+
+```
+Sync on write       → strong consistency, write pays RTT
+                      (can't tolerate stale)
+Invalidate on write → strong consistency, write pays invalidation fanout
+                      (read-heavy, can coordinate)
+TTL                 → bounded staleness, no coordination
+                      (staleness acceptable)
+Version on read     → strong consistency, read pays check
+                      (write-heavy)
+Never               → perfect consistency, no cost
+                      (immutable source)
+```
+
+---
+
+### Unification
+
+| Name | Transform | Location | Sync |
+|------|-----------|----------|------|
+| CPU L1 cache | identity | RAM → L1 | coherence protocol |
+| CDN | identity | origin → edge | TTL / purge |
+| Redis cache | identity / projection | disk → RAM | TTL / invalidate |
+| Database replica | identity | primary → secondary | sync / async |
+| Materialized view | aggregation | compute → storage | refresh / periodic |
+| Index | projection + structure | scan → lookup | sync on write |
+| Denormalized table | join | join-time → storage | dual write |
+| Memoization | full result | compute → lookup | none (pure) |
+| Bloom filter | lossy projection | set → bits | rebuild |
+
+---
+
+### Why This Exists
+
+```
+Latency is real, bandwidth is finite (physics)
+          ↓
+Crossing distance costs time
+          ↓
+Repeated access → repeated cost
+          ↓
+Store copy closer → pay once, access many
+          ↓
+Copy is transform of source
+          ↓
+Two representations of same truth
+          ↓
+Source changes → copy is wrong
+          ↓
+Sync obligation (coordination cost)
+          ↓
+Choose: consistency vs latency vs complexity
+```
+
+---
+
+### What This Explains
+
+**Cache invalidation is hard** — it's distributed coordination.
+
+**Immutability is powerful** — no sync needed, copies are forever valid.
+
+**Indexes slow writes** — sync obligation on every mutation.
+
+**Eventual consistency exists** — coordination is expensive, defer it.
+
+**CDNs use TTL** — bounded staleness avoids coordination.
+
+**Denormalization is dangerous** — multiple sync points, easy to diverge.
+
+**Memoization is easy** — pure functions have immutable inputs.
+
+**CPU caches need coherence protocols** — multiple cores, shared memory, sync is mandatory.
+
+---
+
 ## Abstraction Layers
 
 Every layer in computing—hardware or software—can be understood as an **abstractor**: hiding complexity below while exposing a simpler interface above.
