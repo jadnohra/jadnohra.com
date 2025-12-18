@@ -23,7 +23,7 @@ toc: true
   margin-bottom: 2rem;
 }
 .primitives-intro {
-  color: #cbd5e1;
+  color: #f1f5f9;
   margin-bottom: 1rem;
   line-height: 1.6;
 }
