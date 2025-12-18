@@ -1,7 +1,7 @@
 ---
 layout: post
 icon: fas fa-info-circle
-order: 8
+order: 10
 title: About
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: categories
 icon: fas fa-stream
-order: 6
+order: 8
 title: Categories (WIP)
 ---

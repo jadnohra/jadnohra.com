@@ -2,7 +2,7 @@
 layout: post
 title: Intuitions
 icon: fas fa-lightbulb
-order: 4
+order: 5
 toc: true
 ---
 
