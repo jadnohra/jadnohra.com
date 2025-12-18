@@ -886,3 +886,518 @@ EXPTIME:     "I must track everything. No forgetting allowed."
              "The history IS the problem."
              Full enumeration with memory.
 ```
+
+---
+
+## Part IV: Canonical Algorithms
+
+### The Core Insight
+
+Hardness comes from the relationship between:
+
+```
+1. State space size       how many possible states exist
+2. Solution density       what fraction satisfies the property
+3. Structure              does local information help navigate?
+4. Convergence            can each step guarantee progress?
+```
+
+The key asymmetry:
+
+```
+Forward:   follow deterministic steps, one path, information lost
+Backward:  many inputs could produce this output, must search
+```
+
+Computation is lossy — multiple inputs map to same output. Going backward means recovering lost information.
+
+---
+
+### The Hierarchy
+
+Each class is defined by what the machine can remember:
+
+```
+Name           Memory                    Canonical Structure      Canonical Algorithm
+─────────────────────────────────────────────────────────────────────────────────────────
+lookup         O(1) states               transition table         DFA traversal
+stack          O(n) stack                call stack               recursive descent
+scanner        O(log n) pointers         two pointers             Floyd's cycle detection
+accumulator    O(n^k) facts              visited set              BFS / Dijkstra
+verifier       O(n^k) witness            certificate              SAT solver (backtracking)
+explorer       O(n^k) reused             unmemoized recursion     minimax (no transposition)
+archivist      O(2^n) everything         memoized recursion       minimax (full transposition)
+```
+
+---
+
+### Lookup (Regular)
+
+**Memory:** O(1) — fixed number of states, no matter input size.
+
+**Structure:** Transition table. State × symbol → state.
+
+```
+        a    b    c
+      ┌────┬────┬────┐
+  S0  │ S1 │ S0 │ S0 │
+  S1  │ S1 │ S2 │ S0 │
+  S2  │ S1 │ S0 │ S3 │  ← accept
+      └────┴────┴────┘
+
+Size: |states| × |alphabet| — constant
+Memory: one cell — "which row am I in?"
+```
+
+**Behavior:** Input flows through. State updates. Nothing accumulates.
+
+**Limitation:** Can't count. Can't match nesting. The machine "forgets" everything except which state it's in.
+
+```
+Can:    "contains 'ab'"
+        "ends with '.com'"
+        "valid identifier"
+
+Can't:  a^n b^n (equal counts)
+        balanced parens (nesting)
+        palindromes (need to remember first half)
+```
+
+**Algorithm:** DFA traversal.
+
+```python
+def match(table, accept_states, input):
+    state = 0
+    for char in input:
+        state = table[state][char]  # just a lookup
+    return state in accept_states
+```
+
+**One-liner:** "I'm a table. Input goes in, answer comes out. I remember nothing."
+
+---
+
+### Stack (Context-Free)
+
+**Memory:** O(n) — stack grows with nesting depth, but LIFO only.
+
+**Structure:** Call stack. Recursion itself IS the pushdown automaton.
+
+```python
+def parse_expr():
+    parse_term()
+    while see('+'):
+        consume('+')
+        parse_term()
+
+def parse_term():
+    parse_factor()
+    while see('*'):
+        consume('*')
+        parse_factor()
+
+def parse_factor():
+    if see('('):
+        consume('(')
+        parse_expr()     # stack grows — recursion!
+        consume(')')     # stack shrinks — return!
+    else:
+        parse_number()
+```
+
+**Behavior:** Nesting pushes. Return pops. When you return, you forget.
+
+**Limitation:** Can't cross-reference. Can't look back. Only see top of stack.
+
+```
+Can:    balanced parens ( )
+        a^n b^n (push a's, pop on b's)
+        nested structures
+
+Can't:  a^n b^n c^n (need to count twice)
+        ww (exact copy — need random access)
+        cross-references between parts
+```
+
+**Algorithm:** Recursive descent parsing.
+
+**One-liner:** "I'm a stack. I track what's open. When it closes, I forget."
+
+---
+
+### Scanner (L — Log Space)
+
+**Memory:** O(log n) — enough for constant number of pointers into input.
+
+**Structure:** Two pointers. Positions only, no storage.
+
+```python
+def has_cycle(head):
+    slow = head
+    fast = head
+    while fast and fast.next:
+        slow = slow.next          # one step
+        fast = fast.next.next     # two steps
+        if slow == fast:
+            return True
+    return False
+
+# Memory: two pointers
+# Can re-read input, can't store anything about it
+```
+
+**Behavior:** Scan input. Compare positions. Can re-read but can't accumulate findings.
+
+**Limitation:** Can't mark "visited." Can't build up information. Just fingers on the page.
+
+```
+Can:    string equality (two pointers, compare char by char)
+        cycle detection (fast/slow pointers)
+        palindrome check (two pointers inward)
+
+Can't:  track visited nodes (need O(n) bits)
+        accumulate statistics
+        remember what you've seen
+```
+
+**Algorithm:** Floyd's cycle detection, two-pointer techniques.
+
+**One-liner:** "I'm a finger on the page. I can re-read, but I can't take notes."
+
+---
+
+### Accumulator (P — Polynomial Time)
+
+**Memory:** O(n^k) — polynomial facts accumulated.
+
+**Structure:** Visited set. Hash table. Growing collection of facts.
+
+```python
+def bfs(graph, start):
+    visited = {start}          # accumulates!
+    queue = [start]
+    while queue:
+        node = queue.pop(0)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)  # progress!
+                queue.append(neighbor)
+    return visited
+
+# Each step: one new fact
+# Never backtrack
+# Work = progress
+```
+
+**Behavior:** Add facts. Never remove. Monotonic progress. Each step shrinks the remaining problem.
+
+**Why polynomial is natural:**
+
+```
+Polynomial = processing the input itself
+Exponential = enumerating what the input represents
+
+Input: n-node graph
+Polynomial work: O(n²) edges, O(n³) triples — derived from input
+Exponential work: O(2^n) subsets — configurations the input quantifies over
+```
+
+```
+Can:    shortest path
+        sorting
+        matrix multiplication
+        primality testing
+
+All share: each step = guaranteed progress toward answer
+```
+
+**Algorithm:** BFS, Dijkstra, dynamic programming.
+
+**One-liner:** "I'm a notebook. I write facts down. I never erase. Every note helps."
+
+---
+
+### Verifier (NP — Nondeterministic Polynomial)
+
+**Memory:** O(n^k) for checking — but finding the witness might require searching 2^n.
+
+**Structure:** Witness / certificate. The proof you can check.
+
+```python
+# Sudoku: hard to solve, easy to check
+
+def verify_sudoku(grid):          # O(n²) — polynomial
+    for row in grid:
+        if not valid_set(row): return False
+    for col in columns(grid):
+        if not valid_set(col): return False
+    for box in boxes(grid):
+        if not valid_set(box): return False
+    return True
+
+def solve_sudoku(grid):           # exponential search
+    # try configurations until one verifies
+    ...
+```
+
+**Behavior:** Given proof, check fast. Finding proof, search hard.
+
+**The asymmetry:**
+
+```
+Verification: process witness (polynomial-sized) — accumulator-like
+Search: explore configurations (exponential-sized) — might not converge
+```
+
+```
+SAT:       verify assignment in O(n), find assignment in O(2^n)?
+Sudoku:    verify grid in O(n²), solve in O(k^n)?
+Factoring: verify factors in O(n²), find factors in ???
+```
+
+**Why this matters:**
+
+```
+Witness encodes the search path — compressed directions to the answer.
+Given witness: verify = polynomial (check each step)
+Without witness: search = exponential? (we don't know)
+```
+
+**Algorithm:** SAT solver, backtracking with pruning.
+
+**One-liner:** "I'm a proof-checker. Give me the proof, I'll check it fast. Don't ask me to find it."
+
+---
+
+### Explorer (PSPACE — Polynomial Space)
+
+**Memory:** O(n^k) — but reused across branches. Same space, many paths.
+
+**Structure:** Unmemoized recursion. Game tree DFS. Forget on backtrack.
+
+```python
+def minimax(position, depth, maximizing):
+    if depth == 0 or game_over(position):
+        return evaluate(position)
+
+    if maximizing:
+        value = -infinity
+        for move in legal_moves(position):
+            child = make_move(position, move)
+            value = max(value, minimax(child, depth-1, False))
+            # child is FORGOTTEN here — space reused!
+        return value
+    else:
+        value = +infinity
+        for move in legal_moves(position):
+            child = make_move(position, move)
+            value = min(value, minimax(child, depth-1, True))
+            # child is FORGOTTEN here — space reused!
+        return value
+
+# Space: O(depth) — polynomial
+# Time: O(2^depth) — exponential
+# Key: forgetting enables space reuse
+```
+
+**Behavior:** Explore all paths. Backtrack = forget. Reuse space. Spend time instead.
+
+**Why PSPACE contains NP:**
+
+```
+NP: "guess" the right path (nondeterminism)
+PSPACE: "try" every path, one at a time (enumeration)
+
+Same configurations explored.
+NP does it with magic guessing.
+PSPACE does it with time and forgetting.
+```
+
+**The game connection:**
+
+```
+NP:     ∃ — "does there exist a winning move?"
+PSPACE: ∀∃∀∃ — "for all opponent moves, exists my response, for all counters..."
+
+Alternation = adversary takes turns.
+Can't just guess — opponent responds.
+```
+
+```
+Can:    QBF (quantified boolean formula)
+        optimal game play (polynomial-bounded)
+        regex equivalence
+
+All share: adversarial, alternating, must consider all responses
+```
+
+**Algorithm:** Minimax, game tree search, DPLL without learning.
+
+**One-liner:** "I'm a maze-walker. I try every path. When I backtrack, I forget where I've been. I have time."
+
+---
+
+### Archivist (EXPTIME — Exponential Time)
+
+**Memory:** O(2^n) — must remember everything. Can't forget, can't compress.
+
+**Structure:** Memoized recursion. Full transposition table.
+
+```python
+transposition = {}  # THIS is the exponential memory
+
+def minimax_memo(position, depth, maximizing):
+    key = (position, depth, maximizing)
+    if key in transposition:
+        return transposition[key]
+
+    if depth == 0 or game_over(position):
+        return evaluate(position)
+
+    if maximizing:
+        value = -infinity
+        for move in legal_moves(position):
+            child = make_move(position, move)
+            value = max(value, minimax_memo(child, depth-1, False))
+        transposition[key] = value  # NEVER FORGET
+        return value
+    else:
+        # ... similar
+
+# Space: O(positions) — exponential
+# Time: O(positions) — exponential
+# Key: remembering IS the problem
+```
+
+**Behavior:** Explore all paths. Remember every position. Can't forget — problem structure requires the history.
+
+**Why provably hard:**
+
+```
+Unlike NP-hard (where we just can't prove P≠NP),
+EXPTIME-complete problems are provably not in P.
+
+The game tree IS the problem.
+Every position matters.
+No shortcut exists.
+```
+
+```
+Examples:
+    generalized chess (n×n board)
+    generalized Go
+    full game trees without repetition
+```
+
+**Algorithm:** Minimax with full memoization.
+
+**One-liner:** "I'm a maze-walker with a map. I try every path. I mark every room. I need a very big map."
+
+---
+
+### The Convergence View
+
+What separates the classes:
+
+```
+Class        Convergence                          Progress Guarantee
+───────────────────────────────────────────────────────────────────────────
+lookup       input flows through                  O(1) per character
+stack        nesting resolves                     O(1) per token
+scanner      pointers traverse                    O(1) per step
+accumulator  facts accumulate                     each step = permanent progress
+verifier     verify converges, search might not   verification: yes, search: ???
+explorer     enumerate all, forget between        no per-step guarantee, eventual completion
+archivist    enumerate all, remember all          no per-step guarantee, exponential total
+```
+
+---
+
+### The Information View
+
+How much information can be extracted:
+
+```
+Class        Information Capacity         Extraction Rate
+──────────────────────────────────────────────────────────────────────
+lookup       O(log k) bits — which state   O(1) per input symbol
+stack        O(n) bits — stack contents    O(1) per token
+scanner      O(log n) bits — positions     O(1) per comparison
+accumulator  O(n^k) bits — all findings    O(1) per step, guaranteed
+verifier     witness has O(n^k) bits       O(1) per step to verify; search: ???
+explorer     O(n^k) bits active at once    O(1) per step, but restarting
+archivist    O(2^n) bits total             O(1) per step, never discard
+```
+
+---
+
+### The Physical View
+
+```
+lookup       "streaming — input through, nothing saved"
+stack        "call stack — nesting tracked, return forgets"
+scanner      "two fingers on page — scan, compare, no notes"
+accumulator  "notebook — write facts, never erase"
+verifier     "proof checker — verify easy, discovery hard"
+explorer     "maze walker — all paths, no map"
+archivist    "maze walker — all paths, full map"
+```
+
+---
+
+### The Compiler Connection
+
+```
+Stage               Class           Why
+─────────────────────────────────────────────────────────────────────
+Lexer               lookup          DFA, fixed table, input flows through
+Parser              stack           recursive descent, nesting = stack depth
+Name resolution     accumulator     build symbol table, monotonic
+Type inference      accumulator     (usually) — propagate types
+                    archivist       (F-omega) — can blow up
+Register allocation verifier        NP-hard (graph coloring), use heuristics
+Instruction sched   verifier        NP-hard, use heuristics
+Optimization        accumulator     dataflow = fixed-point over lattice
+```
+
+---
+
+### The Practical Implications
+
+```
+You hit lookup:      use DFA, will be fast
+You hit stack:       use recursive descent or table parser
+You hit scanner:     use pointer tricks, very constrained
+You hit accumulator: use BFS/Dijkstra/DP, will converge
+You hit verifier:    stop looking for poly algorithm
+                     use heuristics, approximation, SAT solvers
+You hit explorer:    game tree, exponential time, be patient
+You hit archivist:   provably exponential, limit scope or approximate
+```
+
+---
+
+### Principle
+
+```
+lookup       "I'm a table."
+             input flows through, state updates, nothing accumulates.
+
+stack        "I'm a stack."
+             nesting pushes, return pops, pop forgets.
+
+scanner      "I'm pointers."
+             scan and compare, can't take notes.
+
+accumulator  "I'm a notebook."
+             write facts, never erase, every step = progress.
+
+verifier     "I'm a proof-checker."
+             give me proof, I verify fast. finding it is your problem.
+
+explorer     "I'm a maze-walker without a map."
+             try all paths, forget on backtrack, reuse space, spend time.
+
+archivist    "I'm a maze-walker with a full map."
+             try all paths, remember all positions, exponential map required.
+```
