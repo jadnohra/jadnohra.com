@@ -94,14 +94,14 @@ toc: true
 /* Popover bubble */
 .primitive-popover {
   position: fixed;
-  max-width: 500px;
-  padding: 12px 14px;
+  max-width: 520px;
+  padding: 14px 16px;
   background: #0f172a;
   border: 1px solid var(--popover-color, #475569);
   border-radius: 6px;
   color: #e2e8f0;
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.7;
   z-index: 9999;
   pointer-events: none;
   opacity: 0;
