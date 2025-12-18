@@ -188,6 +188,65 @@ toc: true
   color: #94a3b8;
 }
 
+/* Derived Data */
+.derived-box {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 1rem 0;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 13px;
+  color: #e2e8f0;
+  border-left: 3px solid #f97316;
+}
+.derived-box b {
+  color: #f97316;
+}
+.derived-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 8px;
+  margin: 1rem 0;
+}
+.derived-card {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 12px;
+}
+.derived-card-title {
+  font-weight: 600;
+  color: #f1f5f9;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.derived-card-item {
+  color: #cbd5e1;
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+.derived-card-item b {
+  color: #94a3b8;
+}
+.derived-explains {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 1rem 0;
+}
+.derived-explains span {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 12px;
+  color: #cbd5e1;
+}
+.derived-explains span b {
+  color: #f1f5f9;
+}
+
 #concept-grid {
   position: relative;
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
@@ -491,85 +550,44 @@ These constraints are rooted in physics and fundamental CS. They apply at every 
 
 ---
 
-## Tradeoff Cards
-
-Real-world technology choices mapped to the primitives above. Hover to see which constraints apply.
-
-<div id="tradeoff-cards"></div>
-
-<script src="{{ '/assets/js/tradeoffs.js' | relative_url }}"></script>
-
----
-
 ## Derived Data
 
 Physics creates distance. Distance forces copies. Copies require coherence.
 
-Computation and storage are separated by distance — in the memory hierarchy, across the network, even in time. When crossing that distance repeatedly is too expensive, you store a copy closer. That copy is derived data.
+Computation and storage are separated by distance — in the memory hierarchy, across the network, even in time. When crossing that distance repeatedly is too expensive, you store a copy closer. That copy is **derived data**.
 
-```
-Source
-  → transform (identity, projection, aggregation, index, ...)
-  → store at location (register, L1, RAM, local DC, edge, ...)
-  → faster access
-  → but now two representations exist
-  → sync obligation
-```
+<div class="derived-box">
+Source → transform → store closer → faster access → two representations → <b>sync obligation</b>
+</div>
 
-Every cache, replica, index, materialized view, denormalized table, and memoized result is the same pattern:
-
-> Store a transform of source data closer to consumption. Pay for sync.
-
----
+Every cache, replica, index, materialized view, denormalized table, and memoized result is the same pattern: **store a transform of source data closer to consumption. Pay for sync.**
 
 ### The Three Choices
 
-**1. What transform?**
-
-```
-Identity          → CPU cache, CDN, replica
-                    (space for proximity)
-Projection        → covering index, column store
-                    (space for access pattern)
-Aggregation       → materialized view, rollup table
-                    (precompute for read speed)
-Structure change  → B-tree, hash index, inverted index
-                    (space + write cost for read pattern)
-Lossy             → bloom filter, HyperLogLog, sketch
-                    (accuracy for space)
-```
-
-**2. Where to store?**
-
-```
-Memory hierarchy:
-  register → L1 → L2 → L3 → RAM → SSD → disk → network
-  (~1ns)   (~3ns)(~10ns)(~40ns)(~100ns)(~100μs)(~10ms)(~1-100ms)
-
-Network topology:
-  same-process → same-machine → same-rack → same-DC → same-region → edge
-
-Time:
-  precomputed → on-demand → lazy
-  (before need)  (at need)   (after first need)
-```
-
-**3. How to sync?**
-
-```
-Sync on write       → strong consistency, write pays RTT
-                      (can't tolerate stale)
-Invalidate on write → strong consistency, write pays invalidation fanout
-                      (read-heavy, can coordinate)
-TTL                 → bounded staleness, no coordination
-                      (staleness acceptable)
-Version on read     → strong consistency, read pays check
-                      (write-heavy)
-Never               → perfect consistency, no cost
-                      (immutable source)
-```
-
----
+<div class="derived-grid">
+<div class="derived-card">
+<div class="derived-card-title">1. What transform?</div>
+<div class="derived-card-item"><b>Identity</b> → CPU cache, CDN, replica</div>
+<div class="derived-card-item"><b>Projection</b> → covering index, column store</div>
+<div class="derived-card-item"><b>Aggregation</b> → materialized view, rollup</div>
+<div class="derived-card-item"><b>Structure change</b> → B-tree, hash, inverted index</div>
+<div class="derived-card-item"><b>Lossy</b> → bloom filter, HyperLogLog, sketch</div>
+</div>
+<div class="derived-card">
+<div class="derived-card-title">2. Where to store?</div>
+<div class="derived-card-item"><b>Memory</b> → register → L1 → L2 → L3 → RAM → SSD → disk</div>
+<div class="derived-card-item"><b>Network</b> → same-process → machine → rack → DC → region → edge</div>
+<div class="derived-card-item"><b>Time</b> → precomputed → on-demand → lazy</div>
+</div>
+<div class="derived-card">
+<div class="derived-card-title">3. How to sync?</div>
+<div class="derived-card-item"><b>Sync on write</b> → strong consistency, write pays RTT</div>
+<div class="derived-card-item"><b>Invalidate</b> → strong consistency, invalidation fanout</div>
+<div class="derived-card-item"><b>TTL</b> → bounded staleness, no coordination</div>
+<div class="derived-card-item"><b>Version on read</b> → strong consistency, read pays check</div>
+<div class="derived-card-item"><b>Never</b> → immutable source, no cost</div>
+</div>
+</div>
 
 ### Unification
 
@@ -585,49 +603,27 @@ Never               → perfect consistency, no cost
 | Memoization | full result | compute → lookup | none (pure) |
 | Bloom filter | lossy projection | set → bits | rebuild |
 
----
-
-### Why This Exists
-
-```
-Latency is real, bandwidth is finite (physics)
-          ↓
-Crossing distance costs time
-          ↓
-Repeated access → repeated cost
-          ↓
-Store copy closer → pay once, access many
-          ↓
-Copy is transform of source
-          ↓
-Two representations of same truth
-          ↓
-Source changes → copy is wrong
-          ↓
-Sync obligation (coordination cost)
-          ↓
-Choose: consistency vs latency vs complexity
-```
-
----
-
 ### What This Explains
 
-**Cache invalidation is hard** — it's distributed coordination.
+<div class="derived-explains">
+<span><b>Cache invalidation is hard</b> — distributed coordination</span>
+<span><b>Immutability is powerful</b> — no sync needed</span>
+<span><b>Indexes slow writes</b> — sync on every mutation</span>
+<span><b>Eventual consistency exists</b> — coordination is expensive</span>
+<span><b>CDNs use TTL</b> — bounded staleness avoids coordination</span>
+<span><b>Denormalization is dangerous</b> — multiple sync points</span>
+<span><b>Memoization is easy</b> — pure functions, immutable inputs</span>
+</div>
 
-**Immutability is powerful** — no sync needed, copies are forever valid.
+---
 
-**Indexes slow writes** — sync obligation on every mutation.
+## Tradeoff Cards
 
-**Eventual consistency exists** — coordination is expensive, defer it.
+Real-world technology choices mapped to the primitives above. Hover to see which constraints apply.
 
-**CDNs use TTL** — bounded staleness avoids coordination.
+<div id="tradeoff-cards"></div>
 
-**Denormalization is dangerous** — multiple sync points, easy to diverge.
-
-**Memoization is easy** — pure functions have immutable inputs.
-
-**CPU caches need coherence protocols** — multiple cores, shared memory, sync is mandatory.
+<script src="{{ '/assets/js/tradeoffs.js' | relative_url }}"></script>
 
 ---
 
