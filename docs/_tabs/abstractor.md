@@ -1018,6 +1018,283 @@ FLEXIBILITY ◄─────────────────────�
 
 ---
 
+## Primitive Interactions
+
+Three primitives from physics:
+
+<table class="derived-table">
+<tr><th>Primitive</th><th>Question</th></tr>
+<tr><td><b>SPACE</b></td><td>Where does data reside?</td></tr>
+<tr><td><b>TIME</b></td><td>When does something exist or happen?</td></tr>
+<tr><td><b>IDENTITY</b></td><td>Is this the same data or a copy?</td></tr>
+</table>
+
+Programs add an **expression layer**:
+
+<table class="derived-table">
+<tr><th>Expression</th><th>What it introduces</th></tr>
+<tr><td><span data-hover="expr-variables">Variables</span></td><td>Names for SPACE</td></tr>
+<tr><td><span data-hover="expr-scopes">Scopes</span></td><td>Bounded regions of TIME</td></tr>
+<tr><td><span data-hover="expr-functions">Functions</span></td><td>Reusable TIME sequences</td></tr>
+<tr><td><span data-hover="expr-types">Types</span></td><td>Constraints on SPACE contents</td></tr>
+<tr><td><span data-hover="expr-references">References</span></td><td>IDENTITY relationships</td></tr>
+<tr><td><span data-hover="expr-threads">Threads</span></td><td>Parallel TIME lines</td></tr>
+</table>
+
+All programming concepts emerge from **interactions** between primitives and expression.
+
+### Pairwise Interactions
+
+<table class="derived-table">
+<tr><th>Interaction</th><th>Question</th><th>Concepts</th></tr>
+<tr><td><span data-hover="pair-space-time">SPACE × TIME</span></td><td>When does memory exist?</td><td>Allocation, deallocation, lifetime, scope, mutation</td></tr>
+<tr><td><span data-hover="pair-space-identity">SPACE × IDENTITY</span></td><td>How many paths to this memory?</td><td>Variable, pointer, alias, copy, move, null</td></tr>
+<tr><td><span data-hover="pair-time-identity">TIME × IDENTITY</span></td><td>When is a name valid?</td><td>Declaration, scope, shadowing, rebinding, drop</td></tr>
+</table>
+
+### Three-way Interaction
+
+When SPACE × TIME × IDENTITY interact simultaneously:
+
+<div class="triangle-diagram">
+<pre>
+    SPACE ────────── TIME
+        \           /
+         \         /
+          \       /
+           \     /
+          IDENTITY
+
+    Center = hard problems
+</pre>
+</div>
+
+<table class="derived-table">
+<tr><th>Scenario</th><th>Interaction</th><th>Result</th></tr>
+<tr><td>Parallel TIME + shared SPACE + multiple IDENTITY</td><td>Concurrent mutation</td><td>Data race</td></tr>
+<tr><td>IDENTITY outlives SPACE in TIME</td><td>Reference to freed memory</td><td>Dangling pointer</td></tr>
+<tr><td>SPACE freed, IDENTITY used later</td><td>Access after deallocation</td><td>Use-after-free</td></tr>
+<tr><td>SPACE freed twice in TIME</td><td>Double deallocation</td><td>Double free</td></tr>
+<tr><td>IDENTITY transferred, old used in TIME</td><td>Access after move</td><td>Use-after-move</td></tr>
+<tr><td>Multiple IDENTITY + mutation + overlapping TIME</td><td>Writes interleave</td><td>Race condition</td></tr>
+</table>
+
+### Bugs as Interaction Failures
+
+<table class="derived-table">
+<tr><th>Bug</th><th>Failed Interaction</th><th>What went wrong</th></tr>
+<tr><td><span data-hover="bug-memory-leak">Memory leak</span></td><td>SPACE × TIME</td><td>SPACE exists past needed TIME</td></tr>
+<tr><td><span data-hover="bug-use-after-free">Use-after-free</span></td><td>SPACE × TIME × IDENTITY</td><td>IDENTITY used after SPACE's TIME ends</td></tr>
+<tr><td><span data-hover="bug-dangling-pointer">Dangling pointer</span></td><td>TIME × IDENTITY</td><td>IDENTITY outlives referent</td></tr>
+<tr><td><span data-hover="bug-data-race">Data race</span></td><td>SPACE × TIME × IDENTITY</td><td>Parallel TIME + shared SPACE + mutation</td></tr>
+<tr><td><span data-hover="bug-double-free">Double free</span></td><td>SPACE × TIME</td><td>SPACE deallocated twice</td></tr>
+<tr><td><span data-hover="bug-null-deref">Null dereference</span></td><td>SPACE × IDENTITY</td><td>IDENTITY points to no SPACE</td></tr>
+<tr><td><span data-hover="bug-buffer-overflow">Buffer overflow</span></td><td>SPACE × IDENTITY</td><td>IDENTITY exceeds SPACE bounds</td></tr>
+<tr><td><span data-hover="bug-uninitialized">Uninitialized read</span></td><td>SPACE × TIME × IDENTITY</td><td>IDENTITY used before SPACE has value</td></tr>
+</table>
+
+### Features as Interaction Solutions
+
+**SPACE × TIME solutions:**
+
+<table class="derived-table">
+<tr><th>Feature</th><th>Mechanism</th></tr>
+<tr><td><span data-hover="feat-gc">Garbage collection</span></td><td>Runtime tracks SPACE, frees when unreachable</td></tr>
+<tr><td><span data-hover="feat-raii">RAII</span></td><td>Tie SPACE lifetime to scope (TIME)</td></tr>
+<tr><td><span data-hover="feat-refcount">Reference counting</span></td><td>Track IDENTITY count, free when zero</td></tr>
+<tr><td>Stack allocation</td><td>SPACE lifetime = function TIME</td></tr>
+</table>
+
+**SPACE × IDENTITY solutions:**
+
+<table class="derived-table">
+<tr><th>Feature</th><th>Mechanism</th></tr>
+<tr><td><span data-hover="feat-ownership">Ownership</span></td><td>Unique IDENTITY to SPACE</td></tr>
+<tr><td><span data-hover="feat-move-semantics">Move semantics</span></td><td>Transfer IDENTITY, invalidate source</td></tr>
+<tr><td><span data-hover="feat-value-types">Value types</span></td><td>Copy creates new SPACE, new IDENTITY</td></tr>
+<tr><td>Nullable types</td><td>Explicit "IDENTITY to no SPACE"</td></tr>
+</table>
+
+**TIME × IDENTITY solutions:**
+
+<table class="derived-table">
+<tr><th>Feature</th><th>Mechanism</th></tr>
+<tr><td><span data-hover="feat-lexical-scope">Lexical scope</span></td><td>IDENTITY valid in TIME region</td></tr>
+<tr><td><span data-hover="feat-lifetimes">Lifetimes</span></td><td>Explicit IDENTITY validity bounds</td></tr>
+<tr><td><span data-hover="feat-closures">Closures</span></td><td>Extend IDENTITY across TIME boundaries</td></tr>
+<tr><td>Drop order</td><td>Defined IDENTITY end sequence</td></tr>
+</table>
+
+**SPACE × TIME × IDENTITY solutions:**
+
+<table class="derived-table">
+<tr><th>Feature</th><th>Mechanism</th></tr>
+<tr><td><span data-hover="feat-borrow-checker">Borrow checker</span></td><td>Prove all three consistent at compile time</td></tr>
+<tr><td><span data-hover="feat-mutex">Locks/Mutex</span></td><td>Serialize TIME access to SPACE</td></tr>
+<tr><td><span data-hover="feat-atomics">Atomics</span></td><td>Hardware-arbitrated SPACE × TIME</td></tr>
+<tr><td><span data-hover="feat-channels">Channels</span></td><td>Transfer IDENTITY, no shared SPACE</td></tr>
+<tr><td><span data-hover="feat-immutability">Immutability</span></td><td>Freeze TIME dimension, sharing safe</td></tr>
+<tr><td><span data-hover="feat-actors">Actor model</span></td><td>Isolate SPACE per actor, message only</td></tr>
+<tr><td><span data-hover="feat-linear-types">Linear types</span></td><td>IDENTITY used exactly once</td></tr>
+</table>
+
+### Paradigms as Interaction Strategies
+
+<table class="derived-table">
+<tr><th>Paradigm</th><th>Strategy</th><th>Constrains</th><th>Tradeoff</th></tr>
+<tr><td><span data-hover="paradigm-functional">Functional</span></td><td>Freeze mutation</td><td>TIME (no state change)</td><td>Easy concurrency ↔ efficiency</td></tr>
+<tr><td><span data-hover="paradigm-oop">OOP</span></td><td>Encapsulate memory</td><td>SPACE (hide behind interface)</td><td>Modularity ↔ aliasing complexity</td></tr>
+<tr><td><span data-hover="paradigm-rust">Rust</span></td><td>Restrict aliasing</td><td>IDENTITY (ownership)</td><td>Safety + performance ↔ learning curve</td></tr>
+<tr><td><span data-hover="paradigm-actor">Actor</span></td><td>Isolate memory</td><td>SPACE (no sharing)</td><td>Fault isolation ↔ message overhead</td></tr>
+<tr><td><span data-hover="paradigm-linear">Linear</span></td><td>Single use</td><td>IDENTITY (exactly once)</td><td>Resource safety ↔ flexibility</td></tr>
+</table>
+
+### Summary
+
+<table class="derived-table">
+<tr><th>Interaction</th><th>Domain</th></tr>
+<tr><td>SPACE × TIME</td><td>Memory management</td></tr>
+<tr><td>SPACE × IDENTITY</td><td>Reference/pointer systems</td></tr>
+<tr><td>TIME × IDENTITY</td><td>Scoping, binding</td></tr>
+<tr><td>SPACE × TIME × IDENTITY</td><td>Concurrency, safety</td></tr>
+</table>
+
+<div class="derived-box">
+Bugs are interaction failures. Features are interaction solutions. Paradigms are holistic bets on which axis to constrain.
+</div>
+
+---
+
+## Representation Constraints
+
+Programs are expressed in a **medium**: text files, ASTs, bytecode. The medium has constraints independent of SPACE/TIME/IDENTITY.
+
+<div class="derived-box">
+<b>PRIMITIVES</b> × <b>MEDIUM CONSTRAINTS</b> = <b>FORCED FEATURES</b><br>
+(SPACE/TIME/IDENTITY) &nbsp;&nbsp;&nbsp; (representation) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (workarounds)
+</div>
+
+Many features exist not because of computational necessity, but because **the representation can't express what we want directly**.
+
+### Constraints
+
+<table class="derived-table">
+<tr><th>Constraint</th><th>What it means</th></tr>
+<tr><td><span data-hover="constraint-forward-time">Forward-only TIME</span></td><td>Execution proceeds forward; can't undo a statement</td></tr>
+<tr><td><span data-hover="constraint-names-persist">Names persist</span></td><td>Once declared, a name exists until scope ends</td></tr>
+<tr><td><span data-hover="constraint-values-persist">Values persist</span></td><td>A value exists until scope ends; can't delete mid-scope</td></tr>
+<tr><td><span data-hover="constraint-stack-lifo">Stack is LIFO</span></td><td>Can only deallocate top of stack</td></tr>
+<tr><td><span data-hover="constraint-sequential-text">Text is sequential</span></td><td>One statement after another</td></tr>
+</table>
+
+### Features as Workarounds
+
+<table class="derived-table">
+<tr><th>Want to...</th><th>Can't because...</th><th>Workaround</th></tr>
+<tr><td>Delete a name</td><td>Names persist in scope</td><td><span data-hover="workaround-shadowing">Shadowing</span></td></tr>
+<tr><td>Delete a value</td><td>Values persist until scope end</td><td><span data-hover="workaround-move">Move + invalidation</span></td></tr>
+<tr><td>Free mid-stack</td><td>Stack is LIFO</td><td><span data-hover="workaround-heap">Heap allocation</span></td></tr>
+<tr><td>Go back in TIME</td><td>Forward-only</td><td><span data-hover="workaround-loops">Loops</span></td></tr>
+<tr><td>Undo mutation</td><td>Forward-only</td><td><span data-hover="workaround-immutability">Immutability</span></td></tr>
+<tr><td>Parallel execution</td><td>Text is sequential</td><td>Explicit threads/async</td></tr>
+</table>
+
+### Shadowing — Can't Delete Names
+
+<div class="rust-code">
+<pre>let x = 5;
+<span class="comment">// Want: delete x, reclaim the name</span>
+<span class="comment">// Can't: name persists until scope ends</span>
+<span class="comment">// Workaround: shadow</span>
+
+let x = "hello";  <span class="comment">// New IDENTITY, same name</span>
+                  <span class="comment">// Old x still in memory, just unreachable</span></pre>
+</div>
+
+Shadowing exists because **names can't be undeclared**. The old binding still exists — destructors run at scope end, not at shadow point.
+
+### Move — Can't Delete Values
+
+<div class="rust-code">
+<pre>let x = vec![1, 2, 3];
+let y = x;
+<span class="comment">// Want: delete x entirely after transfer</span>
+<span class="comment">// Can't: name 'x' persists in scope</span>
+<span class="comment">// Workaround: invalidate the IDENTITY</span>
+
+<span class="comment">// x still exists as a name, but IDENTITY is severed</span>
+<span class="comment">// Compiler tracks: "name exists, IDENTITY gone"</span></pre>
+</div>
+
+Move semantics exist because **values can't be deleted mid-scope**. We transfer IDENTITY and mark the source as invalid.
+
+### Heap — Can't Free Mid-Stack
+
+<div class="pipeline-diagram">
+<pre>
+Stack (LIFO):
+
+    ┌─────┐
+    │  c  │  ← top, can free
+    ├─────┤
+    │  b  │  ← can't free until c is gone
+    ├─────┤
+    │  a  │  ← can't free until b, c are gone
+    └─────┘
+</pre>
+</div>
+
+Heap exists because **stack forces LIFO TIME on SPACE**. Heap allows independent lifetimes, shared IDENTITY, dynamic size.
+
+### SSA — Making Constraints Explicit
+
+Compilers transform to SSA (Static Single Assignment):
+
+<div class="rust-code">
+<pre><span class="comment">// Source</span>
+let mut x = 5;
+x = x + 1;
+x = x * 2;
+
+<span class="comment">// SSA</span>
+let x1 = 5;
+let x2 = x1 + 1;
+let x3 = x2 * 2;</pre>
+</div>
+
+<span data-hover="ssa-insight">SSA reveals the truth</span>: we never "modified" x. We created new values and reused the name.
+- Can't delete names → each assignment is a new IDENTITY
+- Can't go back → values flow forward
+- Mutation is illusion → it's name rebinding
+
+### Alternative Representations
+
+<table class="derived-table">
+<tr><th>Representation</th><th>TIME</th><th>IDENTITY</th><th>SPACE</th><th>Key Workarounds</th></tr>
+<tr><td>Imperative text</td><td>Forward-only</td><td>Names persist</td><td>Stack LIFO</td><td>Shadow, move, heap, loops</td></tr>
+<tr><td>SSA</td><td>Forward-only</td><td>Unique names</td><td>Explicit</td><td>Phi nodes</td></tr>
+<tr><td><span data-hover="rep-stack-based">Stack-based</span></td><td>Forward-only</td><td>Position, not name</td><td>Explicit</td><td>Stack shuffling</td></tr>
+<tr><td><span data-hover="rep-dataflow">Dataflow graph</span></td><td>By dependency</td><td>Nodes</td><td>Edges</td><td>Control dependencies</td></tr>
+<tr><td><span data-hover="rep-logic">Logic</span></td><td>Declarative</td><td>Unification</td><td>Automatic</td><td>Cut, clause order</td></tr>
+</table>
+
+### Summary
+
+<table class="derived-table">
+<tr><th>What we want</th><th>Representation constraint</th><th>What we got</th></tr>
+<tr><td>Delete a name</td><td>Names persist</td><td>Shadowing</td></tr>
+<tr><td>Delete a value</td><td>Values persist</td><td>Move + invalidation</td></tr>
+<tr><td>Free anywhere</td><td>Stack is LIFO</td><td>Heap</td></tr>
+<tr><td>Go back</td><td>TIME is forward</td><td>Loops, recursion</td></tr>
+<tr><td>Undo mutation</td><td>Forward-only</td><td>Immutability</td></tr>
+</table>
+
+<div class="derived-box">
+<b>Features are shaped by representation.</b> The medium constrains what's expressible. Language designers create workarounds. Understanding the constraint explains the workaround.
+</div>
+
+---
+
 ## Abstraction Layers
 
 Every layer in computing—hardware or software—can be understood as an **abstractor**: hiding complexity below while exposing a simpler interface above.

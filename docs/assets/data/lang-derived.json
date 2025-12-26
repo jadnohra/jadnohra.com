@@ -338,5 +338,265 @@
     "title": "Existence TIME",
     "section": "Dimensions of TIME",
     "content": "How long does something exist? A stack variable lives until scope exit. A heap allocation lives until free. A reference has its own lifetime that must fit within the referent's lifetime. Rust's borrow checker tracks existence TIME to prevent dangling references."
+  },
+  "expr-variables": {
+    "title": "Variables",
+    "section": "Expression Layer",
+    "content": "A variable is a name for SPACE. In `let x = 5`, 'x' is the name, and somewhere in memory (stack, heap, register) lives the value 5. The variable creates an IDENTITY relationship between the name and that SPACE. Different languages give different guarantees about how long this relationship holds."
+  },
+  "expr-scopes": {
+    "title": "Scopes",
+    "section": "Expression Layer",
+    "content": "A scope is a bounded region of TIME. When you enter a block `{ }`, TIME begins for variables declared inside. When you exit, their TIME ends. In Rust, this triggers Drop. In C, the stack frame pops. Scopes let us reason locally: names inside can't leak outside."
+  },
+  "expr-functions": {
+    "title": "Functions",
+    "section": "Expression Layer",
+    "content": "A function is a reusable sequence of TIME. Each call creates a new TIME context (stack frame). Parameters transfer IDENTITY into this context; return transfers IDENTITY out. Recursion is nested TIME. Closures capture IDENTITY across TIME boundaries."
+  },
+  "expr-types": {
+    "title": "Types",
+    "section": "Expression Layer",
+    "content": "Types constrain what can inhabit a SPACE. An `i32` says: this SPACE holds 4 bytes interpreted as a signed integer. Types also guide IDENTITY: `Copy` types duplicate freely; non-Copy types move. Rust's `Send`/`Sync` constrain IDENTITY across parallel TIME."
+  },
+  "expr-references": {
+    "title": "References",
+    "section": "Expression Layer",
+    "content": "A reference creates an IDENTITY relationship to existing SPACE without owning it. In Rust, `&x` says: I can read x's SPACE, but someone else owns it. The reference's validity (TIME) must not exceed the referent's. This is what lifetimes track."
+  },
+  "expr-threads": {
+    "title": "Threads",
+    "section": "Expression Layer",
+    "content": "Threads introduce parallel TIME—multiple execution sequences happening simultaneously. This multiplies the interaction complexity: SPACE can now be accessed from multiple TIME lines at once. Without coordination, the order of accesses is undefined, creating race conditions."
+  },
+  "pair-space-time": {
+    "title": "SPACE × TIME",
+    "section": "Pairwise Interactions",
+    "content": "When does memory exist? Stack SPACE exists for function TIME. Heap SPACE exists until explicitly freed (or GC collects). This interaction produces: allocation, deallocation, initialization, mutation, lifetime. Memory management is fundamentally about SPACE × TIME coordination."
+  },
+  "pair-space-identity": {
+    "title": "SPACE × IDENTITY",
+    "section": "Pairwise Interactions",
+    "content": "How many paths lead to memory? One name for one location is simple. Multiple names (aliases) for one location creates complexity: modify through one, visible through all. This interaction produces: pointers, references, aliasing, copying, moving. Ownership systems are about controlling SPACE × IDENTITY."
+  },
+  "pair-time-identity": {
+    "title": "TIME × IDENTITY",
+    "section": "Pairwise Interactions",
+    "content": "When is a name valid? A variable declared in a block is valid until block exit. A reference is valid while the referent exists. Shadowing creates new IDENTITY that hides old in TIME. This interaction produces: scope, shadowing, rebinding, closures, drop order."
+  },
+  "bug-memory-leak": {
+    "title": "Memory Leak",
+    "section": "Bugs",
+    "content": "SPACE × TIME failure: memory allocated but never freed. The SPACE continues to exist past its useful TIME. In C: malloc without free. In reference-counted systems: cycles prevent count reaching zero. Not immediately catastrophic, but accumulates until SPACE exhaustion."
+  },
+  "bug-use-after-free": {
+    "title": "Use-after-free",
+    "section": "Bugs",
+    "content": "SPACE × TIME × IDENTITY failure: SPACE is deallocated (TIME ends), but IDENTITY (pointer) still exists and is used. The SPACE may now hold different data or be unmapped. Classic source of security vulnerabilities—attacker can control what's read/written through stale pointer."
+  },
+  "bug-dangling-pointer": {
+    "title": "Dangling Pointer",
+    "section": "Bugs",
+    "content": "TIME × IDENTITY failure: reference outlives its referent. In C: returning pointer to local variable. The IDENTITY survives function return, but SPACE is reclaimed. Accessing it reads garbage or crashes. Rust's borrow checker exists primarily to prevent this."
+  },
+  "bug-data-race": {
+    "title": "Data Race",
+    "section": "Bugs",
+    "content": "SPACE × TIME × IDENTITY failure: two threads access same SPACE, at least one writes, no synchronization. The parallel TIME lines interleave unpredictably. Result: torn reads, lost updates, corrupted data. Rust prevents at compile time; most languages detect at runtime (if lucky)."
+  },
+  "bug-double-free": {
+    "title": "Double Free",
+    "section": "Bugs",
+    "content": "SPACE × TIME failure: SPACE deallocated twice. First free: ok. Second free: allocator corruption or security vulnerability. Often caused by confused IDENTITY—two pointers think they own the same SPACE. Ownership systems (unique IDENTITY) prevent this by construction."
+  },
+  "bug-null-deref": {
+    "title": "Null Dereference",
+    "section": "Bugs",
+    "content": "SPACE × IDENTITY failure: IDENTITY points to no SPACE. Dereferencing follows the IDENTITY relationship to... nothing. Immediate crash (if lucky) or undefined behavior. Nullable type systems (Option<T>, Maybe) make the 'no SPACE' case explicit and force handling."
+  },
+  "bug-buffer-overflow": {
+    "title": "Buffer Overflow",
+    "section": "Bugs",
+    "content": "SPACE × IDENTITY failure: IDENTITY accesses beyond SPACE bounds. Array of 10 elements, you access index 15. You're now reading/writing adjacent SPACE you don't own. Classic attack vector: overwrite return address, execute arbitrary code. Bounds checking prevents this."
+  },
+  "bug-uninitialized": {
+    "title": "Uninitialized Read",
+    "section": "Bugs",
+    "content": "SPACE × TIME × IDENTITY failure: IDENTITY used before SPACE has a value. The SPACE exists, the name exists, but no value was stored yet. You read whatever bits happened to be there. Rust requires initialization before use; C happily gives you garbage."
+  },
+  "feat-gc": {
+    "title": "Garbage Collection",
+    "section": "Features — SPACE × TIME",
+    "content": "Runtime tracks which SPACE is reachable via any IDENTITY. When SPACE has no paths to it, deallocate. Programmer never explicitly manages SPACE × TIME—the collector does. Cost: unpredictable pauses, memory overhead. Benefit: no manual lifetime management, no use-after-free."
+  },
+  "feat-raii": {
+    "title": "RAII",
+    "section": "Features — SPACE × TIME",
+    "content": "Resource Acquisition Is Initialization. SPACE lifetime tied to scope TIME. Constructor acquires SPACE; destructor releases. When scope ends, cleanup happens automatically. C++ destructors, Rust Drop trait. Deterministic, no GC pauses, but requires ownership discipline."
+  },
+  "feat-refcount": {
+    "title": "Reference Counting",
+    "section": "Features — SPACE × TIME",
+    "content": "Track how many IDENTITYs point to SPACE. When count drops to zero, deallocate. Immediate reclamation (no GC pause), but cycles leak (A→B→A keeps both alive). Rc<T> in Rust (single-thread), Arc<T> (multi-thread). Weak references break cycles."
+  },
+  "feat-ownership": {
+    "title": "Ownership",
+    "section": "Features — SPACE × IDENTITY",
+    "content": "Unique IDENTITY to SPACE. Exactly one owner at a time. Transfer (move) is explicit, invalidates source. No aliasing by default means no confusion about who deallocates. Rust's core innovation: ownership at compile time, zero runtime cost."
+  },
+  "feat-move-semantics": {
+    "title": "Move Semantics",
+    "section": "Features — SPACE × IDENTITY",
+    "content": "Transfer IDENTITY from source to destination. Source becomes invalid (Rust) or empty (C++). Avoids copies for large data: just transfer the IDENTITY. In Rust, non-Copy types move by default. In C++, std::move requests a move (but doesn't enforce invalidation)."
+  },
+  "feat-value-types": {
+    "title": "Value Types",
+    "section": "Features — SPACE × IDENTITY",
+    "content": "Assignment copies, creating new SPACE with new IDENTITY. No aliasing—each copy is independent. Simple to reason about but expensive for large data. Rust's Copy trait marks types that are cheap to copy (integers, small structs). Swift/C# distinguish struct (value) from class (reference)."
+  },
+  "feat-lexical-scope": {
+    "title": "Lexical Scope",
+    "section": "Features — TIME × IDENTITY",
+    "content": "IDENTITY valid within textual boundaries. A variable declared in a block is visible only inside that block's TIME. Enables local reasoning: names can't leak. Most languages use lexical scope. Alternative (dynamic scope) makes IDENTITY depend on call TIME, harder to reason about."
+  },
+  "feat-lifetimes": {
+    "title": "Lifetimes",
+    "section": "Features — TIME × IDENTITY",
+    "content": "Explicit bounds on IDENTITY validity. In Rust, `&'a T` says: this reference is valid for TIME span 'a. The compiler checks that 'a doesn't exceed the referent's TIME. Makes TIME × IDENTITY relationship explicit and verifiable. The key to Rust's safety without GC."
+  },
+  "feat-closures": {
+    "title": "Closures",
+    "section": "Features — TIME × IDENTITY",
+    "content": "Functions that capture IDENTITY from enclosing scope. The captured variables' IDENTITY extends across TIME boundaries—beyond the original scope. How to capture? By reference (borrow), by move (take ownership), by copy? Different languages make different choices. Rust lets you choose."
+  },
+  "feat-borrow-checker": {
+    "title": "Borrow Checker",
+    "section": "Features — SPACE × TIME × IDENTITY",
+    "content": "Compile-time proof that SPACE × TIME × IDENTITY are consistent. No dangling (IDENTITY within SPACE's TIME). No races (no shared mutable IDENTITY in parallel TIME). Analyzes all three dimensions simultaneously. The algorithm: dataflow analysis + constraint solving + conflict detection."
+  },
+  "feat-mutex": {
+    "title": "Locks / Mutex",
+    "section": "Features — SPACE × TIME × IDENTITY",
+    "content": "Serialize parallel TIME. Multiple threads want SPACE access; mutex ensures only one at a time. TIME becomes sequential at the lock boundary. Safe but slow: threads wait. Deadlock possible if multiple locks acquired inconsistently. Rust's Mutex<T> ties data to lock—can't access without locking."
+  },
+  "feat-atomics": {
+    "title": "Atomics",
+    "section": "Features — SPACE × TIME × IDENTITY",
+    "content": "Hardware-arbitrated SPACE × TIME. CPU guarantees individual operations are indivisible. Multiple threads can access, hardware ensures total order. Faster than locks (no blocking) but limited to simple operations. Memory ordering (SeqCst, Acquire, Release) controls visibility across TIME."
+  },
+  "feat-channels": {
+    "title": "Channels",
+    "section": "Features — SPACE × TIME × IDENTITY",
+    "content": "Transfer IDENTITY across threads, no shared SPACE. Sender gives up ownership; receiver gets it. No simultaneous access, no races by construction. Message passing instead of shared memory. Cost: copying/serialization. Go channels, Rust mpsc, Erlang messages."
+  },
+  "feat-immutability": {
+    "title": "Immutability",
+    "section": "Features — SPACE × TIME × IDENTITY",
+    "content": "Freeze the TIME dimension: no mutation. If SPACE never changes, parallel access is safe—all TIME lines see the same STATE. Sharing IDENTITY freely because no writes to conflict. Haskell's default, Clojure's persistent structures, Rust's non-mut bindings."
+  },
+  "feat-actors": {
+    "title": "Actor Model",
+    "section": "Features — SPACE × TIME × IDENTITY",
+    "content": "Isolate SPACE per actor. Each actor owns its SPACE exclusively. Communication only through messages (IDENTITY transfer, not sharing). If an actor crashes, others are unaffected—SPACE isolation contains failure. Erlang/OTP, Akka. Scales naturally to distributed systems."
+  },
+  "feat-linear-types": {
+    "title": "Linear Types",
+    "section": "Features — SPACE × TIME × IDENTITY",
+    "content": "IDENTITY must be used exactly once. Can't ignore (must use), can't duplicate (must not alias). Ensures resources are properly handled: file handles closed, memory freed. Rust's ownership is almost linear (can move, but not copy non-Copy). Full linear types in Clean, experimental in Haskell."
+  },
+  "paradigm-functional": {
+    "title": "Functional Paradigm",
+    "section": "Paradigms",
+    "content": "Freeze TIME: values don't change. Functions return new values instead of mutating. No mutable state means no state-related bugs. Sharing is safe (immutable IDENTITY). Cost: allocations for 'updates'. Enables: equational reasoning, trivial concurrency. Haskell, Clojure, Elm."
+  },
+  "paradigm-oop": {
+    "title": "OOP Paradigm",
+    "section": "Paradigms",
+    "content": "Encapsulate SPACE: hide memory behind interfaces. Objects own SPACE, expose methods. Internal representation can change without affecting users. Aliasing still possible (multiple refs to object). Coherence is programmer's problem. Benefit: modularity. Java, C++, Python."
+  },
+  "paradigm-rust": {
+    "title": "Rust's Approach",
+    "section": "Paradigms",
+    "content": "Constrain IDENTITY: ownership + borrowing. Unique ownership prevents aliasing ambiguity. Borrowing allows temporary shared IDENTITY with rules. Compiler verifies all three dimensions at compile time. Cost: learning curve, fighting the borrow checker. Gain: safety + performance."
+  },
+  "paradigm-actor": {
+    "title": "Actor Paradigm",
+    "section": "Paradigms",
+    "content": "Isolate SPACE: no sharing between actors. Each actor is a SPACE island with its own TIME line. Communication via messages only. Failures are contained. Scales to distributed systems naturally—same model whether actors are local or remote. Erlang, Elixir, Akka."
+  },
+  "paradigm-linear": {
+    "title": "Linear Paradigm",
+    "section": "Paradigms",
+    "content": "Constrain IDENTITY: use exactly once. Resources can't be forgotten (must use) or duplicated (no aliasing). Perfect for modeling real-world resources: file handles, network connections, unique tokens. Strict discipline, but guarantees resource safety. Clean, some Rust patterns."
+  },
+  "constraint-forward-time": {
+    "title": "Forward-only TIME",
+    "section": "Representation Constraints",
+    "content": "Execution proceeds forward; statements can't be undone. You can't 'go back' to a previous state. This is fundamental to how computers execute: instruction pointer moves forward. Loops aren't time travel—they're forward repetition. Recursion unwinds forward. TIME only flows one way."
+  },
+  "constraint-names-persist": {
+    "title": "Names Persist",
+    "section": "Representation Constraints",
+    "content": "Once a name is declared, it exists until scope ends. You can't 'undeclare' a variable mid-scope. The name→IDENTITY mapping persists. Shadowing doesn't delete—it overlays. The old binding may still run its destructor at scope end. Names are permanent within their scope."
+  },
+  "constraint-values-persist": {
+    "title": "Values Persist",
+    "section": "Representation Constraints",
+    "content": "A value exists until its scope ends; you can't delete it mid-scope. Move semantics work around this: transfer IDENTITY, mark source invalid. But the name still exists, the stack slot still exists. Deletion is simulated, not actual."
+  },
+  "constraint-stack-lifo": {
+    "title": "Stack is LIFO",
+    "section": "Representation Constraints",
+    "content": "Stack frames must be deallocated in reverse order of creation. Can't free the middle frame while outer frames exist. This is why heap exists: escape from LIFO discipline. Heap allows independent lifetimes at the cost of complexity (fragmentation, GC, manual management)."
+  },
+  "constraint-sequential-text": {
+    "title": "Text is Sequential",
+    "section": "Representation Constraints",
+    "content": "Source code is written line by line, statement by statement. Parallelism must be explicitly expressed (threads, async, par-map) because the default representation is sequential. Dataflow languages escape this by expressing dependencies, not sequences."
+  },
+  "workaround-shadowing": {
+    "title": "Shadowing",
+    "section": "Representation Workarounds",
+    "content": "Can't delete a name? Create a new binding with the same name. The old binding is hidden (shadowed), not deleted. Memory may still be allocated. Destructors run at scope end, not shadow point. Shadowing is 'poor man's deletion'—overlay instead of remove."
+  },
+  "workaround-move": {
+    "title": "Move + Invalidation",
+    "section": "Representation Workarounds",
+    "content": "Can't delete a value mid-scope? Transfer its IDENTITY to another name and mark the source invalid. The compiler tracks four states: name exists (syntax), value exists (semantics), can use (valid), can shadow (name available). Move simulates deletion by severing IDENTITY."
+  },
+  "workaround-heap": {
+    "title": "Heap Allocation",
+    "section": "Representation Workarounds",
+    "content": "Can't free mid-stack? Allocate on heap instead. Heap allows independent lifetimes: free `b` while `a` and `c` still exist. Cost: allocation overhead, fragmentation, explicit or GC management. Heap exists because stack's LIFO constraint is too restrictive."
+  },
+  "workaround-loops": {
+    "title": "Loops",
+    "section": "Representation Workarounds",
+    "content": "Can't rewind TIME? Repeat forward instead. Loops execute the body multiple times, moving forward through TIME. Recursion is similar: call stack grows forward, then unwinds. Every repetition construct is forward-only because TIME is."
+  },
+  "workaround-immutability": {
+    "title": "Immutability",
+    "section": "Representation Workarounds",
+    "content": "Can't undo mutation? Never mutate. Create new values instead of modifying old ones. Persistent data structures make this efficient by sharing unchanged parts. If you might need the old value, don't destroy it. Immutability sidesteps the forward-only problem."
+  },
+  "ssa-insight": {
+    "title": "SSA Insight",
+    "section": "Representation Constraints",
+    "content": "Static Single Assignment reveals the truth: we never 'modified' a variable. Each assignment creates a new value with a new name (x1, x2, x3). 'Mutation' in source code is really name rebinding. The constraints were always there—SSA makes them explicit."
+  },
+  "rep-stack-based": {
+    "title": "Stack-based Languages",
+    "section": "Alternative Representations",
+    "content": "Forth, PostScript: no variable names, only stack positions. `5 3 +` pushes 5, pushes 3, adds. Different constraint: must manage stack explicitly. Workaround: stack shuffling words (dup, swap, rot, drop). Names avoided entirely, replaced by position."
+  },
+  "rep-dataflow": {
+    "title": "Dataflow Languages",
+    "section": "Alternative Representations",
+    "content": "TensorFlow, Apache Beam: nodes are operations, edges are data. No sequential TIME—operations run when inputs ready. Parallelism is natural, not explicit. Different constraint: must define whole graph upfront. Workaround: control dependencies, dynamic graphs."
+  },
+  "rep-logic": {
+    "title": "Logic Languages",
+    "section": "Alternative Representations",
+    "content": "Prolog: declare relationships, not steps. `grandparent(X,Z) :- parent(X,Y), parent(Y,Z)`. Query, don't execute. No explicit TIME ordering in the logic. Different constraint: less imperative control. Workaround: cut (!), careful clause ordering to control search."
   }
 }
