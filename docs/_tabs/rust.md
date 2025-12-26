@@ -923,3 +923,671 @@ NLL                   ≅  precise invalidation   ≅  fine-grained TIME<br>
 abstract interp.      ≅  conservative approx.   ≅  decidable coherence<br>
 proof (types)         ≅  safety certificate     ≅  verified IDENTITY/TIME
 </div>
+
+---
+
+## Interior Mutability
+
+### The Rule and Its Escape
+
+The borrow checker enforces:
+
+<div class="derived-box">
+!(shared IDENTITY && mutation)
+</div>
+
+<table class="derived-table">
+<tr><th>Reference</th><th>IDENTITY</th><th>TIME</th><th>Coherence</th></tr>
+<tr><td><code>&T</code></td><td>Shared</td><td>Frozen</td><td>Compile-time proof</td></tr>
+<tr><td><code>&mut T</code></td><td>Unique</td><td>Flows</td><td>Compile-time proof</td></tr>
+</table>
+
+Interior mutability allows **shared IDENTITY + mutation** by shifting coherence from compile-time to runtime.
+
+<table class="derived-table">
+<tr><th>Reference</th><th>IDENTITY</th><th>TIME</th><th>Coherence</th></tr>
+<tr><td><code>&Cell&lt;T&gt;</code></td><td>Shared</td><td>Flows</td><td>Runtime: copy in/out</td></tr>
+<tr><td><code>&RefCell&lt;T&gt;</code></td><td>Shared</td><td>Flows</td><td>Runtime: borrow counting</td></tr>
+<tr><td><code>&Mutex&lt;T&gt;</code></td><td>Shared</td><td>Flows</td><td>Runtime: serialize TIME</td></tr>
+<tr><td><code>&Atomic*</code></td><td>Shared</td><td>Flows</td><td>Hardware: arbitration</td></tr>
+<tr><td><code>&UnsafeCell&lt;T&gt;</code></td><td>Shared</td><td>Flows</td><td>None: you prove it</td></tr>
+</table>
+
+---
+
+### Why It Exists
+
+The borrow checker is **sound but incomplete**:
+- OK → definitely safe
+- ERROR → might be safe (false positives)
+
+Interior mutability is the answer to false positives. When the compiler rejects a safe program, shift verification to runtime.
+
+<div class="rust-code">
+<pre><span class="comment">// Borrow checker rejects (can't prove disjoint):</span>
+let mut data = vec![1, 2, 3];
+let a = &mut data[0];
+let b = &mut data[1];  <span class="comment">// ERROR: two &mut to data</span>
+
+<span class="comment">// You know [0] and [1] are disjoint</span>
+<span class="comment">// Compiler can't prove it (undecidable for arbitrary indices)</span>
+<span class="comment">// Solution: runtime checking or unsafe</span></pre>
+</div>
+
+---
+
+### The Hierarchy
+
+All interior mutability builds on `UnsafeCell<T>`:
+
+<div class="pipeline-diagram">
+<pre>
+UnsafeCell&lt;T&gt;           ← primitive: makes &T + mutation not UB
+    │
+    ├── Cell&lt;T&gt;         ← single-thread, Copy only, no refs in
+    │
+    ├── RefCell&lt;T&gt;      ← single-thread, runtime borrow check
+    │
+    ├── OnceCell&lt;T&gt;     ← single-thread, write-once
+    │
+    ├── Mutex&lt;T&gt;        ← multi-thread, OS lock
+    │
+    ├── RwLock&lt;T&gt;       ← multi-thread, many-reader or one-writer
+    │
+    ├── OnceLock&lt;T&gt;     ← multi-thread, write-once
+    │
+    └── Atomic*         ← multi-thread, hardware operations
+</pre>
+</div>
+
+`UnsafeCell<T>` is the foundation. It tells the compiler: "don't assume `&T` means immutable here."
+
+---
+
+### Cell — No References In
+
+<div class="rust-code">
+<pre>let x = Cell::new(5);
+let y = &x;
+let z = &x;  <span class="comment">// Multiple shared refs OK</span>
+
+y.set(10);   <span class="comment">// Mutate through shared ref</span>
+z.set(20);   <span class="comment">// Also OK</span></pre>
+</div>
+
+<table class="derived-table">
+<tr><th>Axis</th><th>Strategy</th></tr>
+<tr><td>IDENTITY</td><td>Shared freely</td></tr>
+<tr><td>TIME</td><td>Flows</td></tr>
+<tr><td>Coherence</td><td>No refs into contents — only copy in/out</td></tr>
+</table>
+
+**How it achieves safety:**
+- `.get()` returns a copy, not a reference
+- `.set()` takes a value, not a reference
+- Never two references to the inner data
+- No aliasing of contents → no coherence problem
+
+**Limitation:** `T` must be `Copy`. Can't get reference to interior.
+
+---
+
+### RefCell — Runtime Borrow Checker
+
+<div class="rust-code">
+<pre>let x = RefCell::new(vec![1, 2, 3]);
+
+let r = x.borrow();      <span class="comment">// Returns Ref&lt;Vec&gt;</span>
+let s = x.borrow();      <span class="comment">// OK: multiple shared borrows</span>
+<span class="comment">// let m = x.borrow_mut(); // PANIC: shared borrow active</span>
+
+drop(r);
+drop(s);
+
+let m = x.borrow_mut();  <span class="comment">// OK: no active borrows</span></pre>
+</div>
+
+<table class="derived-table">
+<tr><th>Axis</th><th>Strategy</th></tr>
+<tr><td>IDENTITY</td><td>Shared, but contents tracked</td></tr>
+<tr><td>TIME</td><td>Flows, checked at runtime</td></tr>
+<tr><td>Coherence</td><td>Borrow counting, panic on violation</td></tr>
+</table>
+
+**How it achieves safety:**
+- Tracks borrow count at runtime
+- `borrow()` → increment shared count
+- `borrow_mut()` → check no borrows exist
+- Violation → panic (fail-fast)
+
+**It's the same logic as the borrow checker, run at a different TIME:**
+
+<table class="derived-table">
+<tr><th>Borrow checker</th><th>RefCell</th></tr>
+<tr><td>Checks at compile</td><td>Checks at runtime</td></tr>
+<tr><td>Rejects program</td><td>Panics at violation</td></tr>
+<tr><td>Zero cost</td><td>Counter overhead</td></tr>
+<tr><td>Conservative</td><td>Precise</td></tr>
+</table>
+
+---
+
+### Mutex — Serialize TIME
+
+<div class="rust-code">
+<pre>let x = Mutex::new(vec![1, 2, 3]);
+
+{
+    let mut guard = x.lock().unwrap();
+    guard.push(4);
+    <span class="comment">// Other threads block here</span>
+}  <span class="comment">// Lock released on drop</span>
+
+<span class="comment">// Another thread can now acquire</span></pre>
+</div>
+
+<table class="derived-table">
+<tr><th>Axis</th><th>Strategy</th></tr>
+<tr><td>IDENTITY</td><td>Shared across threads</td></tr>
+<tr><td>TIME</td><td>Serialized by lock</td></tr>
+<tr><td>Coherence</td><td>Only one accessor at a time</td></tr>
+</table>
+
+**How it achieves safety:**
+- Lock acquisition blocks other threads
+- Only one `MutexGuard` exists at a time
+- Guard gives `&mut` to contents
+- TIME becomes sequential at lock boundaries
+
+**Trade:** Parallel TIME → sequential TIME. Threads wait.
+
+---
+
+### RwLock — Many Readers or One Writer
+
+<div class="rust-code">
+<pre>let x = RwLock::new(vec![1, 2, 3]);
+
+<span class="comment">// Many readers OK</span>
+let r1 = x.read().unwrap();
+let r2 = x.read().unwrap();
+
+<span class="comment">// Writer must wait for readers</span>
+drop(r1);
+drop(r2);
+let w = x.write().unwrap();</pre>
+</div>
+
+<table class="derived-table">
+<tr><th>Mode</th><th>IDENTITY</th><th>TIME</th></tr>
+<tr><td>Read</td><td>Shared</td><td>Frozen (among readers)</td></tr>
+<tr><td>Write</td><td>Exclusive</td><td>Flows</td></tr>
+</table>
+
+Same as `&T` vs `&mut T`, enforced at runtime across threads.
+
+---
+
+### Atomic — Hardware Coherence
+
+<div class="rust-code">
+<pre>let x = AtomicU64::new(0);
+
+<span class="comment">// Multiple threads can access simultaneously</span>
+x.fetch_add(1, Ordering::SeqCst);  <span class="comment">// Hardware guarantees atomicity</span></pre>
+</div>
+
+<table class="derived-table">
+<tr><th>Axis</th><th>Strategy</th></tr>
+<tr><td>IDENTITY</td><td>Shared across threads</td></tr>
+<tr><td>TIME</td><td>Hardware arbitrated</td></tr>
+<tr><td>Coherence</td><td>CPU cache coherence protocol</td></tr>
+</table>
+
+**How it achieves safety:**
+- Individual operations are indivisible
+- Hardware ensures total order (with SeqCst)
+- No locks, but limited to specific operations
+
+**Trade:** Full flexibility → limited operations. Can't atomically modify a Vec.
+
+---
+
+### UnsafeCell — The Primitive
+
+<div class="rust-code">
+<pre>let x = UnsafeCell::new(5);
+
+unsafe {
+    let ptr = x.get();
+    *ptr = 10;
+}</pre>
+</div>
+
+<table class="derived-table">
+<tr><th>Axis</th><th>Strategy</th></tr>
+<tr><td>IDENTITY</td><td>Shared</td></tr>
+<tr><td>TIME</td><td>Flows</td></tr>
+<tr><td>Coherence</td><td>None — you prove it</td></tr>
+</table>
+
+`UnsafeCell` is what makes the others possible. It's the opt-out:
+- Tells compiler: `&UnsafeCell<T>` does not imply contents are immutable
+- All other interior mutability types wrap this
+- Raw access via `.get()` → `*mut T`
+
+---
+
+### The Spectrum
+
+From compile-time to trust-the-programmer:
+
+<div class="pipeline-diagram">
+<pre>
+COMPILE-TIME                              RUNTIME                                 UNSAFE
+     │                                        │                                      │
+     ▼                                        ▼                                      ▼
+  &T / &mut T      Cell&lt;T&gt;      RefCell&lt;T&gt;      Mutex&lt;T&gt;      Atomic*      UnsafeCell&lt;T&gt;
+     │               │              │             │              │               │
+  Borrow         Copy in/out    Borrow count   OS lock       Hardware       You prove it
+  checker        No refs in     Panic on err   Blocking      CPU cycles     Zero cost
+  Zero cost      Copy types     Flexibility    Multi-thread  Limited ops    Unlimited
+</pre>
+</div>
+
+<table class="derived-table">
+<tr><th>Type</th><th>Check TIME</th><th>Cost</th><th>Flexibility</th><th>Thread</th></tr>
+<tr><td><code>&T</code>/<code>&mut T</code></td><td>Compile</td><td>Zero</td><td>Conservative</td><td>Any</td></tr>
+<tr><td><code>Cell&lt;T&gt;</code></td><td>Runtime</td><td>Cheap</td><td>Copy only</td><td>Single</td></tr>
+<tr><td><code>RefCell&lt;T&gt;</code></td><td>Runtime</td><td>Counter</td><td>Full, panics</td><td>Single</td></tr>
+<tr><td><code>Mutex&lt;T&gt;</code></td><td>Runtime</td><td>Lock</td><td>Full, blocks</td><td>Multi</td></tr>
+<tr><td><code>RwLock&lt;T&gt;</code></td><td>Runtime</td><td>Lock</td><td>Full, blocks</td><td>Multi</td></tr>
+<tr><td><code>Atomic*</code></td><td>Runtime</td><td>CPU</td><td>Limited ops</td><td>Multi</td></tr>
+<tr><td><code>UnsafeCell&lt;T&gt;</code></td><td>Never</td><td>Zero</td><td>Unlimited</td><td>Any</td></tr>
+</table>
+
+---
+
+### Triangle View
+
+Interior mutability changes which axis is constrained:
+
+<table class="derived-table">
+<tr><th>Type</th><th>SPACE</th><th>TIME</th><th>IDENTITY</th><th>Coherence</th></tr>
+<tr><td><code>&T</code></td><td>Fixed</td><td>Frozen</td><td>Shared</td><td>No mutation → no problem</td></tr>
+<tr><td><code>&mut T</code></td><td>Fixed</td><td>Flows</td><td>Unique</td><td>No sharing → no problem</td></tr>
+<tr><td><code>Cell</code></td><td>Fixed</td><td>Flows</td><td>Shared</td><td>No refs in → no aliasing of contents</td></tr>
+<tr><td><code>RefCell</code></td><td>Fixed</td><td>Flows (checked)</td><td>Shared (counted)</td><td>Runtime borrow rules</td></tr>
+<tr><td><code>Mutex</code></td><td>Fixed</td><td>Serialized</td><td>Shared</td><td>One at a time</td></tr>
+<tr><td><code>Atomic</code></td><td>Fixed</td><td>Hardware</td><td>Shared</td><td>Hardware arbitration</td></tr>
+</table>
+
+Standard references: constrain TIME (freeze) or IDENTITY (unique).
+Interior mutability: constrain TIME at runtime or use hardware.
+
+---
+
+### Derived Data View
+
+From the coherence pattern:
+
+<div class="derived-box">
+Shared IDENTITY + Mutation + TIME overlap = Coherence Problem
+</div>
+
+Interior mutability solves this in different ways:
+
+<table class="derived-table">
+<tr><th>Type</th><th>How it breaks the problem</th></tr>
+<tr><td><code>Cell</code></td><td>No IDENTITY into contents (copy values)</td></tr>
+<tr><td><code>RefCell</code></td><td>Detect overlap, panic (fail-fast)</td></tr>
+<tr><td><code>Mutex</code></td><td>Prevent TIME overlap (serialize)</td></tr>
+<tr><td><code>RwLock</code></td><td>Allow parallel frozen TIME, serialize mutation</td></tr>
+<tr><td><code>Atomic</code></td><td>Hardware ensures no overlap (atomic ops)</td></tr>
+<tr><td><code>UnsafeCell</code></td><td>Trust programmer to prevent overlap</td></tr>
+</table>
+
+---
+
+### When to Use What
+
+<table class="derived-table">
+<tr><th>Situation</th><th>Use</th></tr>
+<tr><td>Simple counter/flag, single thread</td><td><code>Cell&lt;T&gt;</code></td></tr>
+<tr><td>Complex data, single thread, need refs</td><td><code>RefCell&lt;T&gt;</code></td></tr>
+<tr><td>Shared across threads, any data</td><td><code>Mutex&lt;T&gt;</code></td></tr>
+<tr><td>Shared across threads, read-heavy</td><td><code>RwLock&lt;T&gt;</code></td></tr>
+<tr><td>Shared across threads, simple counter</td><td><code>AtomicU64</code> etc</td></tr>
+<tr><td>Building your own sync primitive</td><td><code>UnsafeCell&lt;T&gt;</code></td></tr>
+<tr><td>Borrow checker accepts your code</td><td>None needed</td></tr>
+</table>
+
+---
+
+### Common Pattern: Shared Ownership + Interior Mutability
+
+Neither alone is enough for shared mutable data:
+
+<table class="derived-table">
+<tr><th>Type</th><th>Ownership</th><th>Mutability</th></tr>
+<tr><td><code>Rc&lt;T&gt;</code></td><td>Shared, single-thread</td><td>Immutable</td></tr>
+<tr><td><code>Arc&lt;T&gt;</code></td><td>Shared, multi-thread</td><td>Immutable</td></tr>
+<tr><td><code>Rc&lt;RefCell&lt;T&gt;&gt;</code></td><td>Shared, single-thread</td><td>Mutable</td></tr>
+<tr><td><code>Arc&lt;Mutex&lt;T&gt;&gt;</code></td><td>Shared, multi-thread</td><td>Mutable</td></tr>
+</table>
+
+Ownership handles SPACE × IDENTITY (who can access).
+Interior mutability handles TIME (when mutation is safe).
+
+---
+
+### The Insight
+
+Interior mutability is not an escape from the rules. It's **the same rules, checked at a different TIME**.
+
+<table class="derived-table">
+<tr><th></th><th>Borrow checker</th><th>Interior mutability</th></tr>
+<tr><td>Rule</td><td>No shared+mutable</td><td>No shared+mutable</td></tr>
+<tr><td>Check</td><td>Compile time</td><td>Runtime</td></tr>
+<tr><td>Failure</td><td>Won't compile</td><td>Panic or block</td></tr>
+<tr><td>Cost</td><td>Zero</td><td>Runtime overhead</td></tr>
+<tr><td>Precision</td><td>Conservative</td><td>Exact</td></tr>
+</table>
+
+The borrow checker is an ahead-of-time approximation. Interior mutability is just-in-time verification. Same coherence problem, different verification strategy.
+
+---
+
+### Interior Mutability — Equivalences
+
+<div class="equivalences-box">
+Cell&lt;T&gt;               ≅  value cache         ≅  no refs, copy in/out<br>
+RefCell&lt;T&gt;            ≅  runtime mutex       ≅  single-thread lock<br>
+Mutex&lt;T&gt;              ≅  distributed lock    ≅  serialize TIME<br>
+RwLock&lt;T&gt;             ≅  read replica + lock ≅  many-read or one-write<br>
+Atomic*               ≅  hardware CAS        ≅  CPU coherence<br>
+UnsafeCell&lt;T&gt;         ≅  trust-me token      ≅  unchecked coherence<br>
+interior mutability   ≅  runtime coherence   ≅  deferred verification
+</div>
+
+---
+
+## Pedantic Naming
+
+Rust's naming creates a large [abstraction distance](/abstractor/) between terminology and the underlying primitives. This distance hinders understanding — every concept requires extra mental mapping through jargon before reaching fundamentals.
+
+---
+
+### References
+
+<table class="derived-table">
+<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
+<tr><td><code>&T</code></td><td>"Reference to T"</td><td>Shared IDENTITY, frozen TIME</td><td>Shared alias, read-only</td><td><code>&shared T</code></td></tr>
+<tr><td><code>&mut T</code></td><td>"Mutable reference"</td><td>Exclusive IDENTITY, TIME flows</td><td>Unique alias, read-write</td><td><code>&unique T</code></td></tr>
+<tr><td>"Borrow"</td><td>Lending temporarily</td><td>Creating scoped IDENTITY</td><td>Scoped alias</td><td>"Alias"</td></tr>
+<tr><td>"Reborrow"</td><td>Borrowing again</td><td>Narrowing IDENTITY scope</td><td>Nested alias</td><td>"Narrow"</td></tr>
+</table>
+
+**The `&mut` problem:**
+
+`&mut T` sounds like "the reference is mutable" or "a reference you can mutate." Neither is right.
+
+What it means:
+- IDENTITY: exclusive (no other aliases exist)
+- TIME: flows (mutation allowed)
+- Coherence: uniqueness guarantees no conflicts
+
+It's not about mutability of the reference. It's about **exclusivity of the IDENTITY**.
+
+<div class="rust-code">
+<pre>let mut x = 5;
+let r = &mut x;  <span class="comment">// "mutable reference" - misleading</span>
+                 <span class="comment">// Actually: exclusive alias to x</span>
+                 <span class="comment">// Better: &unique x or &excl x</span></pre>
+</div>
+
+Compare to:
+
+<div class="rust-code">
+<pre>let mut r = &x;  <span class="comment">// Actually mutable: r can be reassigned</span>
+r = &y;          <span class="comment">// The binding r changed, not what it points to</span></pre>
+</div>
+
+---
+
+### Lifetimes
+
+<table class="derived-table">
+<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
+<tr><td>"Lifetime"</td><td>Memory duration</td><td>IDENTITY validity span</td><td>Reference validity</td><td>"Validity"</td></tr>
+<tr><td><code>'a</code></td><td>Some lifetime a</td><td>TIME region where IDENTITY valid</td><td>Validity interval</td><td><code>#a</code></td></tr>
+<tr><td><code>'static</code></td><td>Lives forever</td><td>Valid for all program TIME</td><td>Global validity</td><td><code>'always</code></td></tr>
+<tr><td><code>'a: 'b</code></td><td>a outlives b</td><td>TIME span a contains b</td><td>Interval containment</td><td><code>'a ⊇ 'b</code></td></tr>
+</table>
+
+**The "lifetime" problem:**
+
+"Lifetime" sounds like memory duration — when SPACE exists. But it's actually about IDENTITY validity — when a reference is usable.
+
+<div class="rust-code">
+<pre>fn example&lt;'a&gt;(x: &'a i32) -> &'a i32 { x }</pre>
+</div>
+
+Reading: "x has lifetime 'a"
+Misleading: suggests x lives for duration 'a
+Actually: the IDENTITY relationship (reference) is valid during TIME span 'a
+
+The value's SPACE might exist longer. The lifetime bounds the reference (IDENTITY), not the value (SPACE).
+
+---
+
+### Ownership
+
+<table class="derived-table">
+<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
+<tr><td>"Ownership"</td><td>Possession</td><td>Unique IDENTITY + dealloc responsibility</td><td>Unique handle</td><td>"Unique binding"</td></tr>
+<tr><td>"Move"</td><td>Physical relocation</td><td>IDENTITY transfer + source invalidation</td><td>Linear consumption</td><td>"Transfer"</td></tr>
+<tr><td>"Copy"</td><td>Make a copy</td><td>New SPACE, new IDENTITY, bitwise</td><td>Value duplication</td><td>"Duplicate"</td></tr>
+<tr><td>"Clone"</td><td>Make a clone</td><td>Explicit deep copy</td><td>Deep duplication</td><td>"Deep copy"</td></tr>
+<tr><td>"Drop"</td><td>Drop it</td><td>Free SPACE at TIME boundary</td><td>Destructor</td><td>"Destruct"</td></tr>
+</table>
+
+**The "move" problem:**
+
+"Move" suggests data physically relocates. It doesn't.
+
+<div class="rust-code">
+<pre>let x = vec![1, 2, 3];  <span class="comment">// x has IDENTITY to heap SPACE</span>
+let y = x;              <span class="comment">// IDENTITY transfers to y, x invalidated</span>
+                        <span class="comment">// The heap data didn't move</span>
+                        <span class="comment">// Only the IDENTITY relationship changed</span></pre>
+</div>
+
+What happens:
+- SPACE: unchanged (heap data stays put)
+- IDENTITY: transferred from x to y
+- x: name exists, IDENTITY severed
+
+"Transfer" or "consume" would be clearer than "move."
+
+---
+
+### Borrow Checker
+
+<table class="derived-table">
+<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
+<tr><td>"Borrow checker"</td><td>Checks borrowing</td><td>Proves IDENTITY×TIME coherence</td><td>Alias-validity prover</td><td>"Coherence prover"</td></tr>
+<tr><td>"Borrow error"</td><td>Borrowing mistake</td><td>IDENTITY×TIME conflict</td><td>Coherence violation</td><td>"Alias conflict"</td></tr>
+<tr><td>"Cannot borrow"</td><td>Borrowing forbidden</td><td>IDENTITY conflict detected</td><td>Alias violation</td><td>"Conflicting alias"</td></tr>
+</table>
+
+**The "borrow checker" problem:**
+
+"Borrow checker" sounds like a simple rule checker. It's actually:
+- A dataflow analyzer (CFG, liveness)
+- A constraint solver (region inference)
+- A proof system (verifying coherence)
+
+Better name: **Alias-Validity Prover** or **Coherence Analyzer**
+
+---
+
+### Interior Mutability Terms
+
+<table class="derived-table">
+<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
+<tr><td>"Interior mutability"</td><td>Mutating insides</td><td>Runtime coherence</td><td>Deferred verification</td><td>"Runtime coherence"</td></tr>
+<tr><td><code>Cell&lt;T&gt;</code></td><td>A cell</td><td>Copy-only shared mutation</td><td>Value-only access</td><td><code>CopyMut&lt;T&gt;</code></td></tr>
+<tr><td><code>RefCell&lt;T&gt;</code></td><td>Reference cell</td><td>Runtime borrow checker</td><td>Checked alias</td><td><code>RuntimeChecked&lt;T&gt;</code></td></tr>
+<tr><td><code>UnsafeCell&lt;T&gt;</code></td><td>Unsafe cell</td><td>Raw opt-out of alias rules</td><td>Unchecked interior</td><td><code>RawMut&lt;T&gt;</code></td></tr>
+</table>
+
+---
+
+### Thread Safety
+
+<table class="derived-table">
+<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
+<tr><td><code>Send</code></td><td>Can be sent</td><td>IDENTITY can cross thread TIME</td><td>Thread-transferable</td><td><code>ThreadTransfer</code></td></tr>
+<tr><td><code>Sync</code></td><td>Synchronizes</td><td>Shared IDENTITY safe in parallel TIME</td><td>Thread-shareable</td><td><code>ThreadShare</code></td></tr>
+<tr><td><code>Mutex&lt;T&gt;</code></td><td>Mutual exclusion</td><td>TIME serializer</td><td>Lock</td><td><code>Lock&lt;T&gt;</code></td></tr>
+<tr><td><code>Arc&lt;T&gt;</code></td><td>Atomic ref count</td><td>Shared IDENTITY across threads</td><td>Thread-shared handle</td><td><code>SharedHandle&lt;T&gt;</code></td></tr>
+</table>
+
+**The Send/Sync problem:**
+
+`Send` and `Sync` are opaque. They don't reveal what they mean.
+
+- `Send`: IDENTITY can be transferred across thread boundary
+- `Sync`: shared IDENTITY (`&T`) can exist in parallel TIME
+
+Better names: `ThreadTransfer` / `ThreadShare`
+
+---
+
+### Smart Pointers
+
+<table class="derived-table">
+<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
+<tr><td><code>Box&lt;T&gt;</code></td><td>A box</td><td>Unique heap IDENTITY</td><td>Heap-unique</td><td><code>HeapUnique&lt;T&gt;</code></td></tr>
+<tr><td><code>Rc&lt;T&gt;</code></td><td>Reference counted</td><td>Shared IDENTITY, counted SPACE lifetime</td><td>Shared handle (counted)</td><td><code>SharedLocal&lt;T&gt;</code></td></tr>
+<tr><td><code>Arc&lt;T&gt;</code></td><td>Atomic RC</td><td>Thread-safe shared IDENTITY</td><td>Shared handle (atomic)</td><td><code>SharedAtomic&lt;T&gt;</code></td></tr>
+<tr><td><code>Weak&lt;T&gt;</code></td><td>Weak reference</td><td>Non-owning IDENTITY</td><td>Observer handle</td><td><code>Observer&lt;T&gt;</code></td></tr>
+</table>
+
+---
+
+### Error Messages
+
+<table class="derived-table">
+<tr><th>Rust Says</th><th>Actually Means</th><th>Clearer Message</th></tr>
+<tr><td>"cannot borrow `x` as mutable because it is also borrowed as immutable"</td><td>Exclusive IDENTITY requested but shared IDENTITY exists</td><td>"Cannot create exclusive alias: shared alias exists"</td></tr>
+<tr><td>"borrowed value does not live long enough"</td><td>IDENTITY validity exceeds SPACE validity</td><td>"Reference outlives the value it refers to"</td></tr>
+<tr><td>"cannot move out of borrowed content"</td><td>Can't transfer IDENTITY while alias exists</td><td>"Cannot consume: alias exists"</td></tr>
+<tr><td>"use of moved value"</td><td>IDENTITY accessed after transfer</td><td>"Value already consumed"</td></tr>
+</table>
+
+---
+
+### The Jargon Layers
+
+Rust terminology forms layers that hide fundamentals:
+
+<div class="pipeline-diagram">
+<pre>
+RUST JARGON LAYER
+    │
+    │  "borrow", "lifetime", "move", "interior mutability"
+    │
+    ▼
+RUST SEMANTIC LAYER
+    │
+    │  Scoped alias, validity span, transfer, runtime check
+    │
+    ▼
+CS CONCEPT LAYER
+    │
+    │  Alias analysis, dataflow, constraint solving, coherence
+    │
+    ▼
+FUNDAMENTAL LAYER
+
+    SPACE × TIME × IDENTITY
+</pre>
+</div>
+
+Each layer adds terminology that obscures the layer below.
+
+---
+
+### Translation Table
+
+<table class="derived-table">
+<tr><th>Rust Concept</th><th>CS Concept</th><th>Fundamental (Triangle)</th></tr>
+<tr><td>Ownership</td><td>Unique pointer/handle</td><td>Unique IDENTITY to SPACE</td></tr>
+<tr><td>Borrowing</td><td>Aliasing</td><td>Creating IDENTITY relationship</td></tr>
+<tr><td>Lifetime</td><td>Reference validity interval</td><td>TIME span of IDENTITY</td></tr>
+<tr><td>Move</td><td>Linear consumption</td><td>IDENTITY transfer</td></tr>
+<tr><td>Copy</td><td>Value semantics</td><td>New SPACE, new IDENTITY</td></tr>
+<tr><td>Borrow checker</td><td>Alias analysis + dataflow</td><td>IDENTITY×TIME coherence proof</td></tr>
+<tr><td>Interior mutability</td><td>Runtime checks</td><td>Deferred coherence verification</td></tr>
+<tr><td><code>&T</code></td><td>Shared/const pointer</td><td>Shared IDENTITY, frozen TIME</td></tr>
+<tr><td><code>&mut T</code></td><td>Unique/exclusive pointer</td><td>Exclusive IDENTITY, TIME flows</td></tr>
+<tr><td>Send</td><td>Thread-transferable</td><td>IDENTITY can cross thread</td></tr>
+<tr><td>Sync</td><td>Thread-shareable</td><td>Shared IDENTITY parallel-safe</td></tr>
+<tr><td>Drop</td><td>Destructor</td><td>SPACE freed at TIME boundary</td></tr>
+<tr><td><code>'static</code></td><td>Global validity</td><td>IDENTITY valid for all TIME</td></tr>
+</table>
+
+---
+
+### Why This Matters
+
+**For learning:**
+- Jargon creates artificial barriers
+- Fundamentals transfer between languages
+- Correct mental models prevent confusion
+
+**For debugging:**
+- "Borrow error" is vague
+- "IDENTITY×TIME conflict" tells you what to fix
+- Understanding the triangle helps resolve issues
+
+**For design:**
+- Jargon hides tradeoffs
+- Fundamentals reveal what's actually constrained
+- Better names would teach concepts
+
+---
+
+### What Rust Could Have Named
+
+<table class="derived-table">
+<tr><th>Current</th><th>Alternative</th><th>Why Better</th></tr>
+<tr><td><code>&T</code></td><td><code>&shared T</code></td><td>Reveals: IDENTITY is shared</td></tr>
+<tr><td><code>&mut T</code></td><td><code>&unique T</code></td><td>Reveals: IDENTITY is exclusive</td></tr>
+<tr><td>Lifetime <code>'a</code></td><td>Validity <code>#a</code></td><td>Not confused with memory duration</td></tr>
+<tr><td>Borrow checker</td><td>Coherence prover</td><td>Reveals: it proves safety properties</td></tr>
+<tr><td>Interior mutability</td><td>Runtime coherence</td><td>Reveals: same rules, different TIME</td></tr>
+<tr><td>Move</td><td>Transfer / Consume</td><td>Reveals: IDENTITY moves, not data</td></tr>
+<tr><td>Send</td><td>ThreadTransfer</td><td>Reveals: what can cross threads</td></tr>
+<tr><td>Sync</td><td>ThreadShare</td><td>Reveals: what's safe to share</td></tr>
+</table>
+
+---
+
+### Naming — Summary
+
+Rust's naming choices:
+1. Create a jargon barrier to entry
+2. Suggest wrong mental models (`&mut` = mutable, "lifetime" = duration)
+3. Hide CS fundamentals (dataflow, coherence, aliasing)
+4. Prevent knowledge transfer to/from other systems
+
+The fundamentals are simple:
+- SPACE: where data lives
+- TIME: when things happen
+- IDENTITY: which references point where
+- Coherence: keeping IDENTITY×TIME consistent
+
+Rust's features are combinations of these. The names obscure this. Understanding the mapping lets you see through the jargon to the principles.
