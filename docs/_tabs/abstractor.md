@@ -1020,16 +1020,7 @@ FLEXIBILITY ◄─────────────────────�
 
 ## Primitive Interactions
 
-Three primitives from physics:
-
-<table class="derived-table">
-<tr><th>Primitive</th><th>Question</th></tr>
-<tr><td><b>SPACE</b></td><td>Where does data reside?</td></tr>
-<tr><td><b>TIME</b></td><td>When does something exist or happen?</td></tr>
-<tr><td><b>IDENTITY</b></td><td>Is this the same data or a copy?</td></tr>
-</table>
-
-Programs add an **expression layer**:
+Programs add an **expression layer** to the primitives:
 
 <table class="derived-table">
 <tr><th>Expression</th><th>What it introduces</th></tr>
@@ -1149,16 +1140,6 @@ When SPACE × TIME × IDENTITY interact simultaneously:
 <tr><td><span data-hover="paradigm-linear">Linear</span></td><td>Single use</td><td>IDENTITY (exactly once)</td><td>Resource safety ↔ flexibility</td></tr>
 </table>
 
-### Summary
-
-<table class="derived-table">
-<tr><th>Interaction</th><th>Domain</th></tr>
-<tr><td>SPACE × TIME</td><td>Memory management</td></tr>
-<tr><td>SPACE × IDENTITY</td><td>Reference/pointer systems</td></tr>
-<tr><td>TIME × IDENTITY</td><td>Scoping, binding</td></tr>
-<tr><td>SPACE × TIME × IDENTITY</td><td>Concurrency, safety</td></tr>
-</table>
-
 <div class="derived-box">
 Bugs are interaction failures. Features are interaction solutions. Paradigms are holistic bets on which axis to constrain.
 </div>
@@ -1276,17 +1257,6 @@ let x3 = x2 * 2;</pre>
 <tr><td><span data-hover="rep-stack-based">Stack-based</span></td><td>Forward-only</td><td>Position, not name</td><td>Explicit</td><td>Stack shuffling</td></tr>
 <tr><td><span data-hover="rep-dataflow">Dataflow graph</span></td><td>By dependency</td><td>Nodes</td><td>Edges</td><td>Control dependencies</td></tr>
 <tr><td><span data-hover="rep-logic">Logic</span></td><td>Declarative</td><td>Unification</td><td>Automatic</td><td>Cut, clause order</td></tr>
-</table>
-
-### Summary
-
-<table class="derived-table">
-<tr><th>What we want</th><th>Representation constraint</th><th>What we got</th></tr>
-<tr><td>Delete a name</td><td>Names persist</td><td>Shadowing</td></tr>
-<tr><td>Delete a value</td><td>Values persist</td><td>Move + invalidation</td></tr>
-<tr><td>Free anywhere</td><td>Stack is LIFO</td><td>Heap</td></tr>
-<tr><td>Go back</td><td>TIME is forward</td><td>Loops, recursion</td></tr>
-<tr><td>Undo mutation</td><td>Forward-only</td><td>Immutability</td></tr>
 </table>
 
 <div class="derived-box">
