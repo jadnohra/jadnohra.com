@@ -598,5 +598,60 @@
     "title": "Logic Languages",
     "section": "Alternative Representations",
     "content": "Prolog: declare relationships, not steps. `grandparent(X,Z) :- parent(X,Y), parent(Y,Z)`. Query, don't execute. No explicit TIME ordering in the logic. Different constraint: less imperative control. Workaround: cut (!), careful clause ordering to control search."
+  },
+  "constraint-discrete-steps": {
+    "title": "Discrete Steps",
+    "section": "Representation Constraints",
+    "content": "Programs are sequences of discrete statements, not continuous transformations. Between statement 1 and statement 2, nothing happens. This works for most computing but is awkward for physics simulations, animations, or reactive systems—we fake continuity with small time steps."
+  },
+  "shadowing-detail": {
+    "title": "Shadowing Detail",
+    "section": "Shadowing",
+    "content": "Shadowing doesn't free memory. `let x = Box::new(5); let x = 10;`—the Box isn't dropped at the shadow, it's dropped at scope end. The name→IDENTITY mapping changes, but the old IDENTITY (and its SPACE) persists until normal cleanup. Shadowing is about names, not values."
+  },
+  "move-detail": {
+    "title": "Move Detail",
+    "section": "Move",
+    "content": "After `let y = x;` (move), x is in a strange state: the name exists, you can shadow it, but you can't use the value. The compiler tracks 'definitely uninitialized' separately from 'never declared.' Move creates a gap between name existence and value existence."
+  },
+  "heap-detail": {
+    "title": "Heap Detail",
+    "section": "Heap",
+    "content": "Heap is freedom and complexity. Freedom: any lifetime, any sharing pattern. Complexity: who frees? when? Rust's ownership tracks this. GC automates it. C makes it your problem. All because stack's LIFO discipline was too restrictive for real programs."
+  },
+  "ssa-transform": {
+    "title": "SSA Transform",
+    "section": "SSA",
+    "content": "SSA (Static Single Assignment) transforms `x = 1; x = 2; x = 3;` into `x1 = 1; x2 = 2; x3 = 3;`. Each 'assignment' becomes a new binding. This reveals the truth: we never mutated x—we created new values and reused a name. The representation hid what was really happening."
+  },
+  "phi-nodes": {
+    "title": "Phi Nodes",
+    "section": "SSA",
+    "content": "When control flow merges (if/else joins), which value does x have? SSA uses φ (phi) nodes: `x3 = φ(x1, x2)` means 'x3 is x1 if we came from the if-branch, x2 if else-branch.' Phi nodes exist because sequential text can't express 'value depends on which TIME path we took.'"
+  },
+  "rep-term-rewriting": {
+    "title": "Term Rewriting",
+    "section": "Alternative Representations",
+    "content": "Mathematica, Pure: expressions transform until fixed point. Rules like `x+0 → x` apply repeatedly. No mutation—only substitution. 'Execution' is reduction. Different constraint: nontermination risk, strategy matters. Workaround: controlled evaluation (lazy, strict, strategies)."
+  },
+  "impl-move-subtle": {
+    "title": "Why Move Is Subtle",
+    "section": "Implications",
+    "content": "Move exists because we can't delete. Four distinct states result: (1) name declared, (2) name has value, (3) name moved-from, (4) name re-shadowed. The compiler tracks which. C++ gets this wrong—moved-from objects are 'valid but unspecified.' Rust makes state explicit."
+  },
+  "impl-shadowing-exists": {
+    "title": "Why Shadowing Exists",
+    "section": "Implications",
+    "content": "Shadowing is 'deletion' within the constraints. We'd rather reclaim the name and memory. We can't, so we overlay a new IDENTITY. Rust allows it; some linters discourage it (confusion risk). Either way, it's a workaround for representation constraints, not a first-class feature."
+  },
+  "impl-heap-exists": {
+    "title": "Why Heap Exists",
+    "section": "Implications",
+    "content": "Heap is escape from stack discipline. If all lifetimes were nested (caller outlives callee, outer scope outlives inner), stack would suffice. Real programs have shared ownership, independent lifetimes, dynamic sizes. Heap provides flexible SPACE×TIME at the cost of management complexity."
+  },
+  "impl-forward-only": {
+    "title": "Why All Control Flow is Forward",
+    "section": "Implications",
+    "content": "Loops, branches, exceptions, continuations—all move forward through TIME. There's no 'goto the past.' Loops repeat forward. Exceptions jump forward (up the stack). Continuations capture 'current position' to resume forward. The representation enforces TIME's arrow."
   }
 }

@@ -139,7 +139,7 @@ toc: true
 
 ## Derived Data Choices
 
-Rust's memory model is a set of choices on the SPACE / TIME / IDENTITY triangle.
+Rust's memory model is a set of choices on the [SPACE / TIME / IDENTITY triangle](/abstractor/).
 
 <div class="derived-box">
 Core strategy: <b>prove coherence at compile time</b>.
@@ -389,6 +389,42 @@ let w = v.clone();  <span class="comment">// Clone: explicit, allocates new heap
 **Copy = value semantics:**
 - New IDENTITY — no shared state
 - No coherence problem — independent copies
+
+---
+
+### Shared Ownership — Rc and Arc
+
+`Box<T>` is unique IDENTITY to SPACE. One owner, clear responsibility, owner ends SPACE's TIME.
+
+What if you need shared IDENTITY to the same SPACE? Who frees it?
+
+`Rc<T>` / `Arc<T>`: count the IDENTITYs. When count hits zero, SPACE's TIME ends.
+
+<table class="derived-table">
+<tr><th>Type</th><th>IDENTITY</th><th>SPACE lifetime</th><th>Thread</th></tr>
+<tr><td><code>Box&lt;T&gt;</code></td><td>Unique</td><td>Owner ends it</td><td>Any</td></tr>
+<tr><td><code>Rc&lt;T&gt;</code></td><td>Shared, counted</td><td>Last IDENTITY ends it</td><td>Single</td></tr>
+<tr><td><code>Arc&lt;T&gt;</code></td><td>Shared, atomic counted</td><td>Last IDENTITY ends it</td><td>Multi</td></tr>
+</table>
+
+This solves SPACE × IDENTITY. But contents are immutable — TIME is frozen.
+
+---
+
+### Combining Ownership + Interior Mutability
+
+Neither alone is enough for shared mutable data:
+
+<table class="derived-table">
+<tr><th>Type</th><th>SPACE × IDENTITY</th><th>TIME</th></tr>
+<tr><td><code>Rc&lt;T&gt;</code></td><td>Shared ownership</td><td>Frozen</td></tr>
+<tr><td><code>Rc&lt;RefCell&lt;T&gt;&gt;</code></td><td>Shared ownership</td><td>Runtime checked</td></tr>
+<tr><td><code>Arc&lt;T&gt;</code></td><td>Shared ownership (atomic)</td><td>Frozen</td></tr>
+<tr><td><code>Arc&lt;Mutex&lt;T&gt;&gt;</code></td><td>Shared ownership (atomic)</td><td>Serialized</td></tr>
+</table>
+
+Ownership handles SPACE × IDENTITY (who can access, who frees).
+Interior mutability handles TIME (when mutation is safe).
 
 ---
 
@@ -930,6 +966,8 @@ proof (types)         ≅  safety certificate     ≅  verified IDENTITY/TIME
 
 ### The Rule and Its Escape
 
+Interior mutability is an [escape hatch](/abstractor/#layer-details) — a sanctioned way to break through an abstraction when its rules are too restrictive.
+
 The borrow checker enforces:
 
 <div class="derived-box">
@@ -1309,6 +1347,77 @@ Atomic*               ≅  hardware CAS        ≅  CPU coherence<br>
 UnsafeCell&lt;T&gt;         ≅  trust-me token      ≅  unchecked coherence<br>
 interior mutability   ≅  runtime coherence   ≅  deferred verification
 </div>
+
+---
+
+## Memory Ordering — TIME Visibility
+
+Atomics make individual operations indivisible. But when does a write in one TIME line become visible in another?
+
+The hardware defers coherence everywhere:
+
+**Store buffers:** When a core writes, the value goes into a small queue on that core before propagating to RAM. The core continues without waiting. Other cores reading from RAM see the old value until the buffer drains.
+
+Write creates local SPACE (buffer) before reaching shared SPACE (RAM). Derived data. Coherence deferred until drain.
+
+**Caches:** When a core reads, it copies the value from RAM into its local L1/L2 cache. Each core has its own cache. A write to one cache doesn't instantly appear in others.
+
+Shared SPACE (RAM) copied to local SPACE (cache). Same as CDN, database replica. Multiple SPACEs, same IDENTITY, sync via MESI protocol.
+
+**Reordering:** The CPU executes instructions out of order for performance — if `y`'s cache line is ready but `x`'s isn't, it may execute `y = 2` before `x = 1`, even though the program says otherwise.
+
+Program text implies TIME order A→B. Hardware executes B→A. The "sequential TIME" from representation constraints is itself an abstraction. Hardware breaks it, maintains the illusion for single TIME line only.
+
+All three: optimizations that defer coherence, assuming single TIME line. Multiple TIME lines expose the deferred sync.
+
+---
+
+### The Orderings
+
+**Relaxed:** Atomic access only. The operation is indivisible, but no coherence guarantees. Other TIME lines may see writes in any order. Useful when you only need a counter, don't care when others see it.
+
+**Acquire/Release:** Coherence at sync points.
+
+Release says: drain the buffer, flush writes. Everything I wrote before this point must be visible before anyone sees this write.
+
+Acquire says: invalidate the cache, pull fresh. Everything I read after this point must see writes from before a Release.
+
+They pair up. One TIME line does Release, another does Acquire on the same SPACE. The Acquire sees the Release and everything before it. A happens-before edge between TIME lines.
+
+<div class="pipeline-diagram">
+<pre>
+TIME line A:                    TIME line B:
+
+write x = 1
+write y = 2
+
+Release(flag = true)  --------> Acquire(flag)
+
+                                read y  // guaranteed to see 2
+                                read x  // guaranteed to see 1
+</pre>
+</div>
+
+Everything above Release in A is visible below Acquire in B. Partial coherence — you choose where to sync.
+
+**SeqCst:** Total order. All TIME lines observe the same sequence of all SeqCst operations. The full "instant visibility" abstraction restored.
+
+Expensive because: every SeqCst operation drains buffers, syncs caches, prevents reordering. You're paying for global coherence on every access.
+
+---
+
+### Memory Ordering Summary
+
+<table class="derived-table">
+<tr><th>Ordering</th><th>What it guarantees</th><th>When to use</th></tr>
+<tr><td>Relaxed</td><td>This operation is atomic, nothing else</td><td>Counters, statistics</td></tr>
+<tr><td>Release</td><td>Writes before this are visible to Acquire</td><td>Producer side of handoff</td></tr>
+<tr><td>Acquire</td><td>Reads after this see writes before Release</td><td>Consumer side of handoff</td></tr>
+<tr><td>AcqRel</td><td>Both Acquire and Release</td><td>Read-modify-write in middle</td></tr>
+<tr><td>SeqCst</td><td>Global total order, full visibility</td><td>When in doubt, or need global ordering</td></tr>
+</table>
+
+Memory ordering is choosing how much coherence to force. SeqCst pays for the full abstraction. Relaxed pays for none. Acquire/Release pays at sync points only.
 
 ---
 
