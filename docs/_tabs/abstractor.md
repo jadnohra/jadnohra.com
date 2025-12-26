@@ -610,6 +610,89 @@ toc: true
   border-bottom: none;
   margin-bottom: 0;
 }
+
+/* Language Derived Data Section */
+.lang-derived-popover {
+  position: fixed;
+  max-width: 520px;
+  padding: 14px 16px;
+  background: #0f172a;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 14px;
+  line-height: 1.7;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+}
+.lang-derived-popover.visible {
+  opacity: 1;
+}
+.lang-derived-popover-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: #f1f5f9;
+  margin-bottom: 4px;
+}
+.lang-derived-popover-section {
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.lang-derived-popover-content {
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+/* Hoverable elements */
+#lang-derived-content .hoverable {
+  color: #f97316;
+  cursor: help;
+  border-bottom: 1px dotted #f97316;
+  transition: all 0.15s;
+}
+#lang-derived-content .hoverable:hover {
+  color: #fb923c;
+  border-bottom-style: solid;
+}
+
+/* Triangle diagram */
+.triangle-diagram {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+.triangle-diagram pre {
+  margin: 0;
+  color: #f97316;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Tradeoff spectrum diagram */
+.tradeoff-spectrum {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+.tradeoff-spectrum pre {
+  margin: 0;
+  color: #e2e8f0;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
 </style>
 
 <div></div>
@@ -624,7 +707,7 @@ These constraints are rooted in physics and fundamental CS. They apply at every 
 
 ---
 
-## Derived Data
+## Derived Data - Systems
 
 <div class="derived-box">
 <b>Physics creates distance.</b> Distance forces copies. <b>Copies require coherence.</b>
@@ -697,13 +780,237 @@ Every cache, replica, index, materialized view, denormalized table, and memoized
 
 ---
 
-## Tradeoff Cards
+## Concrete Tradeoff Examples
 
 Real-world technology choices mapped to the primitives above. Hover to see which constraints apply.
 
 <div id="tradeoff-cards"></div>
 
 <script src="{{ '/assets/js/tradeoffs.js' | relative_url }}"></script>
+
+---
+
+## Derived Data - Languages
+
+<div class="derived-box">
+<b>Physics creates distance.</b> Distance forces copies. <b>Copies require coherence.</b>
+</div>
+
+This pattern applies at every layer of the stack.
+
+<div class="derived-box">
+<b>SYSTEM:</b>&nbsp;&nbsp;&nbsp;Source DB → replica → CDN edge → browser cache<br>
+<b>LANGUAGE:</b>&nbsp;Value → alias → copy → register
+</div>
+
+### Isomorphism
+
+<div id="lang-derived-content">
+
+<table class="derived-table">
+<tr><th>Derived Data (System)</th><th>Derived Data (Language)</th></tr>
+<tr><td>Source</td><td>Original value / memory location</td></tr>
+<tr><td>Transform</td><td>Copy / reference / move / borrow</td></tr>
+<tr><td>Store closer</td><td>Register, stack, local variable, cache line</td></tr>
+<tr><td>Two representations</td><td>Multiple references to same data</td></tr>
+<tr><td>Sync obligation</td><td>Coherence: who can read/write when?</td></tr>
+</table>
+
+### Layers
+
+<table class="derived-table">
+<tr><th>Layer</th><th>Source</th><th>Derived Copy</th><th>Sync Strategy</th></tr>
+<tr><td><span data-hover="layer-cpu-cache">CPU cache</span></td><td>RAM</td><td>L1/L2/L3 line</td><td>MESI protocol</td></tr>
+<tr><td><span data-hover="layer-compiler">Compiler</span></td><td>Memory</td><td>Register</td><td>Register allocation</td></tr>
+<tr><td><span data-hover="layer-language">Language</span></td><td>Original binding</td><td>Alias / reference</td><td>Borrow checker / locks / GC</td></tr>
+<tr><td><span data-hover="layer-thread">Thread</span></td><td>Shared heap</td><td>Thread-local</td><td>Mutex / channels / atomics</td></tr>
+<tr><td><span data-hover="layer-process">Process</span></td><td>Shared memory</td><td>Process-local</td><td>IPC / message passing</td></tr>
+<tr><td><span data-hover="layer-database">Database</span></td><td>Primary</td><td>Replica</td><td>Replication protocol</td></tr>
+<tr><td><span data-hover="layer-network">Network</span></td><td>Origin server</td><td>CDN edge</td><td>TTL / invalidation</td></tr>
+<tr><td><span data-hover="layer-geo">Geo-distributed</span></td><td>Region A</td><td>Region B</td><td>Eventual consistency</td></tr>
+</table>
+
+### Triangle
+
+Three primitives rooted in physics:
+
+<div class="triangle-diagram">
+<pre>
+                      TIME
+                     (when)
+                       △
+                      /|\
+                     / | \
+                    /  |  \
+                   / STATE \
+                  /    |    \
+                 /     |     \
+                /      |      \
+             SPACE ----+---- IDENTITY
+            (where)         (which)
+</pre>
+</div>
+
+<table class="derived-table">
+<tr><th>Primitive</th><th>Physical Root</th><th>Question</th><th>System Equivalent</th></tr>
+<tr><td><span data-hover="primitive-space">SPACE</span></td><td>Locality, memory hierarchy</td><td>Where does data reside?</td><td>Source vs edge location</td></tr>
+<tr><td><span data-hover="primitive-time">TIME</span></td><td>Causality, sequence</td><td>When does it exist/change?</td><td>Sync timing</td></tr>
+<tr><td><span data-hover="primitive-identity">IDENTITY</span></td><td>Equivalence, sameness</td><td>Are these the same data?</td><td>Replica or independent?</td></tr>
+</table>
+
+<span data-hover="primitive-state">STATE</span> emerges from the triangle:
+
+<div class="derived-box">
+STATE = f(SPACE, TIME)
+</div>
+
+### Coherence Problem
+
+Three ingredients:
+
+<div class="derived-box" style="font-family: monospace; white-space: pre-line;">
+<b>SHARED IDENTITY</b>     Multiple paths to "the same" data
+        +
+<b>MULTIPLE SPACES</b>     Data exists in more than one location
+        +
+<b>TIME FLOWS</b>          Mutation can occur
+        =
+<b>COHERENCE PROBLEM</b>   Which STATE is true? How to sync?
+</div>
+
+Remove any one:
+
+<table class="derived-table">
+<tr><th>Remove</th><th>Strategy</th><th>System Equivalent</th></tr>
+<tr><td><span data-hover="remove-identity">Shared Identity</span></td><td>Value semantics, deep copy</td><td>Independent caches</td></tr>
+<tr><td><span data-hover="remove-space">Multiple Spaces</span></td><td>Single source of truth</td><td>No replication</td></tr>
+<tr><td><span data-hover="remove-time">Time flows</span></td><td>Immutability</td><td>Immutable source</td></tr>
+</table>
+
+### Operations
+
+<table class="derived-table">
+<tr><th>Operation</th><th>Language Level</th><th>System Equivalent</th></tr>
+<tr><td><span data-hover="op-read">Read</span></td><td>Observe value</td><td>Cache hit / DB read</td></tr>
+<tr><td><span data-hover="op-write">Write</span></td><td>Mutate value</td><td>Write to primary</td></tr>
+<tr><td><span data-hover="op-copy">Copy</span></td><td>Create independent duplicate</td><td>Fork / snapshot</td></tr>
+<tr><td><span data-hover="op-move">Move</span></td><td>Transfer ownership, invalidate source</td><td>Migration</td></tr>
+<tr><td><span data-hover="op-alias">Alias</span></td><td>Second reference to same location</td><td>Multiple replicas</td></tr>
+<tr><td><span data-hover="op-sync">Sync</span></td><td>Reconcile divergent copies</td><td>Replication protocol</td></tr>
+</table>
+
+### Sync Strategies
+
+<table class="derived-table">
+<tr><th>Strategy</th><th>System Level</th><th>Language Level</th></tr>
+<tr><td><span data-hover="sync-forbid">Forbid the problem</span></td><td>Single region</td><td>Ownership (move semantics)</td></tr>
+<tr><td><span data-hover="sync-freeze">Freeze time</span></td><td>Immutable source</td><td>Immutable bindings</td></tr>
+<tr><td><span data-hover="sync-serialize">Serialize access</span></td><td>Distributed lock</td><td>Mutex, RwLock</td></tr>
+<tr><td><span data-hover="sync-hardware">Hardware arbitration</span></td><td>—</td><td>Atomics, CAS</td></tr>
+<tr><td><span data-hover="sync-compile">Compile-time proof</span></td><td>—</td><td>Borrow checker</td></tr>
+<tr><td><span data-hover="sync-cow">Copy-on-write</span></td><td>CoW filesystem</td><td>CoW data structures</td></tr>
+<tr><td><span data-hover="sync-message">Message passing</span></td><td>Event sourcing</td><td>Channels</td></tr>
+<tr><td><span data-hover="sync-optimistic">Optimistic</span></td><td>MVCC</td><td>STM, persistent structures</td></tr>
+<tr><td><span data-hover="sync-trust">Trust the user</span></td><td>—</td><td><code>unsafe</code>, raw pointers</td></tr>
+</table>
+
+### Language Choices
+
+<table class="derived-table">
+<tr><th>Language</th><th>IDENTITY</th><th>TIME</th><th>Coherence</th></tr>
+<tr><td><span data-hover="lang-haskell">Haskell</span></td><td>Shared freely</td><td>Frozen</td><td>No mutation → no problem</td></tr>
+<tr><td><span data-hover="lang-erlang">Erlang</span></td><td>Process isolation</td><td>Frozen + messages</td><td>Copy between processes</td></tr>
+<tr><td><span data-hover="lang-clojure">Clojure</span></td><td>Shared freely</td><td>Frozen</td><td>Persistent structures</td></tr>
+<tr><td><span data-hover="lang-rust">Rust</span></td><td>Ownership + borrowing</td><td>Controlled</td><td>Compile-time proof</td></tr>
+<tr><td><span data-hover="lang-go">Go</span></td><td>Shared</td><td>Free</td><td>Channels or locks</td></tr>
+<tr><td><span data-hover="lang-java">Java</span></td><td>Shared</td><td>Free</td><td>Locks / volatile</td></tr>
+<tr><td><span data-hover="lang-c">C/C++</span></td><td>Unrestricted</td><td>Free</td><td>Programmer responsibility</td></tr>
+<tr><td><span data-hover="lang-js">JavaScript</span></td><td>Shared</td><td>Free</td><td>Single-threaded</td></tr>
+<tr><td><span data-hover="lang-python">Python</span></td><td>Shared</td><td>Free</td><td>GIL</td></tr>
+</table>
+
+### Language Constructs
+
+<table class="derived-table">
+<tr><th>Construct</th><th>TIME</th><th>SPACE</th><th>IDENTITY</th><th>Coherence</th></tr>
+<tr><td><span data-hover="construct-register">Register</span></td><td>Runtime</td><td>Register</td><td>Unique</td><td>N/A</td></tr>
+<tr><td><span data-hover="construct-stack">Stack variable</span></td><td>Runtime</td><td>Stack</td><td>Scoped</td><td>Lexical scope</td></tr>
+<tr><td><span data-hover="construct-heap">Heap allocation</span></td><td>Runtime</td><td>Heap</td><td>Reference(s)</td><td>Manual / GC / ownership</td></tr>
+<tr><td><span data-hover="construct-const">Compile-time const</span></td><td>Compile</td><td>Inlined</td><td>N/A</td><td>None needed</td></tr>
+<tr><td><span data-hover="construct-static">Static / global</span></td><td>Program lifetime</td><td>Data segment</td><td>Global</td><td>Atomic / lock / immutable</td></tr>
+<tr><td><span data-hover="construct-tls">Thread-local</span></td><td>Runtime</td><td>Per-thread</td><td>Thread-scoped</td><td>No sharing</td></tr>
+<tr><td><span data-hover="construct-immutable">Immutable value</span></td><td>Frozen</td><td>Any</td><td>Shared freely</td><td>Frozen → valid</td></tr>
+<tr><td><span data-hover="construct-locked">Mutable + locked</span></td><td>Serialized</td><td>Heap</td><td>Shared</td><td>Mutex</td></tr>
+<tr><td><span data-hover="construct-atomic">Atomic</span></td><td>Hardware</td><td>RAM</td><td>Shared</td><td>Hardware coherence</td></tr>
+<tr><td><span data-hover="construct-channel">Channel message</span></td><td>Runtime</td><td>Copied</td><td>Transferred</td><td>No shared state</td></tr>
+</table>
+
+### Examples
+
+<ul class="derived-list">
+<li><span data-hover="example-immutable"><b>Immutability enables safe sharing</b></span> — frozen TIME allows IDENTITY to span SPACEs</li>
+<li><span data-hover="example-rust-concurrency"><b>Rust's fearless concurrency</b></span> — compile-time proof of IDENTITY rules</li>
+<li><span data-hover="example-locks-slow"><b>Locks are slow</b></span> — serialize TIME globally, threads wait</li>
+<li><span data-hover="example-lockfree"><b>Lock-free is hard</b></span> — hardware IDENTITY arbitration is subtle</li>
+<li><span data-hover="example-gc-races"><b>GC doesn't prevent data races</b></span> — GC manages SPACE, not IDENTITY+TIME</li>
+<li><span data-hover="example-js-single"><b>JavaScript is single-threaded</b></span> — serialize TIME globally</li>
+<li><span data-hover="example-python-gil"><b>Python's GIL</b></span> — serialize TIME at interpreter level</li>
+<li><span data-hover="example-value-types"><b>Value types are easier</b></span> — copy creates new IDENTITY</li>
+<li><span data-hover="example-pointers"><b>Pointers are dangerous</b></span> — unrestricted IDENTITY + free TIME</li>
+<li><span data-hover="example-const-differs"><b>const differs across languages</b></span> — different TIME/IDENTITY choices</li>
+</ul>
+
+### Tradeoff
+
+<div class="tradeoff-spectrum">
+<pre>
+FLEXIBILITY ◄─────────────────────────► SAFETY
+
+  Unrestricted aliasing         Restricted IDENTITY
+  Free mutation                 Controlled TIME
+  Manual management             Compiler/runtime enforced
+         │                              │
+         ▼                              ▼
+  Maximum power                 Maximum guarantees
+  C, unsafe Rust                Haskell, Rust safe, Erlang
+</pre>
+</div>
+
+<div class="derived-grid">
+<div class="derived-card">
+<div class="derived-card-title">1. Which axis to constrain?</div>
+<div class="derived-card-item">• <b>TIME</b> → immutability</div>
+<div class="derived-card-item">• <b>SPACE</b> → single location</div>
+<div class="derived-card-item">• <b>IDENTITY</b> → ownership, value semantics</div>
+</div>
+<div class="derived-card">
+<div class="derived-card-title">2. Who enforces it?</div>
+<div class="derived-card-item">• Programmer</div>
+<div class="derived-card-item">• Compiler</div>
+<div class="derived-card-item">• Runtime</div>
+<div class="derived-card-item">• Hardware</div>
+</div>
+<div class="derived-card">
+<div class="derived-card-title">3. When to check?</div>
+<div class="derived-card-item">• Compile-time</div>
+<div class="derived-card-item">• Runtime</div>
+<div class="derived-card-item">• Never</div>
+</div>
+</div>
+
+### Equivalences
+
+<div class="derived-box" style="font-family: monospace;">
+CDN edge cache    ≅  CPU cache line   ≅  borrowed reference<br>
+DB replica        ≅  thread-local     ≅  cloned value<br>
+TTL invalidation  ≅  cache coherence  ≅  borrow checker<br>
+distributed lock  ≅  mutex            ≅  serialized TIME<br>
+immutable source  ≅  const            ≅  frozen TIME
+</div>
+
+</div>
+
+<script src="{{ '/assets/js/lang-derived.js' | relative_url }}"></script>
 
 ---
 

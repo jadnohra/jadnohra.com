@@ -1,0 +1,297 @@
+{
+  "primitive-space": {
+    "title": "SPACE",
+    "section": "Triangle",
+    "content": "Your CPU's L1 cache is 0.5ns away. RAM is 100ns. A datacenter across the ocean is 150ms. This 300,000x latency difference is why copies exist—you store data closer to avoid paying the distance tax repeatedly. Every cache line, every replica, every CDN edge node exists because physics makes distance expensive."
+  },
+  "primitive-time": {
+    "title": "TIME",
+    "section": "Triangle",
+    "content": "A Rust `const` is known at compile time—before the program runs. A `let` binding is computed at runtime—when execution reaches that line. This distinction matters: compile-time values can be inlined, used for array sizes, and optimized away. Runtime values require actual memory and CPU cycles."
+  },
+  "primitive-identity": {
+    "title": "IDENTITY",
+    "section": "Triangle",
+    "content": "When two variables point to the same memory, they share IDENTITY. Modify through one, the other sees it. In Rust, `let y = &x` creates shared identity. In C, `int *p = &x; int *q = &x;` does too. The question 'is this the same data or a copy?' determines whether you have a coherence obligation."
+  },
+  "primitive-state": {
+    "title": "STATE",
+    "section": "Triangle",
+    "content": "STATE is not fundamental—it's derived from SPACE and TIME. The value at address 0x7fff at time T1 might be 42, at T2 might be 100. Mutation means STATE(space, t1) ≠ STATE(space, t2). Reading means observing STATE at a particular (SPACE, TIME) coordinate."
+  },
+  "layer-cpu-cache": {
+    "title": "CPU Cache Layer",
+    "section": "Layers",
+    "content": "When Core 0 loads address X into L1, and Core 1 also loads X, there are now two copies. If Core 0 writes, the MESI protocol kicks in: Core 1's cache line is invalidated. This is hardware-level coherence—the CPU ensures both cores see consistent STATE despite having separate SPACEs."
+  },
+  "layer-compiler": {
+    "title": "Compiler Layer",
+    "section": "Layers",
+    "content": "The compiler might keep `x` in a register for a hot loop instead of reading from RAM each iteration. That register is a derived copy. Register allocation is the compiler's coherence strategy—it tracks when the register must be written back to memory."
+  },
+  "layer-language": {
+    "title": "Language Layer",
+    "section": "Layers",
+    "content": "In Rust, `let r1 = &data; let r2 = &data;` creates two references to the same SPACE. The borrow checker is the coherence strategy—it proves at compile time that no mutable reference coexists with these shared references."
+  },
+  "layer-thread": {
+    "title": "Thread Layer",
+    "section": "Layers",
+    "content": "Thread A and Thread B both access a shared HashMap. Without synchronization, A's writes might not be visible to B, or worse, B sees a half-written state. A Mutex serializes access—only one thread touches the map at a time. Channels avoid sharing entirely by copying data between threads."
+  },
+  "layer-process": {
+    "title": "Process Layer",
+    "section": "Layers",
+    "content": "Each process has its own address space—address 0x1000 in Process A is different from 0x1000 in Process B. Shared memory creates a region where they overlap. Without IPC coordination, both processes might corrupt the shared region."
+  },
+  "layer-database": {
+    "title": "Database Layer",
+    "section": "Layers",
+    "content": "A write to the primary database must propagate to replicas. Synchronous replication waits until replicas confirm—strong consistency, high latency. Asynchronous replication returns immediately—low latency, but replicas may be stale. Same tradeoff, larger scale."
+  },
+  "layer-network": {
+    "title": "Network Layer",
+    "section": "Layers",
+    "content": "A CDN caches your website at edge locations worldwide. When you update the origin, edge copies become stale. TTL says 'assume valid for N seconds.' Purge says 'invalidate now.' Both are sync strategies trading freshness against coordination cost."
+  },
+  "layer-geo": {
+    "title": "Geo-distributed Layer",
+    "section": "Layers",
+    "content": "Users in Tokyo write to the Tokyo datacenter. Users in London write to London. Both datacenters have the 'same' database. Eventual consistency means Tokyo's write might not be visible in London for seconds or minutes. Strong consistency means every write waits for global consensus."
+  },
+  "remove-identity": {
+    "title": "Remove Shared Identity",
+    "section": "Coherence Problem",
+    "content": "In Rust, `let y = x.clone()` creates an independent copy. Mutating `y` doesn't affect `x`. There's no shared identity, so no coherence problem. This is value semantics—each copy is its own entity. The cost: memory and CPU for the clone operation."
+  },
+  "remove-space": {
+    "title": "Remove Multiple Spaces",
+    "section": "Coherence Problem",
+    "content": "If your database has no replicas—just one primary—there's only one SPACE for each row. No copies means no divergence. The cost: that single server is a bottleneck and a single point of failure. Same for a single-threaded program with no concurrent access."
+  },
+  "remove-time": {
+    "title": "Remove Time Flows",
+    "section": "Coherence Problem",
+    "content": "In Haskell, values don't change after creation. You can share references freely across threads because nobody can mutate. The vector you passed to another thread will still be [1,2,3] tomorrow. Immutability eliminates coherence problems entirely—at the cost of requiring new allocations for 'updates.'"
+  },
+  "op-read": {
+    "title": "Read Operation",
+    "section": "Operations",
+    "content": "Reading observes STATE at (SPACE, TIME). In Rust: `let val = *ptr;`. At the system level: SELECT from database, cache hit. The question is: which SPACE are you reading from, and is it current? A stale cache read gives you STATE at an earlier TIME."
+  },
+  "op-write": {
+    "title": "Write Operation",
+    "section": "Operations",
+    "content": "Writing changes STATE at a SPACE. In Rust: `*ptr = 42;`. At the system level: UPDATE in database, write to primary. This creates the coherence obligation—if other SPACEs hold copies with the same IDENTITY, they're now stale."
+  },
+  "op-copy": {
+    "title": "Copy Operation",
+    "section": "Operations",
+    "content": "Copying creates a new SPACE with the same value but independent IDENTITY. In Rust: `let y = x;` for Copy types, or `x.clone()`. After the copy, mutations to `x` don't affect `y`. You've traded memory for independence."
+  },
+  "op-move": {
+    "title": "Move Operation",
+    "section": "Operations",
+    "content": "Moving transfers IDENTITY from one SPACE to another and invalidates the source. In Rust: `let y = x;` for non-Copy types makes `x` unusable. There's only ever one valid reference, so no coherence problem. The source SPACE is logically gone."
+  },
+  "op-alias": {
+    "title": "Alias Operation",
+    "section": "Operations",
+    "content": "Aliasing creates a second name for the same SPACE. In Rust: `let r = &x;`. In C: `int *p = &x;`. Now `x` and `*r` refer to identical STATE. This is where coherence problems begin—if one path mutates, the other sees it (or should)."
+  },
+  "op-sync": {
+    "title": "Sync Operation",
+    "section": "Operations",
+    "content": "Syncing reconciles divergent copies. For databases: replication. For CPU caches: MESI protocol. For threads: releasing a mutex flushes writes, acquiring it loads fresh data. The sync operation is where you pay the coherence cost you've deferred."
+  },
+  "sync-forbid": {
+    "title": "Forbid the Problem",
+    "section": "Sync Strategies",
+    "content": "Rust's ownership model: each value has exactly one owner. `let y = x;` moves ownership—`x` is gone. You can't have two mutable paths to the same data because the type system forbids it. No aliasing + mutation means no coherence problem to solve."
+  },
+  "sync-freeze": {
+    "title": "Freeze Time",
+    "section": "Sync Strategies",
+    "content": "Clojure's persistent vectors: when you 'update' index 5, you get a new vector sharing structure with the old one. The original never changes. Any thread holding the old reference sees consistent data forever. Erlang does the same with process state."
+  },
+  "sync-serialize": {
+    "title": "Serialize Access",
+    "section": "Sync Strategies",
+    "content": "A Mutex ensures only one thread accesses data at a time. `mutex.lock()` blocks until you have exclusive access. This serializes TIME—concurrent execution becomes sequential for that critical section. Cost: threads wait, potential deadlocks."
+  },
+  "sync-hardware": {
+    "title": "Hardware Arbitration",
+    "section": "Sync Strategies",
+    "content": "AtomicU64 uses CPU instructions like LOCK CMPXCHG. Multiple cores can attempt concurrent updates; the hardware arbitrates and ensures a total order. Compare-and-swap (CAS) loops let you build lock-free structures, but reasoning about them is notoriously difficult."
+  },
+  "sync-compile": {
+    "title": "Compile-time Proof",
+    "section": "Sync Strategies",
+    "content": "Rust's borrow checker: you can have many `&T` OR one `&mut T`, never both. This is checked at compile time—zero runtime cost. The compiler proves your code has no data races before it ever runs. Invalid programs don't compile."
+  },
+  "sync-cow": {
+    "title": "Copy-on-Write",
+    "section": "Sync Strategies",
+    "content": "Multiple readers share the same physical pages. When one writes, the OS copies that page first—only the writer pays. This defers the copy cost until mutation actually happens. Used in fork(), some filesystems, and Rust's Cow<T> type."
+  },
+  "sync-message": {
+    "title": "Message Passing",
+    "section": "Sync Strategies",
+    "content": "Go channels and Erlang processes: instead of sharing memory, you send copies of data. The sender's version and receiver's version are independent after the send. No shared state means no synchronization needed—at the cost of serialization and copying."
+  },
+  "sync-optimistic": {
+    "title": "Optimistic Concurrency",
+    "section": "Sync Strategies",
+    "content": "MVCC databases keep multiple versions. Readers see a snapshot; writers create new versions. Conflicts are detected at commit time—if someone else modified the row, your transaction aborts and retries. Optimistic that conflicts are rare."
+  },
+  "sync-trust": {
+    "title": "Trust the User",
+    "section": "Sync Strategies",
+    "content": "C gives you raw pointers and says 'good luck.' Rust's `unsafe` blocks let you bypass the borrow checker when you need to. You're asserting the coherence is handled—by your own reasoning, external synchronization, or invariants the compiler can't see."
+  },
+  "lang-haskell": {
+    "title": "Haskell",
+    "section": "Language Choices",
+    "content": "Values are immutable by default. A function can't modify its arguments—it returns new values. The IO monad sequences effects but doesn't allow mutation of pure values. Concurrent Haskell is straightforward because shared immutable data needs no synchronization."
+  },
+  "lang-erlang": {
+    "title": "Erlang",
+    "section": "Language Choices",
+    "content": "Each process has isolated memory—no shared state by design. Communication happens via message passing, which copies data. If a process crashes, others are unaffected. This model scales to distributed systems naturally: same semantics whether processes are local or remote."
+  },
+  "lang-clojure": {
+    "title": "Clojure",
+    "section": "Language Choices",
+    "content": "Persistent data structures share underlying storage but appear immutable. Refs provide coordinated synchronous updates via STM. Atoms provide uncoordinated synchronous updates. Agents provide asynchronous updates. Each is a different coherence strategy for different needs."
+  },
+  "lang-rust": {
+    "title": "Rust",
+    "section": "Language Choices",
+    "content": "Ownership + borrowing at compile time. One mutable reference OR many immutable references—never both. Send and Sync traits track what's safe to share across threads. Data races are compile errors, not runtime bugs. Zero-cost abstractions: the checks happen at compile time."
+  },
+  "lang-go": {
+    "title": "Go",
+    "section": "Language Choices",
+    "content": "Shares memory like C but provides channels for message passing. The mantra: 'Don't communicate by sharing memory; share memory by communicating.' But channels are optional—you can still use mutexes, or just share unsafely. The race detector helps but doesn't guarantee."
+  },
+  "lang-java": {
+    "title": "Java",
+    "section": "Language Choices",
+    "content": "Object references are shared freely. `synchronized` blocks and `volatile` fields provide synchronization. The Java Memory Model specifies visibility guarantees. GC handles SPACE but not IDENTITY+TIME—you still need locks to prevent data races on shared mutable objects."
+  },
+  "lang-c": {
+    "title": "C/C++",
+    "section": "Language Choices",
+    "content": "Pointers can alias anything. `const` is a promise, not enforcement—`const_cast` can remove it. C++11 added atomics and a memory model, but data races are still undefined behavior. The programmer is fully responsible for coherence."
+  },
+  "lang-js": {
+    "title": "JavaScript",
+    "section": "Language Choices",
+    "content": "Single-threaded event loop: only one piece of code runs at a time. No concurrent mutation means no data races—by construction. Web Workers add parallelism but with isolated memory and message passing. SharedArrayBuffer brings back shared memory and the coherence problem."
+  },
+  "lang-python": {
+    "title": "Python",
+    "section": "Language Choices",
+    "content": "The Global Interpreter Lock (GIL) ensures only one thread executes Python bytecode at a time. This serializes TIME at the interpreter level. True parallelism requires multiprocessing (separate memory spaces) or releasing the GIL in C extensions."
+  },
+  "construct-register": {
+    "title": "Register",
+    "section": "Language Constructs",
+    "content": "The fastest SPACE—inside the CPU itself. The compiler decides what lives in registers. A hot loop counter stays in a register; the compiler writes it back to memory only when needed. You don't directly control this in most languages."
+  },
+  "construct-stack": {
+    "title": "Stack Variable",
+    "section": "Language Constructs",
+    "content": "In Rust: `let x = 5;`. Lives on the stack, scoped to the block. When the block ends, the stack frame pops, and `x` is gone. No heap allocation, no GC. IDENTITY is unique within the scope—only local code can reference it."
+  },
+  "construct-heap": {
+    "title": "Heap Allocation",
+    "section": "Language Constructs",
+    "content": "In Rust: `Box::new(5)` or `Vec::new()`. Lives on the heap, can outlive the creating scope if moved. Multiple references possible: `Rc<T>` for single-thread, `Arc<T>` for multi-thread. The coherence strategy depends on whether you use interior mutability."
+  },
+  "construct-const": {
+    "title": "Compile-time Const",
+    "section": "Language Constructs",
+    "content": "In Rust: `const MAX: u32 = 100;`. The value is known at compile time and inlined at every use site. No address—each use is like copy-pasting the literal. Can be used for array sizes: `[0u8; MAX]`. Zero runtime cost."
+  },
+  "construct-static": {
+    "title": "Static / Global",
+    "section": "Language Constructs",
+    "content": "In Rust: `static COUNTER: AtomicU32 = AtomicU32::new(0);`. One address, lives for the entire program in the data segment. Global IDENTITY—all code sees the same location. If mutable, you need atomics or unsafe to manage coherence."
+  },
+  "construct-tls": {
+    "title": "Thread-local",
+    "section": "Language Constructs",
+    "content": "In Rust: `thread_local! { static X: Cell<u32> = Cell::new(0); }`. Each thread gets its own copy. No shared IDENTITY across threads, so no synchronization needed. Useful for per-thread caches or context that shouldn't be shared."
+  },
+  "construct-immutable": {
+    "title": "Immutable Value",
+    "section": "Language Constructs",
+    "content": "In Rust: `let x = vec![1,2,3];` (without mut). You can share `&x` freely because no mutation is possible through those references. The compiler enforces this. Interior mutability (`Cell`, `RefCell`) opts out but brings its own rules."
+  },
+  "construct-locked": {
+    "title": "Mutable + Locked",
+    "section": "Language Constructs",
+    "content": "In Rust: `Mutex<HashMap<K,V>>`. The Mutex serializes access—`lock()` gives you exclusive `&mut` to the inner data. While you hold the guard, no other thread can access it. Drop the guard to release. Deadlock is possible if you acquire multiple locks in inconsistent order."
+  },
+  "construct-atomic": {
+    "title": "Atomic",
+    "section": "Language Constructs",
+    "content": "In Rust: `AtomicU64`. The CPU guarantees individual operations (load, store, compare_exchange) are indivisible. Memory ordering (SeqCst, Acquire, Release) controls visibility to other threads. Lock-free but subtle—most people should use Mutex instead."
+  },
+  "construct-channel": {
+    "title": "Channel Message",
+    "section": "Language Constructs",
+    "content": "In Rust: `std::sync::mpsc::channel()`. Data is moved (not shared) from sender to receiver. The sender gives up ownership; the receiver gets it. No shared IDENTITY means no data race. FIFO ordering; blocks if buffer is full or empty."
+  },
+  "example-immutable": {
+    "title": "Immutability Enables Safe Sharing",
+    "section": "Examples",
+    "content": "In Clojure, 10 threads can read the same vector simultaneously with no locks. In Rust, 10 threads can hold `&Vec<T>` with no synchronization. Because TIME is frozen (no mutation), shared IDENTITY is harmless. This is why functional programming and concurrency pair well."
+  },
+  "example-rust-concurrency": {
+    "title": "Rust's Fearless Concurrency",
+    "section": "Examples",
+    "content": "The compiler rejects `let handle = thread::spawn(|| println!(\"{}\", local_var));` if `local_var` doesn't live long enough or isn't thread-safe. Send and Sync traits encode what can cross thread boundaries. Data races become type errors caught before your code runs."
+  },
+  "example-locks-slow": {
+    "title": "Locks Are Slow",
+    "section": "Examples",
+    "content": "A mutex serializes TIME—threads that could run in parallel instead wait. With 8 threads and a hot lock, you might get *worse* performance than single-threaded because of contention and cache line bouncing. Fine-grained locking or lock-free structures help but add complexity."
+  },
+  "example-lockfree": {
+    "title": "Lock-free Is Hard",
+    "section": "Examples",
+    "content": "A lock-free queue sounds simple: CAS to enqueue, CAS to dequeue. But what about ABA problems? Memory reclamation? Ensuring linearizability? The literature is full of 'obviously correct' lock-free algorithms that turned out to have subtle bugs years later."
+  },
+  "example-gc-races": {
+    "title": "GC Doesn't Prevent Data Races",
+    "section": "Examples",
+    "content": "Java has GC but still needs synchronized blocks. GC handles SPACE (memory lifecycle) but not IDENTITY+TIME (who can access when). Two threads modifying an ArrayList concurrently corrupt it regardless of GC. You still need coherence strategy."
+  },
+  "example-js-single": {
+    "title": "JavaScript Is Single-threaded",
+    "section": "Examples",
+    "content": "The event loop runs one callback at a time. Your click handler finishes completely before the next event fires. This serializes TIME globally—no concurrent mutation possible. It's limiting for CPU-bound work but eliminates a whole class of bugs."
+  },
+  "example-python-gil": {
+    "title": "Python's GIL",
+    "section": "Examples",
+    "content": "Even with threading, only one thread executes Python bytecode at once. This serializes TIME at the interpreter level. For I/O-bound work, threads help (they release the GIL while waiting). For CPU-bound work, you need multiprocessing to get true parallelism."
+  },
+  "example-value-types": {
+    "title": "Value Types Are Easier",
+    "section": "Examples",
+    "content": "In Swift and C#, structs are value types—assignment copies. Each copy is independent, new IDENTITY. No shared state means no coherence problem. The tradeoff: copying large structs is expensive. Reference types share by default and bring back the problem."
+  },
+  "example-pointers": {
+    "title": "Pointers Are Dangerous",
+    "section": "Examples",
+    "content": "In C: `int *p = &x; int *q = &x; *p = 5;` Now q points to 5 too. With unrestricted aliasing (anyone can point anywhere) and free mutation (no compiler checks), coherence is entirely your problem. Add threads and it's undefined behavior."
+  },
+  "example-const-differs": {
+    "title": "const Differs Across Languages",
+    "section": "Examples",
+    "content": "Rust `const`: compile-time, inlined. C/C++ `const`: 'I promise not to mutate through this path' (can be cast away). JavaScript `const`: 'this binding doesn't change' (object contents can). Same keyword, completely different positions in the SPACE/TIME/IDENTITY design space."
+  }
+}
