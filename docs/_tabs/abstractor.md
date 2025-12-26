@@ -651,13 +651,13 @@ toc: true
 }
 
 /* Hoverable elements */
-#lang-derived-content .hoverable {
+[data-hover].hoverable {
   color: #f97316;
   cursor: help;
   border-bottom: 1px dotted #f97316;
   transition: all 0.15s;
 }
-#lang-derived-content .hoverable:hover {
+[data-hover].hoverable:hover {
   color: #fb923c;
   border-bottom-style: solid;
 }
@@ -804,8 +804,6 @@ This pattern applies at every layer of the stack.
 </div>
 
 ### Isomorphism
-
-<div id="lang-derived-content">
 
 <table class="derived-table">
 <tr><th>Derived Data (System)</th><th>Derived Data (Language)</th></tr>
@@ -1006,8 +1004,6 @@ DB replica        ≅  thread-local     ≅  cloned value<br>
 TTL invalidation  ≅  cache coherence  ≅  borrow checker<br>
 distributed lock  ≅  mutex            ≅  serialized TIME<br>
 immutable source  ≅  const            ≅  frozen TIME
-</div>
-
 </div>
 
 <script src="{{ '/assets/js/lang-derived.js' | relative_url }}"></script>

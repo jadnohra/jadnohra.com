@@ -4,8 +4,8 @@
   let popover = null;
 
   async function init() {
-    const container = document.getElementById('lang-derived-content');
-    if (!container) return;
+    // Check if any hover elements exist on the page
+    if (!document.querySelector('[data-hover]')) return;
 
     try {
       let resp = await fetch('./assets/data/lang-derived.json');
@@ -16,7 +16,7 @@
       return;
     }
 
-    setupHovers(container);
+    setupHovers();
   }
 
   function positionPopover(mouseX, mouseY) {
@@ -42,14 +42,14 @@
     popover.style.top = top + 'px';
   }
 
-  function setupHovers(container) {
+  function setupHovers() {
     // Create popover
     popover = document.createElement('div');
     popover.className = 'lang-derived-popover';
     document.body.appendChild(popover);
 
     // Find all elements with data-hover attribute
-    const hoverElements = container.querySelectorAll('[data-hover]');
+    const hoverElements = document.querySelectorAll('[data-hover]');
 
     hoverElements.forEach(el => {
       const hoverId = el.getAttribute('data-hover');
