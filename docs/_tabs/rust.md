@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Rust
-icon: fas fa-crab
+icon: fab fa-rust
 order: 7
 toc: true
 ---
