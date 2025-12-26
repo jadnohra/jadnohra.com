@@ -850,16 +850,34 @@ Three primitives rooted in physics:
 </div>
 
 <table class="derived-table">
-<tr><th>Primitive</th><th>Physical Root</th><th>Question</th><th>System Equivalent</th></tr>
-<tr><td><span data-hover="primitive-space">SPACE</span></td><td>Locality, memory hierarchy</td><td>Where does data reside?</td><td>Source vs edge location</td></tr>
-<tr><td><span data-hover="primitive-time">TIME</span></td><td>Causality, sequence</td><td>When does it exist/change?</td><td>Sync timing</td></tr>
-<tr><td><span data-hover="primitive-identity">IDENTITY</span></td><td>Equivalence, sameness</td><td>Are these the same data?</td><td>Replica or independent?</td></tr>
+<tr><th>Primitive</th><th>Physical Root</th><th>Question</th></tr>
+<tr><td><span data-hover="primitive-space">SPACE</span></td><td>Locality, memory hierarchy</td><td>Where does data reside?</td></tr>
+<tr><td><span data-hover="primitive-time">TIME</span></td><td>Causality, sequence</td><td>When does it exist/change?</td></tr>
+<tr><td><span data-hover="primitive-identity">IDENTITY</span></td><td>Equivalence, sameness</td><td>Are these the same data?</td></tr>
 </table>
 
 <span data-hover="primitive-state">STATE</span> emerges from the triangle:
 
 <div class="derived-box">
 STATE = f(SPACE, TIME)
+</div>
+
+### Dimensions of TIME
+
+TIME is overloaded in programming:
+
+<table class="derived-table">
+<tr><th>Dimension</th><th>Question</th><th>Example</th></tr>
+<tr><td><span data-hover="time-execution">Execution</span></td><td>What order?</td><td>Statement A before B</td></tr>
+<tr><td><span data-hover="time-parallel">Parallel</span></td><td>Simultaneous?</td><td>Thread 1 and Thread 2</td></tr>
+<tr><td><span data-hover="time-existence">Existence</span></td><td>How long?</td><td>Value lifetime, reference validity</td></tr>
+</table>
+
+Coherence problems arise at the intersections:
+
+<div class="derived-box">
+<b>Parallel TIME + shared SPACE</b> → data races<br>
+<b>Existence TIME mismatch</b> → dangling references, use-after-free
 </div>
 
 ### Coherence Problem
@@ -879,37 +897,37 @@ Three ingredients:
 Remove any one:
 
 <table class="derived-table">
-<tr><th>Remove</th><th>Strategy</th><th>System Equivalent</th></tr>
-<tr><td><span data-hover="remove-identity">Shared Identity</span></td><td>Value semantics, deep copy</td><td>Independent caches</td></tr>
-<tr><td><span data-hover="remove-space">Multiple Spaces</span></td><td>Single source of truth</td><td>No replication</td></tr>
-<tr><td><span data-hover="remove-time">Time flows</span></td><td>Immutability</td><td>Immutable source</td></tr>
+<tr><th>Remove</th><th>Strategy</th></tr>
+<tr><td><span data-hover="remove-identity">Shared Identity</span></td><td>Value semantics, deep copy</td></tr>
+<tr><td><span data-hover="remove-space">Multiple Spaces</span></td><td>Single source of truth</td></tr>
+<tr><td><span data-hover="remove-time">Time flows</span></td><td>Immutability</td></tr>
 </table>
 
 ### Operations
 
 <table class="derived-table">
-<tr><th>Operation</th><th>Language Level</th><th>System Equivalent</th></tr>
-<tr><td><span data-hover="op-read">Read</span></td><td>Observe value</td><td>Cache hit / DB read</td></tr>
-<tr><td><span data-hover="op-write">Write</span></td><td>Mutate value</td><td>Write to primary</td></tr>
-<tr><td><span data-hover="op-copy">Copy</span></td><td>Create independent duplicate</td><td>Fork / snapshot</td></tr>
-<tr><td><span data-hover="op-move">Move</span></td><td>Transfer ownership, invalidate source</td><td>Migration</td></tr>
-<tr><td><span data-hover="op-alias">Alias</span></td><td>Second reference to same location</td><td>Multiple replicas</td></tr>
-<tr><td><span data-hover="op-sync">Sync</span></td><td>Reconcile divergent copies</td><td>Replication protocol</td></tr>
+<tr><th>Operation</th><th>Meaning</th><th>Parallel Hazard</th></tr>
+<tr><td><span data-hover="op-read">Read</span></td><td>Observe value</td><td><span data-hover="hazard-read">Stale/torn reads</span></td></tr>
+<tr><td><span data-hover="op-write">Write</span></td><td>Mutate value</td><td><span data-hover="hazard-write">Lost update, race</span></td></tr>
+<tr><td><span data-hover="op-copy">Copy</span></td><td>Create independent duplicate</td><td><span data-hover="hazard-copy">Torn copy</span></td></tr>
+<tr><td><span data-hover="op-move">Move</span></td><td>Transfer ownership, invalidate source</td><td><span data-hover="hazard-move">Double-move</span></td></tr>
+<tr><td><span data-hover="op-alias">Alias</span></td><td>Second reference to same location</td><td><span data-hover="hazard-alias">Data race</span></td></tr>
+<tr><td><span data-hover="op-sync">Sync</span></td><td>Reconcile divergent copies</td><td><span data-hover="hazard-sync">(the solution)</span></td></tr>
 </table>
 
 ### Sync Strategies
 
 <table class="derived-table">
-<tr><th>Strategy</th><th>System Level</th><th>Language Level</th></tr>
-<tr><td><span data-hover="sync-forbid">Forbid the problem</span></td><td>Single region</td><td>Ownership (move semantics)</td></tr>
-<tr><td><span data-hover="sync-freeze">Freeze time</span></td><td>Immutable source</td><td>Immutable bindings</td></tr>
-<tr><td><span data-hover="sync-serialize">Serialize access</span></td><td>Distributed lock</td><td>Mutex, RwLock</td></tr>
-<tr><td><span data-hover="sync-hardware">Hardware arbitration</span></td><td>—</td><td>Atomics, CAS</td></tr>
-<tr><td><span data-hover="sync-compile">Compile-time proof</span></td><td>—</td><td>Borrow checker</td></tr>
-<tr><td><span data-hover="sync-cow">Copy-on-write</span></td><td>CoW filesystem</td><td>CoW data structures</td></tr>
-<tr><td><span data-hover="sync-message">Message passing</span></td><td>Event sourcing</td><td>Channels</td></tr>
-<tr><td><span data-hover="sync-optimistic">Optimistic</span></td><td>MVCC</td><td>STM, persistent structures</td></tr>
-<tr><td><span data-hover="sync-trust">Trust the user</span></td><td>—</td><td><code>unsafe</code>, raw pointers</td></tr>
+<tr><th>Strategy</th><th>Language Level</th></tr>
+<tr><td><span data-hover="sync-forbid">Forbid the problem</span></td><td>Ownership (move semantics)</td></tr>
+<tr><td><span data-hover="sync-freeze">Freeze time</span></td><td>Immutable bindings</td></tr>
+<tr><td><span data-hover="sync-serialize">Serialize access</span></td><td>Mutex, RwLock</td></tr>
+<tr><td><span data-hover="sync-hardware">Hardware arbitration</span></td><td>Atomics, CAS</td></tr>
+<tr><td><span data-hover="sync-compile">Compile-time proof</span></td><td>Borrow checker</td></tr>
+<tr><td><span data-hover="sync-cow">Copy-on-write</span></td><td>CoW data structures</td></tr>
+<tr><td><span data-hover="sync-message">Message passing</span></td><td>Channels</td></tr>
+<tr><td><span data-hover="sync-optimistic">Optimistic</span></td><td>STM, persistent structures</td></tr>
+<tr><td><span data-hover="sync-trust">Trust the user</span></td><td><code>unsafe</code>, raw pointers</td></tr>
 </table>
 
 ### Language Choices
@@ -994,16 +1012,6 @@ FLEXIBILITY ◄─────────────────────�
 <div class="derived-card-item">• Runtime</div>
 <div class="derived-card-item">• Never</div>
 </div>
-</div>
-
-### Equivalences
-
-<div class="derived-box" style="font-family: monospace;">
-CDN edge cache    ≅  CPU cache line   ≅  borrowed reference<br>
-DB replica        ≅  thread-local     ≅  cloned value<br>
-TTL invalidation  ≅  cache coherence  ≅  borrow checker<br>
-distributed lock  ≅  mutex            ≅  serialized TIME<br>
-immutable source  ≅  const            ≅  frozen TIME
 </div>
 
 <script src="{{ '/assets/js/lang-derived.js' | relative_url }}"></script>

@@ -97,7 +97,7 @@
   "op-alias": {
     "title": "Alias Operation",
     "section": "Operations",
-    "content": "Aliasing creates a second name for the same SPACE. In Rust: `let r = &x;`. In C: `int *p = &x;`. Now `x` and `*r` refer to identical STATE. This is where coherence problems begin—if one path mutates, the other sees it (or should)."
+    "content": "Aliasing creates a second path to the same SPACE. The alias has its own lifetime (existence TIME), which must be contained within the value's lifetime—if the value dies or moves while aliases exist, you get dangling references. Rust's borrow checker enforces both: aliases cannot outlive their referent (existence coherence), and mutable aliases cannot coexist with other aliases (parallel coherence)."
   },
   "op-sync": {
     "title": "Sync Operation",
@@ -293,5 +293,50 @@
     "title": "const Differs Across Languages",
     "section": "Examples",
     "content": "Rust `const`: compile-time, inlined. C/C++ `const`: 'I promise not to mutate through this path' (can be cast away). JavaScript `const`: 'this binding doesn't change' (object contents can). Same keyword, completely different positions in the SPACE/TIME/IDENTITY design space."
+  },
+  "hazard-read": {
+    "title": "Read Hazard",
+    "section": "Operations",
+    "content": "When multiple TIME lines read shared SPACE, each may see different STATE. A read during a concurrent write may see a torn value—half old, half new. The question: which TIME's snapshot are you observing?"
+  },
+  "hazard-write": {
+    "title": "Write Hazard",
+    "section": "Operations",
+    "content": "Two parallel writes to the same SPACE: one overwrites the other. Without ordering, you get lost updates. The granularity matters—two writes to different bytes in the same cache line still conflict (false sharing). Someone must arbitrate who wins."
+  },
+  "hazard-copy": {
+    "title": "Copy Hazard",
+    "section": "Operations",
+    "content": "Copying reads the source. If another TIME line mutates the source mid-copy, you get a torn copy—part old state, part new. The copy is internally inconsistent, never representing any valid STATE."
+  },
+  "hazard-move": {
+    "title": "Move Hazard",
+    "section": "Operations",
+    "content": "Move invalidates the source. Two parallel moves of the same value: both think they own it, both invalidate it. Use-after-move, double-free. Rust's ownership prevents this at compile time."
+  },
+  "hazard-alias": {
+    "title": "Alias Hazard",
+    "section": "Operations",
+    "content": "Alias creates shared IDENTITY. Alias + mutation + parallel TIME = data race. This is THE coherence problem: multiple paths to the same SPACE, at least one writing, without synchronization. Every language must address this."
+  },
+  "hazard-sync": {
+    "title": "Sync (Solution)",
+    "section": "Operations",
+    "content": "Sync is not a hazard—it's the solution. Explicitly reconciling divergent copies across TIME lines. The cost you pay to restore coherence after allowing parallel access."
+  },
+  "time-execution": {
+    "title": "Execution TIME",
+    "section": "Dimensions of TIME",
+    "content": "Sequential ordering of operations. Statement A executes before statement B. Single-threaded programs have one execution TIME line—total ordering of all operations. This is the TIME most programmers think about."
+  },
+  "time-parallel": {
+    "title": "Parallel TIME",
+    "section": "Dimensions of TIME",
+    "content": "Multiple execution TIME lines running simultaneously. Thread 1 and Thread 2 each have their own sequence, but operations across threads have no inherent order. This is where 'simultaneous' access becomes possible and coherence problems emerge."
+  },
+  "time-existence": {
+    "title": "Existence TIME",
+    "section": "Dimensions of TIME",
+    "content": "How long does something exist? A stack variable lives until scope exit. A heap allocation lives until free. A reference has its own lifetime that must fit within the referent's lifetime. Rust's borrow checker tracks existence TIME to prevent dangling references."
   }
 }
