@@ -1,6 +1,6 @@
 ---
 layout: tags
 icon: fas fa-tags
-order: 9
+order: 10
 title: Tags (WIP)
 ---
