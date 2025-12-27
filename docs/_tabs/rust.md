@@ -1961,13 +1961,13 @@ This section isn't proposing a new language. It's a mental model—a way to see 
 <table class="derived-table">
 <tr><th>Proposed</th><th>What it does</th></tr>
 <tr><td><code>5</code> (literal)</td><td>create new SPACE with value</td></tr>
-<tr><td><code>copy(y)</code></td><td>duplicate SPACE (must be Copy type)</td></tr>
-<tr><td><code>move(y)</code></td><td>transfer SPACE (y invalidated)</td></tr>
-<tr><td><code>move_or_copy(y)</code></td><td>move y's SPACE, or copy if Copy type *</td></tr>
-<tr><td><code>shared(y)</code></td><td>create shared IDENTITY (frozen TIME)</td></tr>
-<tr><td><code>exclusive(y)</code></td><td>create exclusive IDENTITY (TIME flows)</td></tr>
-<tr><td><code>*r</code></td><td>follow IDENTITY</td></tr>
-<tr><td><code>rebindable(x)</code></td><td>binding can be redirected</td></tr>
+<tr><td><code>copy(y)</code></td><td>create new SPACE with duplicated value from y's SPACE; y remains valid; type must implement Copy</td></tr>
+<tr><td><code>move(y)</code></td><td>transfer y's SPACE to new owner; y is invalidated and cannot be used after</td></tr>
+<tr><td><code>move_or_copy(y)</code></td><td>compiler chooses: copy if type implements Copy, otherwise move *</td></tr>
+<tr><td><code>shared(y)</code></td><td>create IDENTITY to y's SPACE; multiple shared IDENTITYs may coexist; no mutation allowed through any of them; TIME is frozen</td></tr>
+<tr><td><code>exclusive(y)</code></td><td>create IDENTITY to y's SPACE; no other IDENTITY may exist while this one is active; mutation allowed through this IDENTITY; TIME flows</td></tr>
+<tr><td><code>*r</code></td><td>follow IDENTITY r to reach its SPACE; what happens next depends on context (copy, move, or mutate)</td></tr>
+<tr><td><code>rebindable(x)</code></td><td>the binding x can be redirected to point to a different SPACE later; without this, the binding is fixed for its lifetime</td></tr>
 </table>
 
 \* Why `move_or_copy(y)`? In Rust, `let x = y` silently does different things based on whether y's type implements Copy. This makes the implicit explicit—you see that the compiler is choosing.
