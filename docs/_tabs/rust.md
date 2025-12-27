@@ -1710,3 +1710,316 @@ The fundamentals are simple:
 - Coherence: keeping IDENTITY×TIME consistent
 
 Rust's features are combinations of these. The names obscure this. Understanding the mapping lets you see through the jargon to the principles.
+
+---
+
+## Pedantic Syntax
+
+Beyond naming, Rust's syntax overloads symbols based on position. The same `&` means different things on different sides of `=`.
+
+---
+
+### How the Compiler Sees It
+
+**Both sides of `=` parse to trees:**
+
+<div class="rust-code">
+<pre>let PATTERN = EXPRESSION;</pre>
+</div>
+
+`&` is a symbol. The parser needs a name for it in the AST, so it becomes `Ref`. The keyword `mut` stays as `mut`.
+
+<div class="rust-code">
+<pre>let &mut y = r;</pre>
+</div>
+
+<div class="pipeline-diagram">
+<pre>
+Pattern tree:           Expression tree:
+
+  Ref(mut)                  Ident
+     |                        |
+   Ident                     "r"
+     |
+    "y"
+</pre>
+</div>
+
+**Pattern matching is tree matching.** The pattern tree specifies what structure to expect and which parts to bind to variables. The expression produces a value. If structures match, bind the variables.
+
+<div class="rust-code">
+<pre>let (a, &b) = pair;</pre>
+</div>
+
+<div class="pipeline-diagram">
+<pre>
+Pattern tree:
+
+   Tuple
+   /    \
+Ident   Ref
+  |       \
+ "a"     Ident
+           |
+          "b"
+</pre>
+</div>
+
+Pattern says: "expect a tuple, first element goes in `a`, second element is a reference, follow it, put result in `b`."
+
+**What happens:**
+
+1. Expression tree → compiler generates code to produce a value
+2. Pattern tree → compiler generates code to destructure that value into variables
+
+**When trees don't match:**
+
+The compiler doesn't try combinations. It checks: does the pattern's shape match the expression's type?
+
+<div class="rust-code">
+<pre>let &mut x = 5;  <span class="comment">// error: pattern expects reference, got integer</span></pre>
+</div>
+
+<div class="pipeline-diagram">
+<pre>
+Pattern tree:           Expression type:
+
+  Ref(mut)                  i32
+     |
+   Ident
+     |
+    "x"
+</pre>
+</div>
+
+Pattern says: "expect a reference, extract target." Expression produces: integer. Shapes don't match → compile error.
+
+<div class="rust-code">
+<pre>error[E0308]: mismatched types
+  |
+  |     let &mut x = 5;
+  |         ^^^^^^   - this expression has type `{integer}`
+  |         |
+  |         expected integer, found `&mut _`</pre>
+</div>
+
+The error message is backwards—it says "expected integer" because the compiler infers from the pattern what the expression should be. This is why it's confusing: the compiler reports what it expected based on the value, not what the pattern asked for.
+
+---
+
+### Syntax Position
+
+Rust overloads `&` and `&mut` based on where they appear. The same symbol means different things depending on which side of `=` or `:` it's on. This is a common source of confusion—the compiler error tells you shapes don't match, but doesn't tell you that you're in the wrong mode entirely.
+
+<table class="derived-table">
+<tr><th>Position</th><th><code>&mut x</code> means</th><th>What happens</th></tr>
+<tr><td>Expression (right of <code>=</code>)</td><td>Unary operator</td><td>Produces a reference to x</td></tr>
+<tr><td>Pattern (left of <code>=</code>)</td><td>Shape match</td><td>Expects reference, binds target to x</td></tr>
+<tr><td>Type (right of <code>:</code>)</td><td>Type constructor</td><td>Describes "reference to T"</td></tr>
+</table>
+
+Expression: operators produce values. Pattern: shapes match and bind.
+
+**1. Type (right of `:`)**
+
+<div class="rust-code">
+<pre>let x: &mut i32 = ...;  <span class="comment">// x is a reference to i32</span></pre>
+</div>
+
+<div class="rust-code">
+<pre><span class="comment">// C++ equivalent:</span>
+int* x = ...;  <span class="comment">// x is a pointer to int</span></pre>
+</div>
+
+**2. Expression (right of `=`)**
+
+<div class="rust-code">
+<pre>let p = &mut x;  <span class="comment">// evaluates to a reference pointing to x</span></pre>
+</div>
+
+<div class="rust-code">
+<pre><span class="comment">// C++ equivalent:</span>
+int* p = &x;  <span class="comment">// takes address, assigns to p</span></pre>
+</div>
+
+<div class="pipeline-diagram">
+<pre>
+Pattern tree:           Expression tree:
+
+  Ident                   Ref(mut)
+    |                        |
+   "p"                    Ident
+                            |
+                           "x"
+</pre>
+</div>
+
+Expression tree says: produce address of x. Pattern tree says: store it in p.
+
+`&` is one of several unary operators:
+
+<table class="derived-table">
+<tr><th>Operator</th><th>What it produces</th></tr>
+<tr><td><code>-x</code></td><td>negation of x</td></tr>
+<tr><td><code>!x</code></td><td>logical not of x</td></tr>
+<tr><td><code>*x</code></td><td>dereference—value at x</td></tr>
+<tr><td><code>&x</code></td><td>reference to x</td></tr>
+<tr><td><code>&mut x</code></td><td>mutable reference to x</td></tr>
+</table>
+
+**3. Pattern (left of `=`)**
+
+<div class="rust-code">
+<pre>let &mut target = some_ref;  <span class="comment">// match reference, extract target</span></pre>
+</div>
+
+<div class="rust-code">
+<pre><span class="comment">// C++ equivalent:</span>
+int target = *some_ref;  <span class="comment">// dereference to extract target</span></pre>
+</div>
+
+C++ uses `*` operator. Rust uses pattern position.
+
+---
+
+### Primitives
+
+Three building blocks, that's all:
+
+<table class="derived-table">
+<tr><th>Primitive</th><th>What it is</th><th>Where it appears</th></tr>
+<tr><td><code>&</code></td><td>shared reference</td><td>before expression or in pattern</td></tr>
+<tr><td><code>&mut</code></td><td>mutable reference</td><td>before expression or in pattern</td></tr>
+<tr><td><code>mut</code></td><td>mutable binding</td><td>after <code>let</code></td></tr>
+</table>
+
+`&mut` is one token—not `&` + `mut`. There is no `mut&`.
+
+**Reassign vs mutate:**
+
+<div class="rust-code">
+<pre>let mut x = &y;
+x = &z;         <span class="comment">// reassign: x now points elsewhere</span>
+
+let x = &mut y;
+*x = 5;         <span class="comment">// mutate: change what x points to</span></pre>
+</div>
+
+Reassign changes the reference itself. Mutate changes what's at the target.
+
+---
+
+### References Point to SPACE, Not Names
+
+A common misconception: references alias variables. They don't. A reference points to SPACE, not to a name.
+
+When you write `&x`, you get the address of the memory, not an alias to the variable `x`. The name `x` may go out of scope or be rebound—what matters is whether the SPACE it referred to is still valid.
+
+<div class="rust-code">
+<pre>let r;
+{
+    let x = 5;
+    r = &x;      <span class="comment">// r points to x's SPACE</span>
+}                <span class="comment">// x's name is gone, and so is its SPACE</span>
+<span class="comment">// r is now dangling — the IDENTITY outlived the SPACE</span></pre>
+</div>
+
+This is what the borrow checker prevents: IDENTITY outliving SPACE.
+
+---
+
+### Framework Translation
+
+<table class="derived-table">
+<tr><th>Rust</th><th>Framework</th></tr>
+<tr><td>value</td><td>A value occupies SPACE in memory</td></tr>
+<tr><td>binding</td><td>A binding is a name that refers to a SPACE</td></tr>
+<tr><td>reference</td><td>A reference is an IDENTITY that points to a SPACE</td></tr>
+<tr><td>scope</td><td>A scope defines a TIME boundary for when bindings are valid</td></tr>
+<tr><td><code>let x</code></td><td>Bind the name x to a SPACE; the binding cannot be changed</td></tr>
+<tr><td><code>let mut x</code></td><td>Bind the name x to a SPACE; the binding can be changed to point elsewhere</td></tr>
+<tr><td><code>&x</code> (expression)</td><td>Create a shared IDENTITY that points to x's SPACE</td></tr>
+<tr><td><code>&mut x</code> (expression)</td><td>Create an exclusive IDENTITY that points to x's SPACE</td></tr>
+<tr><td><code>&x</code> (pattern)</td><td>Follow the IDENTITY and bind x to what it points to</td></tr>
+<tr><td><code>&mut x</code> (pattern)</td><td>Follow the IDENTITY and bind x to what it points to</td></tr>
+<tr><td><code>&</code></td><td>A shared IDENTITY; TIME is frozen so no mutation is allowed through this path</td></tr>
+<tr><td><code>&mut</code></td><td>An exclusive IDENTITY; TIME flows so mutation is allowed through this path</td></tr>
+</table>
+
+---
+
+### Clarifying Syntax
+
+Rust's syntax overloads symbols based on position. `&` means one thing on the left of `=`, another on the right. `mut` means one thing after `let`, another after `&`. Copy and move happen silently based on type.
+
+These choices have reasons—terseness, familiarity with C, ergonomics. But they obscure the underlying operations. What if we made every operation explicit instead?
+
+This section isn't proposing a new language. It's a mental model—a way to see what Rust is actually doing, unencumbered by its syntactic choices.
+
+**Primitives:**
+
+<table class="derived-table">
+<tr><th>Proposed</th><th>What it does</th></tr>
+<tr><td><code>5</code> (literal)</td><td>create new SPACE with value</td></tr>
+<tr><td><code>copy(y)</code></td><td>duplicate SPACE (must be Copy type)</td></tr>
+<tr><td><code>move(y)</code></td><td>transfer SPACE (y invalidated)</td></tr>
+<tr><td><code>move_or_copy(y)</code></td><td>move y's SPACE, or copy if Copy type *</td></tr>
+<tr><td><code>shared(y)</code></td><td>create shared IDENTITY (frozen TIME)</td></tr>
+<tr><td><code>exclusive(y)</code></td><td>create exclusive IDENTITY (TIME flows)</td></tr>
+<tr><td><code>*r</code></td><td>follow IDENTITY</td></tr>
+<tr><td><code>rebindable(x)</code></td><td>binding can be redirected</td></tr>
+</table>
+
+\* Why `move_or_copy(y)`? In Rust, `let x = y` silently does different things based on whether y's type implements Copy. This makes the implicit explicit—you see that the compiler is choosing.
+
+**All combinations:**
+
+<table class="derived-table">
+<tr><th>Current</th><th>Clarified</th><th>Meaning</th></tr>
+<tr><td><code>let x = 5</code></td><td><code>let x = 5</code></td><td>new SPACE with literal value</td></tr>
+<tr><td><code>let mut x = 5</code></td><td><code>let rebindable(x) = 5</code></td><td>new SPACE, binding can change</td></tr>
+<tr><td><code>let x = y</code> (Copy)</td><td><code>let x = copy(y)</code></td><td>duplicate SPACE</td></tr>
+<tr><td><code>let mut x = y</code> (Copy)</td><td><code>let rebindable(x) = copy(y)</code></td><td>duplicate SPACE, binding can change</td></tr>
+<tr><td><code>let x = y</code> (Move)</td><td><code>let x = move(y)</code></td><td>transfer SPACE, y invalidated</td></tr>
+<tr><td><code>let mut x = y</code> (Move)</td><td><code>let rebindable(x) = move(y)</code></td><td>transfer SPACE, binding can change</td></tr>
+<tr><td><code>let x = y</code> (implicit)</td><td><code>let x = move_or_copy(y)</code></td><td>compiler decides</td></tr>
+<tr><td><code>let x = &y</code></td><td><code>let x = shared(y)</code></td><td>shared IDENTITY to y's SPACE</td></tr>
+<tr><td><code>let mut x = &y</code></td><td><code>let rebindable(x) = shared(y)</code></td><td>shared IDENTITY, binding can change</td></tr>
+<tr><td><code>let x = &mut y</code></td><td><code>let x = exclusive(y)</code></td><td>exclusive IDENTITY to y's SPACE</td></tr>
+<tr><td><code>let mut x = &mut y</code></td><td><code>let rebindable(x) = exclusive(y)</code></td><td>exclusive IDENTITY, binding can change</td></tr>
+<tr><td><code>let x = *r</code> (Copy)</td><td><code>let x = copy(*r)</code></td><td>deref, then duplicate</td></tr>
+<tr><td><code>let mut x = *r</code> (Copy)</td><td><code>let rebindable(x) = copy(*r)</code></td><td>deref, duplicate, binding can change</td></tr>
+<tr><td><code>let x = *r</code> (Move)</td><td><code>let x = move(*r)</code></td><td>deref, then transfer</td></tr>
+<tr><td><code>let mut x = *r</code> (Move)</td><td><code>let rebindable(x) = move(*r)</code></td><td>deref, transfer, binding can change</td></tr>
+<tr><td><code>let &x = r</code></td><td><code>let x = copy(*r)</code></td><td>deref, copy</td></tr>
+<tr><td><code>let &mut x = r</code></td><td><code>let x = copy(*r)</code></td><td>deref, copy</td></tr>
+<tr><td><code>let mut &x = r</code></td><td><code>let rebindable(x) = copy(*r)</code></td><td>deref, copy, binding can change</td></tr>
+<tr><td><code>let mut &mut x = r</code></td><td><code>let rebindable(x) = copy(*r)</code></td><td>deref, copy, binding can change</td></tr>
+<tr><td><code>let (a, b) = t</code></td><td><code>let (a, b) = t</code></td><td>unpack structure</td></tr>
+<tr><td><code>let (a, &b) = t</code></td><td><code>let (a, b) = (t.0, *t.1)</code></td><td>pick first, deref second</td></tr>
+<tr><td><code>let (&a, &b) = t</code></td><td><code>let (a, b) = (*t.0, *t.1)</code></td><td>deref both</td></tr>
+<tr><td><code>let &(a, b) = r</code></td><td><code>let (a, b) = *r</code></td><td>deref, then unpack</td></tr>
+<tr><td><code>let mut (a, b) = t</code></td><td><code>let (rebindable(a), rebindable(b)) = t</code></td><td>unpack, both rebindable</td></tr>
+</table>
+
+**Example:**
+
+<table class="derived-table">
+<tr><th>Current</th><th>Clarified</th></tr>
+<tr><td><code>let mut &mut x = r</code></td><td><code>let rebindable(x) = copy(*r)</code></td></tr>
+</table>
+
+Current requires knowing: `mut` on binding vs `&mut` in pattern vs position rules.
+
+Clarified reads left to right: rebindable binding receives copy of dereferenced r.
+
+**What this clarifies:**
+
+<table class="derived-table">
+<tr><th>Rust</th><th>Clarified</th></tr>
+<tr><td><code>&</code> means two things based on position: on the right it creates a reference, on the left it matches and dereferences</td><td><code>shared()</code> creates a reference, <code>*</code> dereferences—separate operations, no position rules</td></tr>
+<tr><td><code>mut</code> means two things: after <code>let</code> the binding can change, after <code>&</code> mutation is allowed through the reference</td><td><code>rebindable()</code> marks the binding, <code>exclusive()</code> marks the reference—separate concepts, separate keywords</td></tr>
+<tr><td>Copy/Move is hidden—<code>let x = y</code> silently copies or moves based on whether the type implements Copy</td><td><code>copy()</code>, <code>move()</code>, <code>move_or_copy()</code> make the operation visible</td></tr>
+<tr><td>Pattern matching can dereference implicitly—<code>let &x = r</code> follows the reference as a side effect of matching</td><td><code>*r</code> is the only way to dereference, always explicit, always on the right</td></tr>
+<tr><td>Two grammars exist—pattern grammar on the left, expression grammar on the right</td><td>One grammar—operations compose on the right, names go on the left</td></tr>
+</table>
