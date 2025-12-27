@@ -16,6 +16,16 @@ toc: true
 .content blockquote { margin: 0.5rem 0; }
 .content hr { margin: 1rem 0; }
 
+/* All links should be blue and underlined by default */
+a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+a:hover {
+  color: #1d4ed8;
+}
+
 /* Derived Data styles (shared with abstractor) */
 .derived-box {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
