@@ -398,6 +398,49 @@ let r2 = shared(x);  // address of x's SPACE
 // Both r1 and r2 point to same SPACE
 ```
 
+**Move vs Borrow.**
+
+| Operation | What happens to original label |
+|-----------|-------------------------------|
+| `move(x)` | Permanent deletion—x is gone |
+| `shared(x)` / `exclusive(x)` | Temporary suspension—x returns when reference drops |
+
+```rust
+// Move: permanent
+let x = String::from("hello");
+let y = move(x);
+// x is gone forever
+
+// Borrow: temporary
+let rebindable(x) = 5;
+let r = exclusive(x);
+// x suspended while r lives
+*r = 10;
+// r drops here
+println!("{}", x);  // x is back
+```
+
+```
+// Before exclusive(x):
+┌─────────┐
+│    5    │ ← x
+└─────────┘
+
+// During exclusive(x):
+┌─────────┐
+│    5    │    x (suspended)
+├─────────┤
+│ ptr ────│───┘  ← r
+└─────────┘
+
+// After r drops:
+┌─────────┐
+│   10    │ ← x (restored)
+└─────────┘
+```
+
+The borrow checker tracks this TIME boundary. When `r` goes out of scope, `x` becomes usable again.
+
 **Why share?**
 
 Copying duplicates SPACE. For large SPACE, duplicating also costs TIME.
