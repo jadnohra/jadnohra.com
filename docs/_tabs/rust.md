@@ -348,6 +348,175 @@ r.push(4);    <span class="comment">// OK: exclusive access</span>
 
 ---
 
+## IDENTITY at Runtime
+
+**IDENTITY is syntactic.**
+
+Variable names are labels in source code. The compiler chooses how to implement them: register, stack, inlined, or eliminated entirely. The programmer doesn't control this. The compiler optimizes freely.
+
+---
+
+**Two worlds: RAM and registers.**
+
+RAM locations have addresses. Registers do not. Nothing can point to a register.
+
+---
+
+**RAM can reference itself.**
+
+RAM locations have addresses. Addresses are numbers. Numbers are data. Data can be stored in RAM. Therefore: RAM can store addresses of its own locations.
+
+```
+┌─────────────────────────┐
+│          RAM            │
+├─────────┬───────────────┤
+│ addr    │ value         │
+├─────────┼───────────────┤
+│  100    │   5       ← x │ ←──┐
+├─────────┼───────────────┤    │
+│  108    │  100      ← r │ ───┘
+├─────────┼───────────────┤
+│  ...    │  ...          │
+└─────────┴───────────────┘
+
+Location 108 contains "100"
+which is the address of location 100.
+```
+
+This enables:
+
+| Consequence | Why |
+|-------------|-----|
+| References exist | Addresses are storable data |
+| Sharing is possible | Multiple locations can store same address |
+| Complex structures | Graphs, trees, linked lists—edges are just addresses |
+
+---
+
+**This is how we share.**
+
+When you write `shared(x)` and the compiler cannot optimize it away, x must have an address. The syntactic becomes concrete. x must be in RAM.
+
+```rust
+let x = 5;
+let r1 = shared(x);  // address of x's SPACE
+let r2 = shared(x);  // address of x's SPACE
+// Both r1 and r2 point to same SPACE
+```
+
+---
+
+**Why share?**
+
+Copying duplicates SPACE. For large SPACE, duplicating also costs TIME.
+
+```rust
+let data: [u8; 1_000_000] = [0; 1_000_000];  // 1 MB SPACE
+let copy = data;  // duplicates 1 MB SPACE
+```
+
+References copy addresses instead of contents.
+
+```rust
+let data: [u8; 1_000_000] = [0; 1_000_000];  // 1 MB SPACE
+let r = shared(data);  // 8 bytes (address of SPACE)
+```
+
+| Approach | SPACE cost | Access | Coherence |
+|----------|------------|--------|-----------|
+| Copy | Size of data | Direct | None needed—independent SPACE |
+| Reference | 8 bytes | Indirection | Borrow checker enforces rules |
+
+---
+
+**Cost of sharing.**
+
+| Cost | Cause |
+|------|-------|
+| SPACE for address | 8 bytes per reference |
+| Referent forced to RAM | Registers have no addresses; sharing requires RAM |
+| Indirection | Must follow address to reach data |
+
+For small SPACE, copying is cheaper than referencing:
+
+```rust
+let x: u8 = 5;      // 1 byte, can live in register
+let r = shared(x);  // 8 bytes, forces x to RAM, adds indirection
+let y = copy(x);    // 1 byte—less SPACE, no indirection
+```
+
+This is why `Copy` exists. For small SPACE, duplication is the optimization.
+
+---
+
+**When addresses are eliminated.**
+
+The compiler can eliminate addresses when only the traversal result matters:
+
+```rust
+let x = 5;
+let r = shared(x);
+let y = at(r);
+// Compiler: "address created, traversed, done"
+// → No address in RAM, value flows directly
+```
+
+Back to syntactic. IDENTITY without addresses.
+
+**When addresses must exist:**
+
+```rust
+let x = 5;
+let r1 = shared(x);
+let r2 = shared(x);
+if std::ptr::eq(r1, r2) {  // comparing addresses—must be real
+    println!("same location");
+}
+```
+
+| Situation | Why |
+|-----------|-----|
+| Address observed (`ptr::eq`, `{:p}`) | The address itself is the data being used |
+| Stored in data structure | Address must persist |
+| Returned from function | Caller needs the address |
+| Passed to non-inlined function | Compiler can't prove it's just traversal |
+
+---
+
+**Summary:**
+
+| Thing | Runtime cost |
+|-------|--------------|
+| Address | 8 bytes—you pay this |
+| Indirection | Following address—you pay this |
+| Safety rules | Nothing—proven at compile TIME |
+
+"Zero cost abstraction": Rust checks memory safety at compile time, not runtime.
+
+```rust
+let r;
+{
+    let x = 5;
+    r = shared(x);
+}  // x's SPACE is gone
+println!("{}", at(r));  // dangling reference!
+// Rust: compile error
+// C: compiles, crashes (or worse: silent corruption)
+```
+
+SPACE is finite. We reuse it. When x goes out of scope, its SPACE becomes available. Another variable may take that SPACE. The old address now points to different data. Reading it returns garbage. Writing to it corrupts unrelated data.
+
+No garbage collector. No reference counting. No runtime checks. The compiler proves your code is safe before it runs.
+
+| Language | Address size | Memory safety |
+|----------|--------------|---------------|
+| C | 8 bytes | Not checked—crashes at runtime |
+| Rust | 8 bytes | Checked at compile time |
+
+Same runtime cost. Rust adds safety without adding runtime overhead.
+
+---
+
 ### Ownership and Move
 
 <div class="rust-code">
