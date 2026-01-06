@@ -646,24 +646,87 @@ std::vector&lt;int&gt; w = std::move(v);  <span class="comment">// Explicit move
 
 ### Copy vs Clone
 
-<table class="derived-table">
-<tr><th>Trait</th><th>IDENTITY</th><th>When</th></tr>
-<tr><td><code>Copy</code></td><td>Creates new, implicit</td><td>Bitwise copy, cheap</td></tr>
-<tr><td><code>Clone</code></td><td>Creates new, explicit</td><td>Potentially expensive</td></tr>
-</table>
+In Rust, duplicating SPACE happens two ways:
 
-<div class="rust-code">
-<pre>let a: i32 = 5;
-let b = a;      <span class="comment">// Copy: both valid, independent</span>
-<span class="comment">// i32 is Copy — stack-only, no heap resources</span>
+**Copy**: Copy the bytes. Implicit on assignment.
 
-let v = vec![1, 2, 3];
-let w = v.clone();  <span class="comment">// Clone: explicit, allocates new heap</span></pre>
-</div>
+**Clone**: Call `.clone()` method. Always explicit.
 
-**Copy = value semantics:**
-- New IDENTITY — no shared state
-- No coherence problem — independent copies
+#### When copying bytes works
+
+For `i32`, SPACE is self-contained:
+
+```
+SPACE for x:
+┌─────────┐
+│    5    │
+└─────────┘
+
+After copy:
+┌─────────┐    ┌─────────┐
+│    5    │    │    5    │
+└─────────┘    └─────────┘
+
+Independent. No problem.
+```
+
+Types like `i32`, `bool`, `f64`, `char` implement `Copy`. Assignment copies bytes implicitly:
+
+```rust
+let x = 5;
+let y = x;  // bytes copied, both valid
+```
+
+#### When copying bytes can't work
+
+For `String`, SPACE contains coordinates to other SPACE:
+
+```
+SPACE for s:
+┌─────────────────┐
+│ addr: 0x1234    │     Heap SPACE at 0x1234:
+│ len: 5          │     ┌───────────┐
+│ capacity: 5     │     │ h e l l o │
+└─────────────────┘     └───────────┘
+
+If we just copied bytes:
+┌─────────────────┐    ┌─────────────────┐
+│ addr: 0x1234    │    │ addr: 0x1234    │  ← same address!
+│ len: 5          │    │ len: 5          │
+│ capacity: 5     │    │ capacity: 5     │
+└─────────────────┘    └─────────────────┘
+
+Two owners of 0x1234. By our coherence rules, we can't allow this.
+```
+
+The borrow checker COULD track this and prevent conflicts. But then what happens when you WANT to duplicate a String?
+
+There's no single best answer:
+
+| Strategy | Description |
+|----------|-------------|
+| Deep copy | Allocate new heap, copy bytes |
+| Share with refcount | Rc-style sharing |
+| Copy-on-write | Share until mutation |
+
+So Rust separates the concerns:
+
+- **Copy**: One meaning—copy bytes. Compiler handles it.
+- **Clone**: YOU implement `.clone()`, YOU decide what "duplicate" means.
+
+#### The rule
+
+| Type | Copy? | Clone? | Why |
+|------|-------|--------|-----|
+| `i32` | ✓ | ✓ | Self-contained SPACE |
+| `&T` | ✓ | ✓ | Coordinates, but doesn't own |
+| `String` | ✗ | ✓ | Contains owning coordinates—must choose strategy |
+| `Vec<T>` | ✗ | ✓ | Same |
+| `Box<T>` | ✗ | ✓ | Same |
+
+Copy types get implicit duplication. Clone types require explicit `.clone()`.
+
+This is why expensive operations are always visible in Rust.
 
 ---
 
