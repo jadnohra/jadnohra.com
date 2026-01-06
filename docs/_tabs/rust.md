@@ -546,6 +546,73 @@ Same runtime cost. Rust adds safety without adding runtime overhead.
 
 ---
 
+### Stack and Heap
+
+**Stack SPACE is automatic.**
+
+Variables live on the stack. When they go out of scope, their SPACE is reclaimed automatically. The compiler knows the size at compile time.
+
+**Heap SPACE is dynamic.**
+
+Sometimes you need SPACE whose size isn't known at compile time, or SPACE that outlives the current scope. This SPACE lives on the heap.
+
+```rust
+let b = Box::new(String::from("hello"));
+```
+
+`Box::new(x)` does three things:
+1. Allocates SPACE on the heap
+2. Puts x there
+3. Returns owning coordinates
+
+**Three kinds of coordinates:**
+
+| Rust | Ownership | Cleanup |
+|------|-----------|---------|
+| `&y` | Borrowing | Not responsible |
+| `&mut y` | Borrowing | Not responsible |
+| `Box::new(x)` | Owning | Responsible—frees heap when dropped |
+
+Borrowing coordinates point to someone else's SPACE. Owning coordinates point to SPACE you're responsible for.
+
+**When owning coordinates drop, heap SPACE is freed:**
+
+```rust
+{
+    let b = Box::new(5);
+    // b owns heap SPACE containing 5
+}  // b drops here → heap SPACE freed
+```
+
+No garbage collector. No manual `free()`. The compiler inserts cleanup at the end of scope.
+
+**Value at owning coordinates:**
+
+```rust
+let b = Box::new(String::from("hello"));
+let x = *b;
+// x now owns the String directly
+// b is invalid—its heap SPACE was taken
+```
+
+```
+Before *b:
+  Stack              Heap                 Heap
+┌───────┐      ┌───────────┐       ┌─────────┐
+│ ptr ──│─────>│ ptr/len/cap│──────>│ "hello" │
+└───────┘ ← b  └───────────┘       └─────────┘
+  (Box)          (String)
+
+After *b:
+  Stack                              Heap
+┌───────────┐                  ┌─────────┐
+│ ptr/len/cap│─────────────────>│ "hello" │
+└───────────┘ ← x              └─────────┘
+              ← b (invalid)
+```
+
+---
+
 ### Ownership and Move
 
 <div class="rust-code">
