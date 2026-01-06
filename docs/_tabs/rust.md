@@ -348,19 +348,15 @@ r.push(4);    <span class="comment">// OK: exclusive access</span>
 
 ---
 
-## IDENTITY at Runtime
+### IDENTITY at Runtime
 
 **IDENTITY is syntactic.**
 
 Variable names are labels in source code. The compiler chooses how to implement them: register, stack, inlined, or eliminated entirely. The programmer doesn't control this. The compiler optimizes freely.
 
----
-
 **Two worlds: RAM and registers.**
 
 RAM locations have addresses. Registers do not. Nothing can point to a register.
-
----
 
 **RAM can reference itself.**
 
@@ -391,8 +387,6 @@ This enables:
 | Sharing is possible | Multiple locations can store same address |
 | Complex structures | Graphs, trees, linked lists—edges are just addresses |
 
----
-
 **This is how we share.**
 
 When you write `shared(x)` and the compiler cannot optimize it away, x must have an address. The syntactic becomes concrete. x must be in RAM.
@@ -403,8 +397,6 @@ let r1 = shared(x);  // address of x's SPACE
 let r2 = shared(x);  // address of x's SPACE
 // Both r1 and r2 point to same SPACE
 ```
-
----
 
 **Why share?**
 
@@ -427,8 +419,6 @@ let r = shared(data);  // 8 bytes (address of SPACE)
 | Copy | Size of data | Direct | None needed—independent SPACE |
 | Reference | 8 bytes | Indirection | Borrow checker enforces rules |
 
----
-
 **Cost of sharing.**
 
 | Cost | Cause |
@@ -446,8 +436,6 @@ let y = copy(x);    // 1 byte—less SPACE, no indirection
 ```
 
 This is why `Copy` exists. For small SPACE, duplication is the optimization.
-
----
 
 **When addresses are eliminated.**
 
@@ -480,8 +468,6 @@ if std::ptr::eq(r1, r2) {  // comparing addresses—must be real
 | Stored in data structure | Address must persist |
 | Returned from function | Caller needs the address |
 | Passed to non-inlined function | Compiler can't prove it's just traversal |
-
----
 
 **Summary:**
 
