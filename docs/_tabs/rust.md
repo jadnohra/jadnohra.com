@@ -157,162 +157,69 @@ Core strategy: <b>prove coherence at compile time</b>.
 
 ---
 
-### Bindings
+## The Two Projections
+
+Each axis exists in two forms:
 
 <table class="derived-table">
-<tr><th>Construct</th><th>TIME</th><th>SPACE</th><th>IDENTITY</th><th>Coherence</th></tr>
-<tr><td><code>const</code></td><td>Compile</td><td>Inlined</td><td>N/A</td><td>None needed</td></tr>
-<tr><td><code>static</code></td><td>Compile init</td><td>Data segment</td><td>Global</td><td>Immutable or atomic</td></tr>
-<tr><td><code>static mut</code></td><td>Runtime</td><td>Data segment</td><td>Global</td><td><code>unsafe</code> — you prove it</td></tr>
-<tr><td><code>let</code></td><td>Runtime</td><td>Stack</td><td>Owned</td><td>Scope-limited</td></tr>
-<tr><td><code>let mut</code></td><td>Runtime</td><td>Stack</td><td>Owned</td><td>Scope-limited</td></tr>
+<tr><th>Axis</th><th>Compile-time</th><th>Runtime</th></tr>
+<tr><td>SPACE</td><td>Types, layouts</td><td>Bytes in memory</td></tr>
+<tr><td>TIME</td><td>CFG regions</td><td>Execution sequence</td></tr>
+<tr><td>IDENTITY</td><td>Names</td><td>Addresses</td></tr>
 </table>
+
+The compiler works in compile-time projection: it tracks names (not addresses), analyzes CFG regions (not execution), and reasons about types (not bytes). It proves coherence there. The proof transfers to runtime.
+
+This is what "zero-cost" means. Verification happens before execution. Nothing carries over except the guarantee.
+
+Confusion arises from conflating projections. "Lifetime" sounds like runtime duration—it's a compile-time region. "&mut" sounds like mutation—it's exclusive IDENTITY. The borrow checker doesn't run at runtime. It operates on names and regions, then erases them.
 
 ---
 
-### const
-
-<div class="rust-code">
-<pre>const MAX: u32 = 100;
-const BUFFER: [u8; 1024] = [0; 1024];</pre>
-</div>
+## Bindings
 
 <table class="derived-table">
-<tr><th>Axis</th><th>Choice</th></tr>
-<tr><td>TIME</td><td>Compile — value must be computable by the compiler</td></tr>
-<tr><td>SPACE</td><td>Inlined — substituted at every use site, no address</td></tr>
-<tr><td>IDENTITY</td><td>N/A — each use is an independent copy</td></tr>
-<tr><td>Coherence</td><td>None needed — no shared location exists</td></tr>
+<tr><th>Construct</th><th>SPACE</th><th>TIME</th><th>IDENTITY</th></tr>
+<tr><td><code>const</code></td><td>Inlined</td><td>Compile</td><td>Compile only</td></tr>
+<tr><td><code>static</code></td><td>Data segment</td><td>Compile init</td><td>Both</td></tr>
+<tr><td><code>static mut</code></td><td>Data segment</td><td>Runtime</td><td>Both (unsafe)</td></tr>
+<tr><td><code>let</code></td><td>Stack</td><td>Runtime</td><td>Both</td></tr>
+<tr><td><code>let mut</code></td><td>Stack</td><td>Runtime</td><td>Both</td></tr>
 </table>
 
-**Why it exists:**
-- Array sizes require compile-time known values: `[T; N]`
-- Match arms need compile-time constants
-- Zero runtime cost — no memory, no lookup
-
-**Abstraction leak:**
+**const** — Purely compile-time. No runtime IDENTITY exists. Each use is inlined. Taking `&CONST` may yield different addresses—there is no single location.
 
 <div class="rust-code">
 <pre>const X: u32 = 5;
 let a = &X;
 let b = &X;
-<span class="comment">// a and b may have DIFFERENT addresses — each is a fresh inline copy</span></pre>
+<span class="comment">// a and b may have different addresses</span></pre>
 </div>
 
-**Contrast — C/C++:**
-
-<div class="rust-code">
-<pre><span class="comment">const int MAX = 100;      // C: may still have address, not truly inlined</span>
-<span class="comment">constexpr int MAX = 100;  // C++11: equivalent to Rust const</span>
-<span class="comment">#define MAX 100           // Preprocessor: textual substitution, no type safety</span></pre>
-</div>
-
----
-
-### static
+**static** — Bridges projections. Initialized at compile-time, lives in data segment at runtime. Has a stable address. Must be immutable or use interior mutability with atomics.
 
 <div class="rust-code">
 <pre>static TABLE: [u8; 256] = [/* ... */];
 static COUNTER: AtomicU32 = AtomicU32::new(0);</pre>
 </div>
 
-<table class="derived-table">
-<tr><th>Axis</th><th>Choice</th></tr>
-<tr><td>TIME</td><td>Compile-time initialization, runtime reads</td></tr>
-<tr><td>SPACE</td><td>Data segment — one fixed address for program lifetime</td></tr>
-<tr><td>IDENTITY</td><td>Global — all code sees same location</td></tr>
-<tr><td>Coherence</td><td>Must be immutable OR use interior mutability with atomics</td></tr>
-</table>
-
-**Why it exists:**
-- Need stable address: `&'static T`
-- Large data that shouldn't be duplicated at every use site
-- Global state with proper synchronization
-
-**Contrast — const:**
-
-<div class="rust-code">
-<pre>const  DATA: [u8; 1000] = [0; 1000];  <span class="comment">// 1000 bytes inlined at EACH use</span>
-static DATA: [u8; 1000] = [0; 1000];  <span class="comment">// 1000 bytes in binary ONCE</span></pre>
-</div>
-
----
-
-### static mut
+**static mut** — Runtime mutation of global IDENTITY. Rust can't prove safety. Every access requires `unsafe`.
 
 <div class="rust-code">
 <pre>static mut COUNTER: u32 = 0;
-
-unsafe {
-    COUNTER += 1;  <span class="comment">// Every access requires unsafe</span>
-}</pre>
+unsafe { COUNTER += 1; }</pre>
 </div>
 
-<table class="derived-table">
-<tr><th>Axis</th><th>Choice</th></tr>
-<tr><td>TIME</td><td>Runtime mutations</td></tr>
-<tr><td>SPACE</td><td>Data segment</td></tr>
-<tr><td>IDENTITY</td><td>Global — all threads can alias</td></tr>
-<tr><td>Coherence</td><td><code>unsafe</code> — YOU prove no data races</td></tr>
-</table>
-
-**Why unsafe:**
-- Global IDENTITY + free TIME = coherence problem
-- Rust can't prove safety → you must
-- Prefer `AtomicU32`, `Mutex<T>`, or `OnceLock<T>`
-
----
-
-### let (immutable)
+**let / let mut** — Runtime evaluation, stack SPACE. `mut` allows rebinding the name, not mutation through it.
 
 <div class="rust-code">
-<pre>let x = compute_something();
-let y = &x;  <span class="comment">// Borrow: shared reference</span></pre>
+<pre>let x = 5;           <span class="comment">// immutable binding</span>
+let mut y = 5;       <span class="comment">// can rebind: y = 10;</span></pre>
 </div>
-
-<table class="derived-table">
-<tr><th>Axis</th><th>Choice</th></tr>
-<tr><td>TIME</td><td>Runtime — evaluated when reached</td></tr>
-<tr><td>SPACE</td><td>Stack — lives in current frame</td></tr>
-<tr><td>IDENTITY</td><td>Owned — one owner, borrowable</td></tr>
-<tr><td>Coherence</td><td>Borrow checker proves safety</td></tr>
-</table>
-
-**Why immutable by default:**
-- Shared references (`&T`) are safe with no mutation
-- Enables the rule: many `&T` OR one `&mut T`
 
 ---
 
-### let mut
-
-<div class="rust-code">
-<pre>let mut x = 5;
-x += 1;
-
-let r = &mut x;  <span class="comment">// Exclusive borrow</span>
-*r += 1;</pre>
-</div>
-
-<table class="derived-table">
-<tr><th>Axis</th><th>Choice</th></tr>
-<tr><td>TIME</td><td>Runtime, mutable</td></tr>
-<tr><td>SPACE</td><td>Stack</td></tr>
-<tr><td>IDENTITY</td><td>Unique access enforced</td></tr>
-<tr><td>Coherence</td><td>Borrow checker: <code>&mut</code> is exclusive</td></tr>
-</table>
-
-**The rule:**
-
-<div class="derived-box">
-!(shared_identity && mutation)
-</div>
-
-Expressed as: many `&T` OR one `&mut T`, never both.
-
----
-
-### References
+## References
 
 <table class="derived-table">
 <tr><th>Construct</th><th>IDENTITY</th><th>TIME</th><th>Coherence</th></tr>
@@ -320,250 +227,94 @@ Expressed as: many `&T` OR one `&mut T`, never both.
 <tr><td><code>&mut T</code></td><td>Exclusive</td><td>Flows</td><td>One allowed, mutation ok</td></tr>
 </table>
 
-**&T — Shared Reference:**
+**&T — Shared reference:**
 
 <div class="rust-code">
 <pre>let x = vec![1, 2, 3];
 let r1 = &x;
-let r2 = &x;  <span class="comment">// OK: multiple shared refs</span>
-<span class="comment">// x.push(4);  // ERROR: can't mutate while borrowed</span></pre>
+let r2 = &x;  <span class="comment">// multiple shared refs OK</span></pre>
 </div>
 
-- IDENTITY is shared (multiple paths to same data)
-- TIME is frozen (no mutation through any path)
-- Coherence: no problem — frozen TIME
+IDENTITY is shared (multiple paths to same data). TIME is frozen (no mutation through any path).
 
-**&mut T — Exclusive Reference:**
+**&mut T — Exclusive reference:**
 
 <div class="rust-code">
 <pre>let mut x = vec![1, 2, 3];
 let r = &mut x;
-r.push(4);    <span class="comment">// OK: exclusive access</span>
-<span class="comment">// let r2 = &x;  // ERROR: can't alias while mutably borrowed</span></pre>
+r.push(4);  <span class="comment">// exclusive access</span></pre>
 </div>
 
-- IDENTITY is unique (only one path)
-- TIME flows (mutation allowed)
-- Coherence: no problem — unique IDENTITY
+IDENTITY is unique (only one path). TIME flows (mutation allowed).
+
+<div class="derived-box">
+The rule: !(shared IDENTITY && mutation)
+</div>
+
+Expressed as: many `&T` OR one `&mut T`, never both.
 
 ---
 
-### IDENTITY at Runtime
-
-**IDENTITY is syntactic.**
-
-Variable names are labels in source code. The compiler chooses how to implement them: register, stack, inlined, or eliminated entirely. The programmer doesn't control this. The compiler optimizes freely.
-
-**Two worlds: RAM and registers.**
-
-RAM locations have addresses. Registers do not. Nothing can point to a register.
+## IDENTITY at Runtime
 
 **RAM can reference itself.**
 
 RAM locations have addresses. Addresses are numbers. Numbers are data. Data can be stored in RAM. Therefore: RAM can store addresses of its own locations.
 
 ```
-┌─────────────────────────┐
-│          RAM            │
-├─────────┬───────────────┤
-│ addr    │ value         │
-├─────────┼───────────────┤
+┌─────────┬───────────────┐
 │  100    │   5       ← x │ ←──┐
 ├─────────┼───────────────┤    │
 │  108    │  100      ← r │ ───┘
-├─────────┼───────────────┤
-│  ...    │  ...          │
 └─────────┴───────────────┘
-
-Location 108 contains "100"
-which is the address of location 100.
 ```
 
-This enables:
+This enables references, sharing, and complex structures (graphs, trees, linked lists).
 
-| Consequence | Why |
-|-------------|-----|
-| References exist | Addresses are storable data |
-| Sharing is possible | Multiple locations can store same address |
-| Complex structures | Graphs, trees, linked lists—edges are just addresses |
+**Registers have no address.**
 
-**This is how we share.**
+Registers hold bytes but lack addresses. Taking a reference forces the value to stack—the compiler can't point to a register.
 
-When you write `shared(x)` and the compiler cannot optimize it away, x must have an address. The syntactic becomes concrete. x must be in RAM.
+<div class="rust-code">
+<pre>let x = 5;      <span class="comment">// might live in register</span>
+let r = &x;     <span class="comment">// x now has address (stack)</span></pre>
+</div>
 
-```rust
-let x = 5;
-let r1 = shared(x);  // address of x's SPACE
-let r2 = shared(x);  // address of x's SPACE
-// Both r1 and r2 point to same SPACE
-```
-
-**Move vs Borrow.**
-
-| Operation | What happens to original label |
-|-----------|-------------------------------|
-| `move(x)` | Permanent deletion—x is gone |
-| `shared(x)` / `exclusive(x)` | Temporary suspension—x returns when reference drops |
-
-```rust
-// Move: permanent
-let x = String::from("hello");
-let y = move(x);
-// x is gone forever
-
-// Borrow: temporary
-let rebindable(x) = 5;
-let r = exclusive(x);
-// x suspended while r lives
-*r = 10;
-// r drops here
-println!("{}", x);  // x is back
-```
-
-```
-// Before exclusive(x):
-┌─────────┐
-│    5    │ ← x
-└─────────┘
-
-// During exclusive(x):
-┌─────────┐
-│    5    │    x (suspended)
-├─────────┤
-│ ptr ────│───┘  ← r
-└─────────┘
-
-// After r drops:
-┌─────────┐
-│   10    │ ← x (restored)
-└─────────┘
-```
-
-The borrow checker tracks this TIME boundary. When `r` goes out of scope, `x` becomes usable again.
-
-**Why share?**
-
-Copying duplicates SPACE. For large SPACE, duplicating also costs TIME.
-
-```rust
-let data: [u8; 1_000_000] = [0; 1_000_000];  // 1 MB SPACE
-let copy = data;  // duplicates 1 MB SPACE
-```
-
-References copy addresses instead of contents.
-
-```rust
-let data: [u8; 1_000_000] = [0; 1_000_000];  // 1 MB SPACE
-let r = shared(data);  // 8 bytes (address of SPACE)
-```
-
-| Approach | SPACE cost | Access | Coherence |
-|----------|------------|--------|-----------|
-| Copy | Size of data | Direct | None needed—independent SPACE |
-| Reference | 8 bytes | Indirection | Borrow checker enforces rules |
-
-**Cost of sharing.**
+**Cost of sharing:**
 
 | Cost | Cause |
 |------|-------|
-| SPACE for address | 8 bytes per reference |
-| Referent forced to RAM | Registers have no addresses; sharing requires RAM |
-| Indirection | Must follow address to reach data |
+| 8 bytes | Address storage |
+| Indirection | Follow address to reach data |
+| Forces RAM | Registers have no address |
 
-For small SPACE, copying is cheaper than referencing:
+For small types, copying is cheaper than referencing. This is why `Copy` exists.
 
-```rust
-let x: u8 = 5;      // 1 byte, can live in register
-let r = shared(x);  // 8 bytes, forces x to RAM, adds indirection
-let y = copy(x);    // 1 byte—less SPACE, no indirection
-```
-
-This is why `Copy` exists. For small SPACE, duplication is the optimization.
-
-**When addresses are eliminated.**
-
-The compiler can eliminate addresses when only the traversal result matters:
-
-```rust
-let x = 5;
-let r = shared(x);
-let y = at(r);
-// Compiler: "address created, traversed, done"
-// → No address in RAM, value flows directly
-```
-
-Back to syntactic. IDENTITY without addresses.
-
-**When addresses must exist:**
-
-```rust
-let x = 5;
-let r1 = shared(x);
-let r2 = shared(x);
-if std::ptr::eq(r1, r2) {  // comparing addresses—must be real
-    println!("same location");
-}
-```
-
-| Situation | Why |
-|-----------|-----|
-| Address observed (`ptr::eq`, `{:p}`) | The address itself is the data being used |
-| Stored in data structure | Address must persist |
-| Returned from function | Caller needs the address |
-| Passed to non-inlined function | Compiler can't prove it's just traversal |
-
-**Summary:**
+**Zero-cost safety:**
 
 | Thing | Runtime cost |
 |-------|--------------|
-| Address | 8 bytes—you pay this |
-| Indirection | Following address—you pay this |
-| Safety rules | Nothing—proven at compile TIME |
-
-"Zero cost abstraction": Rust checks memory safety at compile time, not runtime.
-
-```rust
-let r;
-{
-    let x = 5;
-    r = shared(x);
-}  // x's SPACE is gone
-println!("{}", at(r));  // dangling reference!
-// Rust: compile error
-// C: compiles, crashes (or worse: silent corruption)
-```
-
-SPACE is finite. We reuse it. When x goes out of scope, its SPACE becomes available. Another variable may take that SPACE. The old address now points to different data. Reading it returns garbage. Writing to it corrupts unrelated data.
-
-No garbage collector. No reference counting. No runtime checks. The compiler proves your code is safe before it runs.
-
-| Language | Address size | Memory safety |
-|----------|--------------|---------------|
-| C | 8 bytes | Not checked—crashes at runtime |
-| Rust | 8 bytes | Checked at compile time |
-
-Same runtime cost. Rust adds safety without adding runtime overhead.
+| Address | 8 bytes |
+| Indirection | Following address |
+| Safety rules | Nothing—proven at compile time |
 
 ---
 
-### Stack and Heap
+## Stack and Heap
 
 **Stack SPACE is automatic.**
 
-Variables live on the stack. When they go out of scope, their SPACE is reclaimed automatically. The compiler knows the size at compile time.
+Variables live on the stack. When they go out of scope, their SPACE is reclaimed. The compiler knows the size at compile time.
 
 **Heap SPACE is dynamic.**
 
 Sometimes you need SPACE whose size isn't known at compile time, or SPACE that outlives the current scope. This SPACE lives on the heap.
 
-```rust
-let b = Box::new(String::from("hello"));
-```
+<div class="rust-code">
+<pre>let b = Box::new(String::from("hello"));</pre>
+</div>
 
-`Box::new(x)` does three things:
-1. Allocates SPACE on the heap
-2. Puts x there
-3. Returns owning coordinates
+`Box::new(x)` allocates SPACE on the heap, puts x there, and returns owning coordinates.
 
 **Three kinds of coordinates:**
 
@@ -571,172 +322,106 @@ let b = Box::new(String::from("hello"));
 |------|-----------|---------|
 | `&y` | Borrowing | Not responsible |
 | `&mut y` | Borrowing | Not responsible |
-| `Box::new(x)` | Owning | Responsible—frees heap when dropped |
-
-Borrowing coordinates point to someone else's SPACE. Owning coordinates point to SPACE you're responsible for.
+| `Box::new(x)` | Owning | Frees heap when dropped |
 
 **When owning coordinates drop, heap SPACE is freed:**
 
-```rust
-{
+<div class="rust-code">
+<pre>{
     let b = Box::new(5);
-    // b owns heap SPACE containing 5
-}  // b drops here → heap SPACE freed
-```
+}  <span class="comment">// b drops → heap freed</span></pre>
+</div>
 
-No garbage collector. No manual `free()`. The compiler inserts cleanup at the end of scope.
-
-**Value at owning coordinates:**
-
-```rust
-let b = Box::new(String::from("hello"));
-let x = *b;
-// x now owns the String directly
-// b is invalid—its heap SPACE was taken
-```
-
-```
-Before *b:
-  Stack              Heap                 Heap
-┌───────┐      ┌───────────┐       ┌─────────┐
-│ ptr ──│─────>│ ptr/len/cap│──────>│ "hello" │
-└───────┘ ← b  └───────────┘       └─────────┘
-  (Box)          (String)
-
-After *b:
-  Stack                              Heap
-┌───────────┐                  ┌─────────┐
-│ ptr/len/cap│─────────────────>│ "hello" │
-└───────────┘ ← x              └─────────┘
-              ← b (invalid)
-```
+No garbage collector. No manual `free()`. The compiler inserts cleanup at scope end.
 
 ---
 
-### Ownership and Move
+## Ownership and Move
 
 <div class="rust-code">
 <pre>let v = vec![1, 2, 3];
-let w = v;  <span class="comment">// MOVE: v is now invalid</span>
-<span class="comment">// println!("{:?}", v);  // ERROR: use of moved value</span></pre>
+let w = v;  <span class="comment">// MOVE: v is now invalid</span></pre>
 </div>
 
 <table class="derived-table">
-<tr><th>Axis</th><th>Choice</th></tr>
+<tr><th>Axis</th><th>What happens</th></tr>
 <tr><td>IDENTITY</td><td>Transferred — old binding invalid</td></tr>
 <tr><td>SPACE</td><td>Same or new (compiler decides)</td></tr>
 <tr><td>Coherence</td><td>Only one owner → no aliasing</td></tr>
 </table>
 
-**Why move semantics:**
-- Eliminates shared IDENTITY by default
-- No coherence problem if only one owner exists
+Move semantics eliminate shared IDENTITY by default. No coherence problem if only one owner exists.
 
-**Contrast — C++:**
+**C++ contrast:**
 
 <div class="rust-code">
-<pre>std::vector&lt;int&gt; v = {1, 2, 3};
-std::vector&lt;int&gt; w = v;  <span class="comment">// COPY by default</span>
-<span class="comment">// Both v and w valid — independent copies</span>
-std::vector&lt;int&gt; w = std::move(v);  <span class="comment">// Explicit move</span>
-<span class="comment">// v is valid but "empty" — not enforced by compiler</span></pre>
+<pre><span class="comment">std::vector<int> w = v;       // COPY by default</span>
+<span class="comment">std::vector<int> w = std::move(v);  // explicit move, v "valid but empty"</span></pre>
 </div>
+
+In Rust, the compiler enforces that moved-from values cannot be used. In C++, you can still access moved-from values—the compiler doesn't prevent it.
 
 ---
 
-### Copy vs Clone
+## Copy vs Clone
 
-In Rust, duplicating SPACE happens two ways:
+Duplicating SPACE happens two ways:
 
-**Copy**: Copy the bytes. Implicit on assignment.
+**Copy** — Copy the bytes. Implicit on assignment.
 
-**Clone**: Call `.clone()` method. Always explicit.
+**Clone** — Call `.clone()`. Always explicit.
 
-#### When copying bytes works
+**When copying bytes works:**
 
-For `i32`, SPACE is self-contained:
+For `i32`, SPACE is self-contained. Copying bytes produces an independent value.
 
 ```
-SPACE for x:
-┌─────────┐
-│    5    │
-└─────────┘
-
-After copy:
 ┌─────────┐    ┌─────────┐
 │    5    │    │    5    │
 └─────────┘    └─────────┘
-
-Independent. No problem.
 ```
 
-Types like `i32`, `bool`, `f64`, `char` implement `Copy`. Assignment copies bytes implicitly:
+Types like `i32`, `bool`, `f64`, `char` implement `Copy`.
 
-```rust
-let x = 5;
-let y = x;  // bytes copied, both valid
-```
+**When copying bytes fails:**
 
-#### When copying bytes can't work
-
-For `String`, SPACE contains coordinates to other SPACE:
+For `String`, SPACE contains coordinates to heap SPACE:
 
 ```
-SPACE for s:
 ┌─────────────────┐
-│ addr: 0x1234    │     Heap SPACE at 0x1234:
+│ addr: 0x1234    │     Heap:
 │ len: 5          │     ┌───────────┐
 │ capacity: 5     │     │ h e l l o │
 └─────────────────┘     └───────────┘
-
-If we just copied bytes:
-┌─────────────────┐    ┌─────────────────┐
-│ addr: 0x1234    │    │ addr: 0x1234    │  ← same address!
-│ len: 5          │    │ len: 5          │
-│ capacity: 5     │    │ capacity: 5     │
-└─────────────────┘    └─────────────────┘
-
-Two owners of 0x1234. By our coherence rules, we can't allow this.
 ```
 
-The borrow checker COULD track this and prevent conflicts. But then what happens when you WANT to duplicate a String?
+Copying bytes would create two owners of the same heap SPACE. Instead, Rust requires explicit choice:
 
-There's no single best answer:
+| Strategy | Method |
+|----------|--------|
+| Deep copy | `.clone()` — new heap allocation |
+| Share with refcount | `Rc::clone()` |
+| Transfer ownership | Move |
 
-| Strategy | Description |
-|----------|-------------|
-| Deep copy | Allocate new heap, copy bytes |
-| Share with refcount | Rc-style sharing |
-| Copy-on-write | Share until mutation |
+<table class="derived-table">
+<tr><th>Type</th><th>Copy?</th><th>Clone?</th><th>Why</th></tr>
+<tr><td><code>i32</code></td><td>Yes</td><td>Yes</td><td>Self-contained</td></tr>
+<tr><td><code>&T</code></td><td>Yes</td><td>Yes</td><td>Coordinates, doesn't own</td></tr>
+<tr><td><code>String</code></td><td>No</td><td>Yes</td><td>Owns heap—must choose strategy</td></tr>
+<tr><td><code>Vec<T></code></td><td>No</td><td>Yes</td><td>Owns heap</td></tr>
+</table>
 
-So Rust separates the concerns:
-
-- **Copy**: One meaning—copy bytes. Compiler handles it.
-- **Clone**: YOU implement `.clone()`, YOU decide what "duplicate" means.
-
-#### The rule
-
-| Type | Copy? | Clone? | Why |
-|------|-------|--------|-----|
-| `i32` | ✓ | ✓ | Self-contained SPACE |
-| `&T` | ✓ | ✓ | Coordinates, but doesn't own |
-| `String` | ✗ | ✓ | Contains owning coordinates—must choose strategy |
-| `Vec<T>` | ✗ | ✓ | Same |
-| `Box<T>` | ✗ | ✓ | Same |
-
-Copy types get implicit duplication. Clone types require explicit `.clone()`.
-
-This is why expensive operations are always visible in Rust.
+Copy types get implicit duplication. Clone types require explicit `.clone()`. Expensive operations are visible.
 
 ---
 
-### Shared Ownership — Rc and Arc
+## Shared Ownership
 
-`Box<T>` is unique IDENTITY to SPACE. One owner, clear responsibility, owner ends SPACE's TIME.
+`Box<T>` is unique IDENTITY to SPACE. One owner, clear responsibility.
 
 What if you need shared IDENTITY to the same SPACE? Who frees it?
 
-`Rc<T>` / `Arc<T>`: count the IDENTITYs. When count hits zero, SPACE's TIME ends.
+`Rc<T>` / `Arc<T>`: count the IDENTITYs. When count hits zero, SPACE ends.
 
 <table class="derived-table">
 <tr><th>Type</th><th>IDENTITY</th><th>SPACE lifetime</th><th>Thread</th></tr>
@@ -745,13 +430,9 @@ What if you need shared IDENTITY to the same SPACE? Who frees it?
 <tr><td><code>Arc&lt;T&gt;</code></td><td>Shared, atomic counted</td><td>Last IDENTITY ends it</td><td>Multi</td></tr>
 </table>
 
-This solves SPACE × IDENTITY. But contents are immutable — TIME is frozen.
+This solves SPACE × IDENTITY. But contents are immutable—TIME is frozen.
 
----
-
-### Combining Ownership + Interior Mutability
-
-Neither alone is enough for shared mutable data:
+To combine shared ownership with mutation:
 
 <table class="derived-table">
 <tr><th>Type</th><th>SPACE × IDENTITY</th><th>TIME</th></tr>
@@ -761,101 +442,128 @@ Neither alone is enough for shared mutable data:
 <tr><td><code>Arc&lt;Mutex&lt;T&gt;&gt;</code></td><td>Shared ownership (atomic)</td><td>Serialized</td></tr>
 </table>
 
-Ownership handles SPACE × IDENTITY (who can access, who frees).
-Interior mutability handles TIME (when mutation is safe).
+Ownership handles SPACE × IDENTITY (who can access, who frees). Interior mutability handles TIME (when mutation is safe).
 
 ---
 
-### Interior Mutability
+## Interior Mutability
 
-When you need shared IDENTITY + mutation:
+Interior mutability moves verification from compile-time to runtime projection. Same rules, different when checked.
 
 <table class="derived-table">
-<tr><th>Type</th><th>SPACE</th><th>Coherence Strategy</th></tr>
-<tr><td><code>Cell&lt;T&gt;</code></td><td>Stack/heap</td><td>Single-thread, no refs into</td></tr>
-<tr><td><code>RefCell&lt;T&gt;</code></td><td>Stack/heap</td><td>Single-thread, runtime borrow check</td></tr>
-<tr><td><code>Mutex&lt;T&gt;</code></td><td>Heap</td><td>Multi-thread, serialize TIME</td></tr>
-<tr><td><code>RwLock&lt;T&gt;</code></td><td>Heap</td><td>Multi-thread, many-read or one-write</td></tr>
-<tr><td><code>Atomic*</code></td><td>Stack/heap</td><td>Multi-thread, hardware arbitration</td></tr>
+<tr><th>Type</th><th>Checked when</th><th>Cost</th><th>Thread</th></tr>
+<tr><td><code>&T</code> / <code>&mut T</code></td><td>Compile</td><td>Zero</td><td>Any</td></tr>
+<tr><td><code>Cell&lt;T&gt;</code></td><td>Runtime</td><td>Copy in/out</td><td>Single</td></tr>
+<tr><td><code>RefCell&lt;T&gt;</code></td><td>Runtime</td><td>Borrow count</td><td>Single</td></tr>
+<tr><td><code>Mutex&lt;T&gt;</code></td><td>Runtime</td><td>Lock</td><td>Multi</td></tr>
+<tr><td><code>RwLock&lt;T&gt;</code></td><td>Runtime</td><td>Lock</td><td>Multi</td></tr>
+<tr><td><code>Atomic*</code></td><td>Runtime</td><td>Hardware</td><td>Multi</td></tr>
+<tr><td><code>UnsafeCell&lt;T&gt;</code></td><td>Never</td><td>Zero</td><td>Any</td></tr>
 </table>
 
-<div class="rust-code">
-<pre>use std::cell::RefCell;
+**The hierarchy:**
 
-let data = RefCell::new(vec![1, 2, 3]);
-let r1 = data.borrow();      <span class="comment">// Shared borrow at runtime</span>
-let r2 = data.borrow();      <span class="comment">// OK</span>
-<span class="comment">// let w = data.borrow_mut(); // PANIC: already borrowed</span></pre>
-</div>
-
-**Why it exists:**
-- Borrow checker is conservative — rejects some safe programs
-- Interior mutability opts into runtime checking
-- `unsafe` under the hood, safe API on top
+```
+UnsafeCell<T>           ← primitive: makes &T + mutation not UB
+    │
+    ├── Cell<T>         ← single-thread, Copy only
+    ├── RefCell<T>      ← single-thread, runtime borrow check
+    ├── Mutex<T>        ← multi-thread, OS lock
+    ├── RwLock<T>       ← multi-thread, many-read or one-write
+    └── Atomic*         ← multi-thread, hardware
+```
 
 ---
 
-### Thread Safety Markers
+**Cell** — No references into contents. Only copy values in/out.
+
+<div class="rust-code">
+<pre>let x = Cell::new(5);
+x.set(10);       <span class="comment">// mutate through shared ref</span>
+let v = x.get(); <span class="comment">// returns copy</span></pre>
+</div>
+
+---
+
+**RefCell** — Runtime borrow checker. Panics on violation.
+
+<div class="rust-code">
+<pre>let x = RefCell::new(vec![1, 2, 3]);
+let r = x.borrow();      <span class="comment">// shared</span>
+let s = x.borrow();      <span class="comment">// OK</span>
+<span class="comment">// x.borrow_mut();       // PANIC: already borrowed</span></pre>
+</div>
+
+Same logic as compile-time borrow checker, run at runtime.
+
+---
+
+**Mutex** — Serialize TIME. Only one accessor.
+
+<div class="rust-code">
+<pre>let x = Mutex::new(vec![1, 2, 3]);
+let mut guard = x.lock().unwrap();
+guard.push(4);
+<span class="comment">// other threads block until guard drops</span></pre>
+</div>
+
+---
+
+**Atomic** — Hardware arbitration. Individual operations indivisible.
+
+<div class="rust-code">
+<pre>let x = AtomicU64::new(0);
+x.fetch_add(1, Ordering::SeqCst);</pre>
+</div>
+
+---
+
+**When to use:**
+
+| Situation | Use |
+|-----------|-----|
+| Simple flag, single thread | `Cell<T>` |
+| Complex data, single thread | `RefCell<T>` |
+| Shared across threads | `Mutex<T>` |
+| Read-heavy, multi-thread | `RwLock<T>` |
+| Counter, multi-thread | `AtomicU64` |
+| Building sync primitives | `UnsafeCell<T>` |
+| Borrow checker accepts code | None needed |
+
+---
+
+## Thread Safety
 
 <table class="derived-table">
 <tr><th>Trait</th><th>Meaning</th></tr>
-<tr><td><code>Send</code></td><td>Safe to transfer to another thread (move IDENTITY across threads)</td></tr>
-<tr><td><code>Sync</code></td><td>Safe to share reference across threads (<code>&T</code> can be sent)</td></tr>
+<tr><td><code>Send</code></td><td>IDENTITY can transfer across thread boundary</td></tr>
+<tr><td><code>Sync</code></td><td>Shared IDENTITY (<code>&T</code>) safe across threads</td></tr>
 </table>
 
 <div class="rust-code">
-<pre><span class="comment">// Rc&lt;T&gt; is !Send and !Sync — single-thread only</span>
-<span class="comment">// Arc&lt;T&gt; is Send and Sync — multi-thread safe</span>
-
-<span class="comment">// Mutex&lt;T&gt;: T is Send → Mutex&lt;T&gt; is Send + Sync</span>
-<span class="comment">// The Mutex provides the coherence strategy</span></pre>
+<pre><span class="comment">// Rc<T> is !Send and !Sync — single-thread only</span>
+<span class="comment">// Arc<T> is Send and Sync — multi-thread safe</span>
+<span class="comment">// Mutex<T>: T is Send → Mutex<T> is Send + Sync</span></pre>
 </div>
 
-**The insight:**
-- `Send` = IDENTITY can cross thread boundary
-- `Sync` = shared IDENTITY across threads is safe
-- Compiler checks these at compile time
+The compiler checks these at compile time. If your code compiles, thread safety is proven.
 
 ---
 
-### Summary — Rust's Strategy
+## Summary
 
 <table class="derived-table">
 <tr><th>Problem</th><th>Rust's Solution</th></tr>
 <tr><td>When to evaluate?</td><td><code>const</code> (compile) vs <code>let</code> (runtime)</td></tr>
-<tr><td>Where to store?</td><td>Inlined / stack / heap / static — explicit control</td></tr>
-<tr><td>Aliasing + mutation?</td><td>Borrow checker: <code>&T</code> OR <code>&mut T</code>, never both</td></tr>
+<tr><td>Where to store?</td><td>Inlined / stack / heap / static</td></tr>
+<tr><td>Aliasing + mutation?</td><td>Borrow checker: <code>&T</code> OR <code>&mut T</code></td></tr>
 <tr><td>Global state?</td><td><code>static</code> with atomics or interior mutability</td></tr>
-<tr><td>Cross-thread sharing?</td><td><code>Send</code> / <code>Sync</code> traits, checked at compile time</td></tr>
+<tr><td>Cross-thread sharing?</td><td><code>Send</code> / <code>Sync</code> traits</td></tr>
 <tr><td>Escaping the rules?</td><td><code>unsafe</code> — you prove coherence</td></tr>
 </table>
 
----
-
-### Triangle Position
-
-<div class="triangle-diagram">
-<pre>
-                      TIME
-                       △
-                      /|\
-                     / | \
-         "let mut"  /  |  \  "const" (frozen at compile time)
-         "&mut T"  /   |   \
-                  /    |    \
-                 / "&T"     \
-                /  (frozen)   \
-               /       |       \
-            SPACE -----+------ IDENTITY
-                       |
-              "Ownership: unique IDENTITY"
-              "Borrowing: controlled sharing"
-              "Move: transfer IDENTITY"
-</pre>
-</div>
-
 <div class="derived-box">
-Rust's bet: constrain IDENTITY (ownership) and TIME (borrowing rules) at compile time. Pay with complexity. Gain zero-cost coherence guarantees.
+Rust's bet: prove coherence in compile-time projection. Pay with complexity. Gain zero-cost guarantees at runtime.
 </div>
 
 ---
@@ -863,341 +571,179 @@ Rust's bet: constrain IDENTITY (ownership) and TIME (borrowing rules) at compile
 ### Equivalences
 
 <div class="equivalences-box">
-Rust const         ≅  inlined value      ≅  no derived data exists<br>
-Rust static        ≅  single replica     ≅  one source of truth<br>
-Rust &T            ≅  read replica       ≅  frozen TIME, shared IDENTITY<br>
-Rust &mut T        ≅  exclusive lock     ≅  unique IDENTITY, TIME flows<br>
-Rust Mutex&lt;T&gt;      ≅  distributed lock   ≅  serialize TIME<br>
-Rust move          ≅  migration          ≅  transfer IDENTITY<br>
-Rust Clone         ≅  snapshot           ≅  new independent IDENTITY<br>
-Rust unsafe        ≅  "trust me"         ≅  you prove coherence
+const         ≅  inlined value      ≅  no runtime IDENTITY<br>
+static        ≅  single replica     ≅  bridges projections<br>
+&T            ≅  read replica       ≅  shared IDENTITY, frozen TIME<br>
+&mut T        ≅  exclusive lock     ≅  unique IDENTITY, TIME flows<br>
+Mutex&lt;T&gt;      ≅  distributed lock   ≅  serialize TIME<br>
+move          ≅  transfer           ≅  IDENTITY changes hands<br>
+Clone         ≅  snapshot           ≅  new IDENTITY, new SPACE<br>
+unsafe        ≅  "trust me"         ≅  you prove coherence
 </div>
 
 ---
 
 ## Lifetimes & Borrow Checker
 
-### Lifetimes in the Triangle
+### Lifetimes as Compile-time TIME
 
-A lifetime is not about memory allocation. It's about **IDENTITY validity in TIME**.
+A lifetime is a set of CFG points where IDENTITY remains valid. It's compile-time TIME, not runtime duration.
 
 <div class="derived-box">
-LIFETIME 'a = the set of program points where IDENTITY to a SPACE remains valid
+'a = region in compile-time TIME where reference is valid
 </div>
 
-A reference `&'a T` means:
+`&'a T` means: shared IDENTITY to SPACE, valid during region 'a.
 
-<table class="derived-table">
-<tr><th>Axis</th><th>Meaning</th></tr>
-<tr><td>IDENTITY</td><td>This reference points to some SPACE</td></tr>
-<tr><td>TIME</td><td>That SPACE is valid for duration <code>'a</code></td></tr>
-<tr><td>Coherence</td><td>Frozen — no mutation through other paths during <code>'a</code></td></tr>
-</table>
-
-A reference `&'a mut T` means:
-
-<table class="derived-table">
-<tr><th>Axis</th><th>Meaning</th></tr>
-<tr><td>IDENTITY</td><td>This reference points to some SPACE, exclusively</td></tr>
-<tr><td>TIME</td><td>That SPACE is valid for duration <code>'a</code></td></tr>
-<tr><td>Coherence</td><td>Exclusive — no other IDENTITY to this SPACE during <code>'a</code></td></tr>
-</table>
+`&'a mut T` means: exclusive IDENTITY to SPACE, valid during region 'a.
 
 The borrow checker proves:
-1. **IDENTITY doesn't outlive SPACE** — no dangling pointers
-2. **Shared IDENTITY + mutation don't overlap in TIME** — no data races
+1. IDENTITY doesn't outlive SPACE
+2. Shared IDENTITY + mutation don't overlap in TIME
 
 ---
 
-### Overview
+### The Borrow Checker
+
+The borrow checker operates entirely in compile-time projection. It tracks names (not addresses), analyzes CFG regions (not execution), reasons about types (not bytes).
 
 <div class="pipeline-diagram">
 <pre>
-              Source Code
-                   │
-                   ▼
-           ┌───────────────┐
-           │  Lower to MIR │ ◄── IDENTITY ops explicit
-           └───────────────┘     (operational semantics)
-                   │
-                   ▼
-           ┌───────────────┐
-           │   Build CFG   │ ◄── branching TIME
-           └───────────────┘     (automata theory)
-                   │
-                   ▼
-           ┌───────────────┐
-           │   Liveness    │ ◄── TIME × IDENTITY
-           │   Analysis    │     (temporal logic, ◇)
-           └───────────────┘
-                   │
-                   ▼
-           ┌───────────────┐
-           │    Region     │ ◄── TIME spans
-           │   Inference   │     (lattice theory)
-           └───────────────┘
-                   │
-                   ▼
-           ┌───────────────┐
-           │   Conflict    │ ◄── SPACE × TIME × IDENTITY
-           │   Detection   │     (coherence check)
-           └───────────────┘
-                   │
-              ▼         ▼
-            OK        ERROR
-         (proof)    (might be valid,
-                     undecidable to prove)
+Source Code
+     │
+     ▼
+┌───────────────┐
+│  Lower to MIR │ ← IDENTITY ops explicit
+└───────────────┘
+     │
+     ▼
+┌───────────────┐
+│   Build CFG   │ ← branching TIME
+└───────────────┘
+     │
+     ▼
+┌───────────────┐
+│   Liveness    │ ← "will this IDENTITY be used?"
+└───────────────┘
+     │
+     ▼
+┌───────────────┐
+│    Region     │ ← compute minimal TIME spans
+│   Inference   │
+└───────────────┘
+     │
+     ▼
+┌───────────────┐
+│   Conflict    │ ← SPACE × TIME × IDENTITY check
+│   Detection   │
+└───────────────┘
+     │
+  ▼       ▼
+ OK     ERROR
 </pre>
 </div>
 
-<table class="derived-table">
-<tr><th>Phase</th><th>Triangle Axis</th><th>Computes</th><th>CS Foundation</th></tr>
-<tr><td>MIR lowering</td><td>IDENTITY</td><td>Explicit borrow/move/drop</td><td>Operational semantics</td></tr>
-<tr><td>CFG construction</td><td>TIME</td><td>Possible execution orderings</td><td>Automata theory (NFA)</td></tr>
-<tr><td>Liveness analysis</td><td>TIME × IDENTITY</td><td>"Will this IDENTITY be used in future?"</td><td>Temporal logic (◇)</td></tr>
-<tr><td>Region inference</td><td>TIME</td><td>Minimal TIME span for each IDENTITY</td><td>Lattice theory</td></tr>
-<tr><td>Conflict detection</td><td>SPACE × TIME × IDENTITY</td><td>All three axes intersect?</td><td>Coherence check</td></tr>
-</table>
-
 ---
 
-### Computational Model
+### Phase 1: MIR
 
-**Turing machine:**
-- Tape → SPACE
-- Head position → IDENTITY (what we're pointing to)
-- Steps → TIME (linear)
-
-But programs branch. TIME is not a line — it's a **directed graph of possible futures**.
-
-<div class="derived-box">
-Turing: TIME is linear         ──────────────────►<br><br>
-Programs: TIME branches         ────┬────►<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└────►
-</div>
-
-The **Control Flow Graph** models branching TIME. Each node is a program point (moment in TIME), edges are possible transitions.
-
-The borrow checker **tracks IDENTITY structure, forgets values**. It doesn't know `x == 5`, only that `r` points to `x`.
-
----
-
-### Phase 1: MIR — Surfacing IDENTITY
-
-MIR (Mid-level IR) makes IDENTITY operations explicit:
+MIR makes IDENTITY operations explicit:
 
 <div class="rust-code">
-<pre><span class="comment">// Source</span>
-fn example(x: &mut i32) {
-    let y = &*x;
-    println!("{}", y);
-}
-
-<span class="comment">// MIR (simplified)</span>
-bb0:
-    _2 = &(*_1)          <span class="comment">// borrow: create IDENTITY to SPACE</span>
-    _3 = println(_2)     <span class="comment">// use: access through IDENTITY</span>
-    drop(_2)             <span class="comment">// end: IDENTITY released</span>
-    return</pre>
+<pre>_2 = &(*_1)     <span class="comment">// borrow: create IDENTITY</span>
+_3 = use(_2)   <span class="comment">// use: access through IDENTITY</span>
+drop(_2)       <span class="comment">// end: IDENTITY released</span></pre>
 </div>
-
-Every borrow, move, and drop is a statement about IDENTITY:
-- `&x` → create IDENTITY to x's SPACE
-- `move x` → transfer IDENTITY, invalidate old
-- `drop(x)` → IDENTITY ends
-
-**CS foundation:** Operational semantics — formally defining what each operation does to the IDENTITY structure.
 
 ---
 
-### Phase 2: CFG — Modeling Branching TIME
+### Phase 2: CFG
 
-The function becomes a directed graph:
+The function becomes a directed graph. Each node is a program point, edges are possible transitions.
 
 <div class="rust-code">
 <pre>fn example(cond: bool) {
     let mut x = 5;       <span class="comment">// BB0</span>
-    let r = &mut x;      <span class="comment">// BB0: IDENTITY created</span>
+    let r = &mut x;      <span class="comment">// BB0</span>
     if cond {
-        *r += 1;         <span class="comment">// BB1: IDENTITY used</span>
-    } else {
-        <span class="comment">// nothing       // BB2</span>
+        *r += 1;         <span class="comment">// BB1</span>
     }
-    println!("{}", r);   <span class="comment">// BB3: IDENTITY used</span>
+    println!("{}", r);   <span class="comment">// BB2</span>
 }</pre>
 </div>
 
-<div class="pipeline-diagram">
-<pre>
-        BB0
-     (x, r = &mut x)
-          │
-        cond?
-        /   \
-      BB1   BB2
-     (*r)   (-)
-        \   /
-         BB3
-     (print r)
-</pre>
-</div>
-
-TIME in a program is not linear. The CFG captures all possible TIME orderings.
-
-**CS foundation:** Automata theory — the CFG is a non-deterministic finite automaton (NFA) over program points. The borrow checker must reason about all paths.
+TIME in a program is not linear. The CFG captures all possible orderings.
 
 ---
 
-### Phase 3: Liveness — TIME × IDENTITY
+### Phase 3: Liveness
 
-Liveness asks: "From this point, on SOME future path, will this IDENTITY be used?"
-
-<div class="derived-box">
-LIVE(r, P) = "reference r is used on some path from P forward"
-</div>
-
-This is a temporal logic question. The modal operator ◇ means "eventually/possibly":
+Liveness asks: "From this point, on some future path, will this IDENTITY be used?"
 
 <div class="rust-code">
-<pre>LIVE(r, P)  ≡  ◇(r is used)   at point P
-            ≡  "there EXISTS a future where r is used"</pre>
+<pre>LIVE(r, P) ≡ "reference r is used on some path from P forward"</pre>
 </div>
 
-Computed via backward dataflow:
-
-<div class="rust-code">
-<pre>LIVE_in(B) = USE(B) ∪ (LIVE_out(B) - DEF(B))
-LIVE_out(B) = ∪ { LIVE_in(S) : S is successor of B }</pre>
-</div>
-
-For the example:
-- `r` is live at: BB0 (after borrow), BB1, BB2, BB3
-- The IDENTITY must be valid at all these TIME points
-
-**CS foundation:** Temporal logic — reasoning about properties over branching time. Liveness is the ◇ operator computed via fixed-point iteration.
+Computed via backward dataflow. The IDENTITY must be valid at all points where it's live.
 
 ---
 
-### Phase 4: Region Inference — TIME as Lattice
+### Phase 4: Region Inference
 
-A **region** (lifetime) is a set of CFG points — a discrete representation of TIME.
+A region is a set of CFG points. Regions form a lattice under subset ordering.
 
-**Constraint types:**
+The solver finds the minimal region satisfying all constraints:
+- `'a: P` — region 'a includes point P
+- `'a: 'b` — region 'a contains region 'b
 
-<table class="derived-table">
-<tr><th>Constraint</th><th>Meaning</th><th>Formal</th></tr>
-<tr><td><code>'a: P</code></td><td>Region 'a includes point P</td><td>P ∈ 'a</td></tr>
-<tr><td><code>'a: 'b</code></td><td>Region 'a outlives 'b</td><td>'a ⊇ 'b</td></tr>
-</table>
-
-Regions form a **lattice** under subset ordering:
-
-<div class="pipeline-diagram">
-<pre>
-        'static (all points)
-           /    \
-         'a      'b
-           \    /
-          'c (fewer points)
-              |
-             {} (empty)
-</pre>
-</div>
-
-The solver finds the **minimal region** satisfying all constraints.
-
-**Fixed-point iteration:**
-
-1. Initialize all regions to minimal (empty or single point)
-2. For each constraint, expand regions as needed
-3. Repeat until no changes
-4. Guaranteed to terminate: lattice is finite, operations are monotonic
-
-**CS foundation:** Lattice theory — regions form a subset lattice. Fixed-point theorem guarantees termination for monotonic functions on finite lattices. Same math underlies abstract interpretation.
+Fixed-point iteration: expand regions until stable. Guaranteed to terminate (finite lattice, monotonic operations).
 
 ---
 
-### Phase 5: Conflict Detection — Coherence Check
+### Phase 5: Conflict Detection
 
 With regions computed, check if SPACE × TIME × IDENTITY conflict:
 
 <div class="rust-code">
 <pre>ERROR if:
-  ∃ location L, borrows B1, B2 of L where:
-    - regions(B1) ∩ regions(B2) ≠ ∅     <span class="comment">// TIME overlap</span>
-    - AND (B1 is mut OR B2 is mut)      <span class="comment">// mutation</span>
-    - AND B1 ≠ B2                       <span class="comment">// different IDENTITY paths</span></pre>
+  ∃ borrows B1, B2 of same location where:
+    - regions overlap
+    - AND one is mutable
+    - AND B1 ≠ B2</pre>
 </div>
-
-This is the coherence check: when all three axes intersect improperly, STATE can diverge.
-
-Example:
-
-<div class="rust-code">
-<pre>let mut x = 5;
-let r = &mut x;     <span class="comment">// B1: mut borrow, region starts</span>
-let s = &x;         <span class="comment">// B2: shared borrow — ERROR</span>
-println!("{}", r);  <span class="comment">// B1 region includes this point</span></pre>
-</div>
-
-The checker sees:
-- Same SPACE: both borrow `x`
-- TIME overlap: B2 starts while B1's region is active
-- IDENTITY conflict: B1 is mut, B2 exists
-
-**CS foundation:** This is the derived data coherence problem — shared IDENTITY + mutation in overlapping TIME = conflict.
 
 ---
 
 ### Decidability
 
-Why does the borrow checker reject valid programs?
+The borrow checker uses decidable approximation:
 
-Perfect analysis would require solving:
+| Perfect question | Approximation |
+|-----------------|---------------|
+| "Will this branch run?" | "Assume all branches might run" |
+| "Same address?" | "Same base → might alias" |
+| "Will this be used?" | "Might be used on some path" |
 
-<table class="derived-table">
-<tr><th>Question</th><th>Difficulty</th></tr>
-<tr><td>"Will this branch execute?"</td><td>Halting problem</td></tr>
-<tr><td>"Do <code>v[i]</code> and <code>v[j]</code> alias?"</td><td>Undecidable for arbitrary i, j</td></tr>
-<tr><td>"Will this value be used?"</td><td>Halting problem</td></tr>
-</table>
-
-The borrow checker uses **decidable approximation**:
-
-<table class="derived-table">
-<tr><th>Property</th><th>Perfect</th><th>Approximation</th></tr>
-<tr><td>Branch</td><td>"Will this run?"</td><td>"Assume all branches might run"</td></tr>
-<tr><td>Alias</td><td>"Same address?"</td><td>"Same base → might alias"</td></tr>
-<tr><td>Use</td><td>"Will this be used?"</td><td>"Might be used on some path"</td></tr>
-</table>
-
-This is **abstract interpretation** — analyze over abstract domains (sets of points) instead of concrete values.
-
-**Sound but incomplete:**
-- OK → definitely safe (no false negatives)
+Sound but incomplete:
+- OK → definitely safe
 - ERROR → might be safe (false positives exist)
-
-**CS foundation:** Abstract interpretation, Rice's theorem — non-trivial semantic properties are undecidable for general programs. The borrow checker trades precision for decidability.
 
 ---
 
 ### Rejected Valid Programs
 
-**Path-insensitive (can't prove branch won't run):**
+**Can't prove branch won't run:**
 
 <div class="rust-code">
 <pre>let mut x = 5;
 let r = &mut x;
 if false {
-    println!("{}", r);  <span class="comment">// Never runs, but checker doesn't know</span>
+    println!("{}", r);  <span class="comment">// never runs</span>
 }
 let s = &x;  <span class="comment">// ERROR: r might be used</span></pre>
 </div>
 
-Checker sees: r's region includes the (unreachable) use, extends past `s` borrow.
-
-**Alias imprecision (can't distinguish indices):**
+**Can't distinguish indices:**
 
 <div class="rust-code">
 <pre>let mut v = vec![1, 2, 3];
@@ -1205,1149 +751,219 @@ let r = &mut v[0];
 let s = &mut v[1];  <span class="comment">// ERROR: two &mut into v</span></pre>
 </div>
 
-Checker sees: both borrow "v", might be same SPACE. Proving `[0] ≠ [1]` would require value tracking.
-
-**Conditional initialization:**
-
-<div class="rust-code">
-<pre>let r: &i32;
-if cond {
-    r = &x;
-}
-use(r);  <span class="comment">// ERROR: r might be uninitialized</span></pre>
-</div>
-
-Checker sees: r's IDENTITY might not exist on some paths.
+The checker sees both as "borrow of v". Proving `[0] ≠ [1]` requires value tracking.
 
 ---
 
-### Curry-Howard — Lifetimes as Proofs
+### Curry-Howard
 
 Types are propositions. Programs are proofs.
 
-A reference `&'a T` is a proof of:
+`&'a T` is a proof of: "There exists SPACE containing T, and IDENTITY to it is valid for TIME span 'a."
 
-<div class="derived-box">
-"There exists a SPACE containing T,<br>
- and IDENTITY to it is valid for TIME span 'a"
-</div>
-
-A lifetime bound `'a: 'b` is a proof obligation:
-
-<div class="derived-box">
-"TIME span 'a contains TIME span 'b"
-</div>
-
-A successful borrow check means:
-
-<div class="derived-box">
-"All IDENTITY/TIME claims are consistent.<br>
- No path exists where IDENTITY outlives SPACE<br>
- or where shared IDENTITY + mutation overlap."
-</div>
-
-The borrow checker is a **proof verifier** for memory safety propositions.
-
-**CS foundation:** Curry-Howard correspondence — the type system is a logic, lifetime annotations are propositions about TIME, the checker verifies proofs.
-
----
-
-### Polonius — Future Direction
-
-Current NLL: **location-based** — tracks which SPACEs are borrowed.
-
-Polonius: **origin-based** — tracks where IDENTITY comes from.
-
-<div class="rust-code">
-<pre>let mut x = 5;
-let mut y = 6;
-let r = if cond { &mut x } else { &mut y };
-*r = 7;
-x = 8;  <span class="comment">// NLL: might error (conservative)</span>
-        <span class="comment">// Polonius: OK if cond was false (tracks origin)</span></pre>
-</div>
-
-Polonius uses **Datalog** (logic programming) for constraint solving:
-
-<div class="rust-code">
-<pre><span class="comment">% Datalog rules (simplified)</span>
-borrow_live_at(B, P) :-
-    borrow_region(B, R),
-    region_contains(R, P).
-
-error(P) :-
-    borrow_live_at(B1, P),
-    borrow_live_at(B2, P),
-    borrow_conflicts(B1, B2).</pre>
-</div>
-
-**CS foundation:** Logic programming, Datalog — rules define relations, engine computes fixed-points. More expressive than manual dataflow.
+A successful borrow check means: "All IDENTITY/TIME claims are consistent."
 
 ---
 
 ### Equivalences
 
 <div class="equivalences-box">
-lifetime 'a           ≅  TTL on cache           ≅  bounded TIME<br>
-region (CFG points)   ≅  validity window        ≅  discrete TIME<br>
-liveness              ≅  "replica in use?"      ≅  IDENTITY tracking<br>
-outlives 'a: 'b       ≅  dependency order       ≅  TIME containment<br>
-conflict detection    ≅  write-write conflict   ≅  coherence violation<br>
-NLL                   ≅  precise invalidation   ≅  fine-grained TIME<br>
-abstract interp.      ≅  conservative approx.   ≅  decidable coherence<br>
-proof (types)         ≅  safety certificate     ≅  verified IDENTITY/TIME
+lifetime 'a       ≅  validity region    ≅  compile-time TIME<br>
+liveness          ≅  "replica in use?"  ≅  IDENTITY tracking<br>
+outlives 'a: 'b   ≅  TIME containment   ≅  'a ⊇ 'b<br>
+conflict          ≅  coherence violation<br>
+abstract interp.  ≅  decidable approximation
 </div>
 
 ---
 
-## Interior Mutability
+## Memory Ordering
 
-### The Rule and Its Escape
+Atomics make operations indivisible. But when does a write in one TIME line become visible in another?
 
-Interior mutability is an [escape hatch](/abstractor/#layer-details) — a sanctioned way to break through an abstraction when its rules are too restrictive.
+**Hardware defers coherence:**
 
-The borrow checker enforces:
+- **Store buffers:** Writes queue locally before reaching RAM. Other cores see old values until drain.
+- **Caches:** Each core copies values locally. Writes don't instantly propagate.
+- **Reordering:** CPU executes out of order for performance.
 
-<div class="derived-box">
-!(shared IDENTITY && mutation)
-</div>
-
-<table class="derived-table">
-<tr><th>Reference</th><th>IDENTITY</th><th>TIME</th><th>Coherence</th></tr>
-<tr><td><code>&T</code></td><td>Shared</td><td>Frozen</td><td>Compile-time proof</td></tr>
-<tr><td><code>&mut T</code></td><td>Unique</td><td>Flows</td><td>Compile-time proof</td></tr>
-</table>
-
-Interior mutability allows **shared IDENTITY + mutation** by shifting coherence from compile-time to runtime.
-
-<table class="derived-table">
-<tr><th>Reference</th><th>IDENTITY</th><th>TIME</th><th>Coherence</th></tr>
-<tr><td><code>&Cell&lt;T&gt;</code></td><td>Shared</td><td>Flows</td><td>Runtime: copy in/out</td></tr>
-<tr><td><code>&RefCell&lt;T&gt;</code></td><td>Shared</td><td>Flows</td><td>Runtime: borrow counting</td></tr>
-<tr><td><code>&Mutex&lt;T&gt;</code></td><td>Shared</td><td>Flows</td><td>Runtime: serialize TIME</td></tr>
-<tr><td><code>&Atomic*</code></td><td>Shared</td><td>Flows</td><td>Hardware: arbitration</td></tr>
-<tr><td><code>&UnsafeCell&lt;T&gt;</code></td><td>Shared</td><td>Flows</td><td>None: you prove it</td></tr>
-</table>
-
----
-
-### Why It Exists
-
-The borrow checker is **sound but incomplete**:
-- OK → definitely safe
-- ERROR → might be safe (false positives)
-
-Interior mutability is the answer to false positives. When the compiler rejects a safe program, shift verification to runtime.
-
-<div class="rust-code">
-<pre><span class="comment">// Borrow checker rejects (can't prove disjoint):</span>
-let mut data = vec![1, 2, 3];
-let a = &mut data[0];
-let b = &mut data[1];  <span class="comment">// ERROR: two &mut to data</span>
-
-<span class="comment">// You know [0] and [1] are disjoint</span>
-<span class="comment">// Compiler can't prove it (undecidable for arbitrary indices)</span>
-<span class="comment">// Solution: runtime checking or unsafe</span></pre>
-</div>
-
----
-
-### The Hierarchy
-
-All interior mutability builds on `UnsafeCell<T>`:
-
-<div class="pipeline-diagram">
-<pre>
-UnsafeCell&lt;T&gt;           ← primitive: makes &T + mutation not UB
-    │
-    ├── Cell&lt;T&gt;         ← single-thread, Copy only, no refs in
-    │
-    ├── RefCell&lt;T&gt;      ← single-thread, runtime borrow check
-    │
-    ├── OnceCell&lt;T&gt;     ← single-thread, write-once
-    │
-    ├── Mutex&lt;T&gt;        ← multi-thread, OS lock
-    │
-    ├── RwLock&lt;T&gt;       ← multi-thread, many-reader or one-writer
-    │
-    ├── OnceLock&lt;T&gt;     ← multi-thread, write-once
-    │
-    └── Atomic*         ← multi-thread, hardware operations
-</pre>
-</div>
-
-`UnsafeCell<T>` is the foundation. It tells the compiler: "don't assume `&T` means immutable here."
-
----
-
-### Cell — No References In
-
-<div class="rust-code">
-<pre>let x = Cell::new(5);
-let y = &x;
-let z = &x;  <span class="comment">// Multiple shared refs OK</span>
-
-y.set(10);   <span class="comment">// Mutate through shared ref</span>
-z.set(20);   <span class="comment">// Also OK</span></pre>
-</div>
-
-<table class="derived-table">
-<tr><th>Axis</th><th>Strategy</th></tr>
-<tr><td>IDENTITY</td><td>Shared freely</td></tr>
-<tr><td>TIME</td><td>Flows</td></tr>
-<tr><td>Coherence</td><td>No refs into contents — only copy in/out</td></tr>
-</table>
-
-**How it achieves safety:**
-- `.get()` returns a copy, not a reference
-- `.set()` takes a value, not a reference
-- Never two references to the inner data
-- No aliasing of contents → no coherence problem
-
-**Limitation:** `T` must be `Copy`. Can't get reference to interior.
-
----
-
-### RefCell — Runtime Borrow Checker
-
-<div class="rust-code">
-<pre>let x = RefCell::new(vec![1, 2, 3]);
-
-let r = x.borrow();      <span class="comment">// Returns Ref&lt;Vec&gt;</span>
-let s = x.borrow();      <span class="comment">// OK: multiple shared borrows</span>
-<span class="comment">// let m = x.borrow_mut(); // PANIC: shared borrow active</span>
-
-drop(r);
-drop(s);
-
-let m = x.borrow_mut();  <span class="comment">// OK: no active borrows</span></pre>
-</div>
-
-<table class="derived-table">
-<tr><th>Axis</th><th>Strategy</th></tr>
-<tr><td>IDENTITY</td><td>Shared, but contents tracked</td></tr>
-<tr><td>TIME</td><td>Flows, checked at runtime</td></tr>
-<tr><td>Coherence</td><td>Borrow counting, panic on violation</td></tr>
-</table>
-
-**How it achieves safety:**
-- Tracks borrow count at runtime
-- `borrow()` → increment shared count
-- `borrow_mut()` → check no borrows exist
-- Violation → panic (fail-fast)
-
-**It's the same logic as the borrow checker, run at a different TIME:**
-
-<table class="derived-table">
-<tr><th>Borrow checker</th><th>RefCell</th></tr>
-<tr><td>Checks at compile</td><td>Checks at runtime</td></tr>
-<tr><td>Rejects program</td><td>Panics at violation</td></tr>
-<tr><td>Zero cost</td><td>Counter overhead</td></tr>
-<tr><td>Conservative</td><td>Precise</td></tr>
-</table>
-
----
-
-### Mutex — Serialize TIME
-
-<div class="rust-code">
-<pre>let x = Mutex::new(vec![1, 2, 3]);
-
-{
-    let mut guard = x.lock().unwrap();
-    guard.push(4);
-    <span class="comment">// Other threads block here</span>
-}  <span class="comment">// Lock released on drop</span>
-
-<span class="comment">// Another thread can now acquire</span></pre>
-</div>
-
-<table class="derived-table">
-<tr><th>Axis</th><th>Strategy</th></tr>
-<tr><td>IDENTITY</td><td>Shared across threads</td></tr>
-<tr><td>TIME</td><td>Serialized by lock</td></tr>
-<tr><td>Coherence</td><td>Only one accessor at a time</td></tr>
-</table>
-
-**How it achieves safety:**
-- Lock acquisition blocks other threads
-- Only one `MutexGuard` exists at a time
-- Guard gives `&mut` to contents
-- TIME becomes sequential at lock boundaries
-
-**Trade:** Parallel TIME → sequential TIME. Threads wait.
-
----
-
-### RwLock — Many Readers or One Writer
-
-<div class="rust-code">
-<pre>let x = RwLock::new(vec![1, 2, 3]);
-
-<span class="comment">// Many readers OK</span>
-let r1 = x.read().unwrap();
-let r2 = x.read().unwrap();
-
-<span class="comment">// Writer must wait for readers</span>
-drop(r1);
-drop(r2);
-let w = x.write().unwrap();</pre>
-</div>
-
-<table class="derived-table">
-<tr><th>Mode</th><th>IDENTITY</th><th>TIME</th></tr>
-<tr><td>Read</td><td>Shared</td><td>Frozen (among readers)</td></tr>
-<tr><td>Write</td><td>Exclusive</td><td>Flows</td></tr>
-</table>
-
-Same as `&T` vs `&mut T`, enforced at runtime across threads.
-
----
-
-### Atomic — Hardware Coherence
-
-<div class="rust-code">
-<pre>let x = AtomicU64::new(0);
-
-<span class="comment">// Multiple threads can access simultaneously</span>
-x.fetch_add(1, Ordering::SeqCst);  <span class="comment">// Hardware guarantees atomicity</span></pre>
-</div>
-
-<table class="derived-table">
-<tr><th>Axis</th><th>Strategy</th></tr>
-<tr><td>IDENTITY</td><td>Shared across threads</td></tr>
-<tr><td>TIME</td><td>Hardware arbitrated</td></tr>
-<tr><td>Coherence</td><td>CPU cache coherence protocol</td></tr>
-</table>
-
-**How it achieves safety:**
-- Individual operations are indivisible
-- Hardware ensures total order (with SeqCst)
-- No locks, but limited to specific operations
-
-**Trade:** Full flexibility → limited operations. Can't atomically modify a Vec.
-
----
-
-### UnsafeCell — The Primitive
-
-<div class="rust-code">
-<pre>let x = UnsafeCell::new(5);
-
-unsafe {
-    let ptr = x.get();
-    *ptr = 10;
-}</pre>
-</div>
-
-<table class="derived-table">
-<tr><th>Axis</th><th>Strategy</th></tr>
-<tr><td>IDENTITY</td><td>Shared</td></tr>
-<tr><td>TIME</td><td>Flows</td></tr>
-<tr><td>Coherence</td><td>None — you prove it</td></tr>
-</table>
-
-`UnsafeCell` is what makes the others possible. It's the opt-out:
-- Tells compiler: `&UnsafeCell<T>` does not imply contents are immutable
-- All other interior mutability types wrap this
-- Raw access via `.get()` → `*mut T`
-
----
-
-### The Spectrum
-
-From compile-time to trust-the-programmer:
-
-<div class="pipeline-diagram">
-<pre>
-COMPILE-TIME                              RUNTIME                                 UNSAFE
-     │                                        │                                      │
-     ▼                                        ▼                                      ▼
-  &T / &mut T      Cell&lt;T&gt;      RefCell&lt;T&gt;      Mutex&lt;T&gt;      Atomic*      UnsafeCell&lt;T&gt;
-     │               │              │             │              │               │
-  Borrow         Copy in/out    Borrow count   OS lock       Hardware       You prove it
-  checker        No refs in     Panic on err   Blocking      CPU cycles     Zero cost
-  Zero cost      Copy types     Flexibility    Multi-thread  Limited ops    Unlimited
-</pre>
-</div>
-
-<table class="derived-table">
-<tr><th>Type</th><th>Check TIME</th><th>Cost</th><th>Flexibility</th><th>Thread</th></tr>
-<tr><td><code>&T</code>/<code>&mut T</code></td><td>Compile</td><td>Zero</td><td>Conservative</td><td>Any</td></tr>
-<tr><td><code>Cell&lt;T&gt;</code></td><td>Runtime</td><td>Cheap</td><td>Copy only</td><td>Single</td></tr>
-<tr><td><code>RefCell&lt;T&gt;</code></td><td>Runtime</td><td>Counter</td><td>Full, panics</td><td>Single</td></tr>
-<tr><td><code>Mutex&lt;T&gt;</code></td><td>Runtime</td><td>Lock</td><td>Full, blocks</td><td>Multi</td></tr>
-<tr><td><code>RwLock&lt;T&gt;</code></td><td>Runtime</td><td>Lock</td><td>Full, blocks</td><td>Multi</td></tr>
-<tr><td><code>Atomic*</code></td><td>Runtime</td><td>CPU</td><td>Limited ops</td><td>Multi</td></tr>
-<tr><td><code>UnsafeCell&lt;T&gt;</code></td><td>Never</td><td>Zero</td><td>Unlimited</td><td>Any</td></tr>
-</table>
-
----
-
-### Triangle View
-
-Interior mutability changes which axis is constrained:
-
-<table class="derived-table">
-<tr><th>Type</th><th>SPACE</th><th>TIME</th><th>IDENTITY</th><th>Coherence</th></tr>
-<tr><td><code>&T</code></td><td>Fixed</td><td>Frozen</td><td>Shared</td><td>No mutation → no problem</td></tr>
-<tr><td><code>&mut T</code></td><td>Fixed</td><td>Flows</td><td>Unique</td><td>No sharing → no problem</td></tr>
-<tr><td><code>Cell</code></td><td>Fixed</td><td>Flows</td><td>Shared</td><td>No refs in → no aliasing of contents</td></tr>
-<tr><td><code>RefCell</code></td><td>Fixed</td><td>Flows (checked)</td><td>Shared (counted)</td><td>Runtime borrow rules</td></tr>
-<tr><td><code>Mutex</code></td><td>Fixed</td><td>Serialized</td><td>Shared</td><td>One at a time</td></tr>
-<tr><td><code>Atomic</code></td><td>Fixed</td><td>Hardware</td><td>Shared</td><td>Hardware arbitration</td></tr>
-</table>
-
-Standard references: constrain TIME (freeze) or IDENTITY (unique).
-Interior mutability: constrain TIME at runtime or use hardware.
-
----
-
-### Derived Data View
-
-From the coherence pattern:
-
-<div class="derived-box">
-Shared IDENTITY + Mutation + TIME overlap = Coherence Problem
-</div>
-
-Interior mutability solves this in different ways:
-
-<table class="derived-table">
-<tr><th>Type</th><th>How it breaks the problem</th></tr>
-<tr><td><code>Cell</code></td><td>No IDENTITY into contents (copy values)</td></tr>
-<tr><td><code>RefCell</code></td><td>Detect overlap, panic (fail-fast)</td></tr>
-<tr><td><code>Mutex</code></td><td>Prevent TIME overlap (serialize)</td></tr>
-<tr><td><code>RwLock</code></td><td>Allow parallel frozen TIME, serialize mutation</td></tr>
-<tr><td><code>Atomic</code></td><td>Hardware ensures no overlap (atomic ops)</td></tr>
-<tr><td><code>UnsafeCell</code></td><td>Trust programmer to prevent overlap</td></tr>
-</table>
-
----
-
-### When to Use What
-
-<table class="derived-table">
-<tr><th>Situation</th><th>Use</th></tr>
-<tr><td>Simple counter/flag, single thread</td><td><code>Cell&lt;T&gt;</code></td></tr>
-<tr><td>Complex data, single thread, need refs</td><td><code>RefCell&lt;T&gt;</code></td></tr>
-<tr><td>Shared across threads, any data</td><td><code>Mutex&lt;T&gt;</code></td></tr>
-<tr><td>Shared across threads, read-heavy</td><td><code>RwLock&lt;T&gt;</code></td></tr>
-<tr><td>Shared across threads, simple counter</td><td><code>AtomicU64</code> etc</td></tr>
-<tr><td>Building your own sync primitive</td><td><code>UnsafeCell&lt;T&gt;</code></td></tr>
-<tr><td>Borrow checker accepts your code</td><td>None needed</td></tr>
-</table>
-
----
-
-### Common Pattern: Shared Ownership + Interior Mutability
-
-Neither alone is enough for shared mutable data:
-
-<table class="derived-table">
-<tr><th>Type</th><th>Ownership</th><th>Mutability</th></tr>
-<tr><td><code>Rc&lt;T&gt;</code></td><td>Shared, single-thread</td><td>Immutable</td></tr>
-<tr><td><code>Arc&lt;T&gt;</code></td><td>Shared, multi-thread</td><td>Immutable</td></tr>
-<tr><td><code>Rc&lt;RefCell&lt;T&gt;&gt;</code></td><td>Shared, single-thread</td><td>Mutable</td></tr>
-<tr><td><code>Arc&lt;Mutex&lt;T&gt;&gt;</code></td><td>Shared, multi-thread</td><td>Mutable</td></tr>
-</table>
-
-Ownership handles SPACE × IDENTITY (who can access).
-Interior mutability handles TIME (when mutation is safe).
-
----
-
-### The Insight
-
-Interior mutability is not an escape from the rules. It's **the same rules, checked at a different TIME**.
-
-<table class="derived-table">
-<tr><th></th><th>Borrow checker</th><th>Interior mutability</th></tr>
-<tr><td>Rule</td><td>No shared+mutable</td><td>No shared+mutable</td></tr>
-<tr><td>Check</td><td>Compile time</td><td>Runtime</td></tr>
-<tr><td>Failure</td><td>Won't compile</td><td>Panic or block</td></tr>
-<tr><td>Cost</td><td>Zero</td><td>Runtime overhead</td></tr>
-<tr><td>Precision</td><td>Conservative</td><td>Exact</td></tr>
-</table>
-
-The borrow checker is an ahead-of-time approximation. Interior mutability is just-in-time verification. Same coherence problem, different verification strategy.
-
----
-
-### Interior Mutability — Equivalences
-
-<div class="equivalences-box">
-Cell&lt;T&gt;               ≅  value cache         ≅  no refs, copy in/out<br>
-RefCell&lt;T&gt;            ≅  runtime mutex       ≅  single-thread lock<br>
-Mutex&lt;T&gt;              ≅  distributed lock    ≅  serialize TIME<br>
-RwLock&lt;T&gt;             ≅  read replica + lock ≅  many-read or one-write<br>
-Atomic*               ≅  hardware CAS        ≅  CPU coherence<br>
-UnsafeCell&lt;T&gt;         ≅  trust-me token      ≅  unchecked coherence<br>
-interior mutability   ≅  runtime coherence   ≅  deferred verification
-</div>
-
----
-
-## Memory Ordering — TIME Visibility
-
-Atomics make individual operations indivisible. But when does a write in one TIME line become visible in another?
-
-The hardware defers coherence everywhere:
-
-**Store buffers:** When a core writes, the value goes into a small queue on that core before propagating to RAM. The core continues without waiting. Other cores reading from RAM see the old value until the buffer drains.
-
-Write creates local SPACE (buffer) before reaching shared SPACE (RAM). Derived data. Coherence deferred until drain.
-
-**Caches:** When a core reads, it copies the value from RAM into its local L1/L2 cache. Each core has its own cache. A write to one cache doesn't instantly appear in others.
-
-Shared SPACE (RAM) copied to local SPACE (cache). Same as CDN, database replica. Multiple SPACEs, same IDENTITY, sync via MESI protocol.
-
-**Reordering:** The CPU executes instructions out of order for performance — if `y`'s cache line is ready but `x`'s isn't, it may execute `y = 2` before `x = 1`, even though the program says otherwise.
-
-Program text implies TIME order A→B. Hardware executes B→A. The "sequential TIME" from representation constraints is itself an abstraction. Hardware breaks it, maintains the illusion for single TIME line only.
-
-All three: optimizations that defer coherence, assuming single TIME line. Multiple TIME lines expose the deferred sync.
+All three: optimizations assuming single TIME line. Multiple TIME lines expose the deferred sync.
 
 ---
 
 ### The Orderings
 
-**Relaxed:** Atomic access only. The operation is indivisible, but no coherence guarantees. Other TIME lines may see writes in any order. Useful when you only need a counter, don't care when others see it.
+**Relaxed** — Atomic access only. No visibility guarantees. Other TIME lines may see writes in any order.
 
-**Acquire/Release:** Coherence at sync points.
+**Acquire/Release** — Coherence at sync points.
 
-Release says: drain the buffer, flush writes. Everything I wrote before this point must be visible before anyone sees this write.
+Release: drain buffer, flush writes. Everything before this point visible before this write.
 
-Acquire says: invalidate the cache, pull fresh. Everything I read after this point must see writes from before a Release.
+Acquire: invalidate cache, pull fresh. Everything after this sees writes from before a Release.
 
-They pair up. One TIME line does Release, another does Acquire on the same SPACE. The Acquire sees the Release and everything before it. A happens-before edge between TIME lines.
-
-<div class="pipeline-diagram">
-<pre>
-TIME line A:                    TIME line B:
+```
+TIME line A:                TIME line B:
 
 write x = 1
 write y = 2
+Release(flag = true)  ───>  Acquire(flag)
+                            read y  // sees 2
+                            read x  // sees 1
+```
 
-Release(flag = true)  --------> Acquire(flag)
-
-                                read y  // guaranteed to see 2
-                                read x  // guaranteed to see 1
-</pre>
-</div>
-
-Everything above Release in A is visible below Acquire in B. Partial coherence — you choose where to sync.
-
-**SeqCst:** Total order. All TIME lines observe the same sequence of all SeqCst operations. The full "instant visibility" abstraction restored.
-
-Expensive because: every SeqCst operation drains buffers, syncs caches, prevents reordering. You're paying for global coherence on every access.
+**SeqCst** — Total order. All TIME lines observe same sequence. Full visibility. Expensive.
 
 ---
 
-### Memory Ordering Summary
+### Summary
 
-<table class="derived-table">
-<tr><th>Ordering</th><th>What it guarantees</th><th>When to use</th></tr>
-<tr><td>Relaxed</td><td>This operation is atomic, nothing else</td><td>Counters, statistics</td></tr>
-<tr><td>Release</td><td>Writes before this are visible to Acquire</td><td>Producer side of handoff</td></tr>
-<tr><td>Acquire</td><td>Reads after this see writes before Release</td><td>Consumer side of handoff</td></tr>
-<tr><td>AcqRel</td><td>Both Acquire and Release</td><td>Read-modify-write in middle</td></tr>
-<tr><td>SeqCst</td><td>Global total order, full visibility</td><td>When in doubt, or need global ordering</td></tr>
-</table>
+| Ordering | Guarantee | Use |
+|----------|-----------|-----|
+| Relaxed | Operation is atomic | Counters |
+| Release | Writes before visible to Acquire | Producer |
+| Acquire | Reads after see writes before Release | Consumer |
+| AcqRel | Both | Read-modify-write |
+| SeqCst | Global total order | When in doubt |
 
-Memory ordering is choosing how much coherence to force. SeqCst pays for the full abstraction. Relaxed pays for none. Acquire/Release pays at sync points only.
+Memory ordering is choosing how much coherence to force.
 
 ---
 
 ## Pedantic Naming
 
-Rust's naming creates a large [abstraction distance](/abstractor/) between terminology and the underlying primitives. This distance hinders understanding — every concept requires extra mental mapping through jargon before reaching fundamentals.
+Rust's terminology conflates compile-time and runtime projections.
 
----
+### Core Terms
+
+| Rust | Suggests | Actually |
+|------|----------|----------|
+| "lifetime" | runtime duration | compile-time region |
+| `&mut T` | mutation allowed | exclusive IDENTITY |
+| "borrow" | runtime lending | compile-time IDENTITY relationship |
+| "move" | data relocation | IDENTITY transfer |
+| "borrow checker" | rule checker | coherence prover |
 
 ### References
 
-<table class="derived-table">
-<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
-<tr><td><code>&T</code></td><td>"Reference to T"</td><td>Shared IDENTITY, frozen TIME</td><td>Shared alias, read-only</td><td><code>&shared T</code></td></tr>
-<tr><td><code>&mut T</code></td><td>"Mutable reference"</td><td>Exclusive IDENTITY, TIME flows</td><td>Unique alias, read-write</td><td><code>&unique T</code></td></tr>
-<tr><td>"Borrow"</td><td>Lending temporarily</td><td>Creating scoped IDENTITY</td><td>Scoped alias</td><td>"Alias"</td></tr>
-<tr><td>"Reborrow"</td><td>Borrowing again</td><td>Narrowing IDENTITY scope</td><td>Nested alias</td><td>"Narrow"</td></tr>
-</table>
+| Rust | Clearer |
+|------|---------|
+| `&T` | `&shared T` |
+| `&mut T` | `&unique T` |
 
-**The `&mut` problem:**
-
-`&mut T` sounds like "the reference is mutable" or "a reference you can mutate." Neither is right.
-
-What it means:
-- IDENTITY: exclusive (no other aliases exist)
-- TIME: flows (mutation allowed)
-- Coherence: uniqueness guarantees no conflicts
-
-It's not about mutability of the reference. It's about **exclusivity of the IDENTITY**.
-
-<div class="rust-code">
-<pre>let mut x = 5;
-let r = &mut x;  <span class="comment">// "mutable reference" - misleading</span>
-                 <span class="comment">// Actually: exclusive alias to x</span>
-                 <span class="comment">// Better: &unique x or &excl x</span></pre>
-</div>
-
-Compare to:
-
-<div class="rust-code">
-<pre>let mut r = &x;  <span class="comment">// Actually mutable: r can be reassigned</span>
-r = &y;          <span class="comment">// The binding r changed, not what it points to</span></pre>
-</div>
-
----
-
-### Lifetimes
-
-<table class="derived-table">
-<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
-<tr><td>"Lifetime"</td><td>Memory duration</td><td>IDENTITY validity span</td><td>Reference validity</td><td>"Validity"</td></tr>
-<tr><td><code>'a</code></td><td>Some lifetime a</td><td>TIME region where IDENTITY valid</td><td>Validity interval</td><td><code>#a</code></td></tr>
-<tr><td><code>'static</code></td><td>Lives forever</td><td>Valid for all program TIME</td><td>Global validity</td><td><code>'always</code></td></tr>
-<tr><td><code>'a: 'b</code></td><td>a outlives b</td><td>TIME span a contains b</td><td>Interval containment</td><td><code>'a ⊇ 'b</code></td></tr>
-</table>
-
-**The "lifetime" problem:**
-
-"Lifetime" sounds like memory duration — when SPACE exists. But it's actually about IDENTITY validity — when a reference is usable.
-
-<div class="rust-code">
-<pre>fn example&lt;'a&gt;(x: &'a i32) -> &'a i32 { x }</pre>
-</div>
-
-Reading: "x has lifetime 'a"
-Misleading: suggests x lives for duration 'a
-Actually: the IDENTITY relationship (reference) is valid during TIME span 'a
-
-The value's SPACE might exist longer. The lifetime bounds the reference (IDENTITY), not the value (SPACE).
-
----
+`&mut T` is about exclusive IDENTITY, not mutability. The name obscures this.
 
 ### Ownership
 
-<table class="derived-table">
-<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
-<tr><td>"Ownership"</td><td>Possession</td><td>Unique IDENTITY + dealloc responsibility</td><td>Unique handle</td><td>"Unique binding"</td></tr>
-<tr><td>"Move"</td><td>Physical relocation</td><td>IDENTITY transfer + source invalidation</td><td>Linear consumption</td><td>"Transfer"</td></tr>
-<tr><td>"Copy"</td><td>Make a copy</td><td>New SPACE, new IDENTITY, bitwise</td><td>Value duplication</td><td>"Duplicate"</td></tr>
-<tr><td>"Clone"</td><td>Make a clone</td><td>Explicit deep copy</td><td>Deep duplication</td><td>"Deep copy"</td></tr>
-<tr><td>"Drop"</td><td>Drop it</td><td>Free SPACE at TIME boundary</td><td>Destructor</td><td>"Destruct"</td></tr>
-</table>
+| Rust | Clearer |
+|------|---------|
+| Ownership | Unique binding |
+| Move | Transfer |
+| Copy | Duplicate |
+| Drop | Destruct |
 
-**The "move" problem:**
-
-"Move" suggests data physically relocates. It doesn't.
-
-<div class="rust-code">
-<pre>let x = vec![1, 2, 3];  <span class="comment">// x has IDENTITY to heap SPACE</span>
-let y = x;              <span class="comment">// IDENTITY transfers to y, x invalidated</span>
-                        <span class="comment">// The heap data didn't move</span>
-                        <span class="comment">// Only the IDENTITY relationship changed</span></pre>
-</div>
-
-What happens:
-- SPACE: unchanged (heap data stays put)
-- IDENTITY: transferred from x to y
-- x: name exists, IDENTITY severed
-
-"Transfer" or "consume" would be clearer than "move."
-
----
-
-### Borrow Checker
-
-<table class="derived-table">
-<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
-<tr><td>"Borrow checker"</td><td>Checks borrowing</td><td>Proves IDENTITY×TIME coherence</td><td>Alias-validity prover</td><td>"Coherence prover"</td></tr>
-<tr><td>"Borrow error"</td><td>Borrowing mistake</td><td>IDENTITY×TIME conflict</td><td>Coherence violation</td><td>"Alias conflict"</td></tr>
-<tr><td>"Cannot borrow"</td><td>Borrowing forbidden</td><td>IDENTITY conflict detected</td><td>Alias violation</td><td>"Conflicting alias"</td></tr>
-</table>
-
-**The "borrow checker" problem:**
-
-"Borrow checker" sounds like a simple rule checker. It's actually:
-- A dataflow analyzer (CFG, liveness)
-- A constraint solver (region inference)
-- A proof system (verifying coherence)
-
-Better name: **Alias-Validity Prover** or **Coherence Analyzer**
-
----
-
-### Interior Mutability Terms
-
-<table class="derived-table">
-<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
-<tr><td>"Interior mutability"</td><td>Mutating insides</td><td>Runtime coherence</td><td>Deferred verification</td><td>"Runtime coherence"</td></tr>
-<tr><td><code>Cell&lt;T&gt;</code></td><td>A cell</td><td>Copy-only shared mutation</td><td>Value-only access</td><td><code>CopyMut&lt;T&gt;</code></td></tr>
-<tr><td><code>RefCell&lt;T&gt;</code></td><td>Reference cell</td><td>Runtime borrow checker</td><td>Checked alias</td><td><code>RuntimeChecked&lt;T&gt;</code></td></tr>
-<tr><td><code>UnsafeCell&lt;T&gt;</code></td><td>Unsafe cell</td><td>Raw opt-out of alias rules</td><td>Unchecked interior</td><td><code>RawMut&lt;T&gt;</code></td></tr>
-</table>
-
----
+"Move" suggests data relocates. It doesn't. IDENTITY transfers.
 
 ### Thread Safety
 
-<table class="derived-table">
-<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
-<tr><td><code>Send</code></td><td>Can be sent</td><td>IDENTITY can cross thread TIME</td><td>Thread-transferable</td><td><code>ThreadTransfer</code></td></tr>
-<tr><td><code>Sync</code></td><td>Synchronizes</td><td>Shared IDENTITY safe in parallel TIME</td><td>Thread-shareable</td><td><code>ThreadShare</code></td></tr>
-<tr><td><code>Mutex&lt;T&gt;</code></td><td>Mutual exclusion</td><td>TIME serializer</td><td>Lock</td><td><code>Lock&lt;T&gt;</code></td></tr>
-<tr><td><code>Arc&lt;T&gt;</code></td><td>Atomic ref count</td><td>Shared IDENTITY across threads</td><td>Thread-shared handle</td><td><code>SharedHandle&lt;T&gt;</code></td></tr>
-</table>
-
-**The Send/Sync problem:**
-
-`Send` and `Sync` are opaque. They don't reveal what they mean.
-
-- `Send`: IDENTITY can be transferred across thread boundary
-- `Sync`: shared IDENTITY (`&T`) can exist in parallel TIME
-
-Better names: `ThreadTransfer` / `ThreadShare`
-
----
-
-### Smart Pointers
-
-<table class="derived-table">
-<tr><th>Rust</th><th>Suggests</th><th>Actually</th><th>Fundamental</th><th>Clearer Name</th></tr>
-<tr><td><code>Box&lt;T&gt;</code></td><td>A box</td><td>Unique heap IDENTITY</td><td>Heap-unique</td><td><code>HeapUnique&lt;T&gt;</code></td></tr>
-<tr><td><code>Rc&lt;T&gt;</code></td><td>Reference counted</td><td>Shared IDENTITY, counted SPACE lifetime</td><td>Shared handle (counted)</td><td><code>SharedLocal&lt;T&gt;</code></td></tr>
-<tr><td><code>Arc&lt;T&gt;</code></td><td>Atomic RC</td><td>Thread-safe shared IDENTITY</td><td>Shared handle (atomic)</td><td><code>SharedAtomic&lt;T&gt;</code></td></tr>
-<tr><td><code>Weak&lt;T&gt;</code></td><td>Weak reference</td><td>Non-owning IDENTITY</td><td>Observer handle</td><td><code>Observer&lt;T&gt;</code></td></tr>
-</table>
-
----
+| Rust | Clearer |
+|------|---------|
+| `Send` | `ThreadTransfer` |
+| `Sync` | `ThreadShare` |
 
 ### Error Messages
 
-<table class="derived-table">
-<tr><th>Rust Says</th><th>Actually Means</th><th>Clearer Message</th></tr>
-<tr><td>"cannot borrow `x` as mutable because it is also borrowed as immutable"</td><td>Exclusive IDENTITY requested but shared IDENTITY exists</td><td>"Cannot create exclusive alias: shared alias exists"</td></tr>
-<tr><td>"borrowed value does not live long enough"</td><td>IDENTITY validity exceeds SPACE validity</td><td>"Reference outlives the value it refers to"</td></tr>
-<tr><td>"cannot move out of borrowed content"</td><td>Can't transfer IDENTITY while alias exists</td><td>"Cannot consume: alias exists"</td></tr>
-<tr><td>"use of moved value"</td><td>IDENTITY accessed after transfer</td><td>"Value already consumed"</td></tr>
-</table>
-
----
-
-### The Jargon Layers
-
-Rust terminology forms layers that hide fundamentals:
-
-<div class="pipeline-diagram">
-<pre>
-RUST JARGON LAYER
-    │
-    │  "borrow", "lifetime", "move", "interior mutability"
-    │
-    ▼
-RUST SEMANTIC LAYER
-    │
-    │  Scoped alias, validity span, transfer, runtime check
-    │
-    ▼
-CS CONCEPT LAYER
-    │
-    │  Alias analysis, dataflow, constraint solving, coherence
-    │
-    ▼
-FUNDAMENTAL LAYER
-
-    SPACE × TIME × IDENTITY
-</pre>
-</div>
-
-Each layer adds terminology that obscures the layer below.
-
----
+| Rust says | Means |
+|-----------|-------|
+| "cannot borrow as mutable because borrowed as immutable" | Exclusive IDENTITY requested but shared exists |
+| "borrowed value does not live long enough" | IDENTITY outlives SPACE |
+| "use of moved value" | IDENTITY accessed after transfer |
 
 ### Translation Table
 
-<table class="derived-table">
-<tr><th>Rust Concept</th><th>CS Concept</th><th>Fundamental (Triangle)</th></tr>
-<tr><td>Ownership</td><td>Unique pointer/handle</td><td>Unique IDENTITY to SPACE</td></tr>
-<tr><td>Borrowing</td><td>Aliasing</td><td>Creating IDENTITY relationship</td></tr>
-<tr><td>Lifetime</td><td>Reference validity interval</td><td>TIME span of IDENTITY</td></tr>
-<tr><td>Move</td><td>Linear consumption</td><td>IDENTITY transfer</td></tr>
-<tr><td>Copy</td><td>Value semantics</td><td>New SPACE, new IDENTITY</td></tr>
-<tr><td>Borrow checker</td><td>Alias analysis + dataflow</td><td>IDENTITY×TIME coherence proof</td></tr>
-<tr><td>Interior mutability</td><td>Runtime checks</td><td>Deferred coherence verification</td></tr>
-<tr><td><code>&T</code></td><td>Shared/const pointer</td><td>Shared IDENTITY, frozen TIME</td></tr>
-<tr><td><code>&mut T</code></td><td>Unique/exclusive pointer</td><td>Exclusive IDENTITY, TIME flows</td></tr>
-<tr><td>Send</td><td>Thread-transferable</td><td>IDENTITY can cross thread</td></tr>
-<tr><td>Sync</td><td>Thread-shareable</td><td>Shared IDENTITY parallel-safe</td></tr>
-<tr><td>Drop</td><td>Destructor</td><td>SPACE freed at TIME boundary</td></tr>
-<tr><td><code>'static</code></td><td>Global validity</td><td>IDENTITY valid for all TIME</td></tr>
-</table>
-
----
-
-### Why This Matters
-
-**For learning:**
-- Jargon creates artificial barriers
-- Fundamentals transfer between languages
-- Correct mental models prevent confusion
-
-**For debugging:**
-- "Borrow error" is vague
-- "IDENTITY×TIME conflict" tells you what to fix
-- Understanding the triangle helps resolve issues
-
-**For design:**
-- Jargon hides tradeoffs
-- Fundamentals reveal what's actually constrained
-- Better names would teach concepts
-
----
-
-### What Rust Could Have Named
-
-<table class="derived-table">
-<tr><th>Current</th><th>Alternative</th><th>Why Better</th></tr>
-<tr><td><code>&T</code></td><td><code>&shared T</code></td><td>Reveals: IDENTITY is shared</td></tr>
-<tr><td><code>&mut T</code></td><td><code>&unique T</code></td><td>Reveals: IDENTITY is exclusive</td></tr>
-<tr><td>Lifetime <code>'a</code></td><td>Validity <code>#a</code></td><td>Not confused with memory duration</td></tr>
-<tr><td>Borrow checker</td><td>Coherence prover</td><td>Reveals: it proves safety properties</td></tr>
-<tr><td>Interior mutability</td><td>Runtime coherence</td><td>Reveals: same rules, different TIME</td></tr>
-<tr><td>Move</td><td>Transfer / Consume</td><td>Reveals: IDENTITY moves, not data</td></tr>
-<tr><td>Send</td><td>ThreadTransfer</td><td>Reveals: what can cross threads</td></tr>
-<tr><td>Sync</td><td>ThreadShare</td><td>Reveals: what's safe to share</td></tr>
-</table>
-
----
-
-### Naming — Summary
-
-Rust's naming choices:
-1. Create a jargon barrier to entry
-2. Suggest wrong mental models (`&mut` = mutable, "lifetime" = duration)
-3. Hide CS fundamentals (dataflow, coherence, aliasing)
-4. Prevent knowledge transfer to/from other systems
-
-The fundamentals are simple:
-- SPACE: where data lives
-- TIME: when things happen
-- IDENTITY: which references point where
-- Coherence: keeping IDENTITY×TIME consistent
-
-Rust's features are combinations of these. The names obscure this. Understanding the mapping lets you see through the jargon to the principles.
+| Rust | CS Concept | Triangle |
+|------|------------|----------|
+| Ownership | Unique handle | Unique IDENTITY |
+| Borrowing | Aliasing | Creating IDENTITY |
+| Lifetime | Reference validity interval | TIME span of IDENTITY |
+| Move | Linear consumption | IDENTITY transfer |
+| Borrow checker | Alias analysis + dataflow | IDENTITY×TIME coherence proof |
+| Interior mutability | Runtime checks | Deferred verification |
+| `Send` | Thread-transferable | IDENTITY crosses thread |
+| `Sync` | Thread-shareable | Shared IDENTITY parallel-safe |
 
 ---
 
 ## Pedantic Syntax
 
-Beyond naming, Rust's syntax overloads symbols based on position. The same `&` means different things on different sides of `=`.
+Rust overloads `&` and `mut` based on position.
 
----
+### Position Rules
 
-### How the Compiler Sees It
+| Position | `&mut x` means |
+|----------|----------------|
+| Expression (right of `=`) | Produce reference to x |
+| Pattern (left of `=`) | Expect reference, bind target |
+| Type (right of `:`) | Type "reference to T" |
 
-**Both sides of `=` parse to trees:**
+### Examples
 
+**Type:**
 <div class="rust-code">
-<pre>let PATTERN = EXPRESSION;</pre>
+<pre>let x: &mut i32 = ...;  <span class="comment">// x is reference to i32</span></pre>
 </div>
 
-`&` is a symbol. The parser needs a name for it in the AST, so it becomes `Ref`. The keyword `mut` stays as `mut`.
-
+**Expression:**
 <div class="rust-code">
-<pre>let &mut y = r;</pre>
+<pre>let p = &mut x;  <span class="comment">// produce reference to x</span></pre>
 </div>
 
-<div class="pipeline-diagram">
-<pre>
-Pattern tree:           Expression tree:
-
-  Ref(mut)                  Ident
-     |                        |
-   Ident                     "r"
-     |
-    "y"
-</pre>
-</div>
-
-**Pattern matching is tree matching.** The pattern tree specifies what structure to expect and which parts to bind to variables. The expression produces a value. If structures match, bind the variables.
-
+**Pattern:**
 <div class="rust-code">
-<pre>let (a, &b) = pair;</pre>
+<pre>let &mut target = some_ref;  <span class="comment">// follow reference, bind target</span></pre>
 </div>
-
-<div class="pipeline-diagram">
-<pre>
-Pattern tree:
-
-   Tuple
-   /    \
-Ident   Ref
-  |       \
- "a"     Ident
-           |
-          "b"
-</pre>
-</div>
-
-Pattern says: "expect a tuple, first element goes in `a`, second element is a reference, follow it, put result in `b`."
-
-**What happens:**
-
-1. Expression tree → compiler generates code to produce a value
-2. Pattern tree → compiler generates code to destructure that value into variables
-
-**When trees don't match:**
-
-The compiler doesn't try combinations. It checks: does the pattern's shape match the expression's type?
-
-<div class="rust-code">
-<pre>let &mut x = 5;  <span class="comment">// error: pattern expects reference, got integer</span></pre>
-</div>
-
-<div class="pipeline-diagram">
-<pre>
-Pattern tree:           Expression type:
-
-  Ref(mut)                  i32
-     |
-   Ident
-     |
-    "x"
-</pre>
-</div>
-
-Pattern says: "expect a reference, extract target." Expression produces: integer. Shapes don't match → compile error.
-
-<div class="rust-code">
-<pre>error[E0308]: mismatched types
-  |
-  |     let &mut x = 5;
-  |         ^^^^^^   - this expression has type `{integer}`
-  |         |
-  |         expected integer, found `&mut _`</pre>
-</div>
-
-The error message is backwards—it says "expected integer" because the compiler infers from the pattern what the expression should be. This is why it's confusing: the compiler reports what it expected based on the value, not what the pattern asked for.
-
----
-
-### Syntax Position
-
-Rust overloads `&` and `&mut` based on where they appear. The same symbol means different things depending on which side of `=` or `:` it's on. This is a common source of confusion—the compiler error tells you shapes don't match, but doesn't tell you that you're in the wrong mode entirely.
-
-<table class="derived-table">
-<tr><th>Position</th><th><code>&mut x</code> means</th><th>What happens</th></tr>
-<tr><td>Expression (right of <code>=</code>)</td><td>Unary operator</td><td>Produces a reference to x</td></tr>
-<tr><td>Pattern (left of <code>=</code>)</td><td>Shape match</td><td>Expects reference, binds target to x</td></tr>
-<tr><td>Type (right of <code>:</code>)</td><td>Type constructor</td><td>Describes "reference to T"</td></tr>
-</table>
-
-Expression: operators produce values. Pattern: shapes match and bind.
-
-**1. Type (right of `:`)**
-
-<div class="rust-code">
-<pre>let x: &mut i32 = ...;  <span class="comment">// x is a reference to i32</span></pre>
-</div>
-
-<div class="rust-code">
-<pre><span class="comment">// C++ equivalent:</span>
-int* x = ...;  <span class="comment">// x is a pointer to int</span></pre>
-</div>
-
-**2. Expression (right of `=`)**
-
-<div class="rust-code">
-<pre>let p = &mut x;  <span class="comment">// evaluates to a reference pointing to x</span></pre>
-</div>
-
-<div class="rust-code">
-<pre><span class="comment">// C++ equivalent:</span>
-int* p = &x;  <span class="comment">// takes address, assigns to p</span></pre>
-</div>
-
-<div class="pipeline-diagram">
-<pre>
-Pattern tree:           Expression tree:
-
-  Ident                   Ref(mut)
-    |                        |
-   "p"                    Ident
-                            |
-                           "x"
-</pre>
-</div>
-
-Expression tree says: produce address of x. Pattern tree says: store it in p.
-
-`&` is one of several unary operators:
-
-<table class="derived-table">
-<tr><th>Operator</th><th>What it produces</th></tr>
-<tr><td><code>-x</code></td><td>negation of x</td></tr>
-<tr><td><code>!x</code></td><td>logical not of x</td></tr>
-<tr><td><code>*x</code></td><td>dereference—value at x</td></tr>
-<tr><td><code>&x</code></td><td>reference to x</td></tr>
-<tr><td><code>&mut x</code></td><td>mutable reference to x</td></tr>
-</table>
-
-**3. Pattern (left of `=`)**
-
-<div class="rust-code">
-<pre>let &mut target = some_ref;  <span class="comment">// match reference, extract target</span></pre>
-</div>
-
-<div class="rust-code">
-<pre><span class="comment">// C++ equivalent:</span>
-int target = *some_ref;  <span class="comment">// dereference to extract target</span></pre>
-</div>
-
-C++ uses `*` operator. Rust uses pattern position.
-
----
 
 ### Primitives
 
-Three building blocks, that's all:
+| Primitive | What |
+|-----------|------|
+| `&` | shared reference |
+| `&mut` | exclusive reference |
+| `mut` | rebindable binding |
 
-<table class="derived-table">
-<tr><th>Primitive</th><th>What it is</th><th>Where it appears</th></tr>
-<tr><td><code>&</code></td><td>shared reference</td><td>before expression or in pattern</td></tr>
-<tr><td><code>&mut</code></td><td>mutable reference</td><td>before expression or in pattern</td></tr>
-<tr><td><code>mut</code></td><td>mutable binding</td><td>after <code>let</code></td></tr>
-</table>
+`&mut` is one token. There is no `mut&`.
 
-`&mut` is one token—not `&` + `mut`. There is no `mut&`.
-
-**Reassign vs mutate:**
+**Rebind vs mutate:**
 
 <div class="rust-code">
 <pre>let mut x = &y;
-x = &z;         <span class="comment">// reassign: x now points elsewhere</span>
+x = &z;         <span class="comment">// rebind: x now points elsewhere</span>
 
 let x = &mut y;
 *x = 5;         <span class="comment">// mutate: change what x points to</span></pre>
 </div>
 
-Reassign changes the reference itself. Mutate changes what's at the target.
+### Clarifying Syntax
 
----
+What if operations were explicit?
 
-### References Point to SPACE, Not Names
+| Current | Clarified | Meaning |
+|---------|-----------|---------|
+| `let x = y` | `let x = move_or_copy(y)` | compiler chooses |
+| `let x = &y` | `let x = shared(y)` | shared IDENTITY |
+| `let x = &mut y` | `let x = exclusive(y)` | exclusive IDENTITY |
+| `let mut x = 5` | `let rebindable(x) = 5` | binding can change |
+| `let &x = r` | `let x = *r` | dereference |
 
-A common misconception: references alias variables. They don't. A reference points to SPACE, not to a name.
-
-When you write `&x`, you get the address of the memory, not an alias to the variable `x`. The name `x` may go out of scope or be rebound—what matters is whether the SPACE it referred to is still valid.
-
-<div class="rust-code">
-<pre>let r;
-{
-    let x = 5;
-    r = &x;      <span class="comment">// r points to x's SPACE</span>
-}                <span class="comment">// x's name is gone, and so is its SPACE</span>
-<span class="comment">// r is now dangling — the IDENTITY outlived the SPACE</span></pre>
-</div>
-
-This is what the borrow checker prevents: IDENTITY outliving SPACE.
-
----
+Current syntax overloads position. Clarified syntax makes operations explicit.
 
 ### Framework Translation
 
-<table class="derived-table">
-<tr><th>Rust</th><th>Framework</th></tr>
-<tr><td>value</td><td>A value occupies SPACE in memory</td></tr>
-<tr><td>binding</td><td>A binding is a name that refers to a SPACE</td></tr>
-<tr><td>reference</td><td>A reference is an IDENTITY that points to a SPACE</td></tr>
-<tr><td>scope</td><td>A scope defines a TIME boundary for when bindings are valid</td></tr>
-<tr><td><code>let x</code></td><td>Bind the name x to a SPACE; the binding cannot be changed</td></tr>
-<tr><td><code>let mut x</code></td><td>Bind the name x to a SPACE; the binding can be changed to point elsewhere</td></tr>
-<tr><td><code>&x</code> (expression)</td><td>Create a shared IDENTITY that points to x's SPACE</td></tr>
-<tr><td><code>&mut x</code> (expression)</td><td>Create an exclusive IDENTITY that points to x's SPACE</td></tr>
-<tr><td><code>&x</code> (pattern)</td><td>Follow the IDENTITY and bind x to what it points to</td></tr>
-<tr><td><code>&mut x</code> (pattern)</td><td>Follow the IDENTITY and bind x to what it points to</td></tr>
-<tr><td><code>&</code></td><td>A shared IDENTITY; TIME is frozen so no mutation is allowed through this path</td></tr>
-<tr><td><code>&mut</code></td><td>An exclusive IDENTITY; TIME flows so mutation is allowed through this path</td></tr>
-</table>
-
----
-
-### Clarifying Syntax
-
-Rust's syntax overloads symbols based on position. `&` means one thing on the left of `=`, another on the right. `mut` means one thing after `let`, another after `&`. Copy and move happen silently based on type.
-
-These choices have reasons—terseness, familiarity with C, ergonomics. But they obscure the underlying operations. What if we made every operation explicit instead?
-
-This section isn't proposing a new language. It's a mental model—a way to see what Rust is actually doing, unencumbered by its syntactic choices.
-
-**Primitives:**
-
-<table class="derived-table">
-<tr><th>Proposed</th><th>What it does</th></tr>
-<tr><td><code>5</code> (literal)</td><td>create new SPACE with value</td></tr>
-<tr><td><code>copy(y)</code></td><td>create new SPACE with duplicated value from y's SPACE; y remains valid; type must implement Copy</td></tr>
-<tr><td><code>move(y)</code></td><td>transfer y's SPACE to new owner; y is invalidated and cannot be used after</td></tr>
-<tr><td><code>move_or_copy(y)</code></td><td>compiler chooses: copy if type implements Copy, otherwise move *</td></tr>
-<tr><td><code>shared(y)</code></td><td>create IDENTITY to y's SPACE; multiple shared IDENTITYs may coexist; no mutation allowed through any of them; TIME is frozen</td></tr>
-<tr><td><code>exclusive(y)</code></td><td>create IDENTITY to y's SPACE; no other IDENTITY may exist while this one is active; mutation allowed through this IDENTITY; TIME flows</td></tr>
-<tr><td><code>*r</code></td><td>follow IDENTITY r to reach its SPACE; what happens next depends on context (copy, move, or mutate)</td></tr>
-<tr><td><code>rebindable(x)</code></td><td>the binding x can be redirected to point to a different SPACE later; without this, the binding is fixed for its lifetime</td></tr>
-</table>
-
-\* Why `move_or_copy(y)`? In Rust, `let x = y` silently does different things based on whether y's type implements Copy. This makes the implicit explicit—you see that the compiler is choosing.
-
-**All combinations:**
-
-<table class="derived-table">
-<tr><th>Current</th><th>Clarified</th><th>Meaning</th></tr>
-<tr><td><code>let x = 5</code></td><td><code>let x = 5</code></td><td>new SPACE with literal value</td></tr>
-<tr><td><code>let mut x = 5</code></td><td><code>let rebindable(x) = 5</code></td><td>new SPACE, binding can change</td></tr>
-<tr><td><code>let x = y</code> (Copy)</td><td><code>let x = copy(y)</code></td><td>duplicate SPACE</td></tr>
-<tr><td><code>let mut x = y</code> (Copy)</td><td><code>let rebindable(x) = copy(y)</code></td><td>duplicate SPACE, binding can change</td></tr>
-<tr><td><code>let x = y</code> (Move)</td><td><code>let x = move(y)</code></td><td>transfer SPACE, y invalidated</td></tr>
-<tr><td><code>let mut x = y</code> (Move)</td><td><code>let rebindable(x) = move(y)</code></td><td>transfer SPACE, binding can change</td></tr>
-<tr><td><code>let x = y</code> (implicit)</td><td><code>let x = move_or_copy(y)</code></td><td>compiler decides</td></tr>
-<tr><td><code>let x = &y</code></td><td><code>let x = shared(y)</code></td><td>shared IDENTITY to y's SPACE</td></tr>
-<tr><td><code>let mut x = &y</code></td><td><code>let rebindable(x) = shared(y)</code></td><td>shared IDENTITY, binding can change</td></tr>
-<tr><td><code>let x = &mut y</code></td><td><code>let x = exclusive(y)</code></td><td>exclusive IDENTITY to y's SPACE</td></tr>
-<tr><td><code>let mut x = &mut y</code></td><td><code>let rebindable(x) = exclusive(y)</code></td><td>exclusive IDENTITY, binding can change</td></tr>
-<tr><td><code>let x = *r</code> (Copy)</td><td><code>let x = copy(*r)</code></td><td>deref, then duplicate</td></tr>
-<tr><td><code>let mut x = *r</code> (Copy)</td><td><code>let rebindable(x) = copy(*r)</code></td><td>deref, duplicate, binding can change</td></tr>
-<tr><td><code>let x = *r</code> (Move)</td><td><code>let x = move(*r)</code></td><td>deref, then transfer</td></tr>
-<tr><td><code>let mut x = *r</code> (Move)</td><td><code>let rebindable(x) = move(*r)</code></td><td>deref, transfer, binding can change</td></tr>
-<tr><td><code>let &x = r</code></td><td><code>let x = copy(*r)</code></td><td>deref, copy</td></tr>
-<tr><td><code>let &mut x = r</code></td><td><code>let x = copy(*r)</code></td><td>deref, copy</td></tr>
-<tr><td><code>let mut &x = r</code></td><td><code>let rebindable(x) = copy(*r)</code></td><td>deref, copy, binding can change</td></tr>
-<tr><td><code>let mut &mut x = r</code></td><td><code>let rebindable(x) = copy(*r)</code></td><td>deref, copy, binding can change</td></tr>
-<tr><td><code>let (a, b) = t</code></td><td><code>let (a, b) = t</code></td><td>unpack structure</td></tr>
-<tr><td><code>let (a, &b) = t</code></td><td><code>let (a, b) = (t.0, *t.1)</code></td><td>pick first, deref second</td></tr>
-<tr><td><code>let (&a, &b) = t</code></td><td><code>let (a, b) = (*t.0, *t.1)</code></td><td>deref both</td></tr>
-<tr><td><code>let &(a, b) = r</code></td><td><code>let (a, b) = *r</code></td><td>deref, then unpack</td></tr>
-<tr><td><code>let mut (a, b) = t</code></td><td><code>let (rebindable(a), rebindable(b)) = t</code></td><td>unpack, both rebindable</td></tr>
-</table>
-
-**Example:**
-
-<table class="derived-table">
-<tr><th>Current</th><th>Clarified</th></tr>
-<tr><td><code>let mut &mut x = r</code></td><td><code>let rebindable(x) = copy(*r)</code></td></tr>
-</table>
-
-Current requires knowing: `mut` on binding vs `&mut` in pattern vs position rules.
-
-Clarified reads left to right: rebindable binding receives copy of dereferenced r.
-
-**What this clarifies:**
-
-<table class="derived-table">
-<tr><th>Rust</th><th>Clarified</th></tr>
-<tr><td><code>&</code> means two things based on position: on the right it creates a reference, on the left it matches and dereferences</td><td><code>shared()</code> creates a reference, <code>*</code> dereferences—separate operations, no position rules</td></tr>
-<tr><td><code>mut</code> means two things: after <code>let</code> the binding can change, after <code>&</code> mutation is allowed through the reference</td><td><code>rebindable()</code> marks the binding, <code>exclusive()</code> marks the reference—separate concepts, separate keywords</td></tr>
-<tr><td>Copy/Move is hidden—<code>let x = y</code> silently copies or moves based on whether the type implements Copy</td><td><code>copy()</code>, <code>move()</code>, <code>move_or_copy()</code> make the operation visible</td></tr>
-<tr><td>Pattern matching can dereference implicitly—<code>let &x = r</code> follows the reference as a side effect of matching</td><td><code>*r</code> is the only way to dereference, always explicit, always on the right</td></tr>
-<tr><td>Two grammars exist—pattern grammar on the left, expression grammar on the right</td><td>One grammar—operations compose on the right, names go on the left</td></tr>
-</table>
+| Rust | Framework |
+|------|-----------|
+| value | Occupies SPACE |
+| binding | Name referring to SPACE |
+| reference | IDENTITY pointing to SPACE |
+| scope | TIME boundary for validity |
+| `&x` (expression) | Create shared IDENTITY to x's SPACE |
+| `&mut x` (expression) | Create exclusive IDENTITY to x's SPACE |
+| `&x` (pattern) | Follow IDENTITY, bind result |
