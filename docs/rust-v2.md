@@ -1,4 +1,9 @@
-# Rust
+---
+layout: post
+title: Rust (v2)
+toc: true
+permalink: /rust-v2/
+---
 
 ## The Framework
 
