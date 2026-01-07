@@ -168,9 +168,18 @@ Each axis exists in two forms:
 <tr><td>IDENTITY</td><td>Names</td><td>Addresses</td></tr>
 </table>
 
-The compiler works in compile-time projection: it tracks names (not addresses), analyzes CFG regions (not execution), and reasons about types (not bytes). It proves coherence there. The proof transfers to runtime.
+The borrow checker works in compile-time projection. It tracks paths like `x` and `x.field` (not runtime addresses), analyzes control flow regions (not actual execution), and reasons about types (not bytes). It proves coherence in this abstract model.
 
-This is what "zero-cost" means. Verification happens before execution. Nothing carries over except the guarantee.
+### Zero-Cost Abstraction
+
+Rust claims "zero-cost abstractions" — safety checks that don't add runtime overhead.
+
+For the borrow checker, this means:
+- Analysis happens at compile time
+- Names and regions are erased before execution
+- At runtime: just addresses, just execution, no tracking
+
+The cost is compile time and programmer effort. The runtime pays nothing.
 
 ---
 
