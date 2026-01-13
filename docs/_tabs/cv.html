@@ -250,11 +250,25 @@ permalink: /cv/
 </head>
 <body>
     <div class="actions">
+        <button onclick="downloadPDF()">Download PDF</button>
         <button onclick="window.print()">Print</button>
         <button type="button" onclick="saveAsHTML()">Save as HTML</button>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
+    function downloadPDF() {
+        const element = document.querySelector('.container');
+        const opt = {
+            margin: [0.35, 0.45, 0.35, 0.45],
+            filename: 'jad_nohra_cv.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+
     function saveAsHTML() {
         const clone = document.documentElement.cloneNode(true);
         clone.querySelector('.actions').remove();
@@ -286,7 +300,7 @@ permalink: /cv/
         </header>
 
         <div class="summary">
-            <p>Engineering leader with 25+ years spanning gaming physics (Sony/Microsoft), autonomous vehicles (Argo AI/Audi), and cryptographic hardware (Irreducible). Built and led organizations up to 25 engineers while staying hands-on with code and architecture. Equally drawn to IC deep-dives, team building, or hybrid technical leadership roles.</p>
+            <p>Hands-on engineering leader with 25+ years spanning gaming physics (Sony/Microsoft), autonomous vehicles (Argo AI/Audi), and cryptographic hardware (Irreducible). Built and led organizations up to 25 engineers while staying hands-on with code and architecture. Equally drawn to IC deep-dives, team building, or hybrid technical leadership roles.</p>
         </div>
 
         <h2>Experience</h2>
@@ -294,7 +308,7 @@ permalink: /cv/
         <div class="job">
             <div class="job-line">
                 <span class="dates">Sep 2024 - Present</span>
-                <span class="company">Irreducible (ZK-crypto/hardware)</span>, Berlin • Engineering Director
+                <span class="company">Irreducible (ZK-crypto/hardware)</span>, Berlin • Hands-on Engineering Director
             </div>
             <ul>
                 <li>Built high-performance systems team for hardware-accelerated Zero-Knowledge Proofs; managing global remote team</li>
