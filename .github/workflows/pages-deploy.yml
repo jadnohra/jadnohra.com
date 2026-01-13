@@ -46,7 +46,7 @@ jobs:
 
       - name: Encrypt protected pages
         run: |
-          npx staticrypt _site/protected-test/index.html -p "${{ secrets.PAGE_PASSWORD }}" --short
+          npx staticrypt _site/protected-test/index.html -p "${{ secrets.PAGE_PASSWORD }}" -d _site/protected-test/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
