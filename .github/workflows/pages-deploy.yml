@@ -48,6 +48,10 @@ jobs:
         env:
           JEKYLL_ENV: production
 
+      - name: Encrypt protected pages
+        run: |
+          npx staticrypt _site/protected-test/index.html "${{ secrets.PAGE_PASSWORD }}" -o _site/protected-test/index.html --short
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
