@@ -46,11 +46,8 @@ jobs:
 
       - name: Encrypt protected pages
         run: |
-          echo "Before encryption:"
-          ls -la _site/protected-test/
-          npx staticrypt _site/protected-test/index.html -p "${{ secrets.PAGE_PASSWORD }}" -d _site/protected-test/ --short
-          echo "After encryption:"
-          ls -la _site/protected-test/
+          npx staticrypt ../_site/protected-test/index.html -p "${{ secrets.PAGE_PASSWORD }}" -d ../_site/protected-test/ --short -t _includes/password_template.html
+        working-directory: docs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
