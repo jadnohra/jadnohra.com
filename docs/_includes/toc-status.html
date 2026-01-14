@@ -1,0 +1,10 @@
+{% comment %}
+  Override: Simplified TOC status check that doesn't rely on content parsing.
+  The original theme checks `page.content contains '<h2'` which fails for
+  standalone pages outside collections due to Kramdown processing differences.
+{% endcomment %}
+
+{% assign enable_toc = false %}
+{% if site.toc and page.toc %}
+  {% assign enable_toc = true %}
+{% endif %}
