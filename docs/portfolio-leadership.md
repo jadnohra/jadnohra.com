@@ -1294,5 +1294,17 @@ At AID, product owner training was offered with an external consultant. Although
 
 ---
 
+## Principles
+
+1. **Treat People Like Adults** — Trust, don't control.
+2. **Say the Hard Thing, Kindly** — Prioritize clarity over comfort.
+3. **Structure Without Bureaucracy** — Build processes that help, not hinder.
+4. **Influence Without Authority** — Lead by providing context and example.
+5. **Lead Through the Dip** — Face burnout and conflict, they are normal.
+6. **The Human Factor** — Address emotional and interpersonal dynamics, not just technical ones.
+7. **Context Over Recipes** — Diagnose, adapt, and lead for the situation—not the script.
+
+---
+
 <!-- Hover functionality script -->
 <script src="{{ '/assets/js/portfolio-leadership-hover.js' | relative_url }}"></script>
