@@ -130,9 +130,10 @@
         html += '<div class="story-popover-star">';
 
         story.content.forEach(p => {
-          // Skip source links in display
-          if (!p.includes('<strong>Source:</strong>')) {
-            html += '<p>' + p + '</p>';
+          // Remove just the Source line, keep rest of content (STAR lines may be in same paragraph)
+          const cleaned = p.replace(/<strong>Source:<\/strong>.*?(?=<strong>|<\/p>|$)/gi, '').trim();
+          if (cleaned) {
+            html += '<p>' + cleaned + '</p>';
           }
         });
 
@@ -145,8 +146,10 @@
             html += '<div class="story-popover-full">';
             html += '<div class="story-popover-full-title">Full:</div>';
             fullStory.content.forEach(p => {
-              if (!p.includes('<strong>Source:</strong>')) {
-                html += '<p>' + p + '</p>';
+              // Remove just the Source line for full stories too
+              const cleaned = p.replace(/<strong>Source:<\/strong>.*?(?=<strong>|<\/p>|$)/gi, '').trim();
+              if (cleaned) {
+                html += '<p>' + cleaned + '</p>';
               }
             });
             html += '</div>';

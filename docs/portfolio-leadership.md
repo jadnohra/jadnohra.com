@@ -134,6 +134,11 @@ toc: true
 .content tr:hover td {
   background: rgba(255,255,255,0.02);
 }
+/* LP Table column widths */
+.content table th:nth-child(1),
+.content table td:nth-child(1) { width: 30px; }
+.content table th:nth-child(2),
+.content table td:nth-child(2) { width: 140px; }
 
 /* Links */
 .content a {
@@ -148,18 +153,13 @@ toc: true
   text-decoration-color: #fb923c;
 }
 
-/* Arc visualization - vertical layout */
+/* Arc visualization - matches LP table format */
 .arc-chain {
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
-  font-size: 12px;
-  color: #94a3b8;
-  padding: 12px 16px;
+  font-size: 13px;
+  padding: 8px 12px;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   border-radius: 6px;
   margin: 0.5rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
 }
 .arc-chain a {
   color: #f97316;
@@ -1124,24 +1124,6 @@ toc: true
 **Action:** I was asked to travel to US to meet test engineering and systems engineering leads. I was invited to join systems engineering to work on the testing plan proving vehicle safety.
 **Result:** Recognition of my contribution to this problem.
 **Source:** [AID-Bridge-Systems-Engineering-Full](#aid-bridge-systems-engineering-full)
-
----
-
-## Career Arc: Proving AV Safety Through Virtual Testing
-
-#### META-1-Consistent-Focus-on-an-Unsolved-Problem
-
-Looking across my career, there's a consistent thread: proving autonomous vehicles are safe through virtual testing—at increasing sophistication.
-
-| Phase | Company | Focus | What I Solved |
-|-------|---------|-------|---------------|
-| 1 | AID | Built simulators from scratch | AV developers need to test without real roads—created traffic sim, viz sim, runtime, scenario eval |
-| 2 | Argo | Simulation fidelity + noise modeling | Tests must reflect reality—built modeling library with realistic noise injection |
-| 3 | Argo | Scenario generation (patent) | Coverage must be meaningful—developed mathematical framework for scenario dimensions |
-| 4 | Argo | Bridge to systems engineering | Testing plan must prove safety—invited to join sys eng team for safety validation |
-| 5 | FERNRIDE | HZM + DFD for TUV SUD certification | Regulators need provable safety case—designed approach that achieved certification |
-
-This problem—how do you prove an autonomous vehicle is safe enough for public roads—remains an open challenge in the industry. I've approached it from multiple angles: building infrastructure, improving realism, generating meaningful scenarios, connecting to formal safety cases. I also studied how other industries solve similar problems—nuclear reactors, aviation, medical devices—domains with decades of experience proving safety when exhaustive testing is impossible.
 
 ---
 
