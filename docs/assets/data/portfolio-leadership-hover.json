@@ -1,0 +1,8 @@
+{
+  "_comment": "Portfolio hover data - Stage 2: Add full story details here",
+  "_example": {
+    "title": "Story Title",
+    "principles": "LP1, LP2, LP3",
+    "content": "Brief explanation or key details about this story that appear on hover."
+  }
+}
