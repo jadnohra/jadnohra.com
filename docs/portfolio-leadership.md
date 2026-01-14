@@ -105,10 +105,7 @@ toc: true
   margin-bottom: 6px;
 }
 
-/* Story links get hover behavior */
-.content a[href^="#"] {
-  cursor: help;
-}
+/* Story links - default pointer */
 
 /* Tables */
 .content table {
@@ -151,7 +148,7 @@ toc: true
   text-decoration-color: #fb923c;
 }
 
-/* Arc visualization */
+/* Arc visualization - vertical layout */
 .arc-chain {
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
   font-size: 12px;
@@ -160,13 +157,20 @@ toc: true
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   border-radius: 6px;
   margin: 0.5rem 0;
-  overflow-x: auto;
-  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 .arc-chain a {
   color: #f97316;
 }
+.arc-chain .arrow {
+  color: #64748b;
+  margin-left: 8px;
+}
 </style>
+
+<div></div>
 
 ## Amazon LP Mapping
 
@@ -350,26 +354,37 @@ toc: true
 #### Arc 1: Building the Systems Team (Irreducible)
 
 <div class="arc-chain">
-<a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a> <b>&rarr;</b> <a href="#irr-3-building-founder-appreciation">irr-3-building-founder-appreciation</a> <b>&rarr;</b> <a href="#irr-4-hiring-a-fpga-shell-design-hands-on">irr-4-hiring-a-fpga-shell-design-hands-on</a> <b>&rarr;</b> <a href="#irr-5-codebase-architecture-analysis-hands-on">irr-5-codebase-architecture-analysis-hands-on</a> <b>&rarr;</b> <a href="#irr-6-xlang-compiler-initiative-hands-on">irr-6-xlang-compiler-initiative-hands-on</a> <b>&rarr;</b> <a href="#irr-7-compiler-engineer-hiring">irr-7-compiler-engineer-hiring</a> <b>&rarr;</b> <a href="#irr-8-principled-problem-solving-hands-on">irr-8-principled-problem-solving-hands-on</a>
+<a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a> <span class="arrow">→</span><br>
+<a href="#irr-3-building-founder-appreciation">irr-3-building-founder-appreciation</a> <span class="arrow">→</span><br>
+<a href="#irr-4-hiring-a-fpga-shell-design-hands-on">irr-4-hiring-fpga-shell</a> <span class="arrow">→</span><br>
+<a href="#irr-5-codebase-architecture-analysis-hands-on">irr-5-codebase-architecture</a> <span class="arrow">→</span><br>
+<a href="#irr-6-xlang-compiler-initiative-hands-on">irr-6-xlang-compiler</a> <span class="arrow">→</span><br>
+<a href="#irr-7-compiler-engineer-hiring">irr-7-compiler-engineer-hiring</a> <span class="arrow">→</span><br>
+<a href="#irr-8-principled-problem-solving-hands-on">irr-8-principled-problem-solving</a>
 </div>
-
-Team diagnosis &rarr; founder appreciation &rarr; hiring &rarr; codebase analysis &rarr; xlang compiler &rarr; compiler hiring &rarr; principled problem-solving
 
 #### Arc 2: Hazard Zone Model HZM (FERNRIDE)
 
 <div class="arc-chain">
-<a href="#fer-2-safety-perception-research-hands-on-star-ownership">fer-2-safety-perception-research-hands-on</a> <b>&rarr;</b> <a href="#fer-4-hazard-zone-design-hands-on">fer-4-hazard-zone-design-hands-on</a> <b>&rarr;</b> <a href="#fer-5-function-testing-framework-hands-on">fer-5-function-testing-framework-hands-on</a> <b>&rarr;</b> <a href="#fer-6-apple-demo-star-earn-trust">fer-6-apple-demo</a> <b>&rarr;</b> <a href="#fer-7-rain-demo">fer-7-rain-demo</a> <b>&rarr;</b> <a href="#fer-12-safety-case-design-hands-on">fer-12-safety-case-design-hands-on</a>
+<a href="#fer-2-safety-perception-research-hands-on-star-ownership">fer-2-safety-perception-research</a> <span class="arrow">→</span><br>
+<a href="#fer-4-hazard-zone-design-hands-on">fer-4-hazard-zone-design</a> <span class="arrow">→</span><br>
+<a href="#fer-5-function-testing-framework-hands-on">fer-5-function-testing</a> <span class="arrow">→</span><br>
+<a href="#fer-6-apple-demo-star-earn-trust">fer-6-apple-demo</a> <span class="arrow">→</span><br>
+<a href="#fer-7-rain-demo">fer-7-rain-demo</a> <span class="arrow">→</span><br>
+<a href="#fer-12-safety-case-design-hands-on">fer-12-safety-case-design</a>
 </div>
-
-Safety perception research &rarr; hazard zone design &rarr; function testing &rarr; apple demo &rarr; rain demo &rarr; safety case certification
 
 #### Arc 3: Proving AV Safety Through Virtual Testing (Career-spanning)
 
 <div class="arc-chain">
-<a href="#meta-1-consistent-focus-on-an-unsolved-problem">meta-1-consistent-focus</a> <b>&rarr;</b> <a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a> <b>&rarr;</b> <a href="#aid-26-scenario-fidelity-gap">aid-26-scenario-fidelity-gap</a> <b>&rarr;</b> <a href="#aid-27-mathematical-framework-hands-on">aid-27-mathematical-framework</a> <b>&rarr;</b> <a href="#aid-28-reading-bridge-role-hands-on-star-customer-obsession">aid-28-reading-bridge-role</a> <b>&rarr;</b> <a href="#aid-29-systems-engineering-invitation">aid-29-systems-engineering-invitation</a> <b>&rarr;</b> <a href="#fer-12-safety-case-design-hands-on">fer-12-safety-case-design</a>
+<a href="#meta-1-consistent-focus-on-an-unsolved-problem">meta-1-consistent-focus</a> <span class="arrow">→</span><br>
+<a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a> <span class="arrow">→</span><br>
+<a href="#aid-26-scenario-fidelity-gap">aid-26-scenario-fidelity-gap</a> <span class="arrow">→</span><br>
+<a href="#aid-27-mathematical-framework-hands-on">aid-27-mathematical-framework</a> <span class="arrow">→</span><br>
+<a href="#aid-28-reading-bridge-role-hands-on-star-customer-obsession">aid-28-reading-bridge-role</a> <span class="arrow">→</span><br>
+<a href="#aid-29-systems-engineering-invitation">aid-29-systems-engineering-invitation</a> <span class="arrow">→</span><br>
+<a href="#fer-12-safety-case-design-hands-on">fer-12-safety-case-design</a>
 </div>
-
-Career focus &rarr; Built simulators (AID) &rarr; Simulation fidelity + noise (Argo) &rarr; Scenario generation patent (Argo) &rarr; Bridge to systems engineering (Argo) &rarr; Systems engineering invitation &rarr; HZM + TUV SUD certification (FERNRIDE)
 
 **Customer context:** Ford/VW were the customers; AV validation was critical for their plans. Argo developers and some peers were to join back VW/Audi to prepare for that. In AV, validation and development are extremely intertwined.
 
@@ -474,6 +489,7 @@ Career focus &rarr; Built simulators (AID) &rarr; Simulation fidelity + noise (A
 **Task:** Decide whether to join a new domain.
 **Action:** I evaluated the opportunity deliberately: I wanted to learn Rust as a modern systems language. Cryptography interested me as a math application I'd never worked on. The role offered low-level systems work: managing the team writing interfaces between crypto in Rust and FPGAs, owning performance optimization, ISA design, and FPGA design.
 **Result:** I joined Irreducible, successfully transitioning from AV to cryptographic hardware.
+**Source:** [IRR-Joining-Irreducible-Full](#irr-joining-irreducible-full)
 
 ### Building the Systems Team
 
@@ -482,6 +498,7 @@ Career focus &rarr; Built simulators (AID) &rarr; Simulation fidelity + noise (A
 **Task:** Diagnose why and build a team that would succeed.
 **Action:** I interviewed everyone involved—current engineers, leadership, and former team members. I found two issues: the team had been staffed with generalists who lacked domain expertise, and their scope was too narrow to influence design decisions. I restructured with two principles: every hire needed hands-on experience in cryptographic or hardware domains, and the team would own end-to-end integration.
 **Result:** Previously unowned blockers gained accountability. The team functioned as connective tissue between crypto and hardware rather than an additional coordination layer.
+**Source:** [IRR-Building-Systems-Team-Full](#irr-building-systems-team-full)
 
 #### IRR-3-Building-Founder-Appreciation
 **Situation:** FPGA engineering, ZK engineering, and ZK research operated in silos. The interdependencies between systems work and cryptography weren't visible across teams.
@@ -1010,5 +1027,89 @@ This problem—how do you prove an autonomous vehicle is safe enough for public 
 
 ---
 
-<!-- Hover functionality script (prepared for stage 2) -->
+## Unabridged Stories
+
+These are the full, detailed versions of the stories. The STAR summaries above link here via **Source** links.
+
+### Irreducible - Full Versions
+
+#### IRR-Joining-Irreducible-Full
+Multiple motivations aligned: I wanted to learn Rust as a modern systems language. Cryptography interested me as a math application I'd never worked on. The role offered low-level systems work—managing the team writing interfaces between crypto in Rust and FPGAs, owning performance optimization end-to-end, ISA design, and FPGA design. I was headhunted—the crypto industry found me through my systems/FPGA background despite coming from AV.
+
+#### IRR-Building-Systems-Team-Full
+At Irred, I started hiring for the systems team. The team had been hired and let go 2 times before I joined. I followed up with the engineers who were let go to understand better the context, to gather information about the specifics of the company and the history. I diagnosed a number of topics: a very high performance bar at the company, driven by the CTO, as well as systems engineering being undervalued relative to crypto work. I did this as I was in parallel studying the existing systems codebase and making small improvements on the line of the existing backlog. I concluded the systems team would need 4 ICs (3 + myself) with different expertise points: FPGA dev/low-level kernels, compilers, and system-level perf optimization. I worked closely with the internal recruiter to find and source candidates. I also had to work with the founders (CEO and CTO both hands-on HW and ZK) to create appreciation for the systems task, as bridging two domains FPGA eng and ZK eng (as well as linking to ZK research, which had been siloed).
+
+#### IRR-Hiring-Alex-FPGA-Shell-Full
+I hired Alex for low-level dev. We worked closely with senior recent FPGA hire to establish the design needed to integrate a new FPGA shell that was solving a critical problem that caused the tech stack many problems in the past, being open loop and causing packet loss which was not acceptable for our application. We also worked on designing the system upfront to be robust against edge case failures from the get-go. We patched holes in the existing code.
+
+#### IRR-XLang-Compiler-Initiative-Full
+At that time I noticed that there was a member of the crypto team sitting at the intersection of the interfaces and he had built several internal tools to help himself. Though the tools were imperfect, they aligned with my intuition that compilation is a necessary step for the systems team to own. I proposed a slimmed-down, backend-only compiler that allows a developer to use the API of the backend to write code. We branded the compiler xlang. I internally moved that developer to my team for 2 reasons: (1) the compiler work, (2) for eng mgmt purposes as the developer had growth opportunities I could support. I also hired a compiler engineer, working closely with the recruiter to remove JD constraints posed as immutable by the founders: Rust expertise. This improved the funnel considerably. I worked with Ivan and Y on finding the smaller compiler function that would help. We ended up with a greedy algorithm that was a generalization of what Y had developed but general enough to handle >80% of the code optimally enough.
+
+#### IRR-FPGA-Management-Tool-Full
+I wrote an FPGA management tool in Rust. The tool we had was a very crude shell script that did not handle many of the edge cases and caused the need for continuous debugging: wrong versions of shell, wrong version of FPGA image, timing issues loading the FPGA, resetting techniques, querying multiple FPGAs for CI/CD. This became the tool used by Infra to manage FPGAs on CI/CD and would have been used in production as well.
+
+#### IRR-MPT-Project-Delivery-Full
+Owned the delivery of the Merkle Patricia Trie company goal end of 2024. ZK cryptography is technically demanding, which made cross-functional coordination particularly challenging. Previously only team weeklies existed—cross-functional risks stayed invisible. I introduced project weeklies: a unified forum across teams that I moderated with technical questions to surface risks teams might not raise unprompted. I interviewed experts across teams and maintained documents mapping the end-to-end view to disseminate system knowledge—critical in a domain where few people understood the full stack. MPT delivered on time. This became the standard process for all cross-functional projects at Irreducible.
+
+#### IRR-Docker-Advocacy-Full
+For the MPT project, there was a technical difference of opinion on using Docker containers, as infra had the impression they affect performance. I set up a specific discussion between Alex on my team who was a virtualization black belt at Amazon and the infra team who had concerns about Docker. We clarified the opinion differences, and also prototyped a proof that performance was not affected in practice. Docker became a standard tool in the infra team.
+
+#### IRR-Co-Design-Breaking-Rebuild-Cycle-Full
+A very important event happened during long-term planning, shortly before the pivot. As the systems team learned more about the product, we started to find gaps in the narrative. I noticed that the company had essentially rebuilt the product 3 times, with the same pattern every time: crypto design → handed to HW → implemented by HW + hooked up using sys eng, only to find that performance was not where it should be. I concluded we need to break out of this cycle. I proposed we have 3 implementations of the systems layer: simulated, verilated, HW. Each with a different use case, all implementing the same interface. This was challenged by the founders as unnecessary but not blocked. Contrasting sim vs verilated became a key component in finding implementation bugs. To break out of the cycle, co-design was necessary. In a key moment, I pushed the CTO to write a model of the future design with back-of-envelope calculations turned into simulation. This was a key revelation that our product was potentially not competitive—something we would find only months later if we kept using the old process.
+
+#### IRR-HFT-Engineer-Coaching-Full
+Hired 3rd engineer from HFT background due to perf optimization experience, parallel computing expertise and kernel writing expertise. Excellent engineer with difficulties communicating when it came to non-technical matters, style extremely sparse. I worked with him on the topic. He knew about the problem and tried to address it multiple times by reading books, though we arrived at the conclusion that books are not able to solve this problem and it should be tackled with the help of specialized interaction with counselors.
+
+#### IRR-Dual-Trials-Full
+As importance of compilers at company expanded, we started hiring to expand the capacity. I requested two trials in the same week due to time constraints. The founders raised concerns about potential conflicts. But I was hiring senior folks to whom it should be reasonable to explain the situation. We did the common trial and it went seamlessly, with some prep on my side: dedicated Slack channels, intro meetings, etc. Sadly the company half-sized DURING the trial and I had to stop the trial in its middle, communicating the change in full maturity and transparency.
+
+#### IRR-Helping-Infra-Manager-Full
+I helped the other infra eng manager during his tenure at Irred. There were role difficulties in his team. I helped him decide on the interactions, and I diagnosed his need for help as a cultural difference where his communication style didn't match his team's expectations for directness. I also had close working collaboration with some of his team members on CI/CD and automation workflows.
+
+### FERNRIDE - Full Versions
+
+#### FER-Starting-Safety-Layer-Full
+For Fernride I wanted to move from simulation to actual robotics. Fernride had remote trucks and we started the autonomy team with 2 devs. I found that it is critical to have a safety layer due to the standards that apply, and I took ownership of starting that effort while my peer looked into performance autonomy. I did 2 weeks of deep research and concluded that lidar-based ground plane segmentation that is safe (no false negatives) is viable. We had a working prototype in one month—impressive speed given the prototype worked end to end.
+
+#### FER-Hazard-Zone-Design-Full
+Once we had a prototype we started working on the quality. I built a scenario/test database. The function is open-loop with a single decision: stop or not. I designed a critical spec called Hazard Zone (HZM), which expanded the perceived area with all potential sources of noise—from lidar calibration to weather effects, including uncertainty of future driver action. This became central to the safety design and certification effort.
+
+#### FER-Apple-Rain-Demo-Full
+The first demo included me throwing an apple in front of the truck and the truck stopping for it—very high precision. It was called the Apple Demo (I ate the apple afterward). There was also a famous demo where it started raining heavily and we decided to do another run anyway—the function still worked perfectly, no false positives and no false negatives.
+
+#### FER-Radar-Vendor-Full
+Radar projects are very different than lidar projects—usually done with close manufacturer collaboration. The comms with Continental wasn't progressing. I asked to join the meetings and realized we were never being technical enough. I asked to talk to the technical people directly. That opened up a new channel, and we successfully planned a measurement campaign in Italy. Conti evaluated our data and agreed the quality was insufficient. Internally I led brainstorming for alternatives. I also contracted a radar expert company in Eastern Europe to double-check Conti's work—they reached similar results and were interested in supplying custom-tuned radars.
+
+#### FER-Safety-Case-Requirements-Full
+I worked very closely with safety/sys eng to design the safety case. We together designed a very simple but effective way using DFD diagrams (my suggestion) to keep design very close to code, and make provable statements about output relations. This technique was modified after I left but was still part of TÜV SÜD certification that Fernride obtained.
+
+#### FER-CTO-Integration-Full
+The CTO wanted to stay technical but was struggling in teams—firefighting everything, couldn't operate as a team member. Others avoided giving feedback out of fear. I tried integrating him into my team, and when it wasn't working after two weeks, I gave him direct honest feedback that nobody else would: 'This isn't working as long as you can't become a team member instead of firefighting everything.' We ended without hard feelings. He needed that mirror.
+
+### AID/Argo - Full Versions
+
+#### AID-Initial-Challenge-Full
+I joined AID to work on crowd simulation. After asking questions to internal clients it became clear quite fast that there was a gap in understanding the simulation requirements. Additionally, a contract with a simulation provider startup had been signed. While wanting to achieve clarity for my role, it turned out that crowd sim is not at all a high priority feature, as basic sim capabilities were non-existent.
+
+#### AID-Architecture-Discovery-Full
+While prototyping using the startup's tool and digging into how AV sim needs differ from gaming tech and traditional traffic sim tech, a structure started to emerge: Traffic sim with agent behaviors, Viz sim for perception devs, Runtime DS sim/emulation. The startup product wasn't production-ready. I started to learn about the existing traffic sim and other topics.
+
+#### AID-F-Reversed-Rejection-Full
+Runtime was a gap until it became clear that the runtime built for AV cannot be used as-is for simulation. I picked up a rejected candidate who had very fitting background—it turns out he had failed the C++ test. C++ was not the most critical skill for this as domain knowledge was needed. Reversed decision and hired F., who became lead of the team, contributed all important designs, and now leads similar tech at Apple.
+
+#### AID-BMW-Counter-Offer-Full
+Buy vs build pressure was very high, I lacked the confidence to push back effectively. I was headhunted by BMW and got an offer, but a generous counter-offer from AID. After that I found myself much more confident and had direct talks with CEO/CTO about stopping the startup partnership and building our own tech.
+
+#### AID-Model-Fidelity-Noise-Full
+At Argo, once I identified the modeling fidelity gap, I worked on design docs that gained appreciation among system engineers and some AV dev team leads. The team started specializing in a modeling library, based on a meticulous design that analyzed every single component's input and output. We created specialized functions that could inject realistic noise. We saw very promising results as a non-insignificant percent of tests started randomly failing while they were previously passing.
+
+#### AID-Scenario-Generation-Patent-Full
+Another gap was the fidelity of simulation scenarios. There was a crude system where scenarios were hand-created and fuzzing applied to parameters. But such a system is not responsive to AV behavior. After analysis I found that a good percent of the millions of scenarios was not providing value. I used my math affinity to develop a view that scenarios have variable dimensions that expand as actors are added. I built a concept for scenario generation that became a patent.
+
+#### AID-Bridge-Systems-Engineering-Full
+I had been reading a lot about stats and testing safety-critical systems and had many interactions with devs and systems engineering. I started to be a bridge between them. I was asked to travel to US to meet the test eng lead and systems engineering, at which point I was asked to join the sys eng team to work on the testing plan that would show how safe the vehicle is.
+
+---
+
+<!-- Hover functionality script -->
 <script src="{{ '/assets/js/portfolio-leadership-hover.js' | relative_url }}"></script>

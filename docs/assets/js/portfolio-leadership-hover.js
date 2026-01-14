@@ -37,8 +37,8 @@
           const text = sibling.innerHTML;
           content.push(text);
 
-          // Check for Source link
-          const sourceMatch = text.match(/\*\*Source:\*\*.*?<a[^>]*href="#([^"]+)"[^>]*>/i);
+          // Check for Source link (rendered HTML: <strong>Source:</strong> <a href="#...">)
+          const sourceMatch = text.match(/<strong>Source:<\/strong>.*?<a[^>]*href="#([^"]+)"[^>]*>/i);
           if (sourceMatch) {
             sourceLink = sourceMatch[1];
           }
@@ -131,7 +131,7 @@
 
         story.content.forEach(p => {
           // Skip source links in display
-          if (!p.includes('**Source:**')) {
+          if (!p.includes('<strong>Source:</strong>')) {
             html += '<p>' + p + '</p>';
           }
         });
@@ -145,7 +145,7 @@
             html += '<div class="story-popover-full">';
             html += '<div class="story-popover-full-title">Full Story:</div>';
             fullStory.content.forEach(p => {
-              if (!p.includes('**Source:**')) {
+              if (!p.includes('<strong>Source:</strong>')) {
                 html += '<p>' + p + '</p>';
               }
             });
