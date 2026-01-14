@@ -350,7 +350,14 @@ toc: true
 <a href="#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight">irr-12-breaking-the-rebuild-cycle</a><br>
 <a href="#irr-16-coaching-peer-manager-star">irr-16-coaching-peer-manager</a><br>
 <a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a><br>
-<a href="#fer-4-hazard-zone-design-hands-on">fer-4-hazard-zone-design</a>
+<a href="#aid-9-vtd-evaluation-hands-on">aid-9-vtd-evaluation</a><br>
+<a href="#aid-21-identifying-the-gap">aid-21-identifying-the-gap</a><br>
+<a href="#aid-23-modeling-library-hands-on">aid-23-modeling-library</a><br>
+<a href="#aid-25-delivering-under-pressure-hands-on">aid-25-delivering-under-pressure</a><br>
+<a href="#aid-31-daisy-traffic-simulator-hands-on">aid-31-daisy-traffic-simulator</a><br>
+<a href="#aid-32-pacos-concurrency-simulator-hands-on">aid-32-pacos-concurrency-simulator</a><br>
+<a href="#fer-4-hazard-zone-design-hands-on">fer-4-hazard-zone-design</a><br>
+<a href="#fer-5-function-testing-framework-hands-on">fer-5-function-testing-framework</a>
 </td></tr>
 <tr><td>14</td><td><b>Have Backbone; Disagree and Commit</b></td><td>
 <a href="#fer-8-hardware-constraints-star-disagree">fer-8-hardware-constraints</a><br>
@@ -361,7 +368,12 @@ toc: true
 <a href="#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight">irr-12-breaking-the-rebuild-cycle</a><br>
 <a href="#irr-15-dual-trials-star">irr-15-dual-trials</a><br>
 <a href="#aid-9-vtd-evaluation-hands-on">aid-9-vtd-evaluation</a><br>
-<a href="#aid-10-buy-vs-build">aid-10-buy-vs-build</a>
+<a href="#aid-10-buy-vs-build">aid-10-buy-vs-build</a><br>
+<a href="#aid-17-supporting-team-members-star-best-employer">aid-17-supporting-team-members</a><br>
+<a href="#fer-13-challenging-requirements">fer-13-challenging-requirements</a><br>
+<a href="#irr-13-driving-co-design-hands-on">irr-13-driving-co-design</a><br>
+<a href="#irr-18-pivot-navigation">irr-18-pivot-navigation</a><br>
+<a href="#irr-21-ai-first-mandate">irr-21-ai-first-mandate</a>
 </td></tr>
 <tr><td>19</td><td><b>Deliver Results</b></td><td>
 <a href="#fer-6-apple-demo-star-earn-trust">fer-6-apple-demo</a><br>
@@ -370,9 +382,19 @@ toc: true
 <a href="#irr-11-docker-advocacy-star">irr-11-docker-advocacy</a><br>
 <a href="#irr-17-half-sizing-survival-star-trust">irr-17-half-sizing-survival</a><br>
 <a href="#aid-4-building-four-teams">aid-4-building-four-teams</a><br>
+<a href="#aid-22-design-docs">aid-22-design-docs</a><br>
+<a href="#aid-24-responding-to-skepticism">aid-24-responding-to-skepticism</a><br>
 <a href="#aid-25-delivering-under-pressure-hands-on">aid-25-delivering-under-pressure</a><br>
+<a href="#aid-27-mathematical-framework-hands-on">aid-27-mathematical-framework</a><br>
 <a href="#fer-3-one-month-prototype-hands-on">fer-3-one-month-prototype</a><br>
-<a href="#fer-12-safety-case-design-hands-on">fer-12-safety-case-design</a>
+<a href="#fer-4-hazard-zone-design-hands-on">fer-4-hazard-zone-design</a><br>
+<a href="#fer-5-function-testing-framework-hands-on">fer-5-function-testing-framework</a><br>
+<a href="#fer-7-rain-demo">fer-7-rain-demo</a><br>
+<a href="#fer-12-safety-case-design-hands-on">fer-12-safety-case-design</a><br>
+<a href="#fer-16-promotion-advocacy">fer-16-promotion-advocacy</a><br>
+<a href="#fer-17-comfort-zone-coaching">fer-17-comfort-zone-coaching</a><br>
+<a href="#irr-9-fpga-management-tool-hands-on">irr-9-fpga-management-tool</a><br>
+<a href="#irr-13-driving-co-design-hands-on">irr-13-driving-co-design</a>
 </td></tr>
 <tr><td>11</td><td><b>Strive to be Earth's Best Employer</b></td><td>
 <a href="#aid-16-integration-approach-star-earn-trust">aid-16-integration-approach</a><br>
@@ -381,8 +403,11 @@ toc: true
 <a href="#irr-16-coaching-peer-manager-star">irr-16-coaching-peer-manager</a><br>
 <a href="#irr-22-alumni-support-star-trust">irr-22-alumni-support</a><br>
 <a href="#fer-16-promotion-advocacy">fer-16-promotion-advocacy</a><br>
+<a href="#fer-17-comfort-zone-coaching">fer-17-comfort-zone-coaching</a><br>
+<a href="#irr-14-hft-engineer-coaching">irr-14-hft-engineer-coaching</a><br>
 <a href="#irr-18-pivot-navigation">irr-18-pivot-navigation</a><br>
-<a href="#irr-19-maintaining-morale">irr-19-maintaining-morale</a>
+<a href="#irr-19-maintaining-morale">irr-19-maintaining-morale</a><br>
+<a href="#irr-21-ai-first-mandate">irr-21-ai-first-mandate</a>
 </td></tr>
 <tr><td>2</td><td><b>Success and Scale Bring Broad Responsibility</b></td><td>
 <a href="#aid-29-systems-engineering-invitation">aid-29-systems-engineering-invitation</a><br>
