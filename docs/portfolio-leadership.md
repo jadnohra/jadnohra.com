@@ -6,11 +6,11 @@ toc: true
 ---
 
 <style>
-/* Compact layout */
+/* Compact layout - ensure headings visible for TOC */
 .content p { margin-bottom: 0.5rem; }
-.content h2 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
-.content h3 { margin-top: 1rem; margin-bottom: 0.3rem; }
-.content h4 { margin-top: 0.8rem; margin-bottom: 0.2rem; }
+.content h2 { margin-top: 1.5rem; margin-bottom: 0.5rem; display: block !important; visibility: visible !important; }
+.content h3 { margin-top: 1rem; margin-bottom: 0.3rem; display: block !important; visibility: visible !important; }
+.content h4 { margin-top: 0.8rem; margin-bottom: 0.2rem; display: block !important; visibility: visible !important; }
 .content ul, .content ol { margin-bottom: 0.5rem; }
 .content li { margin-bottom: 0.2rem; }
 .content blockquote { margin: 0.5rem 0; }
@@ -53,38 +53,61 @@ toc: true
   border: 1px solid rgba(249, 115, 22, 0.3);
 }
 
-/* Popover for hover functionality (prepared for stage 2) */
+/* Popover for hover functionality */
 .story-popover {
   position: fixed;
-  max-width: 520px;
-  padding: 14px 16px;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 16px 18px;
   background: #0f172a;
-  border: 1px solid #475569;
-  border-radius: 6px;
+  border: 1px solid #f97316;
+  border-radius: 8px;
   color: #e2e8f0;
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 13px;
+  line-height: 1.6;
   z-index: 9999;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.12s ease;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
 }
 .story-popover.visible {
   opacity: 1;
 }
-
-/* Hoverable elements (prepared for stage 2) */
-[data-hover].hoverable {
+.story-popover-title {
+  font-weight: 700;
+  font-size: 15px;
   color: #f97316;
-  cursor: help;
-  border-bottom: 1px dotted #f97316;
-  transition: all 0.15s;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
-[data-hover].hoverable:hover {
-  color: #fb923c;
-  border-bottom-style: solid;
+.story-popover-star {
+  margin-bottom: 12px;
+}
+.story-popover-star p {
+  margin: 4px 0;
+}
+.story-popover-star strong {
+  color: #f97316;
+}
+.story-popover-full {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  color: #94a3b8;
+  font-size: 12px;
+}
+.story-popover-full-title {
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+/* Story links get hover behavior */
+.content a[href^="#"] {
+  cursor: help;
 }
 
 /* Tables */
@@ -93,20 +116,39 @@ toc: true
   border-collapse: collapse;
   font-size: 13px;
   margin: 1rem 0;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 8px;
+  overflow: hidden;
 }
 .content th {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.08);
   color: #f1f5f9;
   font-weight: 600;
-  padding: 8px 12px;
+  padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .content td {
-  padding: 6px 12px;
-  color: #cbd5e1;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  padding: 8px 12px;
+  color: #e2e8f0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
   vertical-align: top;
+}
+.content tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+
+/* Links */
+.content a {
+  color: #f97316;
+  text-decoration: underline;
+  text-decoration-color: rgba(249, 115, 22, 0.4);
+  text-underline-offset: 2px;
+  transition: all 0.15s;
+}
+.content a:hover {
+  color: #fb923c;
+  text-decoration-color: #fb923c;
 }
 
 /* Arc visualization */
@@ -126,28 +168,178 @@ toc: true
 }
 </style>
 
-# Amazon LP Mapping
+## Amazon LP Mapping
 
-## Leadership Principles Table
+### Leadership Principles Table
 
-| #   | Principle                                        | Story IDs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Review |
-| --- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| 5   | **Customer Obsession**                           | [aid-1-initial-challenge](#aid-1-initial-challenge-star-customer) [irr-3-building-founder-appreciation](#irr-3-building-founder-appreciation) [aid-29-systems-engineering-invitation](#aid-29-systems-engineering-invitation) [aid-21-identifying-the-gap](#aid-21-identifying-the-gap) [aid-30-virtual-testing-vision-hands-on](#aid-30-virtual-testing-vision-hands-on) [meta-1-consistent-focus-on-an-unsolved-problem](#meta-1-consistent-focus-on-an-unsolved-problem)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |        |
-| 22  | **Ownership**                                    | [aid-1-initial-challenge](#aid-1-initial-challenge-star-customer) [aid-28-reading-bridge-role-hands-on](#aid-28-reading-bridge-role-hands-on-star-customer-obsession) [fer-9-radar-vendor-communication](#fer-9-radar-vendor-communication-star-ownership) [irr-2-team-diagnosis](#irr-2-team-diagnosis) [irr-3-building-founder-appreciation](#irr-3-building-founder-appreciation) [irr-6-xlang-compiler-initiative-hands-on](#irr-6-xlang-compiler-initiative-hands-on) [irr-10-mpt-project-delivery](#irr-10-mpt-project-delivery-star-ownership) [irr-12-breaking-the-rebuild-cycle-hands-on](#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight) [irr-16-coaching-peer-manager](#irr-16-coaching-peer-manager-star) [irr-17-half-sizing-survival](#irr-17-half-sizing-survival-star-trust) [aid-3-team-expansion](#aid-3-team-expansion) [aid-4-building-four-teams](#aid-4-building-four-teams) [aid-29-systems-engineering-invitation](#aid-29-systems-engineering-invitation) [aid-31-daisy-traffic-simulator-hands-on](#aid-31-daisy-traffic-simulator-hands-on) [aid-32-pacos-concurrency-simulator-hands-on](#aid-32-pacos-concurrency-simulator-hands-on) [fer-1-joining-fernride](#fer-1-joining-fernride) [fer-5-function-testing-framework-hands-on](#fer-5-function-testing-framework-hands-on) [fer-10-radar-de-risking](#fer-10-radar-de-risking) [fer-11-trailer-angle-hands-on](#fer-11-trailer-angle-hands-on) [irr-13-driving-co-design-hands-on](#irr-13-driving-co-design-hands-on) [irr-18-pivot-navigation](#irr-18-pivot-navigation) [irr-20-post-pivot-product-focus-hands-on](#irr-20-post-pivot-product-focus-hands-on) |        |
-| 15  | **Invent and Simplify**                          | [irr-6-xlang-compiler-initiative-hands-on](#irr-6-xlang-compiler-initiative-hands-on) [irr-8-principled-problem-solving-hands-on](#irr-8-principled-problem-solving-hands-on) [irr-10-mpt-project-delivery](#irr-10-mpt-project-delivery-star-ownership) [irr-12-breaking-the-rebuild-cycle-hands-on](#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight) [aid-2-architecture-discovery-hands-on](#aid-2-architecture-discovery-hands-on) [aid-25-delivering-under-pressure-hands-on](#aid-25-delivering-under-pressure-hands-on) [aid-27-mathematical-framework-hands-on](#aid-27-mathematical-framework-hands-on) [aid-31-daisy-traffic-simulator-hands-on](#aid-31-daisy-traffic-simulator-hands-on) [aid-32-pacos-concurrency-simulator-hands-on](#aid-32-pacos-concurrency-simulator-hands-on) [fer-4-hazard-zone-design-hands-on](#fer-4-hazard-zone-design-hands-on) [fer-5-function-testing-framework-hands-on](#fer-5-function-testing-framework-hands-on) [fer-11-trailer-angle-hands-on](#fer-11-trailer-angle-hands-on) [fer-12-safety-case-design-hands-on](#fer-12-safety-case-design-hands-on) [irr-9-fpga-management-tool-hands-on](#irr-9-fpga-management-tool-hands-on) [irr-20-post-pivot-product-focus-hands-on](#irr-20-post-pivot-product-focus-hands-on)                                                                                                                                                                                                                                                                                                                                    |        |
-| 13  | **Are Right, A Lot**                             | [fer-2-safety-perception-research-hands-on](#fer-2-safety-perception-research-hands-on-star-ownership) [fer-9-radar-vendor-communication](#fer-9-radar-vendor-communication-star-ownership) [irr-2-team-diagnosis](#irr-2-team-diagnosis) [irr-5-codebase-architecture-analysis-hands-on](#irr-5-codebase-architecture-analysis-hands-on) [irr-6-xlang-compiler-initiative-hands-on](#irr-6-xlang-compiler-initiative-hands-on) [irr-11-docker-advocacy](#irr-11-docker-advocacy-star) [irr-12-breaking-the-rebuild-cycle-hands-on](#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight) [aid-2-architecture-discovery-hands-on](#aid-2-architecture-discovery-hands-on) [aid-9-vtd-evaluation-hands-on](#aid-9-vtd-evaluation-hands-on) [aid-26-scenario-fidelity-gap](#aid-26-scenario-fidelity-gap) [aid-32-pacos-concurrency-simulator-hands-on](#aid-32-pacos-concurrency-simulator-hands-on) [fer-11-trailer-angle-hands-on](#fer-11-trailer-angle-hands-on) `negative` [irr-13-driving-co-design-hands-on](#irr-13-driving-co-design-hands-on)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |        |
-| 13  | **Learn and Be Curious**                         | [aid-28-reading-bridge-role-hands-on](#aid-28-reading-bridge-role-hands-on-star-customer-obsession) [fer-2-safety-perception-research-hands-on](#fer-2-safety-perception-research-hands-on-star-ownership) [irr-2-team-diagnosis](#irr-2-team-diagnosis) [irr-5-codebase-architecture-analysis-hands-on](#irr-5-codebase-architecture-analysis-hands-on) [aid-2-architecture-discovery-hands-on](#aid-2-architecture-discovery-hands-on) [aid-10-buy-vs-build](#aid-10-buy-vs-build) `negative` [aid-13-product-owner-training](#aid-13-product-owner-training) [fer-1-joining-fernride](#fer-1-joining-fernride) [fer-11-trailer-angle-hands-on](#fer-11-trailer-angle-hands-on) [fer-11b-mechanical-sensor-proposal](#fer-11b-mechanical-sensor-proposal-star-bias-for-action) `negative` [irr-1-joining-irreducible](#irr-1-joining-irreducible) [irr-20-post-pivot-product-focus-hands-on](#irr-20-post-pivot-product-focus-hands-on) [irr-23-staying-current](#irr-23-staying-current)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |        |
-| 24  | **Hire and Develop the Best**                    | [aid-5-f-reversed-rejection](#aid-5-f-reversed-rejection-star-best-employer) [aid-8-t-us-experience](#aid-8-t-us-experience-star-best-employer) [fer-14-cto-integration](#fer-14-cto-integration-star-disagree) [irr-2-team-diagnosis](#irr-2-team-diagnosis) [irr-4-hiring-a-fpga-shell-design-hands-on](#irr-4-hiring-a-fpga-shell-design-hands-on) [irr-6-xlang-compiler-initiative-hands-on](#irr-6-xlang-compiler-initiative-hands-on) [irr-7-compiler-engineer-hiring](#irr-7-compiler-engineer-hiring) [irr-8-principled-problem-solving-hands-on](#irr-8-principled-problem-solving-hands-on) [irr-15-dual-trials](#irr-15-dual-trials-star) [irr-16-coaching-peer-manager](#irr-16-coaching-peer-manager-star) [aid-6-n-oss-sourcing](#aid-6-n-oss-sourcing) [aid-7-u-internal-transfer](#aid-7-u-internal-transfer) [aid-11-l-communication-coaching](#aid-11-l-communication-coaching) [aid-12-scenario-evaluation-team](#aid-12-scenario-evaluation-team) [aid-18-f-communication-coaching](#aid-18-f-communication-coaching) [aid-19-u-colleague-code-quality](#aid-19-u-colleague-code-quality) [aid-20-le-standup-balance](#aid-20-le-standup-balance) [fer-3-one-month-prototype-hands-on](#fer-3-one-month-prototype-hands-on) [fer-15-junior-developer-coaching](#fer-15-junior-developer-coaching) [fer-16-promotion-advocacy](#fer-16-promotion-advocacy) [fer-17-comfort-zone-coaching](#fer-17-comfort-zone-coaching) [fer-18-team-growth](#fer-18-team-growth) [irr-14-hft-engineer-coaching](#irr-14-hft-engineer-coaching) [irr-24-consulting](#irr-24-consulting)                         |        |
-| 10  | **Insist on Highest Standards**                  | [fer-9-radar-vendor-communication](#fer-9-radar-vendor-communication-star-ownership) [irr-5-codebase-architecture-analysis-hands-on](#irr-5-codebase-architecture-analysis-hands-on) [irr-8-principled-problem-solving-hands-on](#irr-8-principled-problem-solving-hands-on) [irr-12-breaking-the-rebuild-cycle-hands-on](#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight) [aid-2-architecture-discovery-hands-on](#aid-2-architecture-discovery-hands-on) [aid-9-vtd-evaluation-hands-on](#aid-9-vtd-evaluation-hands-on) [aid-19-u-colleague-code-quality](#aid-19-u-colleague-code-quality) [fer-13-challenging-requirements](#fer-13-challenging-requirements) [irr-13-driving-co-design-hands-on](#irr-13-driving-co-design-hands-on) [irr-21-ai-first-mandate](#irr-21-ai-first-mandate)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |        |
-| 8   | **Think Big**                                    | [irr-2-team-diagnosis](#irr-2-team-diagnosis) [irr-12-breaking-the-rebuild-cycle-hands-on](#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight) [aid-4-building-four-teams](#aid-4-building-four-teams) [aid-14-vision-slides](#aid-14-vision-slides) [aid-30-virtual-testing-vision-hands-on](#aid-30-virtual-testing-vision-hands-on) [irr-13-driving-co-design-hands-on](#irr-13-driving-co-design-hands-on) [irr-20-post-pivot-product-focus-hands-on](#irr-20-post-pivot-product-focus-hands-on) [meta-1-consistent-focus-on-an-unsolved-problem](#meta-1-consistent-focus-on-an-unsolved-problem)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |        |
-| 10  | **Bias for Action**                              | [fer-6-apple-demo](#fer-6-apple-demo-star-earn-trust) [irr-4-hiring-a-fpga-shell-design-hands-on](#irr-4-hiring-a-fpga-shell-design-hands-on) [irr-15-dual-trials](#irr-15-dual-trials-star) [aid-24-responding-to-skepticism](#aid-24-responding-to-skepticism) [aid-25-delivering-under-pressure-hands-on](#aid-25-delivering-under-pressure-hands-on) [aid-31-daisy-traffic-simulator-hands-on](#aid-31-daisy-traffic-simulator-hands-on) [fer-3-one-month-prototype-hands-on](#fer-3-one-month-prototype-hands-on) [fer-7-rain-demo](#fer-7-rain-demo) [fer-11-trailer-angle-hands-on](#fer-11-trailer-angle-hands-on) [irr-9-fpga-management-tool-hands-on](#irr-9-fpga-management-tool-hands-on)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |        |
-| 3   | **Frugality**                                    | [fer-8-hardware-constraints](#fer-8-hardware-constraints-star-disagree) [irr-7-compiler-engineer-hiring](#irr-7-compiler-engineer-hiring) [fer-3-one-month-prototype-hands-on](#fer-3-one-month-prototype-hands-on)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |        |
-| 16  | **Earn Trust**                                   | [aid-16-integration-approach](#aid-16-integration-approach-star-earn-trust) [aid-17-supporting-team-members](#aid-17-supporting-team-members-star-best-employer) [fer-14-cto-integration](#fer-14-cto-integration-star-disagree) [irr-2-team-diagnosis](#irr-2-team-diagnosis) [irr-3-building-founder-appreciation](#irr-3-building-founder-appreciation) [irr-11-docker-advocacy](#irr-11-docker-advocacy-star) [irr-15-dual-trials](#irr-15-dual-trials-star) [irr-22-alumni-support](#irr-22-alumni-support-star-trust) [aid-15-acquisition-integration](#aid-15-acquisition-integration) [aid-18-f-communication-coaching](#aid-18-f-communication-coaching) [aid-19-u-colleague-code-quality](#aid-19-u-colleague-code-quality) [aid-20-le-standup-balance](#aid-20-le-standup-balance) [aid-22-design-docs](#aid-22-design-docs) [fer-16-promotion-advocacy](#fer-16-promotion-advocacy) [irr-18-pivot-navigation](#irr-18-pivot-navigation) [irr-19-maintaining-morale](#irr-19-maintaining-morale)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |        |
-| 17  | **Dive Deep**                                    | [aid-28-reading-bridge-role-hands-on](#aid-28-reading-bridge-role-hands-on-star-customer-obsession) [fer-2-safety-perception-research-hands-on](#fer-2-safety-perception-research-hands-on-star-ownership) [fer-9-radar-vendor-communication](#fer-9-radar-vendor-communication-star-ownership) [irr-2-team-diagnosis](#irr-2-team-diagnosis) [irr-5-codebase-architecture-analysis-hands-on](#irr-5-codebase-architecture-analysis-hands-on) [irr-11-docker-advocacy](#irr-11-docker-advocacy-star) [irr-12-breaking-the-rebuild-cycle-hands-on](#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight) [irr-16-coaching-peer-manager](#irr-16-coaching-peer-manager-star) [aid-2-architecture-discovery-hands-on](#aid-2-architecture-discovery-hands-on) [aid-9-vtd-evaluation-hands-on](#aid-9-vtd-evaluation-hands-on) [aid-21-identifying-the-gap](#aid-21-identifying-the-gap) [aid-23-modeling-library-hands-on](#aid-23-modeling-library-hands-on) [aid-25-delivering-under-pressure-hands-on](#aid-25-delivering-under-pressure-hands-on) [aid-31-daisy-traffic-simulator-hands-on](#aid-31-daisy-traffic-simulator-hands-on) [aid-32-pacos-concurrency-simulator-hands-on](#aid-32-pacos-concurrency-simulator-hands-on) [fer-4-hazard-zone-design-hands-on](#fer-4-hazard-zone-design-hands-on) [fer-5-function-testing-framework-hands-on](#fer-5-function-testing-framework-hands-on)                                                                                                                                                                                                                                                      |        |
-| 14  | **Have Backbone; Disagree and Commit**           | [fer-8-hardware-constraints](#fer-8-hardware-constraints-star-disagree) [fer-11b-mechanical-sensor-proposal](#fer-11b-mechanical-sensor-proposal-star-bias-for-action) `negative` [irr-7-compiler-engineer-hiring](#irr-7-compiler-engineer-hiring) [irr-8-principled-problem-solving-hands-on](#irr-8-principled-problem-solving-hands-on) [irr-11-docker-advocacy](#irr-11-docker-advocacy-star) [irr-12-breaking-the-rebuild-cycle-hands-on](#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight) [irr-15-dual-trials](#irr-15-dual-trials-star) [aid-9-vtd-evaluation-hands-on](#aid-9-vtd-evaluation-hands-on) [aid-10-buy-vs-build](#aid-10-buy-vs-build) [aid-17-supporting-team-members](#aid-17-supporting-team-members-star-best-employer) [fer-13-challenging-requirements](#fer-13-challenging-requirements) [irr-13-driving-co-design-hands-on](#irr-13-driving-co-design-hands-on) [irr-18-pivot-navigation](#irr-18-pivot-navigation) [irr-21-ai-first-mandate](#irr-21-ai-first-mandate)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |        |
-| 19  | **Deliver Results**                              | [fer-6-apple-demo](#fer-6-apple-demo-star-earn-trust) [irr-4-hiring-a-fpga-shell-design-hands-on](#irr-4-hiring-a-fpga-shell-design-hands-on) [irr-10-mpt-project-delivery](#irr-10-mpt-project-delivery-star-ownership) [irr-11-docker-advocacy](#irr-11-docker-advocacy-star) [irr-17-half-sizing-survival](#irr-17-half-sizing-survival-star-trust) [aid-4-building-four-teams](#aid-4-building-four-teams) [aid-22-design-docs](#aid-22-design-docs) [aid-24-responding-to-skepticism](#aid-24-responding-to-skepticism) [aid-25-delivering-under-pressure-hands-on](#aid-25-delivering-under-pressure-hands-on) [aid-27-mathematical-framework-hands-on](#aid-27-mathematical-framework-hands-on) [fer-3-one-month-prototype-hands-on](#fer-3-one-month-prototype-hands-on) [fer-4-hazard-zone-design-hands-on](#fer-4-hazard-zone-design-hands-on) [fer-5-function-testing-framework-hands-on](#fer-5-function-testing-framework-hands-on) [fer-7-rain-demo](#fer-7-rain-demo) [fer-12-safety-case-design-hands-on](#fer-12-safety-case-design-hands-on) [fer-16-promotion-advocacy](#fer-16-promotion-advocacy) [fer-17-comfort-zone-coaching](#fer-17-comfort-zone-coaching) [irr-9-fpga-management-tool-hands-on](#irr-9-fpga-management-tool-hands-on) [irr-13-driving-co-design-hands-on](#irr-13-driving-co-design-hands-on)                                                                                                                                                                                                                                                                                      |        |
-| 11  | **Strive to be Earth's Best Employer**           | [aid-16-integration-approach](#aid-16-integration-approach-star-earn-trust) [aid-17-supporting-team-members](#aid-17-supporting-team-members-star-best-employer) [fer-14-cto-integration](#fer-14-cto-integration-star-disagree) [irr-16-coaching-peer-manager](#irr-16-coaching-peer-manager-star) [irr-22-alumni-support](#irr-22-alumni-support-star-trust) [fer-16-promotion-advocacy](#fer-16-promotion-advocacy) [fer-17-comfort-zone-coaching](#fer-17-comfort-zone-coaching) [irr-14-hft-engineer-coaching](#irr-14-hft-engineer-coaching) [irr-18-pivot-navigation](#irr-18-pivot-navigation) [irr-19-maintaining-morale](#irr-19-maintaining-morale) [irr-21-ai-first-mandate](#irr-21-ai-first-mandate)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |        |
-| 2   | **Success and Scale Bring Broad Responsibility** | [aid-29-systems-engineering-invitation](#aid-29-systems-engineering-invitation) [fer-12-safety-case-design-hands-on](#fer-12-safety-case-design-hands-on)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |        |
+<table>
+<tr><th>#</th><th>Principle</th><th>Story IDs</th></tr>
+<tr><td>5</td><td><b>Customer Obsession</b></td><td>
+<a href="#aid-1-initial-challenge-star-customer">aid-1-initial-challenge</a><br>
+<a href="#irr-3-building-founder-appreciation">irr-3-building-founder-appreciation</a><br>
+<a href="#aid-29-systems-engineering-invitation">aid-29-systems-engineering-invitation</a><br>
+<a href="#aid-21-identifying-the-gap">aid-21-identifying-the-gap</a><br>
+<a href="#aid-30-virtual-testing-vision-hands-on">aid-30-virtual-testing-vision-hands-on</a><br>
+<a href="#meta-1-consistent-focus-on-an-unsolved-problem">meta-1-consistent-focus</a>
+</td></tr>
+<tr><td>22</td><td><b>Ownership</b></td><td>
+<a href="#aid-1-initial-challenge-star-customer">aid-1-initial-challenge</a><br>
+<a href="#aid-28-reading-bridge-role-hands-on-star-customer-obsession">aid-28-reading-bridge-role</a><br>
+<a href="#fer-9-radar-vendor-communication-star-ownership">fer-9-radar-vendor-communication</a><br>
+<a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a><br>
+<a href="#irr-3-building-founder-appreciation">irr-3-building-founder-appreciation</a><br>
+<a href="#irr-6-xlang-compiler-initiative-hands-on">irr-6-xlang-compiler-initiative</a><br>
+<a href="#irr-10-mpt-project-delivery-star-ownership">irr-10-mpt-project-delivery</a><br>
+<a href="#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight">irr-12-breaking-the-rebuild-cycle</a><br>
+<a href="#irr-16-coaching-peer-manager-star">irr-16-coaching-peer-manager</a><br>
+<a href="#irr-17-half-sizing-survival-star-trust">irr-17-half-sizing-survival</a><br>
+<a href="#aid-3-team-expansion">aid-3-team-expansion</a><br>
+<a href="#aid-4-building-four-teams">aid-4-building-four-teams</a><br>
+<a href="#fer-1-joining-fernride">fer-1-joining-fernride</a><br>
+<a href="#irr-13-driving-co-design-hands-on">irr-13-driving-co-design</a>
+</td></tr>
+<tr><td>15</td><td><b>Invent and Simplify</b></td><td>
+<a href="#irr-6-xlang-compiler-initiative-hands-on">irr-6-xlang-compiler-initiative</a><br>
+<a href="#irr-8-principled-problem-solving-hands-on">irr-8-principled-problem-solving</a><br>
+<a href="#irr-10-mpt-project-delivery-star-ownership">irr-10-mpt-project-delivery</a><br>
+<a href="#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight">irr-12-breaking-the-rebuild-cycle</a><br>
+<a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a><br>
+<a href="#aid-25-delivering-under-pressure-hands-on">aid-25-delivering-under-pressure</a><br>
+<a href="#aid-27-mathematical-framework-hands-on">aid-27-mathematical-framework</a><br>
+<a href="#fer-4-hazard-zone-design-hands-on">fer-4-hazard-zone-design</a><br>
+<a href="#fer-12-safety-case-design-hands-on">fer-12-safety-case-design</a><br>
+<a href="#irr-9-fpga-management-tool-hands-on">irr-9-fpga-management-tool</a>
+</td></tr>
+<tr><td>13</td><td><b>Are Right, A Lot</b></td><td>
+<a href="#fer-2-safety-perception-research-hands-on-star-ownership">fer-2-safety-perception-research</a><br>
+<a href="#fer-9-radar-vendor-communication-star-ownership">fer-9-radar-vendor-communication</a><br>
+<a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a><br>
+<a href="#irr-5-codebase-architecture-analysis-hands-on">irr-5-codebase-architecture-analysis</a><br>
+<a href="#irr-6-xlang-compiler-initiative-hands-on">irr-6-xlang-compiler-initiative</a><br>
+<a href="#irr-11-docker-advocacy-star">irr-11-docker-advocacy</a><br>
+<a href="#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight">irr-12-breaking-the-rebuild-cycle</a><br>
+<a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a><br>
+<a href="#aid-9-vtd-evaluation-hands-on">aid-9-vtd-evaluation</a>
+</td></tr>
+<tr><td>13</td><td><b>Learn and Be Curious</b></td><td>
+<a href="#aid-28-reading-bridge-role-hands-on-star-customer-obsession">aid-28-reading-bridge-role</a><br>
+<a href="#fer-2-safety-perception-research-hands-on-star-ownership">fer-2-safety-perception-research</a><br>
+<a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a><br>
+<a href="#irr-5-codebase-architecture-analysis-hands-on">irr-5-codebase-architecture-analysis</a><br>
+<a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a><br>
+<a href="#aid-10-buy-vs-build">aid-10-buy-vs-build</a> <span class="lp-tag">negative</span><br>
+<a href="#fer-1-joining-fernride">fer-1-joining-fernride</a><br>
+<a href="#irr-1-joining-irreducible">irr-1-joining-irreducible</a><br>
+<a href="#irr-23-staying-current">irr-23-staying-current</a>
+</td></tr>
+<tr><td>24</td><td><b>Hire and Develop the Best</b></td><td>
+<a href="#aid-5-f-reversed-rejection-star-best-employer">aid-5-f-reversed-rejection</a><br>
+<a href="#aid-8-t-us-experience-star-best-employer">aid-8-t-us-experience</a><br>
+<a href="#fer-14-cto-integration-star-disagree">fer-14-cto-integration</a><br>
+<a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a><br>
+<a href="#irr-4-hiring-a-fpga-shell-design-hands-on">irr-4-hiring-fpga-shell</a><br>
+<a href="#irr-7-compiler-engineer-hiring">irr-7-compiler-engineer-hiring</a><br>
+<a href="#irr-15-dual-trials-star">irr-15-dual-trials</a><br>
+<a href="#irr-16-coaching-peer-manager-star">irr-16-coaching-peer-manager</a><br>
+<a href="#fer-15-junior-developer-coaching">fer-15-junior-developer-coaching</a><br>
+<a href="#fer-16-promotion-advocacy">fer-16-promotion-advocacy</a><br>
+<a href="#fer-17-comfort-zone-coaching">fer-17-comfort-zone-coaching</a><br>
+<a href="#irr-14-hft-engineer-coaching">irr-14-hft-engineer-coaching</a>
+</td></tr>
+<tr><td>10</td><td><b>Insist on Highest Standards</b></td><td>
+<a href="#fer-9-radar-vendor-communication-star-ownership">fer-9-radar-vendor-communication</a><br>
+<a href="#irr-5-codebase-architecture-analysis-hands-on">irr-5-codebase-architecture-analysis</a><br>
+<a href="#irr-8-principled-problem-solving-hands-on">irr-8-principled-problem-solving</a><br>
+<a href="#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight">irr-12-breaking-the-rebuild-cycle</a><br>
+<a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a><br>
+<a href="#aid-9-vtd-evaluation-hands-on">aid-9-vtd-evaluation</a><br>
+<a href="#fer-13-challenging-requirements">fer-13-challenging-requirements</a>
+</td></tr>
+<tr><td>8</td><td><b>Think Big</b></td><td>
+<a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a><br>
+<a href="#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight">irr-12-breaking-the-rebuild-cycle</a><br>
+<a href="#aid-4-building-four-teams">aid-4-building-four-teams</a><br>
+<a href="#aid-14-vision-slides">aid-14-vision-slides</a><br>
+<a href="#aid-30-virtual-testing-vision-hands-on">aid-30-virtual-testing-vision</a><br>
+<a href="#irr-13-driving-co-design-hands-on">irr-13-driving-co-design</a><br>
+<a href="#meta-1-consistent-focus-on-an-unsolved-problem">meta-1-consistent-focus</a>
+</td></tr>
+<tr><td>10</td><td><b>Bias for Action</b></td><td>
+<a href="#fer-6-apple-demo-star-earn-trust">fer-6-apple-demo</a><br>
+<a href="#irr-4-hiring-a-fpga-shell-design-hands-on">irr-4-hiring-fpga-shell</a><br>
+<a href="#irr-15-dual-trials-star">irr-15-dual-trials</a><br>
+<a href="#aid-24-responding-to-skepticism">aid-24-responding-to-skepticism</a><br>
+<a href="#aid-25-delivering-under-pressure-hands-on">aid-25-delivering-under-pressure</a><br>
+<a href="#fer-3-one-month-prototype-hands-on">fer-3-one-month-prototype</a><br>
+<a href="#fer-7-rain-demo">fer-7-rain-demo</a><br>
+<a href="#irr-9-fpga-management-tool-hands-on">irr-9-fpga-management-tool</a>
+</td></tr>
+<tr><td>3</td><td><b>Frugality</b></td><td>
+<a href="#fer-8-hardware-constraints-star-disagree">fer-8-hardware-constraints</a><br>
+<a href="#irr-7-compiler-engineer-hiring">irr-7-compiler-engineer-hiring</a><br>
+<a href="#fer-3-one-month-prototype-hands-on">fer-3-one-month-prototype</a>
+</td></tr>
+<tr><td>16</td><td><b>Earn Trust</b></td><td>
+<a href="#aid-16-integration-approach-star-earn-trust">aid-16-integration-approach</a><br>
+<a href="#aid-17-supporting-team-members-star-best-employer">aid-17-supporting-team-members</a><br>
+<a href="#fer-14-cto-integration-star-disagree">fer-14-cto-integration</a><br>
+<a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a><br>
+<a href="#irr-3-building-founder-appreciation">irr-3-building-founder-appreciation</a><br>
+<a href="#irr-11-docker-advocacy-star">irr-11-docker-advocacy</a><br>
+<a href="#irr-15-dual-trials-star">irr-15-dual-trials</a><br>
+<a href="#irr-22-alumni-support-star-trust">irr-22-alumni-support</a><br>
+<a href="#fer-16-promotion-advocacy">fer-16-promotion-advocacy</a><br>
+<a href="#irr-18-pivot-navigation">irr-18-pivot-navigation</a>
+</td></tr>
+<tr><td>17</td><td><b>Dive Deep</b></td><td>
+<a href="#aid-28-reading-bridge-role-hands-on-star-customer-obsession">aid-28-reading-bridge-role</a><br>
+<a href="#fer-2-safety-perception-research-hands-on-star-ownership">fer-2-safety-perception-research</a><br>
+<a href="#fer-9-radar-vendor-communication-star-ownership">fer-9-radar-vendor-communication</a><br>
+<a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a><br>
+<a href="#irr-5-codebase-architecture-analysis-hands-on">irr-5-codebase-architecture-analysis</a><br>
+<a href="#irr-11-docker-advocacy-star">irr-11-docker-advocacy</a><br>
+<a href="#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight">irr-12-breaking-the-rebuild-cycle</a><br>
+<a href="#irr-16-coaching-peer-manager-star">irr-16-coaching-peer-manager</a><br>
+<a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a><br>
+<a href="#fer-4-hazard-zone-design-hands-on">fer-4-hazard-zone-design</a>
+</td></tr>
+<tr><td>14</td><td><b>Have Backbone; Disagree and Commit</b></td><td>
+<a href="#fer-8-hardware-constraints-star-disagree">fer-8-hardware-constraints</a><br>
+<a href="#fer-11b-mechanical-sensor-proposal-star-bias-for-action">fer-11b-mechanical-sensor-proposal</a> <span class="lp-tag">negative</span><br>
+<a href="#irr-7-compiler-engineer-hiring">irr-7-compiler-engineer-hiring</a><br>
+<a href="#irr-8-principled-problem-solving-hands-on">irr-8-principled-problem-solving</a><br>
+<a href="#irr-11-docker-advocacy-star">irr-11-docker-advocacy</a><br>
+<a href="#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight">irr-12-breaking-the-rebuild-cycle</a><br>
+<a href="#irr-15-dual-trials-star">irr-15-dual-trials</a><br>
+<a href="#aid-9-vtd-evaluation-hands-on">aid-9-vtd-evaluation</a><br>
+<a href="#aid-10-buy-vs-build">aid-10-buy-vs-build</a>
+</td></tr>
+<tr><td>19</td><td><b>Deliver Results</b></td><td>
+<a href="#fer-6-apple-demo-star-earn-trust">fer-6-apple-demo</a><br>
+<a href="#irr-4-hiring-a-fpga-shell-design-hands-on">irr-4-hiring-fpga-shell</a><br>
+<a href="#irr-10-mpt-project-delivery-star-ownership">irr-10-mpt-project-delivery</a><br>
+<a href="#irr-11-docker-advocacy-star">irr-11-docker-advocacy</a><br>
+<a href="#irr-17-half-sizing-survival-star-trust">irr-17-half-sizing-survival</a><br>
+<a href="#aid-4-building-four-teams">aid-4-building-four-teams</a><br>
+<a href="#aid-25-delivering-under-pressure-hands-on">aid-25-delivering-under-pressure</a><br>
+<a href="#fer-3-one-month-prototype-hands-on">fer-3-one-month-prototype</a><br>
+<a href="#fer-12-safety-case-design-hands-on">fer-12-safety-case-design</a>
+</td></tr>
+<tr><td>11</td><td><b>Strive to be Earth's Best Employer</b></td><td>
+<a href="#aid-16-integration-approach-star-earn-trust">aid-16-integration-approach</a><br>
+<a href="#aid-17-supporting-team-members-star-best-employer">aid-17-supporting-team-members</a><br>
+<a href="#fer-14-cto-integration-star-disagree">fer-14-cto-integration</a><br>
+<a href="#irr-16-coaching-peer-manager-star">irr-16-coaching-peer-manager</a><br>
+<a href="#irr-22-alumni-support-star-trust">irr-22-alumni-support</a><br>
+<a href="#fer-16-promotion-advocacy">fer-16-promotion-advocacy</a><br>
+<a href="#irr-18-pivot-navigation">irr-18-pivot-navigation</a><br>
+<a href="#irr-19-maintaining-morale">irr-19-maintaining-morale</a>
+</td></tr>
+<tr><td>2</td><td><b>Success and Scale Bring Broad Responsibility</b></td><td>
+<a href="#aid-29-systems-engineering-invitation">aid-29-systems-engineering-invitation</a><br>
+<a href="#fer-12-safety-case-design-hands-on">fer-12-safety-case-design</a>
+</td></tr>
+</table>
 
 ---
 
@@ -271,9 +463,9 @@ Career focus &rarr; Built simulators (AID) &rarr; Simulation fidelity + noise (A
 
 ---
 
-# Stories
+## Stories
 
-## Irreducible (Sep 2024 - Present)
+### Irreducible (Sep 2024 - Present)
 
 ### Context & Motivation
 
@@ -433,7 +625,7 @@ Career focus &rarr; Built simulators (AID) &rarr; Simulation fidelity + noise (A
 
 ---
 
-## FERNRIDE (Jan 2023 - Sep 2024)
+### FERNRIDE (Jan 2023 - Sep 2024)
 
 ### Context & Foundation
 
@@ -569,7 +761,7 @@ Career focus &rarr; Built simulators (AID) &rarr; Simulation fidelity + noise (A
 
 ---
 
-## AID/Argo (Apr 2018 - Dec 2022)
+### AID/Argo (Apr 2018 - Dec 2022)
 
 ### Context & Discovery
 

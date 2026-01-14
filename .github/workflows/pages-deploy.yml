@@ -47,7 +47,7 @@ jobs:
       - name: Encrypt protected pages
         run: |
           npx staticrypt _site/protected-test/index.html -p "${{ secrets.PAGE_PASSWORD }}" -d _site/protected-test/ --short --template-color-primary "#2563eb" --template-color-secondary "#f8fafc" --template-title "Protected Page" --template-button "Unlock"
-          npx staticrypt _site/portfolio-leadership/index.html -p "${{ secrets.PAGE_PASSWORD }}" -d _site/portfolio-leadership/ --short --template-color-primary "#2563eb" --template-color-secondary "#f8fafc" --template-title "Engineering Manager Portfolio" --template-button "Unlock"
+          npx staticrypt _site/portfolio-leadership/index.html -p "${{ secrets.PAGE_PASSWORD }}" -d _site/portfolio-leadership/ --short --template-color-primary "#2563eb" --template-color-secondary "#f8fafc" --template-title "Leadership Portfolio" --template-button "Unlock"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
