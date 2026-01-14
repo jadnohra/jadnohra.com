@@ -199,8 +199,16 @@ toc: true
 <a href="#irr-17-half-sizing-survival-star-trust">irr-17-half-sizing-survival</a><br>
 <a href="#aid-3-team-expansion">aid-3-team-expansion</a><br>
 <a href="#aid-4-building-four-teams">aid-4-building-four-teams</a><br>
+<a href="#aid-29-systems-engineering-invitation">aid-29-systems-engineering-invitation</a><br>
+<a href="#aid-31-daisy-traffic-simulator-hands-on">aid-31-daisy-traffic-simulator</a><br>
+<a href="#aid-32-pacos-concurrency-simulator-hands-on">aid-32-pacos-concurrency-simulator</a><br>
 <a href="#fer-1-joining-fernride">fer-1-joining-fernride</a><br>
-<a href="#irr-13-driving-co-design-hands-on">irr-13-driving-co-design</a>
+<a href="#fer-5-function-testing-framework-hands-on">fer-5-function-testing-framework</a><br>
+<a href="#fer-10-radar-de-risking">fer-10-radar-de-risking</a><br>
+<a href="#fer-11-trailer-angle-hands-on">fer-11-trailer-angle</a><br>
+<a href="#irr-13-driving-co-design-hands-on">irr-13-driving-co-design</a><br>
+<a href="#irr-18-pivot-navigation">irr-18-pivot-navigation</a><br>
+<a href="#irr-20-post-pivot-product-focus-hands-on">irr-20-post-pivot-product-focus</a>
 </td></tr>
 <tr><td>15</td><td><b>Invent and Simplify</b></td><td>
 <a href="#irr-6-xlang-compiler-initiative-hands-on">irr-6-xlang-compiler-initiative</a><br>
@@ -210,9 +218,14 @@ toc: true
 <a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a><br>
 <a href="#aid-25-delivering-under-pressure-hands-on">aid-25-delivering-under-pressure</a><br>
 <a href="#aid-27-mathematical-framework-hands-on">aid-27-mathematical-framework</a><br>
+<a href="#aid-31-daisy-traffic-simulator-hands-on">aid-31-daisy-traffic-simulator</a><br>
+<a href="#aid-32-pacos-concurrency-simulator-hands-on">aid-32-pacos-concurrency-simulator</a><br>
 <a href="#fer-4-hazard-zone-design-hands-on">fer-4-hazard-zone-design</a><br>
+<a href="#fer-5-function-testing-framework-hands-on">fer-5-function-testing-framework</a><br>
+<a href="#fer-11-trailer-angle-hands-on">fer-11-trailer-angle</a><br>
 <a href="#fer-12-safety-case-design-hands-on">fer-12-safety-case-design</a><br>
-<a href="#irr-9-fpga-management-tool-hands-on">irr-9-fpga-management-tool</a>
+<a href="#irr-9-fpga-management-tool-hands-on">irr-9-fpga-management-tool</a><br>
+<a href="#irr-20-post-pivot-product-focus-hands-on">irr-20-post-pivot-product-focus</a>
 </td></tr>
 <tr><td>13</td><td><b>Are Right, A Lot</b></td><td>
 <a href="#fer-2-safety-perception-research-hands-on-star-ownership">fer-2-safety-perception-research</a><br>
@@ -223,7 +236,11 @@ toc: true
 <a href="#irr-11-docker-advocacy-star">irr-11-docker-advocacy</a><br>
 <a href="#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight">irr-12-breaking-the-rebuild-cycle</a><br>
 <a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a><br>
-<a href="#aid-9-vtd-evaluation-hands-on">aid-9-vtd-evaluation</a>
+<a href="#aid-9-vtd-evaluation-hands-on">aid-9-vtd-evaluation</a><br>
+<a href="#aid-26-scenario-fidelity-gap">aid-26-scenario-fidelity-gap</a><br>
+<a href="#aid-32-pacos-concurrency-simulator-hands-on">aid-32-pacos-concurrency-simulator</a><br>
+<a href="#fer-11-trailer-angle-hands-on">fer-11-trailer-angle</a> <span class="lp-tag">negative</span><br>
+<a href="#irr-13-driving-co-design-hands-on">irr-13-driving-co-design</a>
 </td></tr>
 <tr><td>13</td><td><b>Learn and Be Curious</b></td><td>
 <a href="#aid-28-reading-bridge-role-hands-on-star-customer-obsession">aid-28-reading-bridge-role</a><br>
@@ -232,8 +249,12 @@ toc: true
 <a href="#irr-5-codebase-architecture-analysis-hands-on">irr-5-codebase-architecture-analysis</a><br>
 <a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a><br>
 <a href="#aid-10-buy-vs-build">aid-10-buy-vs-build</a> <span class="lp-tag">negative</span><br>
+<a href="#aid-13-product-owner-training">aid-13-product-owner-training</a><br>
 <a href="#fer-1-joining-fernride">fer-1-joining-fernride</a><br>
+<a href="#fer-11-trailer-angle-hands-on">fer-11-trailer-angle</a><br>
+<a href="#fer-11b-mechanical-sensor-proposal-star-bias-for-action">fer-11b-mechanical-sensor-proposal</a> <span class="lp-tag">negative</span><br>
 <a href="#irr-1-joining-irreducible">irr-1-joining-irreducible</a><br>
+<a href="#irr-20-post-pivot-product-focus-hands-on">irr-20-post-pivot-product-focus</a><br>
 <a href="#irr-23-staying-current">irr-23-staying-current</a>
 </td></tr>
 <tr><td>24</td><td><b>Hire and Develop the Best</b></td><td>
@@ -242,13 +263,25 @@ toc: true
 <a href="#fer-14-cto-integration-star-disagree">fer-14-cto-integration</a><br>
 <a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a><br>
 <a href="#irr-4-hiring-a-fpga-shell-design-hands-on">irr-4-hiring-fpga-shell</a><br>
+<a href="#irr-6-xlang-compiler-initiative-hands-on">irr-6-xlang-compiler-initiative</a><br>
 <a href="#irr-7-compiler-engineer-hiring">irr-7-compiler-engineer-hiring</a><br>
+<a href="#irr-8-principled-problem-solving-hands-on">irr-8-principled-problem-solving</a><br>
 <a href="#irr-15-dual-trials-star">irr-15-dual-trials</a><br>
 <a href="#irr-16-coaching-peer-manager-star">irr-16-coaching-peer-manager</a><br>
+<a href="#aid-6-n-oss-sourcing">aid-6-n-oss-sourcing</a><br>
+<a href="#aid-7-u-internal-transfer">aid-7-u-internal-transfer</a><br>
+<a href="#aid-11-l-communication-coaching">aid-11-l-communication-coaching</a><br>
+<a href="#aid-12-scenario-evaluation-team">aid-12-scenario-evaluation-team</a><br>
+<a href="#aid-18-f-communication-coaching">aid-18-f-communication-coaching</a><br>
+<a href="#aid-19-u-colleague-code-quality">aid-19-u-colleague-code-quality</a><br>
+<a href="#aid-20-le-standup-balance">aid-20-le-standup-balance</a><br>
+<a href="#fer-3-one-month-prototype-hands-on">fer-3-one-month-prototype</a><br>
 <a href="#fer-15-junior-developer-coaching">fer-15-junior-developer-coaching</a><br>
 <a href="#fer-16-promotion-advocacy">fer-16-promotion-advocacy</a><br>
 <a href="#fer-17-comfort-zone-coaching">fer-17-comfort-zone-coaching</a><br>
-<a href="#irr-14-hft-engineer-coaching">irr-14-hft-engineer-coaching</a>
+<a href="#fer-18-team-growth">fer-18-team-growth</a><br>
+<a href="#irr-14-hft-engineer-coaching">irr-14-hft-engineer-coaching</a><br>
+<a href="#irr-24-consulting">irr-24-consulting</a>
 </td></tr>
 <tr><td>10</td><td><b>Insist on Highest Standards</b></td><td>
 <a href="#fer-9-radar-vendor-communication-star-ownership">fer-9-radar-vendor-communication</a><br>
@@ -257,7 +290,10 @@ toc: true
 <a href="#irr-12-breaking-the-rebuild-cycle-hands-on-star-highlight">irr-12-breaking-the-rebuild-cycle</a><br>
 <a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a><br>
 <a href="#aid-9-vtd-evaluation-hands-on">aid-9-vtd-evaluation</a><br>
-<a href="#fer-13-challenging-requirements">fer-13-challenging-requirements</a>
+<a href="#aid-19-u-colleague-code-quality">aid-19-u-colleague-code-quality</a><br>
+<a href="#fer-13-challenging-requirements">fer-13-challenging-requirements</a><br>
+<a href="#irr-13-driving-co-design-hands-on">irr-13-driving-co-design</a><br>
+<a href="#irr-21-ai-first-mandate">irr-21-ai-first-mandate</a>
 </td></tr>
 <tr><td>8</td><td><b>Think Big</b></td><td>
 <a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a><br>
@@ -266,6 +302,7 @@ toc: true
 <a href="#aid-14-vision-slides">aid-14-vision-slides</a><br>
 <a href="#aid-30-virtual-testing-vision-hands-on">aid-30-virtual-testing-vision</a><br>
 <a href="#irr-13-driving-co-design-hands-on">irr-13-driving-co-design</a><br>
+<a href="#irr-20-post-pivot-product-focus-hands-on">irr-20-post-pivot-product-focus</a><br>
 <a href="#meta-1-consistent-focus-on-an-unsolved-problem">meta-1-consistent-focus</a>
 </td></tr>
 <tr><td>10</td><td><b>Bias for Action</b></td><td>
@@ -274,8 +311,10 @@ toc: true
 <a href="#irr-15-dual-trials-star">irr-15-dual-trials</a><br>
 <a href="#aid-24-responding-to-skepticism">aid-24-responding-to-skepticism</a><br>
 <a href="#aid-25-delivering-under-pressure-hands-on">aid-25-delivering-under-pressure</a><br>
+<a href="#aid-31-daisy-traffic-simulator-hands-on">aid-31-daisy-traffic-simulator</a><br>
 <a href="#fer-3-one-month-prototype-hands-on">fer-3-one-month-prototype</a><br>
 <a href="#fer-7-rain-demo">fer-7-rain-demo</a><br>
+<a href="#fer-11-trailer-angle-hands-on">fer-11-trailer-angle</a><br>
 <a href="#irr-9-fpga-management-tool-hands-on">irr-9-fpga-management-tool</a>
 </td></tr>
 <tr><td>3</td><td><b>Frugality</b></td><td>
@@ -292,8 +331,14 @@ toc: true
 <a href="#irr-11-docker-advocacy-star">irr-11-docker-advocacy</a><br>
 <a href="#irr-15-dual-trials-star">irr-15-dual-trials</a><br>
 <a href="#irr-22-alumni-support-star-trust">irr-22-alumni-support</a><br>
+<a href="#aid-15-acquisition-integration">aid-15-acquisition-integration</a><br>
+<a href="#aid-18-f-communication-coaching">aid-18-f-communication-coaching</a><br>
+<a href="#aid-19-u-colleague-code-quality">aid-19-u-colleague-code-quality</a><br>
+<a href="#aid-20-le-standup-balance">aid-20-le-standup-balance</a><br>
+<a href="#aid-22-design-docs">aid-22-design-docs</a><br>
 <a href="#fer-16-promotion-advocacy">fer-16-promotion-advocacy</a><br>
-<a href="#irr-18-pivot-navigation">irr-18-pivot-navigation</a>
+<a href="#irr-18-pivot-navigation">irr-18-pivot-navigation</a><br>
+<a href="#irr-19-maintaining-morale">irr-19-maintaining-morale</a>
 </td></tr>
 <tr><td>17</td><td><b>Dive Deep</b></td><td>
 <a href="#aid-28-reading-bridge-role-hands-on-star-customer-obsession">aid-28-reading-bridge-role</a><br>
@@ -354,35 +399,35 @@ toc: true
 #### Arc 1: Building the Systems Team (Irreducible)
 
 <div class="arc-chain">
-<a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a> <span class="arrow">→</span><br>
-<a href="#irr-3-building-founder-appreciation">irr-3-building-founder-appreciation</a> <span class="arrow">→</span><br>
-<a href="#irr-4-hiring-a-fpga-shell-design-hands-on">irr-4-hiring-fpga-shell</a> <span class="arrow">→</span><br>
-<a href="#irr-5-codebase-architecture-analysis-hands-on">irr-5-codebase-architecture</a> <span class="arrow">→</span><br>
-<a href="#irr-6-xlang-compiler-initiative-hands-on">irr-6-xlang-compiler</a> <span class="arrow">→</span><br>
-<a href="#irr-7-compiler-engineer-hiring">irr-7-compiler-engineer-hiring</a> <span class="arrow">→</span><br>
+<a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a><br>
+<a href="#irr-3-building-founder-appreciation">irr-3-building-founder-appreciation</a><br>
+<a href="#irr-4-hiring-a-fpga-shell-design-hands-on">irr-4-hiring-fpga-shell</a><br>
+<a href="#irr-5-codebase-architecture-analysis-hands-on">irr-5-codebase-architecture</a><br>
+<a href="#irr-6-xlang-compiler-initiative-hands-on">irr-6-xlang-compiler</a><br>
+<a href="#irr-7-compiler-engineer-hiring">irr-7-compiler-engineer-hiring</a><br>
 <a href="#irr-8-principled-problem-solving-hands-on">irr-8-principled-problem-solving</a>
 </div>
 
 #### Arc 2: Hazard Zone Model HZM (FERNRIDE)
 
 <div class="arc-chain">
-<a href="#fer-2-safety-perception-research-hands-on-star-ownership">fer-2-safety-perception-research</a> <span class="arrow">→</span><br>
-<a href="#fer-4-hazard-zone-design-hands-on">fer-4-hazard-zone-design</a> <span class="arrow">→</span><br>
-<a href="#fer-5-function-testing-framework-hands-on">fer-5-function-testing</a> <span class="arrow">→</span><br>
-<a href="#fer-6-apple-demo-star-earn-trust">fer-6-apple-demo</a> <span class="arrow">→</span><br>
-<a href="#fer-7-rain-demo">fer-7-rain-demo</a> <span class="arrow">→</span><br>
+<a href="#fer-2-safety-perception-research-hands-on-star-ownership">fer-2-safety-perception-research</a><br>
+<a href="#fer-4-hazard-zone-design-hands-on">fer-4-hazard-zone-design</a><br>
+<a href="#fer-5-function-testing-framework-hands-on">fer-5-function-testing</a><br>
+<a href="#fer-6-apple-demo-star-earn-trust">fer-6-apple-demo</a><br>
+<a href="#fer-7-rain-demo">fer-7-rain-demo</a><br>
 <a href="#fer-12-safety-case-design-hands-on">fer-12-safety-case-design</a>
 </div>
 
 #### Arc 3: Proving AV Safety Through Virtual Testing (Career-spanning)
 
 <div class="arc-chain">
-<a href="#meta-1-consistent-focus-on-an-unsolved-problem">meta-1-consistent-focus</a> <span class="arrow">→</span><br>
-<a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a> <span class="arrow">→</span><br>
-<a href="#aid-26-scenario-fidelity-gap">aid-26-scenario-fidelity-gap</a> <span class="arrow">→</span><br>
-<a href="#aid-27-mathematical-framework-hands-on">aid-27-mathematical-framework</a> <span class="arrow">→</span><br>
-<a href="#aid-28-reading-bridge-role-hands-on-star-customer-obsession">aid-28-reading-bridge-role</a> <span class="arrow">→</span><br>
-<a href="#aid-29-systems-engineering-invitation">aid-29-systems-engineering-invitation</a> <span class="arrow">→</span><br>
+<a href="#meta-1-consistent-focus-on-an-unsolved-problem">meta-1-consistent-focus</a><br>
+<a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a><br>
+<a href="#aid-26-scenario-fidelity-gap">aid-26-scenario-fidelity-gap</a><br>
+<a href="#aid-27-mathematical-framework-hands-on">aid-27-mathematical-framework</a><br>
+<a href="#aid-28-reading-bridge-role-hands-on-star-customer-obsession">aid-28-reading-bridge-role</a><br>
+<a href="#aid-29-systems-engineering-invitation">aid-29-systems-engineering-invitation</a><br>
 <a href="#fer-12-safety-case-design-hands-on">fer-12-safety-case-design</a>
 </div>
 
@@ -505,36 +550,42 @@ toc: true
 **Task:** Bridge the silos and build shared understanding.
 **Action:** I worked closely with both founders (hands-on with HW and ZK) to demonstrate how systems engineering connects the domains and enables cryptographic performance.
 **Result:** Systems work gained visibility; cross-team collaboration improved significantly.
+**Source:** [IRR-Building-Systems-Team-Full](#irr-building-systems-team-full)
 
 #### IRR-4-Hiring-A-FPGA-Shell-Design-Hands-On
 **Situation:** We needed someone senior for low-level development. The existing FPGA system had a critical packet loss problem (open-loop design).
 **Task:** Hire the right person and fix the architecture.
 **Action:** I hired A.—very senior, perfect for the role. We worked with the senior FPGA hire to design a new FPGA shell. We designed the system upfront for robustness against edge cases.
 **Result:** New shell solved the packet loss problem. Patched holes in existing code.
+**Source:** [IRR-Hiring-Alex-FPGA-Shell-Full](#irr-hiring-alex-fpga-shell-full)
 
 #### IRR-5-Codebase-Architecture-Analysis-Hands-On
 **Situation:** The existing code had evolved organically to serve specific crypto designs. It functioned as memory passing engine, compute compiler, and kernel management—but these concerns weren't cleanly separated.
 **Task:** Understand the codebase and determine the right path forward.
 **Action:** I studied the architecture deeply. I concluded that the current compilation approach wouldn't scale—we needed a more general compiler to support future requirements.
 **Result:** Clear technical direction: build a proper compiler capability. This insight led to the xlang compiler initiative.
+**Source:** [IRR-XLang-Compiler-Initiative-Full](#irr-xlang-compiler-initiative-full)
 
 #### IRR-6-XLang-Compiler-Initiative-Hands-On
 **Situation:** A crypto team member at the interface intersection had built private bespoke tooling. The approach aligned with my intuition that compilation should be owned by systems.
 **Task:** Formalize this into a real compiler capability.
 **Action:** I proposed a slimmed-down backend-only compiler ("xlang") allowing developers to use the backend API directly. I moved this developer to my team to focus on compiler work and provide closer mentorship. I moderated design discussions between the 3 devs and contributed to parts on a need basis.
 **Result:** xlang became a real product; developer grew under coaching.
+**Source:** [IRR-XLang-Compiler-Initiative-Full](#irr-xlang-compiler-initiative-full)
 
 #### IRR-7-Compiler-Engineer-Hiring
 **Situation:** We needed a compiler engineer. The founders posed Rust expertise as an immutable JD requirement, but the intersection of Rust + compiler skills was rare.
 **Task:** Improve the candidate funnel without lowering the bar.
 **Action:** I worked with the recruiter to argue that seniority with appetite to learn was sufficient. We removed the Rust constraint.
 **Result:** Funnel improved dramatically; hired a strong compiler engineer.
+**Source:** [IRR-XLang-Compiler-Initiative-Full](#irr-xlang-compiler-initiative-full)
 
 #### IRR-8-Principled-Problem-Solving-Hands-On
 **Situation:** The FPGA cores were specific—VLIW-like with quirks, not Turing complete, like crypto DSPs with multi-register bank constraints. The optimization approach was iterative rather than systematic.
 **Task:** Establish a principled approach.
 **Action:** I worked with the team on a greedy algorithm generalizing an existing approach. I coached the team on how a systematic method would reduce iteration cycles and improve cross-team alignment.
 **Result:** Algorithm handles over 80% of code optimally. Team adopted the principled approach.
+**Source:** [IRR-XLang-Compiler-Initiative-Full](#irr-xlang-compiler-initiative-full)
 
 ### Technical Initiatives
 
@@ -543,30 +594,35 @@ toc: true
 **Task:** Build a proper tool.
 **Action:** I wrote an FPGA management tool in Rust.
 **Result:** Became the tool used by infrastructure for CI/CD; would have been used in production.
+**Source:** [IRR-FPGA-Management-Tool-Full](#irr-fpga-management-tool-full)
 
 #### IRR-10-MPT-Project-Delivery-star-ownership
 **Situation:** Merkle Patricia Trie was a company goal for end of 2024. Cross-team dependencies made delivery challenging—previously only team weeklies existed, so cross-functional risks stayed invisible. ZK cryptography is technically demanding, making cross-functional coordination harder.
 **Task:** Deliver on time and establish a repeatable process.
 **Action:** I introduced project weeklies—a unified forum I moderated with technical questions to surface risks teams might not raise unprompted. I interviewed experts across teams and maintained documents mapping the end-to-end view to disseminate system knowledge. I dove into technical details across the stack to spot critical-path dependencies early. I created a visual diagram of projects and blockers for shared visibility.
 **Result:** MPT delivered on time. I continued this approach beyond MPT—maintaining end-to-end documents and translating ZK concepts into familiar computer science and algebra terms so non-experts could think along and contribute. This became the standard process for all cross-functional projects.
+**Source:** [IRR-MPT-Project-Delivery-Full](#irr-mpt-project-delivery-full)
 
 #### IRR-11-Docker-Advocacy-star
 **Situation:** A technical disagreement on Docker containers was stalling the MPT project. Infrastructure believed they affected performance.
 **Task:** Unblock the project.
 **Action:** I set up a discussion between A. (virtualization expertise from Amazon) and the infra team. I facilitated the conversation, helping both sides clarify their positions and resolve the opinion differences.
 **Result:** Docker became a standard tool in infrastructure. Project unblocked.
+**Source:** [IRR-Docker-Advocacy-Full](#irr-docker-advocacy-full)
 
 #### IRR-12-Breaking-the-Rebuild-Cycle-Hands-On-star-highlight
 **Situation:** As the systems team learned the product, I noticed a recurring pattern: crypto design &rarr; HW &rarr; implement &rarr; discover performance issues &rarr; the cycle repeated. The company had rebuilt the product three times this way.
 **Task:** Break this cycle before repeating it with expensive HBM hardware.
 **Action:** I proposed three implementations of the systems layer—simulated, verilated, and HW—each with different use case, all implementing the same interface. I implemented the emulated mode and led architecture decisions for verilated and HW modes. The founders challenged this as unnecessary. I held my ground.
 **Result:** Sim vs verilated found implementation bugs; verilated vs HW found HW bugs. Simulation became powerful enough to estimate future performance quickly.
+**Source:** [IRR-Co-Design-Breaking-Rebuild-Cycle-Full](#irr-co-design-breaking-rebuild-cycle-full)
 
 #### IRR-13-Driving-Co-Design-Hands-On
 **Situation:** The company aspired to "co-design" between crypto and systems, but the workflow was sequential—crypto designed, systems implemented, issues surfaced late.
 **Task:** Make co-design real.
 **Action:** I pushed for modeling future designs with back-of-envelope calculations turned into simulation before committing to implementation.
 **Result:** Revealed product was potentially not competitive—something we would have discovered months later using the old process. Enabled fixing crypto techniques upfront.
+**Source:** [IRR-Co-Design-Breaking-Rebuild-Cycle-Full](#irr-co-design-breaking-rebuild-cycle-full)
 
 ### People & Leadership
 
@@ -575,18 +631,21 @@ toc: true
 **Task:** Help him improve.
 **Action:** I worked with him on the topic. He'd tried books multiple times. We concluded together that books couldn't solve this.
 **Result:** He agreed to work with a specialized counselor. Honest guidance toward a real solution.
+**Source:** [IRR-HFT-Engineer-Coaching-Full](#irr-hft-engineer-coaching-full)
 
 #### IRR-15-Dual-Trials-star
 **Situation:** As compiler work expanded, we needed to hire. I asked for two trials in the same week due to time constraints. The founders raised concerns about conflicts.
 **Task:** Run both trials successfully.
 **Action:** I reframed this as a feature: senior candidates should be able to handle transparency about parallel evaluations. I prepared carefully—dedicated Slack channels, intro meetings.
 **Result:** Trial went seamlessly. When the company half-sized during the trial, I stopped it mid-process with full transparency.
+**Source:** [IRR-Dual-Trials-Full](#irr-dual-trials-full)
 
 #### IRR-16-Coaching-Peer-Manager-star
 **Situation:** The infrastructure engineering manager had role difficulties with his team.
 **Task:** Help him without taking over.
 **Action:** I diagnosed the issue as a communication mismatch—his style didn't match his team's expectations for directness. I helped him adjust his approach. I also collaborated on CI/CD workflows.
 **Result:** He improved team interactions; we strengthened infrastructure automation.
+**Source:** [IRR-Helping-Infra-Manager-Full](#irr-helping-infra-manager-full)
 
 ### Organizational Challenges & Pivot
 
@@ -595,12 +654,14 @@ toc: true
 **Task:** Continue contributing.
 **Action:** I was the only non-cryptographer not let go—recognized for helping the engineering organization function smoothly.
 **Result:** Remained in the leadership team, now reduced to two founders + me. Role became mostly IC while contributing to leadership decisions.
+**Source:** [IRR-Half-Sizing-Full](#irr-half-sizing-full)
 
 #### IRR-18-Pivot-Navigation
 **Situation:** Team morale was fragile during the pivot.
 **Task:** Help founders navigate and keep team grounded.
 **Action:** I moderated group meetings, injecting soberness, reality checks, and optimism. I reviewed founders' pitches to the team. My principle: treat people as adults with transparency—state realities, balance with future scenarios, help team see their strengths.
 **Result:** Team stayed cohesive through difficult transition.
+**Source:** [IRR-Pivot-Navigation-Full](#irr-pivot-navigation-full)
 
 #### IRR-19-Maintaining-Morale
 **Situation:** Difficult post-pivot period with uncertainty.
@@ -613,12 +674,14 @@ toc: true
 **Task:** Contribute technically while supporting critical resources.
 **Action:** I wrote ZK circuits myself. I also built prototypes for a ZK circuit compiler—exploring how to make circuit development more systematic. I worked closely with the compiler engineer but deliberately didn't interrupt him—he was critical. Instead, I prototyped ideas on the side and discussed with CTO. I moderated brainstorming, focusing on unconsidered views about how to use our skills for new technologies.
 **Result:** Kept momentum; circuit compiler prototypes informed future direction; explored adjacent opportunities.
+**Source:** [IRR-Post-Pivot-Product-Focus-Full](#irr-post-pivot-product-focus-full)
 
 #### IRR-21-AI-First-Mandate
 **Situation:** The founders created a mandate to become AI-first for coding. Questions arose about quality of AI-generated ZK circuits.
 **Task:** Balance adoption with quality.
 **Action:** I defended the engineer by balancing points of view—the process around AI tools wasn't fully clarified, and aggressive adoption carried risks. I shared that I had the same experience: wrote circuits I didn't fully understand and needed peer review.
 **Result:** More balanced discussion about AI adoption risks.
+**Source:** [IRR-AI-First-Mandate-Full](#irr-ai-first-mandate-full)
 
 #### IRR-22-Alumni-Support-star-trust
 **Situation:** Irreducible closed after the pivot.
@@ -633,12 +696,14 @@ toc: true
 **Task:** Stay technically relevant and prepare for next role.
 **Action:** I've been researching LLMs and agentic workflows to stay technically current. I'm also researching structured ways for engineering managers to handle transitions—developing frameworks to help other EMs.
 **Result:** Maintaining technical edge while contributing to the EM community.
+**Source:** [IRR-After-Irreducible-Full](#irr-after-irreducible-full)
 
 #### IRR-24-Consulting
 **Situation:** After Irreducible, I had expertise to share.
 **Task:** Continue contributing while between roles.
 **Action:** I started consulting—coaching tech leads. I helped one engineer obtain a lead position at his workplace that he was qualified for but struggled to get buy-in for.
 **Result:** He got the role. Validated my coaching approach.
+**Source:** [IRR-After-Irreducible-Full](#irr-after-irreducible-full)
 
 ---
 
@@ -651,18 +716,21 @@ toc: true
 **Task:** Define my role in a two-person team.
 **Action:** I joined with one peer—two developers total. I recognized a safety layer was critical due to applicable standards and took ownership of that effort while my peer focused on performance autonomy.
 **Result:** Established clear ownership of safety-critical systems from day one.
+**Source:** [FER-Starting-Safety-Layer-Full](#fer-starting-safety-layer-full)
 
 #### FER-2-Safety-Perception-Research-Hands-On-star-ownership
 **Situation:** We needed a viable approach for safety perception.
 **Task:** Determine feasibility.
 **Action:** I did two weeks of deep research. Concluded LiDAR-based ground plane segmentation with no false negatives was viable given current hardware. Early discussions with safety confirmed we needed both radar and LiDAR for weather.
 **Result:** Clear technical direction with safety buy-in.
+**Source:** [FER-Starting-Safety-Layer-Full](#fer-starting-safety-layer-full)
 
 #### FER-3-One-Month-Prototype-Hands-On
 **Situation:** We had two developers and needed to prove viability fast.
 **Task:** Build a working prototype.
 **Action:** I found a paper with code we could modify. We had a LiDAR driver. I attracted an engineer looking for more technical depth who was keen to join. I soldered wires for missing connectors since we weren't an automotive company yet.
 **Result:** Working prototype in one month—end-to-end, surprising speed.
+**Source:** [FER-Starting-Safety-Layer-Full](#fer-starting-safety-layer-full)
 
 ### Technical Development
 
@@ -671,30 +739,35 @@ toc: true
 **Task:** Design a spec that captures all risk factors.
 **Action:** I designed the Hazard Zone (HZM)—expanding the perceived area with all potential noise sources: LiDAR calibration, weather effects, uncertainty of future driver action.
 **Result:** HZM became central to safety design and certification effort.
+**Source:** [FER-Hazard-Zone-Design-Full](#fer-hazard-zone-design-full)
 
 #### FER-5-Function-Testing-Framework-Hands-On
 **Situation:** We needed to validate the safety function systematically, but operations were being established.
 **Task:** Build testing capability despite constraints.
 **Action:** We succeeded in getting operations in Estonia (very snowy—added complexity). I built a function testing code framework that uses replay data from real drives. I designed the approach for labeling pass/fail—determining ground truth for our open-loop function (single decision: stop or not). This framework enabled systematic validation against recorded scenarios.
 **Result:** Systematic testing capability established. Framework became the foundation for ongoing validation work.
+**Source:** [FER-Hazard-Zone-Design-Full](#fer-hazard-zone-design-full)
 
 #### FER-6-Apple-Demo-star-earn-trust
 **Situation:** We needed to demonstrate capability.
 **Task:** Show the system works with high precision.
 **Action:** I threw an apple in front of the truck during a demo.
 **Result:** Truck stopped with very high precision. We called it the "Apple Demo." I ate the apple afterward.
+**Source:** [FER-Apple-Rain-Demo-Full](#fer-apple-rain-demo-full)
 
 #### FER-7-Rain-Demo
 **Situation:** Heavy rain started during a demo.
 **Task:** Decide whether to continue.
 **Action:** We decided to do another run in the heavy rain anyway.
 **Result:** Function worked perfectly—no false positives, no false negatives. Powerful demonstration.
+**Source:** [FER-Apple-Rain-Demo-Full](#fer-apple-rain-demo-full)
 
 #### FER-8-Hardware-Constraints-star-disagree
 **Situation:** Nvidia hardware wouldn't ship due to budget restrictions. We faced a choice: keep developing on unavailable hardware or optimize for underpowered but certifiable hardware.
 **Task:** Align on direction and execute.
 **Action:** I had a different view than the tech director. When the decision was made, I disagreed but committed fully.
 **Result:** Spent months rewriting and optimizing for limited hardware. Made it work.
+**Source:** [FER-HW-Constraints-Full](#fer-hw-constraints-full)
 
 ### External Collaboration
 
@@ -703,18 +776,21 @@ toc: true
 **Task:** Fix the relationship.
 **Action:** I asked to join the meetings. I realized we weren't being technical enough. I asked to speak directly with their technical people—opened a new channel. We organized a two-day measurement campaign in Italy, carefully choosing scenarios.
 **Result:** Continental evaluated our data and agreed quality was insufficient. Honest technical partnership established.
+**Source:** [FER-Radar-Vendor-Full](#fer-radar-vendor-full)
 
 #### FER-10-Radar-De-risking
 **Situation:** The radar data quality didn't meet our requirements. We needed alternatives.
 **Task:** Find a path forward.
 **Action:** I led internal brainstorming: bypass radar? Get more from LiDAR? Operational constraints? Director chose to continue with radar. In parallel, I contracted a radar expert company in Eastern Europe to double-check Continental.
 **Result:** They reached similar conclusions; interested in supplying custom-tuned radars. Multiple options opened.
+**Source:** [FER-Radar-Vendor-Full](#fer-radar-vendor-full)
 
 #### FER-11-Trailer-Angle-Hands-On
 **Situation:** I discovered late (my blind spot) that the trailer needed to be in the Hazard Zone—it has its own trajectory when not aligned.
 **Task:** Fix it despite not being in my expertise.
 **Action:** I was listening to an image processing course on my commute. I realized I could apply it. I built a prototype with geometric projection and fitting.
 **Result:** Made it to product. Had calibration shortcomings. A later hire with deep expertise improved it.
+**Source:** [FER-Trailer-Angle-Full](#fer-trailer-angle-full)
 
 #### FER-11b-Mechanical-Sensor-Proposal-star-bias-for-action
 **Situation:** With the head of safety in Tallinn, we explored measuring trailer angle with a mechanical sensor while examining the trailer structure.
@@ -729,6 +805,7 @@ toc: true
 **Task:** Design an approach that's both rigorous and practical.
 **Action:** I worked closely with safety and systems engineering. Together we developed a simple but effective approach using DFD diagrams (my suggestion)—keeping design close to code with provable statements about output relations.
 **Result:** Technique was modified after I left but remained part of TUV SUD certification.
+**Source:** [FER-Safety-Case-Requirements-Full](#fer-safety-case-requirements-full)
 
 #### FER-13-Challenging-Requirements
 **Situation:** Some systems engineering requirements needed adjustment for implementation.
@@ -743,24 +820,28 @@ toc: true
 **Task:** Help him or end the experiment.
 **Action:** I tried integrating him into my team. After two weeks, I gave direct honest feedback: "This isn't working as long as you can't become a team member instead of handling everything yourself."
 **Result:** We ended without hard feelings. He needed that mirror.
+**Source:** [FER-CTO-Integration-Full](#fer-cto-integration-full)
 
 #### FER-15-Junior-Developer-Coaching
 **Situation:** A junior programmer struggled with C++ despite passing the interview.
 **Task:** Help her succeed.
 **Action:** We had 1-1s to understand struggles. I gave her resources and time. When that wasn't enough, I paired her with an experienced C++ developer for mentoring.
 **Result:** She was promoted to engineer after 10 months.
+**Source:** [FER-Junior-Programmer-Full](#fer-junior-programmer-full)
 
 #### FER-16-Promotion-Advocacy
 **Situation:** My best contributor deserved a promotion.
 **Task:** Get him promoted.
 **Action:** I worked his case and got him promoted. This drew critique from peer managers who felt I'd taken from their pool. I had close discussions to understand perspectives.
 **Result:** We aligned on approaches. I realized I was overfitting to my previous company's culture.
+**Source:** [FER-Promotion-Advocacy-Full](#fer-promotion-advocacy-full)
 
 #### FER-17-Comfort-Zone-Coaching
 **Situation:** A senior C++ expert wanted robotics but kept defaulting to C++ tasks—his comfort zone.
 **Task:** Help him grow.
 **Action:** After many discussions, we agreed he'd work on radar. It was difficult—not purely SW engineering.
 **Result:** Moderate success: he appreciated both the new domain's difficulty and his C++ value. I got him promoted; it helped his self-confidence.
+**Source:** [FER-Senior-Engineer-Robotics-Full](#fer-senior-engineer-robotics-full)
 
 #### FER-18-Team-Growth
 **Situation:** I had learned from hiring too senior-heavy at AID.
@@ -787,12 +868,14 @@ toc: true
 **Task:** Understand customer needs and define direction.
 **Action:** I interviewed internal clients (systems engineers, developers) and discovered a gap: crowd simulation wasn't a priority—basic simulation capabilities were non-existent.
 **Result:** Pivoted my focus to building foundational simulation capability instead of crowd simulation.
+**Source:** [AID-Initial-Challenge-Full](#aid-initial-challenge-full)
 
 #### AID-2-Architecture-Discovery-Hands-On
 **Situation:** We were evaluating a contracted startup's tool for simulation. I needed to understand what AV simulation actually requires.
 **Task:** Define the right architecture for AV simulation.
 **Action:** While prototyping, I discovered how AV simulation differs from gaming and traditional traffic simulation. I identified the structure: traffic sim with agent behaviors, visualization sim for perception developers, runtime simulation.
 **Result:** The startup product turned out to be more tech demo than production-ready. This research defined the architecture that guided all subsequent work.
+**Source:** [AID-Architecture-Discovery-Full](#aid-architecture-discovery-full)
 
 ### Team Building
 
@@ -801,6 +884,7 @@ toc: true
 **Task:** Build a team.
 **Action:** I discussed with management and got approval to expand. After a couple of hires, I became de facto tech lead. I was actively involved in interviewing.
 **Result:** Growth without budget constraints; strong candidate pipeline.
+**Source:** [AID-Team-Building-Full](#aid-team-building-full)
 
 #### AID-4-Building-Four-Teams
 **Situation:** We needed comprehensive simulation capability.
@@ -815,18 +899,21 @@ toc: true
 **Task:** Get the right person.
 **Action:** I identified that C++ wasn't the critical skill—domain knowledge was. I reversed the decision and hired F.
 **Result:** He became team lead, contributed key designs, now leads similar technology at Apple.
+**Source:** [AID-F-Reversed-Rejection-Full](#aid-f-reversed-rejection-full)
 
 #### AID-6-N-OSS-Sourcing
 **Situation:** For visualization sim, we needed a full-system expert. Carla was a promising open-source project.
 **Task:** Get top talent.
 **Action:** We sourced N., Carla's lead developer, and convinced him to join.
 **Result:** Strong technical leadership for viz sim.
+**Source:** [AID-N-OSS-Sourcing-Full](#aid-n-oss-sourcing-full)
 
 #### AID-7-U-Internal-Transfer
 **Situation:** U. was looking for a better team fit.
 **Task:** Attract good talent.
 **Action:** He was drawn by our team culture.
 **Result:** U. joined internally and thrived.
+**Source:** [AID-U-Internal-Transfer-Full](#aid-u-internal-transfer-full)
 
 #### AID-8-T-US-Experience-star-best-employer
 **Situation:** EU team lacked AV experience compared to US.
@@ -841,12 +928,14 @@ toc: true
 **Task:** Make the right technical call.
 **Action:** I visited their HQ and got the agent behavior developer on phone. I discovered their techniques weren't suited for our models.
 **Result:** Rejected VTD despite relationship pressure. Led to building our own traffic sim with planner team.
+**Source:** [AID-VTD-Evaluation-Full](#aid-vtd-evaluation-full)
 
 #### AID-10-Buy-vs-Build
 **Situation:** Early on, I lacked confidence to push back on buy-vs-build decisions.
 **Task:** Change company direction.
 **Action:** After receiving a BMW offer and AID counter-offer, I found confidence. I had direct talks with CEO/CTO about stopping the startup partnership.
 **Result:** Built our own technology. Exception: VectorZero for landscape/map rendering.
+**Source:** [AID-BMW-Counter-Offer-Full](#aid-bmw-counter-offer-full)
 
 ### People Development
 
@@ -855,12 +944,14 @@ toc: true
 **Task:** Help him communicate better.
 **Action:** Multiple 1-1s working on lowering nervousness and improving communication.
 **Result:** Improved confidence and expression.
+**Source:** [AID-L-Communication-Coaching-Full](#aid-l-communication-coaching-full)
 
 #### AID-12-Scenario-Evaluation-Team
 **Situation:** Scenario evaluation was too complex for test engineers alongside other work.
 **Task:** Staff appropriately.
 **Action:** We formed a dedicated scenario evaluation team.
 **Result:** Proper focus on complex challenge.
+**Source:** [AID-Scenario-Eval-Team-Full](#aid-scenario-eval-team-full)
 
 ### Planning & Product
 
@@ -869,12 +960,14 @@ toc: true
 **Task:** Learn relevant methodologies.
 **Action:** Although I wasn't a product owner, I asked to join because planning methodologies were relevant to managing the simulation roadmap.
 **Result:** Applied PO practices to roadmap management.
+**Source:** [AID-Planning-Product-Ownership-Full](#aid-planning-product-ownership-full)
 
 #### AID-14-Vision-Slides
 **Situation:** We needed long-term direction.
 **Task:** Articulate the vision.
 **Action:** I created long-term vision slides for simulation, articulating where we were heading and why.
 **Result:** Clear shared vision for the organization.
+**Source:** [AID-Planning-Product-Ownership-Full](#aid-planning-product-ownership-full)
 
 #### AID-30-Virtual-Testing-Vision-Hands-On
 **Situation:** AV simulation requirements differ fundamentally from gaming and traditional traffic simulation.
@@ -903,18 +996,21 @@ toc: true
 **Task:** Navigate the transition.
 **Action:** Small core team with unclear mission. Different focus from US (large-scale cloud testing vs our behavior quality).
 **Result:** Preserved team; found new direction.
+**Source:** [AID-Argo-Acquisition-Full](#aid-argo-acquisition-full)
 
 #### AID-16-Integration-Approach-star-earn-trust
 **Situation:** Other teams had more friction during integration.
 **Task:** Integrate smoothly.
 **Action:** We did direct integration—assimilated with existing sim team and started working on their backlog. "Add value first, think about identity later."
 **Result:** Our approach avoided conflicts; team stayed intact.
+**Source:** [AID-Direct-Integration-Full](#aid-direct-integration-full)
 
 #### AID-17-Supporting-Team-Members-star-best-employer
 **Situation:** Team members were scattered across the organization after acquisition.
 **Task:** Support them regardless of reporting lines.
 **Action:** I supported team members wherever they ended up. I advocated for L.'s transfer despite initial skepticism from my manager.
 **Result:** Team members landed well; L. switched successfully.
+**Source:** [AID-Supporting-Team-Members-Full](#aid-supporting-team-members-full)
 
 ### Technical Leadership at Argo
 
@@ -923,18 +1019,21 @@ toc: true
 **Task:** Help him succeed in the new environment.
 **Action:** We debugged together. I coached him on building consensus through design document discussions (major alignment vehicle at Argo).
 **Result:** Improved his influence and impact.
+**Source:** [AID-F-Argo-Communication-Full](#aid-f-argo-communication-full)
 
 #### AID-19-U-Colleague-Code-Quality
 **Situation:** U. raised concerns about a colleague's code quality. There was a skills gap between them.
 **Task:** Resolve the tension productively.
 **Action:** I coached them to transform their dynamic into pair programming and mentoring.
 **Result:** Pushed both out of comfort zones; situation improved.
+**Source:** [AID-U-Code-Quality-Full](#aid-u-code-quality-full)
 
 #### AID-20-Le-Standup-Balance
 **Situation:** Le. brought energy to standups that sometimes extended them.
 **Task:** Find the right balance.
 **Action:** We discussed the purpose of dailies and how to balance engagement with focus.
 **Result:** Found balance between focus and team morale.
+**Source:** [AID-Le-Standup-Full](#aid-le-standup-full)
 
 ### Model Fidelity Work
 
@@ -961,12 +1060,14 @@ toc: true
 **Task:** Deliver value and demonstrate simulation wasn't a bottleneck.
 **Action:** I took feedback as signal to deliver faster, not stop. Focused on proving value quickly.
 **Result:** With noise injection, significant percentage of previously-passing tests started correctly failing. Validated the approach.
+**Source:** [AID-Model-Fidelity-Noise-Full](#aid-model-fidelity-noise-full)
 
 #### AID-25-Delivering-Under-Pressure-Hands-On
 **Situation:** Management increased visibility on the project given its importance.
 **Task:** Demonstrate solid planning and execution.
 **Action:** I created a granular Excel tracker (Jira couldn't handle the granularity) with tasks, min/max estimates, status, dependencies, assignees. Focused on thin vertical slice first.
 **Result:** Gave management confidence; delivered on time.
+**Source:** [AID-Delivering-Under-Pressure-Full](#aid-delivering-under-pressure-full)
 
 ### Scenario Generation
 
@@ -981,6 +1082,7 @@ toc: true
 **Task:** Build a better system.
 **Action:** I used my math background to develop a framework viewing scenarios as variable dimensions that expand as actors are added.
 **Result:** Patent for scenario generation; extended existing Argo generators.
+**Source:** [AID-Scenario-Generation-Patent-Full](#aid-scenario-generation-patent-full)
 
 ### Bridge to Systems Engineering
 
@@ -989,12 +1091,14 @@ toc: true
 **Task:** Learn from other domains.
 **Action:** I read extensively about statistics and testing—not just AV, but nuclear reactors, aviation, medical devices. These industries have decades of experience proving safety when you can't test every scenario.
 **Result:** Became bridge between developers and systems engineering. This research informed my fidelity and coverage approach.
+**Source:** [AID-Bridge-Systems-Engineering-Full](#aid-bridge-systems-engineering-full)
 
 #### AID-29-Systems-Engineering-Invitation
 **Situation:** I was working on real-world testing for trajectory control.
 **Task:** Contribute to safety validation.
 **Action:** I was asked to travel to US to meet test engineering and systems engineering leads. I was invited to join systems engineering to work on the testing plan proving vehicle safety.
 **Result:** Recognition of my contribution to this problem.
+**Source:** [AID-Bridge-Systems-Engineering-Full](#aid-bridge-systems-engineering-full)
 
 ---
 
@@ -1066,6 +1170,21 @@ As importance of compilers at company expanded, we started hiring to expand the 
 #### IRR-Helping-Infra-Manager-Full
 I helped the other infra eng manager during his tenure at Irred. There were role difficulties in his team. I helped him decide on the interactions, and I diagnosed his need for help as a cultural difference where his communication style didn't match his team's expectations for directness. I also had close working collaboration with some of his team members on CI/CD and automation workflows.
 
+#### IRR-Half-Sizing-Full
+The half-sizing also removed the full HW and systems team and infra teams, pivoting to pure SW crypto. I was the only non-cryptographer who was not let go, due to my important role in moving the eng organization to function smoothly. After that though my role was mostly IC, like everyone else at the company, while being in the leadership team: 2 founders and myself. The leadership team was before that 5 people (HR head and other infra eng mgr).
+
+#### IRR-Pivot-Navigation-Full
+During the pivot, I made sure to moderate group meetings and inject soberness, reality checks and optimism into the discussions, helping the founders navigate the discussions. I reviewed their pitches to the team. My principle was as always treating people as adults, transparency, maturity, stating the realities as they are, balancing the reality, contrasting future scenarios, understanding the group's strengths beyond the current product.
+
+#### IRR-Post-Pivot-Product-Focus-Full
+After pivot, we brainstormed in the leadership team and decided to focus on a minimal version of product that would be geared towards identity proving. This included crypto R&D work but also writing a library of algorithms that would be ZK-provable using our API. This means implementing known cryptographic primitives such as hashing functions or modeling complex primitives using ZK. Everyone became a 'circuit writer' including myself. The ZK circuit compiler was one aspect of the upcoming product. I worked closely with the engineer developing it to prepare for a production version. I made sure to work with him without interrupting him as he became a critical resource during this phase. Instead I prototyped a number of ideas on the side and discussed them with the CTO. During this period I moderated a number of discussions where as a group we brainstormed other potential applications. A key topic I had in mind was keeping the morale up, celebrating small wins, 1-1s that were addressing core frustrations of the members.
+
+#### IRR-AI-First-Mandate-Full
+By investor and leadership team alignment, we created a mandate to become an AI-first company in terms of using AI for coding. This had pros and cons. In one instance, an infra engineer was criticized by crypto R&D experts for writing imperfect ZK circuits that needed thorough review. At the time, we had not fully clarified the process behind these tools, and the founders were quite bullish on adoption. I managed the criticism toward the engineer by balancing points of view on the risks associated with overly aggressive use of AI. I myself also saw the effects firsthand—I wrote circuits that I didn't fully understand and needed thorough review from peers.
+
+#### IRR-After-Irreducible-Full
+After Irreducible closed, I've been researching LLMs and agentic workflows to stay current. I'm also researching how to create a structured way for EMs to handle these transitions. I started consulting—coaching tech leads. I helped one engineer obtain a lead position at his workplace that he was qualified for but struggled to get official buy-in for the responsibility. And I'm still in touch with my former systems team, helping with recommendations as they land new roles.
+
 ### FERNRIDE - Full Versions
 
 #### FER-Starting-Safety-Layer-Full
@@ -1085,6 +1204,21 @@ I worked very closely with safety/sys eng to design the safety case. We together
 
 #### FER-CTO-Integration-Full
 The CTO wanted to stay technical but was struggling in teams—firefighting everything, couldn't operate as a team member. Others avoided giving feedback out of fear. I tried integrating him into my team, and when it wasn't working after two weeks, I gave him direct honest feedback that nobody else would: 'This isn't working as long as you can't become a team member instead of firefighting everything.' We ended without hard feelings. He needed that mirror.
+
+#### FER-HW-Constraints-Full
+Then came a difficulty with HW. Our provider's (Nvidia) HW would not come to us due to budget restrictions. There was a hard choice to make: keep developing on unshipped HW or work on HW we could get now which was very underpowered. I was for one choice while the tech director had the other opinion. There is no easy or reliable choice. I disagreed but committed and we went on to spend months rewriting and optimizing for the certifiable but very limited HW.
+
+#### FER-Trailer-Angle-Full
+Another aspect was trailer angle calculation. We found out a bit late (my mistake/blind spot) that we also need to include the trailer into the Hazard Zone as the trailer may have intersecting trajectory when not aligned with the tractor. This was not urgent but critical. I was listening to an image processing course on my trips to work every month. At one point I decided I could actually implement the trailer angle estimation confidently using information from that course. I implemented a prototype which was doing geometric projection and fitting into the cosine of the angle, and had promising results. This made it to the product but had shortcomings due to calibration issues. A hire we made later was someone who worked on this topic at quite some length previously, and he improved it using more robust techniques.
+
+#### FER-Junior-Programmer-Full
+A junior programmer we hired struggled with C++ though she passed the C++ interview. We detected that as she was struggling to make progress on her tasks due to C++. We had 1:1s to understand where the struggles were. I gave her resources to actually study, and time to do that. This was not enough, as she was under the impression she did the studies but it seems partially she was still struggling. We then paired her up with a C++ experienced dev who was our most helpful reviewer in the team, to improve her skills. She was promoted to engineer after 10 months at Fernride (after I left).
+
+#### FER-Promotion-Advocacy-Full
+Also the best contributor for my team really deserved a promotion. I worked on his case and managed to get him his rightful promotion, though this attracted critique from peer managers who were frustrated and believed I took away from their pool. I reacted and had close discussions with them to understand the differences and explained my view on the topic. We agreed that everyone did their best, though with different approaches, and that we could tune the approach together. My approach was overfitting the culture of the previous company I was at, where promotions were an important topic that included managers advocating strongly for their reports.
+
+#### FER-Senior-Engineer-Robotics-Full
+I also got another senior engineer promoted. He was a C++ expert but wanted to get into the robotics domain, though he usually defaulted to taking hard tasks in the C++ front - his comfort zone. We had many discussions about it, and we agreed he would work on radar outside his comfort zone, which was not easy for him as the topic is not purely SW eng and needs prerequisites. It was a moderate success as he started to appreciate the difficulty of the topic but also appreciate more that his C++ expertise is also of value. I managed to also get him a promotion he deserved due to his expertise. This also helped build his self-confidence.
 
 ### AID/Argo - Full Versions
 
@@ -1108,6 +1242,48 @@ Another gap was the fidelity of simulation scenarios. There was a crude system w
 
 #### AID-Bridge-Systems-Engineering-Full
 I had been reading a lot about stats and testing safety-critical systems and had many interactions with devs and systems engineering. I started to be a bridge between them. I was asked to travel to US to meet the test eng lead and systems engineering, at which point I was asked to join the sys eng team to work on the testing plan that would show how safe the vehicle is.
+
+#### AID-Team-Building-Full
+Discussed with mgmt and got ok to expand the sim team, so I started hiring. After a couple of hires I was the defacto tech lead. Growth was a priority and not budget constrained, a lot of talent applied, actively involved in interviewing using stock take-home assignment.
+
+#### AID-N-OSS-Sourcing-Full
+Viz sim: needed 'full system expert'. Carla was a promising OSS, we managed to source the lead N. who joined our team.
+
+#### AID-U-Internal-Transfer-Full
+U. transferred internally, drawn by our team culture after looking for a better team fit.
+
+#### AID-VTD-Evaluation-Full
+Evaluated VTD as mgmt was recommending due to discussions with Audi. Evaluation was a failure, included meeting with VTD at their HQ, and key was starting tech conversation with the key dev of the agent behavior who I was able to get on phone. We found out the techniques they use are not suited for our models. This was key to start working with planner team to extend their sim, as we had enough hands, which we did - this became the traffic sim. Key hire there was H..
+
+#### AID-L-Communication-Coaching-Full
+L. had difficulties expressing himself, we had multiple 1-1s on the topic, and worked on lowering his nervousness.
+
+#### AID-Scenario-Eval-Team-Full
+We later formed the scenario eval team as scenario evaluation was too complex for test engineers to handle alongside their other work.
+
+#### AID-Argo-Acquisition-Full
+Holding team together: Argo 'acquired' us. integration interviews, many people let go, sim team largely survived but removed from sim. Result: a small core sim team with no clear mission, as a lot of redundancy with Argo sim in USA, different tech focus: less behavior quality, but more focus on large-scale testing on cloud. We had achieved a small scale 10k (US teams had more mature AV experience). Pushed hard to hire US talent to catch up on experience → hired T.B.. We worked very closely with testing on statistical work on probability distribution in test scenarios and coverage + T.M., many interesting tech conversations on the topic.
+
+#### AID-Supporting-Team-Members-Full
+Supported team members at Argo no matter where they were. Helped L. switch teams—I advocated for the transfer despite initial skepticism from my manager. Generally supported team by asking them to focus on their skills, the technical work, and not think in silo 'us/them' mentality, though the transition had been difficult.
+
+#### AID-F-Argo-Communication-Full
+F. had troubles getting his ideas through at Argo, worked together to debug: conversation style was identified as an issue it seemed, due to non-native language and culture diff, his style didn't land well in the new environment. Coached him to adjust his communication style and build consensus through DPR comment discussions, which were a major alignment vehicle at Argo.
+
+#### AID-U-Code-Quality-Full
+U. raised concerns about a colleague's code quality. There was a skills gap between them. Coached them into transforming their dynamic into a pair programming/mentoring relationship, pushing both out of their comfort zones, but it did improve the situation.
+
+#### AID-Le-Standup-Full
+Le. brought energy that sometimes extended standups. We discussed the purpose of dailies and found a balance between focus and team morale.
+
+#### AID-Direct-Integration-Full
+The remaining sim team, we did a very direct integration by similarly assimilating ourselves with existing sim team and all just starting to work on their backlog with them. Other teams had more friction during integration. As the basics of sim were generally solved well enough, I started to notice a real gap in Argo: large sim testing → model fidelity → missing probability aspect, with evidence in recording replay that showed failures that should theoretically have been caught by existing scenarios (after my digging into historical data).
+
+#### AID-Delivering-Under-Pressure-Full
+How did we deliver under pressure? Management increased oversight, so I created a very granular Excel sheet (would have not been possible in Jira) with all tasks, estimates both min and max, status and dependencies (color-coded into table) as well as who could take the job. We meticulously kept it up to date. Sharing this artifact gave more confidence that our planning was sound and we could get through on time. Of course we focused on a thin vertical slice first: one component. The challenge was noise must be realistic! This was solved by analyzing real-world data and finding a useful model for it.
+
+#### AID-Planning-Product-Ownership-Full
+At AID, product owner training was offered with an external consultant. Although I wasn't a product owner, I asked to join because the planning methodologies were relevant to managing the simulation roadmap. I created long-term vision slides for the simulation effort, articulating where we were heading and why. At Argo, I planned the entire simulation fidelity effort as a multi-quarter technical roadmap, breaking down the modeling library work into phases with clear milestones. At FERNRIDE, I defined the planning horizon for versions of the safety function, mapping features to deployment use cases—understanding which capabilities were needed for which operational scenarios and when. This meant balancing safety certification timelines with business deployment targets.
 
 ---
 

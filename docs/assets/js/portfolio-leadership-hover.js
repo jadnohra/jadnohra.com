@@ -143,7 +143,7 @@
           const fullStory = getFullStoryContent(story.sourceLink);
           if (fullStory && fullStory.content.length > 0) {
             html += '<div class="story-popover-full">';
-            html += '<div class="story-popover-full-title">Full Story:</div>';
+            html += '<div class="story-popover-full-title">Full:</div>';
             fullStory.content.forEach(p => {
               if (!p.includes('<strong>Source:</strong>')) {
                 html += '<p>' + p + '</p>';
