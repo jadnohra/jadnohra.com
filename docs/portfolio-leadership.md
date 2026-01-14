@@ -239,7 +239,7 @@ toc: true
 <a href="#aid-9-vtd-evaluation-hands-on">aid-9-vtd-evaluation</a><br>
 <a href="#aid-26-scenario-fidelity-gap">aid-26-scenario-fidelity-gap</a><br>
 <a href="#aid-32-pacos-concurrency-simulator-hands-on">aid-32-pacos-concurrency-simulator</a><br>
-<a href="#fer-11-trailer-angle-hands-on">fer-11-trailer-angle</a> <span class="lp-tag">negative</span><br>
+<a href="#fer-11-trailer-angle-hands-on">fer-11-trailer-angle</a> <span class="lp-tag">learning</span><br>
 <a href="#irr-13-driving-co-design-hands-on">irr-13-driving-co-design</a>
 </td></tr>
 <tr><td>13</td><td><b>Learn and Be Curious</b></td><td>
@@ -248,11 +248,11 @@ toc: true
 <a href="#irr-2-team-diagnosis">irr-2-team-diagnosis</a><br>
 <a href="#irr-5-codebase-architecture-analysis-hands-on">irr-5-codebase-architecture-analysis</a><br>
 <a href="#aid-2-architecture-discovery-hands-on">aid-2-architecture-discovery</a><br>
-<a href="#aid-10-buy-vs-build">aid-10-buy-vs-build</a> <span class="lp-tag">negative</span><br>
+<a href="#aid-10-buy-vs-build">aid-10-buy-vs-build</a> <span class="lp-tag">learning</span><br>
 <a href="#aid-13-product-owner-training">aid-13-product-owner-training</a><br>
 <a href="#fer-1-joining-fernride">fer-1-joining-fernride</a><br>
 <a href="#fer-11-trailer-angle-hands-on">fer-11-trailer-angle</a><br>
-<a href="#fer-11b-mechanical-sensor-proposal-star-bias-for-action">fer-11b-mechanical-sensor-proposal</a> <span class="lp-tag">negative</span><br>
+<a href="#fer-11b-mechanical-sensor-proposal-star-bias-for-action">fer-11b-mechanical-sensor-proposal</a> <span class="lp-tag">learning</span><br>
 <a href="#irr-1-joining-irreducible">irr-1-joining-irreducible</a><br>
 <a href="#irr-20-post-pivot-product-focus-hands-on">irr-20-post-pivot-product-focus</a><br>
 <a href="#irr-23-staying-current">irr-23-staying-current</a>
@@ -361,7 +361,7 @@ toc: true
 </td></tr>
 <tr><td>14</td><td><b>Have Backbone; Disagree and Commit</b></td><td>
 <a href="#fer-8-hardware-constraints-star-disagree">fer-8-hardware-constraints</a><br>
-<a href="#fer-11b-mechanical-sensor-proposal-star-bias-for-action">fer-11b-mechanical-sensor-proposal</a> <span class="lp-tag">negative</span><br>
+<a href="#fer-11b-mechanical-sensor-proposal-star-bias-for-action">fer-11b-mechanical-sensor-proposal</a> <span class="lp-tag">learning</span><br>
 <a href="#irr-7-compiler-engineer-hiring">irr-7-compiler-engineer-hiring</a><br>
 <a href="#irr-8-principled-problem-solving-hands-on">irr-8-principled-problem-solving</a><br>
 <a href="#irr-11-docker-advocacy-star">irr-11-docker-advocacy</a><br>
@@ -491,10 +491,10 @@ toc: true
 - [irr-7-compiler-engineer-hiring](#irr-7-compiler-engineer-hiring)
 
 ### Learning from Setbacks
-- [aid-10-buy-vs-build](#aid-10-buy-vs-build) `negative`
-- [fer-11-trailer-angle-hands-on](#fer-11-trailer-angle-hands-on) `negative`
-- [fer-11b-mechanical-sensor-proposal](#fer-11b-mechanical-sensor-proposal-star-bias-for-action) `negative`
-- [aid-4-building-four-teams](#aid-4-building-four-teams) `negative`
+- [aid-10-buy-vs-build](#aid-10-buy-vs-build) `learning`
+- [fer-11-trailer-angle-hands-on](#fer-11-trailer-angle-hands-on) `learning`
+- [fer-11b-mechanical-sensor-proposal](#fer-11b-mechanical-sensor-proposal-star-bias-for-action) `learning`
+- [aid-4-building-four-teams](#aid-4-building-four-teams) `learning`
 
 ### Delivering Under Pressure
 - [aid-24-responding-to-skepticism](#aid-24-responding-to-skepticism)
