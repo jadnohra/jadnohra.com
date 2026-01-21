@@ -359,6 +359,12 @@ Interactive visualization of connections between career, projects, algorithms, a
   </pre>
   </details>
 
+- **2011-2012 - Study: Mathematical Foundations** — [77-neurons Project Perelman](https://github.com/jadnohra/77-neurons-project-perelman)
+  - Year-long structured self-study curriculum in mathematics with study partners — building rigorous foundations in calculus, proofs, and linear algebra through weekly exercises and discussions.
+  - <span class="algo">Algos: [Calculus](https://en.wikipedia.org/wiki/Calculus), [Mathematical proof](https://en.wikipedia.org/wiki/Mathematical_proof), [Linear algebra](https://en.wikipedia.org/wiki/Linear_algebra).</span>
+  - **Books:** The Calculus Lifesaver (Banner), Book of Proof (Hammack), Linear Algebra (Hefferon)
+  - <span class="ref">[77-neurons-project-perelman](https://github.com/jadnohra/77-neurons-project-perelman): Calculus, Proofs, Linear Algebra</span>
+
 - **2009-2011 - Killzone 3 AI Systems** at <span class="career">[#6 Guerrilla Games](#career)</span>
   - Environment-aware AI physical behavior for Killzone 3 — jetpack navigation, owl patrol AI, environment interaction.
   <div class="thumb-strip"><img src="/assets/img/portfolio/jetpack.png"><img src="/assets/img/portfolio/owl.png"></div>
@@ -763,3 +769,8 @@ Favorite technical books studied throughout career.
 1. **[Statistics for Experimenters](https://www.wiley.com/en-us/Statistics+for+Experimenters%3A+Design%2C+Innovation%2C+and+Discovery%2C+2nd+Edition-p-9780471718130)** (Box, Hunter, Hunter) — Design of experiments, hypothesis testing, confidence intervals
 2. **[Probabilistic Safety Assessment in the Chemical and Nuclear Industries](https://books.google.de/books/about/Probabilistic_safety_assessment_in_the_c.html?id=CAUuWcTmNrQC)** (Fullwood) — Safety analysis for chemical and nuclear industries
 3. **AI Game Programming Wisdom** (4 volumes) — Game AI algorithms and techniques
+4. **[Linear Algebra](https://hefferon.net/linearalgebra/)** (Hefferon) — Free textbook, worked through completely in [77-neurons](https://github.com/jadnohra/77-neurons-project-perelman) with [detailed notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Hefferon's%20%27Linear%20Algebra%27.pdf)
+5. **[Book of Proof](https://www.people.vcu.edu/~rhammack/BookOfProof/)** (Hammack) — Introduction to mathematical proof techniques
+6. **[Linear Algebra Done Right](https://linear.axler.net/)** (Axler) — Abstract approach to linear algebra, [memo notes](https://github.com/jadnohra/TheNotes/blob/master/2019/memo_linear-algebra-done-right.pdf)
+7. **[Mathematical Thought from Ancient to Modern Times](https://global.oup.com/academic/product/mathematical-thought-from-ancient-to-modern-times-9780195061352)** (Morris Kline) — History of mathematics, [notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Morris%20Kline's%20%27Mathematical%20Thought%27.pdf)
+8. **[Euclid's Elements](https://mathcs.clarku.edu/~djoyce/elements/elements.html)** (Heath translation) — Classical foundations of geometry, [notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Euclid's%20Elements.pdf)
