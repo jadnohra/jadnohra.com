@@ -96,6 +96,15 @@ Interactive visualization of connections between career, projects, algorithms, a
   - UL4600 safety certification. SOTIF analysis. FMEA integration.
   - Applied at <span class="career">[#3 Argo AI](#career)</span>, <span class="career">[#2 FERNRIDE](#career)</span>.
 
+- **2023-2024 - FERNRIDE Safety Function** — Autonomous truck safety layer
+  - Safety-critical perception and control layer for teleoperated autonomous trucks. Designed and implemented complete safety function from perception to actuation, achieving TÜV SÜD certification.
+  - **Hazard Zone Model (HZM):** Designed comprehensive safety specification expanding perceived area with all potential noise sources—LiDAR calibration, weather effects, uncertainty of future driver action, trailer trajectory modeling.
+  - **Safety Perception:** LiDAR-based ground plane segmentation with zero false negatives requirement. Dual-sensor approach (radar + LiDAR) for weather robustness.
+  - **Safety Case Design:** Developed DFD-based approach keeping design close to code with provable statements about output relations. Part of TÜV SÜD certification.
+  - **Function Testing Framework:** Scenario/test database for systematic validation of open-loop safety decisions.
+  - <span class="algo">Tech: C++, ROS2. Algos: [Ground plane segmentation](https://en.wikipedia.org/wiki/Image_segmentation), [Point cloud processing](https://en.wikipedia.org/wiki/Point_cloud), DFD analysis, [SOTIF](https://en.wikipedia.org/wiki/Safety_of_the_intended_functionality).</span>
+  - Applied at <span class="career">[#2 FERNRIDE](#career)</span>.
+
 - **2018-2020 - [daisy](https://github.com/jadnohra/daisy)** — Traffic simulator
   - Traffic flow simulation for autonomous vehicle testing scenarios — built during AV work to model realistic traffic patterns and edge cases.
   - <span class="algo">Tech: Python. Algos: Agent-based simulation, traffic flow modeling.</span>

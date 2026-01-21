@@ -4,8 +4,8 @@
     {
       "name": "career",
       "children": [
-        {"name": "career.irreducible", "label": "Irreducible", "imports": []},
-        {"name": "career.fernride", "label": "FERNRIDE", "imports": []},
+        {"name": "career.irreducible", "label": "Irreducible", "imports": ["project.zkaccel"]},
+        {"name": "career.fernride", "label": "FERNRIDE", "imports": ["project.fernridesafety", "project.vtt"]},
         {"name": "career.argo", "label": "Argo AI", "imports": []},
         {"name": "career.audi", "label": "Audi AID", "imports": []},
         {"name": "career.guidedknowledge", "label": "Guided Knowledge", "imports": []},
@@ -19,7 +19,7 @@
     {
       "name": "project",
       "children": [
-        {"name": "project.vtt", "label": "VTT Platform", "imports": ["career.argo", "algo.discreteeventsim", "algo.mpc", "algo.abm", "algo.idm", "algo.qp", "algo.bicyclemodel", "algo.timeseries", "algo.convexopt", "algo.reachability", "algo.ttc", "theory.constraintsolving", "theory.rbd"]},
+        {"name": "project.vtt", "label": "VTT Platform", "imports": ["career.argo", "career.fernride", "algo.discreteeventsim", "algo.mpc", "algo.abm", "algo.idm", "algo.qp", "algo.bicyclemodel", "algo.timeseries", "algo.convexopt", "algo.reachability", "algo.ttc", "theory.constraintsolving", "theory.rbd"]},
         {"name": "project.stattestdesign", "label": "Statistical Test Design", "imports": ["career.argo", "algo.binomialci", "algo.wilsonscore", "algo.hypothesistesting", "algo.doe", "algo.stratifiedsampling", "algo.factorialdesign", "algo.plackettburman", "algo.gp", "algo.uq", "theory.statistics", "theory.probability", "theory.expdesign", "books.statsforexp", "books.probsafety"]},
         {"name": "project.daisy", "label": "daisy", "imports": ["career.audi", "algo.trafficsim"]},
         {"name": "project.pacos", "label": "PaCoS", "imports": ["career.audi", "algo.concurrency"]},
@@ -50,7 +50,9 @@
         {"name": "project.tictactoe", "label": "TicTacToe AI", "imports": ["career.aigamedev", "algo.minimax", "algo.alphabeta", "algo.valueiteration"]},
         {"name": "project.aisandbox", "label": "AI Sandbox", "imports": ["career.aigamedev", "algo.hpastar", "algo.rl", "algo.locomotion", "books.aigameprog"]},
         {"name": "project.wof", "label": "World-Of-Football", "imports": ["career.kimera", "career.sixteentons", "career.aigamedev", "algo.nn", "algo.spatialpartition"]},
-        {"name": "project.university", "label": "University Projects", "imports": ["career.kimera", "algo.raytracing", "algo.rasterization", "algo.zbuffer"]}
+        {"name": "project.university", "label": "University Projects", "imports": ["career.kimera", "algo.raytracing", "algo.rasterization", "algo.zbuffer"]},
+        {"name": "project.zkaccel", "label": "ZK Hardware Accel", "imports": ["career.irreducible", "algo.ntt", "algo.fri", "algo.vliw", "algo.regalloc", "algo.instrscheduling", "algo.finitefields", "algo.polycommit", "algo.concurrency"]},
+        {"name": "project.fernridesafety", "label": "FERNRIDE Safety", "imports": ["career.fernride", "algo.groundplaneseg", "algo.pointcloud", "algo.dfd", "algo.sotif", "theory.probability"]}
       ]
     },
     {
@@ -116,7 +118,18 @@
         {"name": "algo.factorialdesign", "label": "Factorial Design", "imports": ["algo.doe", "theory.expdesign"]},
         {"name": "algo.plackettburman", "label": "Plackett-Burman", "imports": ["algo.factorialdesign", "theory.expdesign"]},
         {"name": "algo.gp", "label": "Gaussian Processes", "imports": ["theory.probability", "theory.statistics"]},
-        {"name": "algo.uq", "label": "Uncertainty Quantification", "imports": ["theory.probability", "theory.statistics"]}
+        {"name": "algo.uq", "label": "Uncertainty Quantification", "imports": ["theory.probability", "theory.statistics"]},
+        {"name": "algo.ntt", "label": "NTT", "imports": ["theory.numbertheory", "theory.linalg"]},
+        {"name": "algo.fri", "label": "FRI Protocol", "imports": ["algo.ntt", "theory.probability"]},
+        {"name": "algo.vliw", "label": "VLIW Compiler", "imports": ["algo.regalloc", "algo.instrscheduling"]},
+        {"name": "algo.regalloc", "label": "Register Allocation", "imports": []},
+        {"name": "algo.instrscheduling", "label": "Instruction Scheduling", "imports": []},
+        {"name": "algo.finitefields", "label": "Finite Fields", "imports": ["theory.numbertheory"]},
+        {"name": "algo.polycommit", "label": "Polynomial Commitments", "imports": ["algo.finitefields"]},
+        {"name": "algo.groundplaneseg", "label": "Ground Plane Segmentation", "imports": []},
+        {"name": "algo.pointcloud", "label": "Point Cloud Processing", "imports": ["theory.linalg"]},
+        {"name": "algo.dfd", "label": "DFD Analysis", "imports": []},
+        {"name": "algo.sotif", "label": "SOTIF", "imports": ["theory.probability"]}
       ]
     },
     {
