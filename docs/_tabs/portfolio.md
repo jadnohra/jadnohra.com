@@ -300,13 +300,13 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Notes: Physics: <span class="study">[LCP](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20the%20Linear%20Complementarity%20Problem.pdf), [LCP supp](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Supplementary%20Notes%20on%20the%20Linear%20Complemetarity%20Problem.pdf), [GJK](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20the%20GJK%20Algorithm..pdf), [Jammer's Force](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Jammer's%20%27Force%27.pdf), [Stevin](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Note%20on%20Stevin's%20inclined%20plane%20equilibrium.pdf), [Whittaker Aether](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20%27Theories%20of%20the%20Aether%20and%20Electricity%2C%20Whittaker%27.pdf)</span>
   - Notes: Linear Algebra: <span class="study">[Eigenvalues](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Parlett's%20The%20Symmetric%20Eigenvalue%20Problem.pdf), [Hefferon LinAlg](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Hefferon's%20%27Linear%20Algebra%27.pdf)</span>
   - Notes: Foundations: <span class="study">[Euler](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Euler's%20Writings.pdf), [Euclid](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Euclid's%20Elements.pdf), [Morris Kline](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Morris%20Kline's%20%27Mathematical%20Thought%27.pdf), [Number Theory](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Number%20Theory.pdf), [Infinity](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/On%20the%20Necessity%20of%20Infinity.pdf), [Convergence](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Convergence%20proofs%20in%20the%20literature.pdf)</span>
-  - <span class="algo">Key files: [lamby](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/Labs/Physics/lamby), [gjk0.py](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/Physics/fc/gjk/gjk0.py)</span>
+  - <span class="algo">Key files: [lamby](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/Physics/lamby), [gjk0.py](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Physics/fc/gjk/gjk0.py)</span>
   - Applied linear programming in Havok physics solvers.
 
-- **May 2011 - [Floating Point Analysis](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/Labs/fp)** — IEEE 754 deep dive
+- **May 2011 - [Floating Point Analysis](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/fp)** — IEEE 754 deep dive
   - Low-level exploration of IEEE 754 floating-point representation — bit manipulation, epsilon calculation, and denormal handling essential for numerical stability in physics code.
   - <span class="algo">Tech: Python, C++. Algos: [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) bit manipulation, epsilon calculation, denormals.</span>
-  - <span class="algo">Key files: [bitfp.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/fp/bitfp.cpp), [bitfp.py](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/fp/bitfp.py).</span>
+  - <span class="algo">Key files: [bitfp.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/fp/bitfp.cpp), [bitfp.py](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/fp/bitfp.py).</span>
   - Notes: <span class="study">[asymp_not](https://github.com/jadnohra/TheNotes/blob/master/2016/asymp_not.pdf)</span>
   - Applied at <span class="career">[#5 Havok](#career)</span> for low-level numerical optimization.
   <details>
@@ -335,17 +335,17 @@ Interactive visualization of connections between career, projects, algorithms, a
   - <span class="algo">Tech: C++. Algos: [Skeletonization](https://en.wikipedia.org/wiki/Topological_skeleton), [Medial axis transform](https://en.wikipedia.org/wiki/Medial_axis), region decomposition.</span>
   - Improvements on corner cases that other companies presented as challenges during GDC.
 
-- **Nov 2010 - [RecastMOD](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/Labs/AI/RecastMOD)** — Navigation mesh system
+- **Nov 2010 - [RecastMOD](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/AI/RecastMOD)** — Navigation mesh system
   - Modified version of Recast & Detour — the industry-standard navmesh library used in AAA games for AI pathfinding through voxelization and mesh generation.
   - <span class="algo">Tech: C++, OpenGL, Recast & Detour. Algos: [Voxelization](https://en.wikipedia.org/wiki/Voxel), [Navigation mesh](https://en.wikipedia.org/wiki/Navigation_mesh), [A*](https://en.wikipedia.org/wiki/A*_search_algorithm).</span>
-  - <span class="algo">Key files: [Recast.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/AI/RecastMOD/Recast/Source/Recast.cpp), [RecastRasterization.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/AI/RecastMOD/Recast/Source/RecastRasterization.cpp), [DetourStatNavMesh.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/AI/RecastMOD/Detour/Source/DetourStatNavMesh.cpp).</span>
+  - <span class="algo">Key files: [Recast.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/AI/RecastMOD/Recast/Source/Recast.cpp), [RecastRasterization.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/AI/RecastMOD/Recast/Source/RecastRasterization.cpp), [DetourStatNavMesh.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/AI/RecastMOD/Detour/Source/DetourStatNavMesh.cpp).</span>
   - Notes: <span class="study">[Collision Detection](https://github.com/jadnohra/TheNotes/blob/master/2016/notes_coll_det.pdf), [algcrumb](https://github.com/jadnohra/TheNotes/blob/master/2016/algcrumb.pdf)</span>
   - Built on AI Sandbox pathfinding; applied at <span class="career">[#6 Guerrilla](#career)</span> for automated navigable space.
 
-- **Aug 2010 - [Bigfoot Animation](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/Labs/Bigfoot)** — Skeletal animation with physics
+- **Aug 2010 - [Bigfoot Animation](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/Bigfoot)** — Skeletal animation with physics
   - Skeleton retargeting and motion planning system — exploring character animation pipelines, physics-based locomotion, and motion capture processing.
   - <span class="algo">Tech: C++, OpenGL, GLM, Bigeye UI. Algos: [BVH](https://en.wikipedia.org/wiki/Biovision_Hierarchy), [Skeletal animation](https://en.wikipedia.org/wiki/Skeletal_animation), [Motion retargeting](https://en.wikipedia.org/wiki/Motion_capture#Retargeting), [Quaternion](https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation) ([notes](https://github.com/jadnohra/TheNotes/blob/master/2015/rotation.pdf)).</span>
-  - <span class="algo">Key files: [LoaderBVH.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/Bigfoot/src/BF/LoaderBVH.cpp), [Retarget.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/Bigfoot/src/Retarget.cpp), [Locomo.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/Bigfoot/src/BF/Locomo.cpp), [Planner.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/Bigfoot/src/Planner.cpp).</span>
+  - <span class="algo">Key files: [LoaderBVH.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Bigfoot/src/BF/LoaderBVH.cpp), [Retarget.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Bigfoot/src/Retarget.cpp), [Locomo.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Bigfoot/src/BF/Locomo.cpp), [Planner.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Bigfoot/src/Planner.cpp).</span>
   - Notes: <span class="study">[RBD](https://github.com/jadnohra/TheNotes/blob/master/2017/treat_rbd_1.pdf), [Lagrangian](https://github.com/jadnohra/TheNotes/blob/master/2015/lagrfrmw.pdf), [Rotation](https://github.com/jadnohra/TheNotes/blob/master/2015/rotation.pdf), [Covariance](https://github.com/jadnohra/TheNotes/blob/master/2015/covar.pdf), [Hestenes GA](https://github.com/jadnohra/TheNotes/blob/master/2015/Notes%20on%20Hestenes%27%20%27Reforming%20the%20Mathematical%20Language%20of%20Physics%27.pdf)</span>
   - Built on Puppeteer/Bigeye; applied at <span class="career">[#7](#career)→[#6](#career)→[#5](#career)</span>. [Video](https://www.youtube.com/watch?v=XMj0xhCzx4U).
   <details>
@@ -385,10 +385,10 @@ Interactive visualization of connections between career, projects, algorithms, a
   </pre>
   </details>
 
-- **Aug 2010 - [BlenderToBVH](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/Labs/BlenderToBVH)** — Animation export tool
+- **Aug 2010 - [BlenderToBVH](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/BlenderToBVH)** — Animation export tool
   - Blender addon to export armature animations to BVH format — enabling custom animation pipelines and motion capture integration.
   - <span class="algo">Tech: Python, Blender API. Algos: Armature traversal, coordinate system conversion.</span>
-  - <span class="algo">Key files: [bvh_export.py](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/BlenderToBVH/bvh_export.py).</span>
+  - <span class="algo">Key files: [bvh_export.py](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/BlenderToBVH/bvh_export.py).</span>
   - Used in Bigfoot animation pipeline.
   <details>
   <summary>Source Tree</summary>
@@ -410,10 +410,10 @@ Interactive visualization of connections between career, projects, algorithms, a
   </pre>
   </details>
 
-- **May 2010 - [Bigeye UI](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/Labs/Bigeye)** — UI framework
+- **May 2010 - [Bigeye UI](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/Bigeye)** — UI framework
   - Lightweight retained-mode UI framework with scene graph rendering — built for rapid prototyping of graphics and simulation tools.
   - <span class="algo">Tech: C++, OpenGL, MagickWand, Win32. Algos: Retained-mode rendering, [Scene graph](https://en.wikipedia.org/wiki/Scene_graph).</span>
-  - <span class="algo">Key files: [Bigeye.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/Bigeye/src/BE/Bigeye.cpp), [RenderNodes.h](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/Bigeye/src/BE/RenderNodes.h).</span>
+  - <span class="algo">Key files: [Bigeye.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Bigeye/src/BE/Bigeye.cpp), [RenderNodes.h](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Bigeye/src/BE/RenderNodes.h).</span>
   - Used for rapid prototyping throughout career.
   <details>
   <summary>Source Tree</summary>
@@ -446,10 +446,10 @@ Interactive visualization of connections between career, projects, algorithms, a
   </pre>
   </details>
 
-- **Apr 2010 - [Puppeteer](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/Labs/Puppeteer)** — BVH viewer
+- **Apr 2010 - [Puppeteer](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/Puppeteer)** — BVH viewer
   - BVH file loader and skeletal animation viewer — foundation for character animation research and motion capture visualization.
   - <span class="algo">Tech: C++, OpenGL, GLM. Algos: [BVH](https://en.wikipedia.org/wiki/Biovision_Hierarchy) parsing, skeletal rendering.</span>
-  - <span class="algo">Key files: [LoaderBVH.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/Puppeteer/src/LoaderBVH.cpp), [Skeleton.h](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Labs/Puppeteer/src/Skeleton.h).</span>
+  - <span class="algo">Key files: [LoaderBVH.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Puppeteer/src/LoaderBVH.cpp), [Skeleton.h](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Puppeteer/src/Skeleton.h).</span>
   - Foundation for Bigfoot animation system.
   <details>
   <summary>Source Tree</summary>
@@ -487,12 +487,12 @@ Interactive visualization of connections between career, projects, algorithms, a
   - Notes: <span class="study">[ml_survey](https://github.com/jadnohra/TheNotes/blob/master/2016/ml_survey.pdf)</span>. Books: <span class="book">[#3 AI Game Programming Wisdom](#books)</span>
   - Main programmer; co-authored "Parallel Pathfinding on Modern Hardware". Applied at <span class="career">[#6](#career), [#5](#career)</span>.
 
-- **Apr 2009 - [Obstacle Avoidance](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/Labs/AI)** — Steering behaviors
+- **Apr 2009 - [Obstacle Avoidance](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/AI)** — Steering behaviors
   - Implementation of velocity obstacles and steering behaviors — local collision avoidance for crowds and NPC navigation.
   - <span class="algo">Tech: C++, 2D visualization. Algos: [Velocity obstacles](https://en.wikipedia.org/wiki/Velocity_obstacle), collision prediction, steering.</span>
   - Applied at <span class="career">[#7](#career), [#6](#career)</span>. [Video](https://www.youtube.com/watch?v=RZHIchPK1TE).
 
-- **Apr 2009 - [TicTacToe AI](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/Labs/AI/TicTacToe)** — AI algorithms testbed
+- **Apr 2009 - [TicTacToe AI](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/AI/TicTacToe)** — AI algorithms testbed
   - Classic game AI algorithms implemented as a learning exercise — minimax, alpha-beta pruning, and reinforcement learning on a simple domain.
   - <span class="algo">Tech: C++, Visual Studio. Algos: [Minimax](https://en.wikipedia.org/wiki/Minimax), [Alpha-Beta pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning), [Value iteration](https://en.wikipedia.org/wiki/Markov_decision_process#Value_iteration) (RL).</span>
   - Notes: <span class="study">[FOL](https://github.com/jadnohra/TheNotes/blob/master/2018/Free%20Occurrences%20in%20FOL.pdf), [plql](https://github.com/jadnohra/TheNotes/blob/master/2017/plql.pdf)</span>
@@ -523,7 +523,7 @@ Interactive visualization of connections between career, projects, algorithms, a
   </pre>
   </details>
 
-- **Apr 2009 - [Graphics Framework](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/Labs/Graphics/Framework1)** — Quake3 BSP renderer
+- **Apr 2009 - [Graphics Framework](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/Graphics/Framework1)** — Quake3 BSP renderer
   - BSP-based renderer loading Quake 3 maps — exploring spatial partitioning, PVS culling, and real-time rendering techniques from classic game engines.
   - <span class="algo">Tech: C++, OpenGL, Win32. Algos: [BSP](https://en.wikipedia.org/wiki/Binary_space_partitioning) traversal, [PVS](https://en.wikipedia.org/wiki/Potentially_visible_set) culling, lightmaps.</span>
   - Built on thrashit3d experience from university.
