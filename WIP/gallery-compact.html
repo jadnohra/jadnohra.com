@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Compact Gallery Concept</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.5;
+            padding: 1.5rem;
+            max-width: 850px;
+            margin: 0 auto;
+            font-size: 14px;
+        }
+
+        h1 { font-size: 1.4rem; margin-bottom: 0.5rem; color: #1a1a1a; }
+        h2 { font-size: 1rem; margin-top: 1.5rem; margin-bottom: 0.3rem; color: #444; }
+
+        /* Links - blue and underlined like your portfolio */
+        a { color: #2563eb; text-decoration: underline; }
+        a:hover { color: #1d4ed8; }
+
+        .algo { color: #2563eb; }
+        .career { color: #dc2626; }
+
+        /* Compact project entry */
+        .project {
+            margin: 0.6rem 0;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .project:last-child { border-bottom: none; }
+
+        .project-header {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .project-title {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .project-subtitle {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .project-desc {
+            color: #555;
+            font-size: 0.9em;
+            margin: 0.25rem 0;
+        }
+
+        /* Compact thumbnail strip - as many as fit */
+        .thumb-strip {
+            display: flex;
+            gap: 3px;
+            margin: 0.4rem 0;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .thumb-strip img {
+            height: 50px;
+            width: auto;
+            max-width: 90px;
+            object-fit: cover;
+            border-radius: 3px;
+            opacity: 0.85;
+            transition: all 0.15s;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+
+        .thumb-strip img:hover {
+            opacity: 1;
+            transform: scale(1.08);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 10;
+            position: relative;
+        }
+
+        /* Even smaller thumbs variant */
+        .thumb-strip.tiny img {
+            height: 40px;
+            max-width: 70px;
+        }
+
+        /* Extra compact details */
+        details {
+            margin: 0.3rem 0;
+            font-size: 0.85em;
+        }
+
+        summary {
+            cursor: pointer;
+            color: #2563eb;
+            display: inline;
+        }
+
+        summary:hover { text-decoration: underline; }
+
+        .more-thumbs {
+            display: flex;
+            gap: 3px;
+            flex-wrap: wrap;
+            margin-top: 0.3rem;
+            padding: 0.4rem;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .more-thumbs img {
+            height: 45px;
+            width: auto;
+            max-width: 80px;
+            object-fit: cover;
+            border-radius: 3px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+
+        .meta {
+            font-size: 0.85em;
+            margin-top: 0.2rem;
+        }
+
+        /* Section divider */
+        hr {
+            border: none;
+            border-top: 2px solid #e0e0e0;
+            margin: 1rem 0;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            padding: 0.5rem 0.75rem;
+            margin: 0.75rem 0;
+            font-size: 0.85em;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .lightbox.active { display: flex; }
+        .lightbox img { max-width: 90%; max-height: 90%; object-fit: contain; }
+        .lightbox-close {
+            position: absolute;
+            top: 15px; right: 25px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* Comparison section */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .comparison > div {
+            background: white;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        .comparison h3 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Compact Gallery Concept</h1>
+<p style="color:#666;margin-bottom:1rem;">Many small thumbnails, minimal spacing, keeps page short.</p>
+
+<div class="note">
+    <strong>Changes from previous:</strong> Smaller thumbs (50px → can fit 6-8 per row), tighter spacing, neutral colors matching Chirpy theme.
+</div>
+
+<h2>Projects</h2>
+
+<!-- HKDS -->
+<div class="project">
+    <div class="project-header">
+        <span class="project-title">~2016 - HKDS High-Fidelity Solver</span>
+        <span class="project-subtitle">— Robotics/machinery simulation</span>
+    </div>
+    <div class="thumb-strip">
+        <img src="../repos/projects-pre-2015/hkds/overview_screen1.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/ds_simple.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/overview_screen2.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/hkds_titan.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/hkds_digger1.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/mlcp_trace.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/detail_screen1.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/mlcp_chuzro.png" onclick="openLightbox(this)">
+    </div>
+    <div class="meta">
+        <span class="algo">Tech: C++. Algos: MLCP, substepping, co-simulation.</span>
+        Applied at <span class="career">#5 Havok</span>
+    </div>
+</div>
+
+<!-- Network Physics -->
+<div class="project">
+    <div class="project-header">
+        <span class="project-title">~2015 - Network Physics R&D</span>
+        <span class="project-subtitle">— Multiplayer physics sync</span>
+    </div>
+    <div class="thumb-strip">
+        <img src="../repos/projects-pre-2015/netw/csarch1_screen1.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/netw/csarch1_screen2.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/netw/viewer5.jpeg" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/netw/viewer6.jpeg" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/netw/pyramid_split.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/netw/sectors2.jpeg" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/netw/launcher.jpg" onclick="openLightbox(this)">
+    </div>
+    <div class="meta">
+        <span class="algo">Tech: C++. Algos: Client-server physics, state sync, sector partitioning.</span>
+    </div>
+</div>
+
+<!-- Geometry Numerical -->
+<div class="project">
+    <div class="project-header">
+        <span class="project-title">~2013-2015 - Geometry Numerical Issues</span>
+        <span class="project-subtitle">— FP precision in collision</span>
+    </div>
+    <div class="thumb-strip">
+        <img src="../repos/projects-pre-2015/geom_num/JiraEpsilon_screen1.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/geom_num/RaySphere.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/geom_num/00-10km_NoToleranceAlgo_CurrAlgo.jpg" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/geom_num/04-10km_ZeroToleranceAlgo_CurrAlgo.jpg" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/geom_num/01-30km_NaiveTolerranceAlgo.jpg" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/geom_num/02-30km_ThickEdgeAlgo.jpg" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/geom_num/nics_rnn.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/geom_num/nics_fp754.png" onclick="openLightbox(this)">
+    </div>
+    <div class="meta">
+        <span class="algo">Tech: C++. Algos: IEEE 754, interval arithmetic, ULP analysis.</span>
+    </div>
+</div>
+
+<hr>
+
+<!-- Guerrilla -->
+<div class="project">
+    <div class="project-header">
+        <span class="project-title">2009-2011 - Killzone 3 AI & Vehicle</span>
+        <span class="project-subtitle">— Jetpack, owl patrol, vehicle pathfinding</span>
+    </div>
+    <div class="thumb-strip">
+        <img src="../repos/projects-pre-2015/GG/jetpack.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/GG/owl.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/GG/vehicle.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/GG/recast.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/GG/areas.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/GG/vehic_planner1.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/GG/vehic_planner2.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/GG/vehic_planner3.png" onclick="openLightbox(this)">
+    </div>
+    <div class="meta">
+        <span class="algo">Tech: C++, PS3/SPU. Algos: Behavior trees, skeletonization, navmesh, motion planning.</span>
+        Applied at <span class="career">#6 Guerrilla</span>. <a href="https://www.youtube.com/watch?v=_mXYAPUIAqg">Video</a>
+    </div>
+</div>
+
+<!-- WOF + Bigfoot -->
+<div class="project">
+    <div class="project-header">
+        <span class="project-title">2006-2010 - World-Of-Football & Bigfoot</span>
+        <span class="project-subtitle">— Indie engine, animation system</span>
+    </div>
+    <div class="thumb-strip">
+        <img src="../repos/projects-pre-2015/old/wof_teaser.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/old/wof_play.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/old/wof_coll.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/old/bigfoot_1.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/old/bigfoot_2.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/old/bigeye_1.png" onclick="openLightbox(this)">
+    </div>
+    <div class="meta">
+        <span class="algo">Tech: C++, DirectX/OpenGL. Algos: Neural networks, skeletal animation, BVH.</span>
+        <a href="https://www.youtube.com/watch?v=SEntMI6s6RQ">Bigfoot Video</a>
+    </div>
+</div>
+
+<hr>
+
+<h2>Even Tinier Variant (40px height)</h2>
+
+<div class="project">
+    <div class="project-header">
+        <span class="project-title">~2016 - HKDS High-Fidelity Solver</span>
+    </div>
+    <div class="thumb-strip tiny">
+        <img src="../repos/projects-pre-2015/hkds/overview_screen1.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/ds_simple.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/overview_screen2.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/hkds_titan.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/hkds_digger1.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/mlcp_trace.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/detail_screen1.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/mlcp_chuzro.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/hkds_digger2.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/hkds/mlcp_refs.png" onclick="openLightbox(this)">
+    </div>
+    <div class="meta"><span class="algo">Tech: C++. Algos: MLCP, substepping.</span></div>
+</div>
+
+<hr>
+
+<h2>With Overflow Details</h2>
+<p style="color:#666;font-size:0.85em;margin-bottom:0.5rem;">Show first 5-6 inline, rest in expandable</p>
+
+<div class="project">
+    <div class="project-header">
+        <span class="project-title">~2013-2015 - Geometry Numerical Issues</span>
+    </div>
+    <div class="thumb-strip">
+        <img src="../repos/projects-pre-2015/geom_num/JiraEpsilon_screen1.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/geom_num/RaySphere.png" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/geom_num/00-10km_NoToleranceAlgo_CurrAlgo.jpg" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/geom_num/04-10km_ZeroToleranceAlgo_CurrAlgo.jpg" onclick="openLightbox(this)">
+        <img src="../repos/projects-pre-2015/geom_num/01-30km_NaiveTolerranceAlgo.jpg" onclick="openLightbox(this)">
+    </div>
+    <details>
+        <summary>+3 more</summary>
+        <div class="more-thumbs">
+            <img src="../repos/projects-pre-2015/geom_num/02-30km_ThickEdgeAlgo.jpg" onclick="openLightbox(this)">
+            <img src="../repos/projects-pre-2015/geom_num/nics_rnn.png" onclick="openLightbox(this)">
+            <img src="../repos/projects-pre-2015/geom_num/nics_fp754.png" onclick="openLightbox(this)">
+        </div>
+    </details>
+    <div class="meta"><span class="algo">Tech: C++. Algos: IEEE 754, interval math.</span></div>
+</div>
+
+<hr>
+
+<div class="comparison">
+    <div>
+        <h3>Space Comparison</h3>
+        <p style="font-size:0.85em;">
+            Previous concept: ~180px per project<br>
+            This concept: ~100px per project<br>
+            <strong>~45% smaller</strong>
+        </p>
+    </div>
+    <div>
+        <h3>Thumbnail Sizes</h3>
+        <p style="font-size:0.85em;">
+            Standard: 50px height<br>
+            Tiny variant: 40px height<br>
+            Click to enlarge in lightbox
+        </p>
+    </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <img id="lightbox-img" src="">
+</div>
+
+<script>
+    function openLightbox(img) {
+        document.getElementById('lightbox-img').src = img.src;
+        document.getElementById('lightbox').classList.add('active');
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('active');
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+
+</body>
+</html>

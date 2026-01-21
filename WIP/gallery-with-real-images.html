@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio with Real Screenshots</title>
+    <style>
+        :root {
+            --algo-color: #2563eb;
+            --career-color: #dc2626;
+            --study-color: #059669;
+            --bg-dark: #1a1a2e;
+            --bg-card: #16213e;
+            --text-primary: #e6e6e6;
+            --text-secondary: #a0a0a0;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 { color: #fff; border-bottom: 2px solid var(--algo-color); padding-bottom: 0.5rem; }
+        h2 { color: var(--algo-color); margin-top: 2.5rem; font-size: 1.1rem; }
+
+        .project-entry {
+            margin: 1.5rem 0;
+            padding: 1rem 1.25rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 6px;
+            border-left: 3px solid var(--algo-color);
+        }
+
+        .project-title {
+            font-weight: 600;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .project-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+
+        .algo-tag {
+            color: var(--algo-color);
+            font-size: 0.85rem;
+        }
+
+        .study-tag {
+            color: var(--study-color);
+            font-size: 0.85rem;
+        }
+
+        .career-link {
+            color: var(--career-color);
+            text-decoration: underline;
+        }
+
+        /* Inline thumbnails */
+        .inline-thumbs {
+            display: flex;
+            gap: 0.5rem;
+            margin: 0.75rem 0;
+            flex-wrap: wrap;
+        }
+
+        .inline-thumbs img {
+            height: 80px;
+            width: auto;
+            max-width: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+            opacity: 0.9;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: #0d1b2a;
+        }
+
+        .inline-thumbs img:hover {
+            opacity: 1;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        /* Collapsible gallery */
+        details {
+            margin: 0.75rem 0;
+        }
+
+        summary {
+            cursor: pointer;
+            color: var(--algo-color);
+            font-size: 0.85rem;
+            padding: 0.25rem 0;
+        }
+
+        summary:hover {
+            text-decoration: underline;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+        }
+
+        .gallery-grid img {
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+            background: #0d1b2a;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .gallery-grid img:hover {
+            transform: scale(1.02);
+        }
+
+        .img-caption {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 0.25rem;
+        }
+
+        .note-box {
+            background: rgba(37, 99, 235, 0.1);
+            border-left: 3px solid var(--algo-color);
+            padding: 0.75rem 1rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin: 2rem 0;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Portfolio with Real Screenshots</h1>
+    <p>Showing actual images from your projects-pre-2015 repo. Click images to enlarge.</p>
+
+    <div class="note-box">
+        <strong>Path note:</strong> Images reference local files from <code>repos/projects-pre-2015/</code>.
+        For the live site, these would be copied to <code>/assets/img/portfolio/</code> and resized.
+    </div>
+
+    <h2>Projects</h2>
+
+    <!-- HKDS High-Fidelity Solver -->
+    <div class="project-entry">
+        <div class="project-title">~2016 - HKDS High-Fidelity Solver</div>
+        <p class="project-desc">R&D for high-fidelity constraint solver targeting robotics and machinery simulation.</p>
+
+        <div class="inline-thumbs">
+            <img src="../repos/projects-pre-2015/hkds/overview_screen1.png" alt="HKDS Overview" onclick="openLightbox(this)">
+            <img src="../repos/projects-pre-2015/hkds/ds_simple.png" alt="Approaches" onclick="openLightbox(this)">
+        </div>
+
+        <details>
+            <summary>More screenshots (6)</summary>
+            <div class="gallery-grid">
+                <div>
+                    <img src="../repos/projects-pre-2015/hkds/overview_screen2.png" alt="Overview 2" onclick="openLightbox(this)">
+                    <div class="img-caption">Overview diagram</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/hkds/detail_screen1.png" alt="Detail" onclick="openLightbox(this)">
+                    <div class="img-caption">Constraint detail</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/hkds/hkds_titan.png" alt="Titan arm" onclick="openLightbox(this)">
+                    <div class="img-caption">Titan arm demo</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/hkds/hkds_digger1.png" alt="Digger" onclick="openLightbox(this)">
+                    <div class="img-caption">Excavator simulation</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/hkds/mlcp_trace.png" alt="Trace" onclick="openLightbox(this)">
+                    <div class="img-caption">Dynamics debugger</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/hkds/mlcp_chuzro.png" alt="MLCP" onclick="openLightbox(this)">
+                    <div class="img-caption">MLCP solver</div>
+                </div>
+            </div>
+        </details>
+
+        <p class="algo-tag">Tech: C++. Algos: MLCP, substepping, co-simulation.</p>
+        <p>Applied at <span class="career-link">#5 Havok</span></p>
+    </div>
+
+    <!-- Network Physics -->
+    <div class="project-entry">
+        <div class="project-title">~2015 - Network Physics R&D</div>
+        <p class="project-desc">Research and prototyping for networked multiplayer physics.</p>
+
+        <div class="inline-thumbs">
+            <img src="../repos/projects-pre-2015/netw/csarch1_screen1.png" alt="Architecture" onclick="openLightbox(this)">
+            <img src="../repos/projects-pre-2015/netw/viewer5.jpeg" alt="Viewer" onclick="openLightbox(this)">
+        </div>
+
+        <details>
+            <summary>More screenshots (5)</summary>
+            <div class="gallery-grid">
+                <div>
+                    <img src="../repos/projects-pre-2015/netw/csarch1_screen2.png" alt="Design" onclick="openLightbox(this)">
+                    <div class="img-caption">Architecture design</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/netw/pyramid_split.png" alt="Split" onclick="openLightbox(this)">
+                    <div class="img-caption">Sector splitting</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/netw/sectors2.jpeg" alt="Sectors" onclick="openLightbox(this)">
+                    <div class="img-caption">Sector visualization</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/netw/viewer6.jpeg" alt="Viewer 2" onclick="openLightbox(this)">
+                    <div class="img-caption">Physics viewer</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/netw/launcher.jpg" alt="Launcher" onclick="openLightbox(this)">
+                    <div class="img-caption">Framework launcher</div>
+                </div>
+            </div>
+        </details>
+
+        <p class="algo-tag">Tech: C++. Algos: Client-server physics, state synchronization.</p>
+    </div>
+
+    <!-- Geometry Numerical Issues -->
+    <div class="project-entry">
+        <div class="project-title">~2013-2015 - Geometry Numerical Issues</div>
+        <p class="project-desc">Deep investigation of floating-point issues in collision geometry.</p>
+
+        <div class="inline-thumbs">
+            <img src="../repos/projects-pre-2015/geom_num/JiraEpsilon_screen1.png" alt="Epsilon" onclick="openLightbox(this)">
+            <img src="../repos/projects-pre-2015/geom_num/RaySphere.png" alt="Ray-Sphere" onclick="openLightbox(this)">
+        </div>
+
+        <details>
+            <summary>Ray-triangle analysis (6 images)</summary>
+            <div class="gallery-grid">
+                <div>
+                    <img src="../repos/projects-pre-2015/geom_num/00-10km_NoToleranceAlgo_CurrAlgo.jpg" alt="10km" onclick="openLightbox(this)">
+                    <div class="img-caption">10km no tolerance</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/geom_num/04-10km_ZeroToleranceAlgo_CurrAlgo.jpg" alt="Zero tol" onclick="openLightbox(this)">
+                    <div class="img-caption">Zero tolerance algo</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/geom_num/01-30km_NaiveTolerranceAlgo.jpg" alt="Naive" onclick="openLightbox(this)">
+                    <div class="img-caption">30km naive tolerance</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/geom_num/02-30km_ThickEdgeAlgo.jpg" alt="Thick" onclick="openLightbox(this)">
+                    <div class="img-caption">Thick edge algorithm</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/geom_num/nics_rnn.png" alt="RNN" onclick="openLightbox(this)">
+                    <div class="img-caption">Numerical sampler</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/geom_num/nics_fp754.png" alt="FP754" onclick="openLightbox(this)">
+                    <div class="img-caption">IEEE 754 analysis</div>
+                </div>
+            </div>
+        </details>
+
+        <p class="algo-tag">Tech: C++. Algos: IEEE 754, interval arithmetic, ULP analysis.</p>
+    </div>
+
+    <hr>
+
+    <!-- Guerrilla Games Projects -->
+    <div class="project-entry">
+        <div class="project-title">2009-2011 - Killzone 3 AI Systems</div>
+        <p class="project-desc">Environment-aware AI physical behavior for Killzone 3.</p>
+
+        <div class="inline-thumbs">
+            <img src="../repos/projects-pre-2015/GG/jetpack.png" alt="Jetpack" onclick="openLightbox(this)">
+            <img src="../repos/projects-pre-2015/GG/owl.png" alt="Owl" onclick="openLightbox(this)">
+        </div>
+
+        <p class="algo-tag">Tech: C++, PS3/SPU. Algos: Behavior trees, environment queries.</p>
+        <p>Applied at <span class="career-link">#6 Guerrilla Games</span>. <a href="https://www.youtube.com/watch?v=_mXYAPUIAqg" style="color:var(--algo-color);">Video</a></p>
+    </div>
+
+    <div class="project-entry">
+        <div class="project-title">2009-2011 - Region Generation & Vehicle AI</div>
+        <p class="project-desc">Automated navmesh region generation and vehicle pathfinding.</p>
+
+        <div class="inline-thumbs">
+            <img src="../repos/projects-pre-2015/GG/recast.png" alt="Recast" onclick="openLightbox(this)">
+            <img src="../repos/projects-pre-2015/GG/areas.png" alt="Areas" onclick="openLightbox(this)">
+            <img src="../repos/projects-pre-2015/GG/vehicle.png" alt="Vehicle" onclick="openLightbox(this)">
+        </div>
+
+        <details>
+            <summary>Vehicle planner visualizations (3)</summary>
+            <div class="gallery-grid">
+                <div>
+                    <img src="../repos/projects-pre-2015/GG/vehic_planner1.png" alt="Planner 1" onclick="openLightbox(this)">
+                    <div class="img-caption">Path planning</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/GG/vehic_planner2.png" alt="Planner 2" onclick="openLightbox(this)">
+                    <div class="img-caption">Trajectory</div>
+                </div>
+                <div>
+                    <img src="../repos/projects-pre-2015/GG/vehic_planner3.png" alt="Planner 3" onclick="openLightbox(this)">
+                    <div class="img-caption">Steering</div>
+                </div>
+            </div>
+        </details>
+
+        <p class="algo-tag">Tech: C++. Algos: Skeletonization, navmesh, motion planning.</p>
+    </div>
+
+    <hr>
+
+    <!-- Before that -->
+    <div class="project-entry">
+        <div class="project-title">2006-2008 - World-Of-Football</div>
+        <p class="project-desc">Complete indie game engine for a football game.</p>
+
+        <div class="inline-thumbs">
+            <img src="../repos/projects-pre-2015/old/wof_teaser.png" alt="WOF Teaser" onclick="openLightbox(this)">
+            <img src="../repos/projects-pre-2015/old/wof_play.png" alt="WOF Play" onclick="openLightbox(this)">
+            <img src="../repos/projects-pre-2015/old/wof_coll.png" alt="WOF Collision" onclick="openLightbox(this)">
+        </div>
+
+        <p class="algo-tag">Tech: C++, DirectX. Algos: Neural networks (goalkeeper AI), spatial partitioning.</p>
+    </div>
+
+    <div class="project-entry">
+        <div class="project-title">Aug 2010 - Bigfoot Animation & Bigeye UI</div>
+        <p class="project-desc">Skeleton retargeting, mocap loading, and UI framework.</p>
+
+        <div class="inline-thumbs">
+            <img src="../repos/projects-pre-2015/old/bigfoot_1.png" alt="Bigfoot 1" onclick="openLightbox(this)">
+            <img src="../repos/projects-pre-2015/old/bigfoot_2.png" alt="Bigfoot 2" onclick="openLightbox(this)">
+            <img src="../repos/projects-pre-2015/old/bigeye_1.png" alt="Bigeye" onclick="openLightbox(this)">
+        </div>
+
+        <p class="algo-tag">Tech: C++, OpenGL. Algos: BVH, skeletal animation, quaternions.</p>
+        <p><a href="https://www.youtube.com/watch?v=SEntMI6s6RQ" style="color:var(--algo-color);">Bigfoot Video</a></p>
+    </div>
+
+    <hr>
+
+    <div class="note-box">
+        <strong>Implementation notes:</strong>
+        <ul style="margin:0.5rem 0;padding-left:1.5rem;">
+            <li>Images would need to be copied to <code>/docs/assets/img/portfolio/</code></li>
+            <li>Resize to ~400px width for inline, ~800px for gallery</li>
+            <li>Use WebP format for smaller file sizes</li>
+            <li>The <code>&lt;details&gt;</code> tag works natively in Jekyll/markdown</li>
+        </ul>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+        function openLightbox(img) {
+            document.getElementById('lightbox-img').src = img.src;
+            document.getElementById('lightbox').classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+    </script>
+</body>
+</html>
