@@ -214,17 +214,19 @@ Interactive visualization of connections between career, projects, algorithms, a
 - **~2016 - HKDS High-Fidelity Solver** at <span class="career">[#5 Havok](#career)</span>
   - R&D for high-fidelity constraint solver targeting robotics and machinery simulation — going beyond game physics to industrial precision.
   <div class="thumb-strip"><img src="/assets/img/portfolio/overview_screen1.png"><img src="/assets/img/portfolio/ds_simple.png"><img src="/assets/img/portfolio/overview_screen2.png"><img src="/assets/img/portfolio/hkds_titan.png"><img src="/assets/img/portfolio/hkds_digger1.png"><img src="/assets/img/portfolio/mlcp_trace.png"><img src="/assets/img/portfolio/detail_screen1.png"><img src="/assets/img/portfolio/mlcp_chuzro.png"></div>
+  - Context: [HKDS overview](https://github.com/jadnohra/projects-pre-2015/blob/master/hkds/ds_overview1.pdf). [More detail](https://github.com/jadnohra/projects-pre-2015/blob/master/hkds/ds_detail.pdf). Videos: [Titan arm](https://github.com/jadnohra/projects-pre-2015/blob/master/hkds/HifiSolverVid/arm.mp4), [Digger](https://github.com/jadnohra/projects-pre-2015/blob/master/hkds/HifiSolverVid/digger.mp4). Prerequisites: [Rotations and Basics](https://github.com/jadnohra/projects-pre-2015/blob/master/hvk_other/TheMathematicsOfHavoksSolver.pdf), work on stabilizing constraints, notebook notes on 'universal constraint', [substepping algorithm](https://github.com/jadnohra/projects-pre-2015/blob/master/hvk_other/substep1.pdf) (a stumbling block for others at multiple occasions). Prototyping using Julia: [MLCP solver](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/Lab2015/mlcp2.0/lp_jad.jl). Dynamics debugging tool: [trace](https://github.com/jadnohra/trace).
   - <span class="algo">Tech: C++. Algos: [MLCP](https://en.wikipedia.org/wiki/Linear_complementarity_problem), substepping, co-simulation.</span>
-  - Notes: <span class="study">[Rotations and Basics (TheMathematicsOfHavoksSolver.pdf)](https://github.com/jadnohra/TheNotes/blob/master/2017/treat_rbd_1.pdf), [treat_rbd_1](https://github.com/jadnohra/TheNotes/blob/master/2017/treat_rbd_1.pdf)</span>
 
 - **~2016 - TOI Argument** at <span class="career">[#5 Havok](#career)</span>
   - Formal proof that the Time-Of-Impact tunneling problem has no complete solution — proving an open problem unsolvable, redirecting team focus from finding a solution to managing trade-offs.
   <div class="thumb-strip"><img src="/assets/img/portfolio/toiarg1_screen.png"></div>
+  - Context: Open problem ever since the 'TOI' engine was abandoned. Multiple attempts that replaced artifacts with other artifacts. Proved that the problem is not solvable: [TOI argument](https://github.com/jadnohra/projects-pre-2015/blob/master/hvk_other/toiarg1.pdf). Effect: stop searching for the solution, focus on which artifacts to trade and when.
   - <span class="algo">Algos: [Continuous collision detection](https://en.wikipedia.org/wiki/Collision_detection#A_posteriori_(discrete)_versus_a_priori_(continuous)), TOI analysis.</span>
 
 - **~2015 - Network Physics R&D** at <span class="career">[#5 Havok](#career)</span>
   - Research and prototyping for networked multiplayer physics — synchronization, prediction, and rollback for distributed rigid body simulation.
   <div class="thumb-strip"><img src="/assets/img/portfolio/csarch1_screen1.png"><img src="/assets/img/portfolio/csarch1_screen2.png"><img src="/assets/img/portfolio/viewer5.jpeg"><img src="/assets/img/portfolio/viewer6.jpeg"><img src="/assets/img/portfolio/pyramid_split.png"><img src="/assets/img/portfolio/sectors2.jpeg"><img src="/assets/img/portfolio/launcher.jpg"></div>
+  - Context: [Research report](https://github.com/jadnohra/projects-pre-2015/blob/master/netw/csarch1.pdf) and proposed designs. Prototype including low-level framework.
   - <span class="algo">Tech: C++. Algos: Client-server physics, state synchronization, sector partitioning.</span>
 
 - **~2015 - [hinges_py](https://github.com/jadnohra/hinges_py)** — RBD simulator
@@ -244,19 +246,24 @@ Interactive visualization of connections between career, projects, algorithms, a
 
 - **~2014 - Physics-2014 Contact Solver** at <span class="career">[#5 Havok](#career)</span>
   - Complete rewrite of Havok's contact constraint solver — shipped in all games since ~2014, optimized for branch prediction and cache efficiency.
+  - Context: Mental models of CPUs at race with CPU improvements — benchmarking ignoring real data becomes dangerous. Research ([Agner's manuals](https://www.agner.org/optimize/#manuals)) → branch prediction as main actor in this context. New (intrusive) optimization: coupling geometry processing to solver using data rearrangement. For comparison: [Bullet solver](https://github.com/bulletphysics/bullet3/blob/cdd56e46411527772711da5357c856a90ad9ea67/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.cpp). Havok's focus: performance. No bugs ever reported. Defensive code (tunable defensiveness — math library only has INFTY and NAN warnings). Found bugs in other pieces of code, including hard to find bugs due to slow accumulation of wrong calculation. Tunable per-platform using a very carefully configured set of macros (>10 options → code path combinations). Also: deterministic scaling of cores (Intel many-core CPU R&D).
   - <span class="algo">Tech: C++, SIMD. Algos: [Gauss-Seidel](https://en.wikipedia.org/wiki/Gauss%E2%80%93Seidel_method), sequential impulse, constraint solving.</span>
-  - Key achievements: No bugs ever reported, tunable defensiveness, found slow-accumulation bugs in other code.
-  - Critical component in all Havok-powered games for a decade.
+
+- **~2014 - Job Queue Combinatorial Delay Mode** at <span class="career">[#5 Havok](#career)</span>
+  - Automated race condition debugging technique for hard-to-reproduce threading bugs.
+  - Context: Bug that was hard for dev support team to repro (1/100000). Introduced timing fuzzing into the system by instrumentation — different threads slowed down by different random amounts. Ran automatically, found bug after some hours. Repro then easy to debug.
+  - <span class="algo">Tech: C++. Algos: Timing fuzzing, [race condition](https://en.wikipedia.org/wiki/Race_condition) detection, instrumentation.</span>
 
 - **~2013-2015 - Geometry Numerical Issues** at <span class="career">[#5 Havok](#career)</span>
   - Deep investigation of floating-point numerical issues in collision geometry — ray-triangle, ray-sphere intersection with robust epsilon handling.
   <div class="thumb-strip"><img src="/assets/img/portfolio/JiraEpsilon_screen1.png"><img src="/assets/img/portfolio/RaySphere.png"><img src="/assets/img/portfolio/00-10km_NoToleranceAlgo_CurrAlgo.jpg"><img src="/assets/img/portfolio/04-10km_ZeroToleranceAlgo_CurrAlgo.jpg"><img src="/assets/img/portfolio/01-30km_NaiveTolerranceAlgo.jpg"><img src="/assets/img/portfolio/02-30km_ThickEdgeAlgo.jpg"><img src="/assets/img/portfolio/nics_rnn.png"><img src="/assets/img/portfolio/nics_fp754.png"></div>
+  - Context: [Jira epsilon analysis](https://github.com/jadnohra/projects-pre-2015/blob/master/geom_num/JiraEpsilon.pdf). Ray-sphere: improvement by intuitive solution. Ray-triangle: improvement by analytical solution (books like *Floating-Point Computation* by Strebenz). Telescoping debugger. Led to interest about numerical analysis. [Sampler prototype (RRT)](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/Numerical/nics). Interval math library with pessimistic approximate but fast bounds (2x slower than normal arithmetic). Also first steps into numerical analysis for dynamics: [Residuals](https://github.com/jadnohra/projects-pre-2015/blob/master/hvk_other/respart1.pdf).
   - <span class="algo">Tech: C++. Algos: [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754), interval arithmetic, [ULP](https://en.wikipedia.org/wiki/Unit_in_the_last_place) analysis.</span>
-  - Notes: <span class="study">[Residuals](https://github.com/jadnohra/TheNotes/blob/master/2016/asymp_not.pdf)</span>
 
 - **~2012 - Nintendo WiiU Math Library** at <span class="career">[#5 Havok](#career)</span>
   - Low-level math library optimization for Nintendo WiiU's PowerPC-based CPU — working around buggy compiler optimizations and limited SIMD.
   <div class="thumb-strip"><img src="/assets/img/portfolio/wiiu_1.png"><img src="/assets/img/portfolio/wiiu_2.png"></div>
+  - Context: Instruction-level ARM (handicapped two-float SIMD). Buggy compiler in terms of performance optimization.
   - <span class="algo">Tech: C++, PowerPC assembly. Algos: [SIMD](https://en.wikipedia.org/wiki/SIMD) vectorization, instruction scheduling.</span>
 
 - **2015 - Study: Foundations & Logic**
@@ -264,6 +271,10 @@ Interactive visualization of connections between career, projects, algorithms, a
   - <span class="algo">Algos: [Set theory](https://en.wikipedia.org/wiki/Set_theory), [Model theory](https://en.wikipedia.org/wiki/Model_theory), [Proof theory](https://en.wikipedia.org/wiki/Proof_theory).</span>
   - Notes: <span class="study">[Potter Set Theory](https://github.com/jadnohra/TheNotes/blob/master/2015/Notes%20on%20Potter's%20Set%20Theory%20and%20its%20Philosophy.pdf), [Potter Reason's Kin](https://github.com/jadnohra/TheNotes/blob/master/2015/Notes%20on%20Potter's%20%27Reason's%20Nearest%20Kin%27.pdf), [Gödel 1](https://github.com/jadnohra/TheNotes/blob/master/2015/Study%20of%20%27There's%20Something%20about%20Goedel%27.pdf), [Gödel 2](https://github.com/jadnohra/TheNotes/blob/master/2015/Study%20of%20%27There's%20Something%20about%20Goedel%27%202.pdf), [Semantics](https://github.com/jadnohra/TheNotes/blob/master/2015/Notes%20on%20Semantics.pdf), [Hestenes GA](https://github.com/jadnohra/TheNotes/blob/master/2015/Notes%20on%20Hestenes%27%20%27Reforming%20the%20Mathematical%20Language%20of%20Physics%27.pdf)</span>
   - <span class="ref">[tag_export](https://github.com/jadnohra/tag_export): Set Theory, Model Theory, Proof Theory</span>
+
+- **2015 - Problem-Solving Methodology**
+  - Approach for managing many technical topics in parallel when deep focus on one at a time is no longer possible.
+  - Context: Too many topics to care about. In the past had luxury to focus one at a time, since some years cannot afford this anymore. Stack keeps growing bigger. Tried many techniques: physical notebooks ([GK notes](https://gitlab.com/jadnohra/project_gk/blob/master/simp-hing-analyt/simp-hing-analyt.pdf) leading to [arxiv publication](https://arxiv.org/pdf/1605.08221.pdf)), large single-topic latex documents. Currently: combination of physical notes, latex summaries, and gitlab project management. The biggest challenge is still memorization — do not do it actively anymore except when necessary. Work as a 'processing machine': open notes, switch context for a while, process for results. The older the topic, the longer the lead time — can take from a couple of hours to a couple of weeks.
 
 - **Sep 2015 - [MLCP 2.0](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/Lab2015/mlcp2.0)** — LP solver in Julia
   - Implementation of linear programming and LU decomposition — exploring numerical methods for constraint solving that underpin physics engines.
@@ -353,18 +364,21 @@ Interactive visualization of connections between career, projects, algorithms, a
 - **2009-2011 - Killzone 3 AI Systems** at <span class="career">[#6 Guerrilla Games](#career)</span>
   - Environment-aware AI physical behavior for Killzone 3 — jetpack navigation, owl patrol AI, environment interaction.
   <div class="thumb-strip"><img src="/assets/img/portfolio/jetpack.png"><img src="/assets/img/portfolio/owl.png"></div>
+  - Context: SPU + PS3 multithreading/DMA tricky bug chasing.
   - <span class="algo">Tech: C++, PS3/SPU. Algos: Behavior trees, environment queries, physical animation.</span>
   - [Video: Jetpack and Owl AI](https://www.youtube.com/watch?v=_mXYAPUIAqg).
 
 - **2009-2011 - Killzone 3 Vehicle AI** at <span class="career">[#6 Guerrilla Games](#career)</span>
   - Vehicle pathfinding and motion planning for AI-controlled vehicles in Killzone 3.
   <div class="thumb-strip"><img src="/assets/img/portfolio/vehicle.png"><img src="/assets/img/portfolio/vehic_planner1.png"><img src="/assets/img/portfolio/vehic_planner2.png"><img src="/assets/img/portfolio/vehic_planner3.png"></div>
+  - Context: Prototyping ([VehicleTest](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/BlackRiceLabs/VehicleTest)).
   - <span class="algo">Tech: C++. Algos: Motion planning, vehicle dynamics, path following.</span>
   - [Video: Vehicle AI](https://www.youtube.com/watch?v=QjmRA2Obu9I).
 
 - **2009-2011 - Automatic Region Generation** at <span class="career">[#6 Guerrilla Games](#career)</span>
   - Automated navmesh region generation using skeletonization — improving on Recast's "ugly and cryptic" code with better corner case handling.
   <div class="thumb-strip"><img src="/assets/img/portfolio/recast.png"><img src="/assets/img/portfolio/areas.png"></div>
+  - Context: Porting of Recast 'ugly and cryptic' code. Improvements on corner cases that other companies presented as challenges during GDC. Research skeletonization algorithms. Choose and implement. Modify to fit application (stray edges).
   - <span class="algo">Tech: C++. Algos: [Skeletonization](https://en.wikipedia.org/wiki/Topological_skeleton), [Medial axis transform](https://en.wikipedia.org/wiki/Medial_axis), region decomposition.</span>
 
 - **Nov 2010 - [RecastMOD](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/AI/RecastMOD)** — Navigation mesh system
@@ -377,6 +391,7 @@ Interactive visualization of connections between career, projects, algorithms, a
 - **Aug 2010 - [Bigfoot Animation](https://github.com/jadnohra/projects-pre-2015/tree/master/Labs/LabsMore/Bigfoot)** — Skeletal animation with physics
   - Skeleton retargeting and motion planning system — exploring character animation pipelines, physics-based locomotion, and motion capture processing.
   <div class="thumb-strip"><img src="/assets/img/portfolio/bigfoot_1.png"><img src="/assets/img/portfolio/bigfoot_2.png"></div>
+  - Context: Mocap loader, skeleton semantics, footplant detection. [Bigfoot video](https://www.youtube.com/watch?v=SEntMI6s6RQ). Example: smart pointers 10 years ago.
   - <span class="algo">Tech: C++, OpenGL, GLM, Bigeye UI. Algos: [BVH](https://en.wikipedia.org/wiki/Biovision_Hierarchy), [Skeletal animation](https://en.wikipedia.org/wiki/Skeletal_animation), [Motion retargeting](https://en.wikipedia.org/wiki/Motion_capture#Retargeting), [Quaternion](https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation) ([notes](https://github.com/jadnohra/TheNotes/blob/master/2015/rotation.pdf)).</span>
   - <span class="algo">Key files: [LoaderBVH.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Bigfoot/src/BF/LoaderBVH.cpp), [Retarget.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Bigfoot/src/Retarget.cpp), [Locomo.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Bigfoot/src/BF/Locomo.cpp), [Planner.cpp](https://github.com/jadnohra/projects-pre-2015/blob/master/Labs/LabsMore/Bigfoot/src/Planner.cpp).</span>
   - Notes: <span class="study">[RBD](https://github.com/jadnohra/TheNotes/blob/master/2017/treat_rbd_1.pdf), [Lagrangian](https://github.com/jadnohra/TheNotes/blob/master/2015/lagrfrmw.pdf), [Rotation](https://github.com/jadnohra/TheNotes/blob/master/2015/rotation.pdf), [Covariance](https://github.com/jadnohra/TheNotes/blob/master/2015/covar.pdf), [Hestenes GA](https://github.com/jadnohra/TheNotes/blob/master/2015/Notes%20on%20Hestenes%27%20%27Reforming%20the%20Mathematical%20Language%20of%20Physics%27.pdf)</span>
@@ -587,6 +602,7 @@ Interactive visualization of connections between career, projects, algorithms, a
 - **2006-2008 - [World-Of-Football](https://github.com/jadnohra/World-Of-Football)** at <span class="career">[#9 Kimera](#career)</span>
   - Complete indie game engine for a football (soccer) game — custom rendering, physics, animation, and neural network-based goalkeeper AI.
   <div class="thumb-strip"><img src="/assets/img/portfolio/wof_teaser.png"><img src="/assets/img/portfolio/wof_play.png"><img src="/assets/img/portfolio/wof_coll.png"></div>
+  - Context: [YouTube videos](https://www.youtube.com/watch?v=lDNY4-mupf0&list=PL5ED86276C6DB1347).
   - <span class="algo">Tech: C++, DirectX. Algos: Custom physics, [Neural networks](https://en.wikipedia.org/wiki/Artificial_neural_network) (goalkeeper AI), spatial partitioning.</span>
   - Foundation for <span class="career">[#8 Sixteen Tons](#career)</span> and <span class="career">[#7 AiGameDev](#career)</span>.
   <details>

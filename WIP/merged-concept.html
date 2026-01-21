@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merged Portfolio Concept</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.5;
+            padding: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+            font-size: 14px;
+        }
+        h1 { font-size: 1.3rem; margin-bottom: 1rem; color: #1a1a1a; }
+        h2 { font-size: 1rem; margin-top: 2rem; margin-bottom: 0.5rem; color: #666; border-bottom: 1px solid #ddd; padding-bottom: 0.3rem; }
+        a { color: #2563eb; text-decoration: underline; }
+        .algo { color: #2563eb; }
+        .study { color: #059669; }
+        .career { color: #dc2626; }
+
+        .project {
+            margin: 0.75rem 0;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .project-title {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        .project-desc {
+            color: #555;
+            font-size: 0.9em;
+            margin: 0.25rem 0;
+        }
+
+        /* Technical context from README - the key addition */
+        .tech-context {
+            background: #f5f5f5;
+            border-left: 3px solid #2563eb;
+            padding: 0.5rem 0.75rem;
+            margin: 0.4rem 0;
+            font-size: 0.85em;
+        }
+        .tech-context ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+        .tech-context li {
+            margin: 0.15rem 0;
+            color: #444;
+        }
+        .tech-context a {
+            color: #2563eb;
+        }
+        .tech-context img {
+            height: 45px;
+            margin: 0.2rem 0.2rem 0.2rem 0;
+            border-radius: 3px;
+            vertical-align: middle;
+        }
+
+        /* Compact thumbnail strip */
+        .thumb-strip {
+            display: flex;
+            gap: 3px;
+            margin: 0.3rem 0;
+            flex-wrap: wrap;
+        }
+        .thumb-strip img {
+            height: 50px;
+            width: auto;
+            max-width: 90px;
+            object-fit: cover;
+            border-radius: 3px;
+            opacity: 0.85;
+            border: 1px solid #ddd;
+        }
+        .thumb-strip img:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .meta {
+            font-size: 0.85em;
+            margin-top: 0.2rem;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .comparison > div {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        .comparison h3 {
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            color: #333;
+        }
+
+        .note {
+            background: #e8f4fd;
+            border-left: 3px solid #2563eb;
+            padding: 0.75rem 1rem;
+            margin: 1rem 0;
+            font-size: 0.9em;
+        }
+
+        hr { border: none; border-top: 2px solid #e0e0e0; margin: 1.5rem 0; }
+    </style>
+</head>
+<body>
+
+<h1>Merged Portfolio Concept</h1>
+<p style="color:#666;margin-bottom:1rem;">Combining current portfolio structure with README's technical density</p>
+
+<div class="note">
+    <strong>Key idea:</strong> Add a <code>.tech-context</code> block with bullet points from the old README -
+    technical facts, inline PDF links, images next to context. Keep the existing structure around it.
+</div>
+
+<hr>
+
+<h2>Example 1: Physics-2014 Contact Solver</h2>
+
+<div class="project">
+    <div class="project-title">~2014 - Physics-2014 Contact Solver at <span class="career">#5 Havok</span></div>
+    <p class="project-desc">Complete rewrite of Havok's contact constraint solver — shipped in all games since ~2014.</p>
+
+    <div class="tech-context">
+        <ul>
+            <li>Mental models of CPUs at race with CPU improvements — benchmarking ignoring real data becomes dangerous</li>
+            <li>Research (<a href="https://www.agner.org/optimize/#manuals">Agner's manuals</a>) → branch prediction as main actor <img src="../repos/projects-pre-2015/netw/pyramid_split.png"></li>
+            <li>New optimization: coupling geometry processing to solver using data rearrangement</li>
+            <li>Reference: <a href="https://github.com/bulletphysics/bullet3/blob/cdd56e46411527772711da5357c856a90ad9ea67/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.cpp">Bullet solver</a> for comparison</li>
+            <li>No bugs ever reported. Tunable defensiveness (>10 macro options → code path combinations)</li>
+            <li>Found slow-accumulation bugs in other code</li>
+        </ul>
+    </div>
+
+    <div class="meta">
+        <span class="algo">Tech: C++, SIMD. Algos: Gauss-Seidel, sequential impulse.</span>
+    </div>
+</div>
+
+<h2>Example 2: Geometry Numerical Issues</h2>
+
+<div class="project">
+    <div class="project-title">~2013-2015 - Geometry Numerical Issues at <span class="career">#5 Havok</span></div>
+    <p class="project-desc">Deep investigation of floating-point issues in collision geometry.</p>
+
+    <div class="tech-context">
+        <ul>
+            <li><a href="#">Jira epsilon analysis</a> <img src="../repos/projects-pre-2015/geom_num/JiraEpsilon_screen1.png"></li>
+            <li>Ray-sphere: improvement by intuitive solution <img src="../repos/projects-pre-2015/geom_num/RaySphere.png"></li>
+            <li>Ray-triangle: improvement by analytical solution (ref: <em>Floating-Point Computation</em>, Strebenz)</li>
+            <li>Telescoping debugger for visualization:
+                <img src="../repos/projects-pre-2015/geom_num/00-10km_NoToleranceAlgo_CurrAlgo.jpg">
+                <img src="../repos/projects-pre-2015/geom_num/04-10km_ZeroToleranceAlgo_CurrAlgo.jpg">
+                <img src="../repos/projects-pre-2015/geom_num/01-30km_NaiveTolerranceAlgo.jpg">
+            </li>
+            <li>Interval math library: pessimistic approximate bounds, 2x slower than normal arithmetic</li>
+            <li><a href="#">Residuals analysis</a> — first steps into numerical analysis for dynamics</li>
+        </ul>
+    </div>
+
+    <div class="meta">
+        <span class="algo">Tech: C++. Algos: IEEE 754, interval arithmetic, ULP analysis.</span>
+        Notes: <span class="study"><a href="#">Residuals</a></span>
+    </div>
+</div>
+
+<h2>Example 3: HKDS High-Fidelity Solver</h2>
+
+<div class="project">
+    <div class="project-title">~2016 - HKDS High-Fidelity Solver at <span class="career">#5 Havok</span></div>
+    <p class="project-desc">R&D for high-fidelity constraint solver targeting robotics and machinery simulation.</p>
+
+    <div class="tech-context">
+        <ul>
+            <li><a href="#">HKDS overview</a> <img src="../repos/projects-pre-2015/hkds/overview_screen1.png"> <img src="../repos/projects-pre-2015/hkds/overview_screen2.png"></li>
+            <li>High-level approaches: <img src="../repos/projects-pre-2015/hkds/ds_simple.png"></li>
+            <li><a href="#">Detailed design</a> <img src="../repos/projects-pre-2015/hkds/detail_screen1.png"></li>
+            <li>Videos: <a href="#">Titan arm</a> <img src="../repos/projects-pre-2015/hkds/hkds_titan.png">, <a href="#">Digger</a> <img src="../repos/projects-pre-2015/hkds/hkds_digger1.png"></li>
+            <li>Prerequisites: <a href="#">Rotations and Basics</a>, constraint stabilization, substepping algorithm</li>
+            <li>Prototyping in Julia: <a href="https://gitlab.com/jadnohra/jad-pre-2015-dabblings/blob/master/Lab2015/mlcp2.0/lp_jad.jl">MLCP solver</a> <img src="../repos/projects-pre-2015/hkds/mlcp_chuzro.png"></li>
+            <li>Dynamics debugging tool: <img src="../repos/projects-pre-2015/hkds/mlcp_trace.png"></li>
+        </ul>
+    </div>
+
+    <div class="meta">
+        <span class="algo">Tech: C++, Julia. Algos: MLCP, substepping, co-simulation.</span>
+        Notes: <span class="study"><a href="#">treat_rbd_1</a></span>
+    </div>
+</div>
+
+<h2>Example 4: Short entry (no README content)</h2>
+
+<div class="project">
+    <div class="project-title">~2015 - <a href="https://github.com/jadnohra/hinges_py">hinges_py</a> — RBD simulator</div>
+    <p class="project-desc">Python rigid body dynamics simulator for research and prototyping.</p>
+    <div class="meta">
+        <span class="algo">Tech: Python. Algos: Rigid body dynamics, constraint solving, forward Euler.</span>
+    </div>
+</div>
+
+<hr>
+
+<div class="comparison">
+    <div>
+        <h3>What we keep</h3>
+        <ul style="font-size:0.85em;padding-left:1.2rem;">
+            <li>Overall structure & navigation</li>
+            <li>Short prose description</li>
+            <li>Wikipedia links for algos</li>
+            <li>Career/study/algo color coding</li>
+            <li>GitHub links</li>
+        </ul>
+    </div>
+    <div>
+        <h3>What we add from README</h3>
+        <ul style="font-size:0.85em;padding-left:1.2rem;">
+            <li>Technical bullet points</li>
+            <li>Inline PDF/doc links</li>
+            <li>Images next to their context</li>
+            <li>Specific references (books, code)</li>
+            <li>Problem→result statements</li>
+        </ul>
+    </div>
+</div>
+
+<div class="note">
+    <strong>Implementation:</strong> Add <code>&lt;div class="tech-context"&gt;</code> blocks to projects that have
+    README content. Keep entries without README content as-is (short form).
+</div>
+
+</body>
+</html>
