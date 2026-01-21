@@ -122,10 +122,10 @@ Interactive visualization of connections between career, projects, algorithms, a
 
 - **2023-2024 - FERNRIDE Safety Function** — Autonomous truck safety layer
   - Safety-critical perception and control layer for teleoperated autonomous trucks. Designed and implemented complete safety function from perception to actuation, achieving TÜV SÜD certification.
-  - **Hazard Zone Model (HZM):** Designed comprehensive safety specification expanding perceived area with all potential noise sources—LiDAR calibration, weather effects, uncertainty of future driver action, trailer trajectory modeling.
-  - **Safety Perception:** LiDAR-based ground plane segmentation with zero false negatives requirement. Dual-sensor approach (radar + LiDAR) for weather robustness.
+  - **Hazard Zone Model (HZM):** Designed comprehensive safety specification expanding perceived area with all potential noise sources—LiDAR calibration, weather effects, uncertainty of future driver action. Articulated truck-trailer kinematic modeling for trajectory prediction under steering uncertainty, integrated as [swept-path analysis](https://en.wikipedia.org/wiki/Swept_path_analysis) noise source. Paper-to-production prototype—adapted academic ground segmentation algorithm, hardware bring-up. Rewrote pipeline for resource-constrained certifiable embedded platform.
+  - **Safety Perception:** LiDAR-based ground plane segmentation with zero false negatives requirement. Dual-sensor approach (radar + LiDAR) for weather robustness. Validated in Estonian winter operations—snow-covered ground detection, heavy rain with zero false positives/negatives.
   - **Safety Case Design:** Developed DFD-based approach keeping design close to code with provable statements about output relations. Part of TÜV SÜD certification.
-  - **Function Testing Framework:** Scenario/test database for systematic validation of open-loop safety decisions.
+  - **Function Testing Framework:** Scenario/test database for systematic validation of open-loop safety decisions. Replay-based testing using recorded drive data with labeled ground truth.
   - <span class="algo">Tech: C++, ROS2. Algos: [Ground plane segmentation](https://en.wikipedia.org/wiki/Image_segmentation), [Point cloud processing](https://en.wikipedia.org/wiki/Point_cloud), DFD analysis, [SOTIF](https://en.wikipedia.org/wiki/Safety_of_the_intended_functionality).</span>
   - Applied at <span class="career">[#2 FERNRIDE](#career)</span>.
 
