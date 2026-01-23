@@ -127,12 +127,15 @@ Interactive visualization of connections between career, projects, algorithms, a
   - **Safety Case Design:** Developed DFD-based approach keeping design close to code with provable statements about output relations. Part of TÜV SÜD certification.
   - **Function Testing Framework:** Scenario/test database for systematic validation of open-loop safety decisions. Replay-based testing using recorded drive data with labeled ground truth.
   - <span class="algo">Tech: C++, ROS2. Algos: [Ground plane segmentation](https://en.wikipedia.org/wiki/Image_segmentation), [Point cloud processing](https://en.wikipedia.org/wiki/Point_cloud), DFD analysis, [SOTIF](https://en.wikipedia.org/wiki/Safety_of_the_intended_functionality).</span>
+  - **Video:** [YouTube demo](https://youtu.be/O8ogbux_308).
+  <div class="thumb-strip"><img src="/assets/img/portfolio/fernride-hardware-cables.jpg"><img src="/assets/img/portfolio/fernride-laptop-setup.jpg"><img src="/assets/img/portfolio/fernride-server-rack.jpg"><img src="/assets/img/portfolio/fernride-hzm-viz.jpg"><img src="/assets/img/portfolio/fernride-lidar-viz.jpg"><img src="/assets/img/portfolio/fernride-truck-warehouse.jpg"><img src="/assets/img/portfolio/fernride-truck-container.jpg"><img src="/assets/img/portfolio/fernride-truck-snow.jpg"><img src="/assets/img/portfolio/fernride-port-ship.jpg"><img src="/assets/img/portfolio/fernride-port-cranes.jpg"><img src="/assets/img/portfolio/fernride-cockpit-night.jpg"><img src="/assets/img/portfolio/fernride-truck-service.jpg"><img src="/assets/img/portfolio/fernride-hardware-closeup.jpg"><img src="/assets/img/portfolio/fernride-mannequin.jpg"></div>
   - Applied at <span class="career">[#2 FERNRIDE](#career)</span>.
 
 - **2018-2020 - [daisy](https://github.com/jadnohra/daisy)** — Traffic simulator
   - Traffic flow simulation for autonomous vehicle testing scenarios — built during AV work to model realistic traffic patterns and edge cases.
   - <span class="algo">Tech: Python. Algos: Agent-based simulation, traffic flow modeling.</span>
   - **Video:** [YouTube demo](https://youtu.be/-PC-AbEbrsE).
+  <div class="thumb-strip"><img src="/assets/img/portfolio/aid-shuttles-parking.jpg"><img src="/assets/img/portfolio/aid-shuttles-garage.jpg"></div>
   - Applied at <span class="career">[#4 Audi AID](#career)</span>.
 
 - **2018-2020 - [PaCoS](https://github.com/jadnohra/PaCoS)** — Concurrency determinism simulator
