@@ -95,6 +95,17 @@ Interactive visualization of connections between career, projects, algorithms, a
   - <span class="algo">Tech: Rust, Verilator, FPGA (Xilinx), PCIe, DMA, VFIO. Algos: [NTT](https://en.wikipedia.org/wiki/Discrete_Fourier_transform#Number-theoretic_transform), [FRI](https://en.wikipedia.org/wiki/FRI_protocol), [Tensor operations](https://en.wikipedia.org/wiki/Tensor), [Finite fields](https://en.wikipedia.org/wiki/Finite_field), [Polynomial commitments](https://en.wikipedia.org/wiki/Commitment_scheme), [VLIW](https://en.wikipedia.org/wiki/Very_long_instruction_word), [Register allocation](https://en.wikipedia.org/wiki/Register_allocation), [Instruction scheduling](https://en.wikipedia.org/wiki/Instruction_scheduling).</span>
   - Applied at <span class="career">[#1 Irreducible](#career)</span>.
 
+- **2023-2024 - FERNRIDE Safety Function** — Autonomous truck safety layer
+  - Safety-critical perception and control layer for teleoperated autonomous trucks. Designed and implemented complete safety function from perception to actuation, achieving TÜV SÜD certification.
+  <div class="thumb-strip"><img src="/assets/img/portfolio/fernride-hardware-cables.jpg"><img src="/assets/img/portfolio/fernride-laptop-setup.jpg"><img src="/assets/img/portfolio/fernride-server-rack.jpg"><img src="/assets/img/portfolio/fernride-hzm-viz.jpg"><img src="/assets/img/portfolio/fernride-lidar-viz.jpg"><img src="/assets/img/portfolio/fernride-truck-warehouse.jpg"><img src="/assets/img/portfolio/fernride-truck-container.jpg"><img src="/assets/img/portfolio/fernride-truck-snow.jpg"><img src="/assets/img/portfolio/fernride-port-ship.jpg"><img src="/assets/img/portfolio/fernride-port-cranes.jpg"><img src="/assets/img/portfolio/fernride-cockpit-night.jpg"><img src="/assets/img/portfolio/fernride-truck-service.jpg"><img src="/assets/img/portfolio/fernride-hardware-closeup.jpg"><img src="/assets/img/portfolio/fernride-mannequin.jpg"></div>
+  - **Hazard Zone Model (HZM):** Designed comprehensive safety specification expanding perceived area with all potential noise sources—LiDAR calibration, weather effects, uncertainty of future driver action. Articulated truck-trailer kinematic modeling for trajectory prediction under steering uncertainty, integrated as [swept-path analysis](https://en.wikipedia.org/wiki/Swept_path_analysis) noise source. Paper-to-production prototype—adapted academic ground segmentation algorithm, hardware bring-up. Rewrote pipeline for resource-constrained certifiable embedded platform.
+  - **Safety Perception:** LiDAR-based ground plane segmentation with zero false negatives requirement. Dual-sensor approach (radar + LiDAR) for weather robustness. Validated in Estonian winter operations—snow-covered ground detection, heavy rain with zero false positives/negatives.
+  - **Safety Case Design:** Developed DFD-based approach keeping design close to code with provable statements about output relations. Part of TÜV SÜD certification.
+  - **Function Testing Framework:** Scenario/test database for systematic validation of open-loop safety decisions. Replay-based testing using recorded drive data with labeled ground truth.
+  - <span class="algo">Tech: C++, ROS2. Algos: [Ground plane segmentation](https://en.wikipedia.org/wiki/Image_segmentation), [Point cloud processing](https://en.wikipedia.org/wiki/Point_cloud), DFD analysis, [SOTIF](https://en.wikipedia.org/wiki/Safety_of_the_intended_functionality).</span>
+  - **Video:** [YouTube demo](https://youtu.be/O8ogbux_308).
+  - Applied at <span class="career">[#2 FERNRIDE](#career)</span>.
+
 - **2021-2022 - Statistical Test Design for AV Safety Validation** — Fleet-level safety statistics
   - Statistical framework for proving autonomous vehicle safety at deployment scale — designing hypothesis tests for fleet-level safety validation, applying Design of Experiments (DoE) to test strategy, and quantifying confidence bounds for rare-event failure rates.
   - **Fleet-Level Safety Statistics:** [Binomial confidence intervals](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval) ([Wilson score method](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval)) for p≈0. Fleet encounter probability formula: p_encounter = 1 - (1 - rarity_p)^fleet_size. Safe fleet size estimation from test data with significance level α=0.05. Lower confidence bound calculations for conservative safety claims.
@@ -110,6 +121,7 @@ Interactive visualization of connections between career, projects, algorithms, a
 
 - **2021-2022 - VTT Simulation Platform** — AV simulation framework
   - Multi-layer simulation framework for autonomous vehicle testing — enabling systematic validation of detection, prediction, tracking, and motion planning through physics-based modeling and deterministic execution.
+  <div class="thumb-strip"><img src="/assets/img/portfolio/aid-shuttles-parking.jpg"><img src="/assets/img/portfolio/aid-shuttles-garage.jpg"></div>
   - **Layered Simulation Architecture:** Multi-layer Environment State (ES) with Transformation Functions (TF). Layer 0 ground truth, subsequent layers apply noise/filtering. Enables isolated testing of detection, prediction, tracking, motion planning.
   - **AV Compute Model:** 8-dimension timing model — Execution Time (distribution sampling), Branching, Messaging, Triggering, Transmission Time, Queuing (FIFO/LIFO), Clock Synchronization, System Load. Time series modeling for latency. SOTIF/FMEA connection.
   - **Driver Model:** Built on [Wiedemann Model](https://en.wikipedia.org/wiki/Microscopic_traffic_flow_model) (1974), [Intelligent Driver Model](https://en.wikipedia.org/wiki/Intelligent_driver_model) (1999), Enhanced IDM. "Specialist Driver" concept for edge case testing. [Agent-based modeling](https://en.wikipedia.org/wiki/Agent-based_model) validation methodology. [TTC](https://en.wikipedia.org/wiki/Time_to_collision) metrics.
@@ -120,22 +132,10 @@ Interactive visualization of connections between career, projects, algorithms, a
   - UL4600 safety certification. SOTIF analysis. FMEA integration.
   - Applied at <span class="career">[#3 Argo AI](#career)</span>, <span class="career">[#2 FERNRIDE](#career)</span>.
 
-- **2023-2024 - FERNRIDE Safety Function** — Autonomous truck safety layer
-  - Safety-critical perception and control layer for teleoperated autonomous trucks. Designed and implemented complete safety function from perception to actuation, achieving TÜV SÜD certification.
-  - **Hazard Zone Model (HZM):** Designed comprehensive safety specification expanding perceived area with all potential noise sources—LiDAR calibration, weather effects, uncertainty of future driver action. Articulated truck-trailer kinematic modeling for trajectory prediction under steering uncertainty, integrated as [swept-path analysis](https://en.wikipedia.org/wiki/Swept_path_analysis) noise source. Paper-to-production prototype—adapted academic ground segmentation algorithm, hardware bring-up. Rewrote pipeline for resource-constrained certifiable embedded platform.
-  - **Safety Perception:** LiDAR-based ground plane segmentation with zero false negatives requirement. Dual-sensor approach (radar + LiDAR) for weather robustness. Validated in Estonian winter operations—snow-covered ground detection, heavy rain with zero false positives/negatives.
-  - **Safety Case Design:** Developed DFD-based approach keeping design close to code with provable statements about output relations. Part of TÜV SÜD certification.
-  - **Function Testing Framework:** Scenario/test database for systematic validation of open-loop safety decisions. Replay-based testing using recorded drive data with labeled ground truth.
-  - <span class="algo">Tech: C++, ROS2. Algos: [Ground plane segmentation](https://en.wikipedia.org/wiki/Image_segmentation), [Point cloud processing](https://en.wikipedia.org/wiki/Point_cloud), DFD analysis, [SOTIF](https://en.wikipedia.org/wiki/Safety_of_the_intended_functionality).</span>
-  - **Video:** [YouTube demo](https://youtu.be/O8ogbux_308).
-  <div class="thumb-strip"><img src="/assets/img/portfolio/fernride-hardware-cables.jpg"><img src="/assets/img/portfolio/fernride-laptop-setup.jpg"><img src="/assets/img/portfolio/fernride-server-rack.jpg"><img src="/assets/img/portfolio/fernride-hzm-viz.jpg"><img src="/assets/img/portfolio/fernride-lidar-viz.jpg"><img src="/assets/img/portfolio/fernride-truck-warehouse.jpg"><img src="/assets/img/portfolio/fernride-truck-container.jpg"><img src="/assets/img/portfolio/fernride-truck-snow.jpg"><img src="/assets/img/portfolio/fernride-port-ship.jpg"><img src="/assets/img/portfolio/fernride-port-cranes.jpg"><img src="/assets/img/portfolio/fernride-cockpit-night.jpg"><img src="/assets/img/portfolio/fernride-truck-service.jpg"><img src="/assets/img/portfolio/fernride-hardware-closeup.jpg"><img src="/assets/img/portfolio/fernride-mannequin.jpg"></div>
-  - Applied at <span class="career">[#2 FERNRIDE](#career)</span>.
-
 - **2018-2020 - [daisy](https://github.com/jadnohra/daisy)** — Traffic simulator
   - Traffic flow simulation for autonomous vehicle testing scenarios — built during AV work to model realistic traffic patterns and edge cases.
   - <span class="algo">Tech: Python. Algos: Agent-based simulation, traffic flow modeling.</span>
   - **Video:** [YouTube demo](https://youtu.be/-PC-AbEbrsE).
-  <div class="thumb-strip"><img src="/assets/img/portfolio/aid-shuttles-parking.jpg"><img src="/assets/img/portfolio/aid-shuttles-garage.jpg"></div>
   - Applied at <span class="career">[#4 Audi AID](#career)</span>.
 
 - **2018-2020 - [PaCoS](https://github.com/jadnohra/PaCoS)** — Concurrency determinism simulator
