@@ -132,6 +132,7 @@ Interactive visualization of connections between career, projects, algorithms, a
 - **2018-2020 - [daisy](https://github.com/jadnohra/daisy)** — Traffic simulator
   - Traffic flow simulation for autonomous vehicle testing scenarios — built during AV work to model realistic traffic patterns and edge cases.
   - <span class="algo">Tech: Python. Algos: Agent-based simulation, traffic flow modeling.</span>
+  - **Video:** [YouTube demo](https://youtu.be/-PC-AbEbrsE).
   - Applied at <span class="career">[#4 Audi AID](#career)</span>.
 
 - **2018-2020 - [PaCoS](https://github.com/jadnohra/PaCoS)** — Concurrency determinism simulator

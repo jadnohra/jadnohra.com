@@ -20,7 +20,7 @@
       "name": "project",
       "children": [
         {"name": "project.zkaccel", "label": "ZK Hardware Accel", "imports": ["career.irreducible", "algo.ntt", "algo.fri", "algo.vliw", "algo.regalloc", "algo.instrscheduling", "algo.finitefields", "algo.polycommit", "algo.concurrency"]},
-        {"name": "project.fernridesafety", "label": "FERNRIDE Safety", "imports": ["career.fernride", "algo.groundplaneseg", "algo.pointcloud", "algo.dfd", "algo.sotif", "theory.probability"]},
+        {"name": "project.fernridesafety", "label": "FERNRIDE HZM", "imports": ["career.fernride", "algo.groundplaneseg", "algo.pointcloud", "algo.dfd", "algo.sotif", "algo.sweptpath", "algo.vehiclekinematics", "algo.functionalsafety", "algo.replaytesting", "theory.probability"]},
         {"name": "project.vtt", "label": "VTT Platform", "imports": ["career.argo", "career.fernride", "algo.discreteeventsim", "algo.mpc", "algo.abm", "algo.idm", "algo.qp", "algo.bicyclemodel", "algo.timeseries", "algo.convexopt", "algo.reachability", "algo.ttc", "theory.constraintsolving", "theory.rbd"]},
         {"name": "project.stattestdesign", "label": "Statistical Test Design", "imports": ["career.argo", "algo.binomialci", "algo.wilsonscore", "algo.hypothesistesting", "algo.doe", "algo.stratifiedsampling", "algo.factorialdesign", "algo.plackettburman", "algo.gp", "algo.uq", "theory.statistics", "theory.probability", "theory.expdesign", "books.statsforexp", "books.probsafety"]},
         {"name": "project.daisy", "label": "daisy", "imports": ["career.audi", "algo.trafficsim"]},
@@ -129,7 +129,11 @@
         {"name": "algo.groundplaneseg", "label": "Ground Plane Segmentation", "imports": []},
         {"name": "algo.pointcloud", "label": "Point Cloud Processing", "imports": ["theory.linalg"]},
         {"name": "algo.dfd", "label": "DFD Analysis", "imports": []},
-        {"name": "algo.sotif", "label": "SOTIF", "imports": ["theory.probability"]}
+        {"name": "algo.sotif", "label": "SOTIF", "imports": ["theory.probability"]},
+        {"name": "algo.sweptpath", "label": "Swept Path Analysis", "imports": ["algo.vehiclekinematics"]},
+        {"name": "algo.vehiclekinematics", "label": "Vehicle Kinematics", "imports": ["theory.rbd"]},
+        {"name": "algo.functionalsafety", "label": "Functional Safety", "imports": []},
+        {"name": "algo.replaytesting", "label": "Replay Testing", "imports": []}
       ]
     },
     {
