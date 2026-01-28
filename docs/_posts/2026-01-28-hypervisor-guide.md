@@ -1,5 +1,5 @@
 ---
-title: "Linux & Hypervisors: The Complete Deep Dive"
+title: "Primer: Linux, Syscalls and Hypervisors"
 date: 2026-01-28
 categories: [Systems, Computing]
 tags: [linux, hypervisors, virtualization, kernel, memory, cpu]
