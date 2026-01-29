@@ -224,6 +224,41 @@ Like `ADD` or `MOV`, there is literally an instruction called `SYSCALL`. It's op
 
 ---
 
+## Part 4.5: The Trap Table
+
+SYSCALL is one entry point, but the CPU handles many other events like divide by zero, page fault, debug breakpoint, and timer tick. Each of these must transfer control to kernel code.
+
+This transfer has to be indirect. If unprivileged code could jump directly to any kernel address, it would skip validation and corrupt state. So the CPU uses a table of fixed entry points that only the kernel can configure.
+
+When event N happens, the CPU looks up entry N, switches to privileged mode, and jumps to that address.
+
+```
+┌────────┬─────────────────────┐
+│ Number │ Jump address        │
+├────────┼─────────────────────┤
+│   0    │ 0x80100100          │  divide by zero
+│   1    │ 0x80100200          │  debug
+│  13    │ 0x80100D00          │  general protection fault
+│  14    │ 0x80100E00          │  page fault
+│  ...   │ ...                 │
+│  64    │ 0x80103000          │  syscall (legacy)
+└────────┴─────────────────────┘
+```
+
+The kernel writes this table at boot, and the `lidt` instruction tells the CPU where to find it. Both operations require privileged mode.
+
+| Who | Does | Privileged? |
+|-----|------|-------------|
+| Kernel | Writes table, runs `lidt` | Yes |
+| User code | Triggers entry (`int N`, or fault) | No |
+| Hardware | Looks up, switches mode, jumps | — |
+
+User code triggers. Kernel code configures. Hardware enforces.
+
+(officially: Interrupt Descriptor Table / IDT)
+
+---
+
 ## Part 5: Page Tables (Memory Isolation)
 
 ### The Lie
