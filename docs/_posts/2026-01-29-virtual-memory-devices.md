@@ -6,88 +6,187 @@ tags: [linux, memory, virtual-memory, mmu, dma, iommu, devices]
 toc: true
 ---
 
-## Physical Memory
+## Memory Controller - RAM Protocol Abstraction
 
-RAM chips are complex devices with timing constraints, refresh cycles, banks, and channels. The memory controller sits between the CPU and RAM, handling this complexity. It presents a simpler interface. Any address yields the data stored there.
+A CPU reads and writes values at addresses. RAM stores the values, but the protocol for accessing DRAM is complex. DRAM chips organize storage into rows and columns, require periodic refresh to retain data, and impose timing constraints between operations. A CPU cannot issue raw addresses and expect data back.
 
-```
-Program ──► Memory Controller ──► RAM
-```
-
-**How it works:** The memory controller is hardware on the CPU die (modern systems) or motherboard (older systems). Address lines from the CPU connect to it. When an address appears, the controller translates it to DRAM commands: row address, column address, read/write strobes. It handles timing, refresh, and bank interleaving. The CPU sees none of this. Wires go in with an address, data comes back.
-
-A single program using this interface encounters no difficulty. Multiple programs sharing the same address space encounter several.
-
-## Multiple Programs, One Memory
-
-A program should see a simple model. Memory is a contiguous space starting at address 0, and the program is alone in it. The program should not need to know that other programs exist, that physical memory has a different layout, or that some addresses route to devices instead of RAM.
+The memory controller abstracts this complexity. It accepts addresses from the CPU, translates each into the required sequence of DRAM commands (row address strobe, column address strobe, read/write signals), tracks which rows are active, schedules refresh cycles, and interleaves requests across banks. What the CPU sees is a linear address space: issue an address, receive data.
 
 ```
-Program A ──┬──► RAM
-Program B ──┘
+CPU ──► Memory Controller ──► RAM
 ```
 
-Without hardware support, this abstraction is impossible. Programs issue addresses that go directly to RAM. Two programs using address 0x1000 access the same physical location. Programs can read each other's memory, overwrite the kernel, and send commands to devices. The simple model is a fiction that nothing enforces.
+**Details:** DRAM stores bits in capacitors arranged in a two-dimensional array. Each capacitor holds one bit. Accessing a bit requires specifying its row and column. The protocol proceeds in phases: the controller asserts RAS (Row Address Strobe) with the row address, which loads the entire row into a sense amplifier buffer. Then it asserts CAS (Column Address Strobe) with the column address, which selects specific bits from the buffer. The data transfers on subsequent clock edges.
 
-## Virtual Addresses
+Timing parameters constrain every transition. tRCD specifies minimum delay between row activation and column access. tRP specifies minimum delay to precharge before activating a different row. tRFC specifies refresh cycle duration. Violating these timings corrupts data.
 
-The MMU (Memory Management Unit) sits between the CPU and the memory bus, translating every address before it reaches RAM.
+Modern DRAM divides memory into independent banks (typically 8-16). Each bank has its own row buffer. The controller interleaves requests across banks: while one bank waits for tRCD, another serves data. This hides latency. The controller maintains state for each bank: idle, active with row N open, precharging. It reorders requests to maximize row buffer hits and minimize precharge cycles.
 
-```
-Program A ──┬──► MMU ──► RAM
-Program B ──┘
-```
+Refresh runs continuously. Each row must be refreshed within a retention window (typically 64ms). The controller issues REF commands at regular intervals, cycling through all rows. During refresh, the bank is unavailable.
 
-Each program issues addresses starting at 0. The MMU translates these virtual addresses to physical addresses. Program A's 0x1000 becomes physical 0x50000. Program B's 0x1000 becomes physical 0x80000. Each program sees the simple model it expects. Neither knows the other exists.
+**History:** The PCI bus specification of 1991 established the memory controller as a dedicated chip on the motherboard. AMD moved it onto the CPU die in 2003 with the Athlon 64. Intel followed in 2008 with Nehalem.
 
-**How it works:** The MMU is not software. It is transistors in the path. The CPU does not "call" the MMU. Address lines from the CPU execution unit physically connect to MMU hardware before reaching the memory bus. There is no way around it.
+**Jargon:** Engineers drew motherboard layouts as maps, CPU at top.
 
 ```
-CPU execution unit
-     │
-     │ address lines (wires)
-     ▼
-┌─────────┐
-│   MMU   │  ← physically in the path
-└────┬────┘
-     │
-     │ address lines (wires)
-     ▼
-Memory bus
+        ┌─────┐
+        │ CPU │
+        └──┬──┘
+           │
+      ┌────┴────┐
+      │Northbridge│  ← memory, graphics (fast, near CPU)
+      └────┬────┘
+           │
+      ┌────┴────┐
+      │Southbridge│  ← disk, USB, audio (slow, far from CPU)
+      └─────────┘
 ```
 
-When the CPU executes `mov eax, [0x1000]`, the address 0x1000 appears on wires. Those wires go into MMU transistors. Different wires come out with the physical address. The translation happens in gate delays, not function calls.
+*Northbridge*: the chip near the CPU handling memory and graphics. *Southbridge*: the chip farther away handling disk and USB. The northbridge was the memory controller. When AMD and Intel moved it onto the CPU die, the northbridge disappeared as a separate chip and the term fell out of use.
 
-A virtual address splits into page number and offset:
+---
 
-```
-Virtual 0x00012345 (4KB pages):
-┌─────────────────────┬──────────────┐
-│ Page number: 0x12   │ Offset: 0x345│
-└─────────────────────┴──────────────┘
-```
+## MMU - Address Space Abstraction
 
-The MMU looks up page 0x12, finds physical page 0x50. The offset passes through unchanged. Result: physical 0x00050345.
+Running multiple processes means multiple processes in memory simultaneously. Each process was compiled to own address zero. Their addresses collide. The physical address space, presented by the memory controller, needed a further abstraction: a separate address space for each process, mapped onto the physical one.
 
-## Page Tables
-
-The MMU needs to know how to translate each virtual address. It reads this information from a table stored in RAM, called a page table.
+The solution: a hardware component that intercepts every address and translates it before it reaches the memory controller.
 
 ```
-┌─────────────┬─────────────┬─────────────┐
-│ Virtual     │ Physical    │ Permissions │
-├─────────────┼─────────────┼─────────────┤
-│ 0x1000      │ 0x50000     │ user, r/w   │
-│ 0x2000      │ 0x51000     │ user, r     │
-│ 0x3000      │ —           │ not present │
-└─────────────┴─────────────┴─────────────┘
+Process A (0x1000) ──► MMU ──► Physical RAM (0x50000)
+Process B (0x1000) ──► MMU ──► Physical RAM (0x80000)
+                        │
+                 each process gets
+                 its own address space
 ```
 
-Each process has its own page table. A CPU register called CR3 holds the physical address of the current page table. When the kernel switches from one process to another, it loads a new value into CR3, and the MMU begins using the new mapping.
+Process A's 0x1000 maps to physical 0x50000. Process B's 0x1000 maps to physical 0x80000. Each process sees a linear address space starting at zero. The MMU multiplexes them onto physical RAM.
 
-Changing CR3 requires ring 0 privilege. User programs cannot modify their own mappings.
+**Details:** The MMU maintains a mapping from virtual pages to physical pages. This mapping lives in a page table, a data structure stored in RAM. A CPU register (CR3 on x86) holds the physical address of the active page table.
 
-Programs see virtual addresses and do not know where their data physically resides. What leaks through is page granularity, translation cost, and page faults. Protection cannot be finer than a page. Every access needs a lookup. Translation can fail.
+A virtual address splits into two parts: page number and offset. With 4KB pages, the low 12 bits are the offset (2^12 = 4096), the remaining bits are the page number. The MMU uses the page number to index into the page table. Each page table entry (PTE) contains a physical page number, permission bits (read, write, execute), and status flags (present, accessed, dirty). The MMU combines the physical page number from the PTE with the offset from the virtual address. Result: physical address.
+
+```
+Virtual:  [    page number    |   offset   ]
+                   │                 │
+                   ▼                 │
+            Page Table              │
+          ┌────────────┐            │
+          │ PTE: phys  │            │
+          │ page 0x50  │            │
+          └─────┬──────┘            │
+                │                   │
+                ▼                   ▼
+Physical: [  phys page 0x50  |   offset   ]
+```
+
+Permission checks happen during translation. If the PTE marks a page read-only and the instruction writes, the MMU raises a fault. If the present bit is clear, the MMU raises a fault. These faults are synchronous exceptions, delivered before the memory access completes.
+
+Changing CR3 switches the entire address space. Writing to CR3 is a privileged operation. The hardware enforces this.
+
+**History:** The Atlas computer (1962, Ferranti/Manchester University) introduced the first paged MMU and virtual memory. IBM's System/360 Model 67 (1965) brought it to commercial systems, calling it the Dynamic Address Translation box. Early MMUs were separate chips. Intel integrated the MMU onto the CPU die with the 386 in 1985.
+
+**Jargon:** *Time-sharing*: multiple processes take turns on the CPU, switching fast enough to appear simultaneous. *Concurrent*: interleaved, one at a time, fast switching. *Parallel*: truly simultaneous, multiple CPUs. *MMU*: Memory Management Unit, the hardware performing address translation. *DAT*: Dynamic Address Translation, IBM's term for the same thing. *Virtual address*: the address a process issues. *Physical address*: the address that reaches RAM. *Page table*: data structure mapping virtual pages to physical pages. *PTE*: Page Table Entry, one row in the page table.
+
+---
+
+## TLB - Address Translation Optimization
+
+Every address the CPU issues is virtual. Every load, store, and instruction fetch requires translation before reaching RAM. The page table holds the mappings, but it lives in RAM. Fetching from RAM on every access would be slow. The TLB caches recent translations.
+
+The TLB (Translation Lookaside Buffer) is a cache of page table entries built into the CPU. It sits on the same die as the execution units, nanometers away. RAM sits on separate chips, centimeters away across the motherboard. The TLB uses SRAM, which completes a lookup in one CPU cycle. RAM uses DRAM, which takes 50-100 cycles.
+
+```
+┌────────────────────────────────────────┐
+│                CPU die                 │
+│  ┌──────────┐  ┌──────────┐           │
+│  │Execution │  │   TLB    │           │
+│  │  Units   │──│  (SRAM)  │           │
+│  └──────────┘  └────┬─────┘           │
+│                     │                  │
+│                ┌────┴─────┐           │
+│                │   MMU    │           │
+│                └────┬─────┘           │
+│                     │                  │
+│                ┌────┴─────┐           │
+│                │ Memory   │           │
+│                │Controller│           │
+│                └────┬─────┘           │
+└─────────────────────┼──────────────────┘
+                      │ memory bus
+              ┌───────┴───────┐
+              │  DRAM chips   │
+              │  (RAM)        │
+              └───────────────┘
+```
+
+Every memory access checks the TLB. A process issues a virtual address. The MMU splits it into page number and offset. The page number indexes into the TLB.
+
+```
+Virtual address from process
+           │
+           ▼
+┌─────────────────────────────┐
+│ page number  │    offset    │
+└──────┬──────────────────────┘
+       │
+       ▼
+   TLB lookup
+       │
+       ├── hit: TLB returns physical page (1 cycle)
+       │
+       └── miss: fetch from page table in RAM (~100 cycles)
+                        │
+                        ▼
+              ┌─────────────────────┐
+              │ Page Table (RAM)    │
+              │ page 0 → phys 30    │
+              │ page 1 → phys 40    │
+              │ page 2 → phys 50    │  ← fetch, copy to TLB
+              │ ...                 │
+              └─────────────────────┘
+```
+
+A hit returns the physical page from the TLB in one cycle. A miss fetches the entry from RAM, copies it into the TLB, then returns the physical page. Either way, the MMU combines the physical page with the offset to form the physical address.
+
+Consider a function summing an array. The array starts at virtual address 0x5000. The loop reads element 0 at 0x5000, element 1 at 0x5004, element 2 at 0x5008. Each read triggers a TLB lookup. All three addresses fall within page 5 (0x5000–0x5FFF). The first read misses, fetches the entry from RAM, populates the TLB. Subsequent reads hit.
+
+A 4KB array spans one page. Summing 1000 four-byte integers: one TLB miss, 999 hits.
+
+A 256-entry TLB covering 4KB pages spans 1MB of working memory. Most programs fit their hot path in far less.
+
+**Details:** DRAM stores bits in capacitors that leak and require refresh. SRAM stores bits in flip-flops, six transistors per bit, holding state as long as power flows. SRAM costs more per bit and takes more area, so main memory uses DRAM. SRAM needs no refresh cycles, no row/column protocol, no precharge delays.
+
+The TLB is a content-addressable memory (CAM). Regular RAM takes an address as input and returns data at that location. A CAM takes data as input and searches all entries in parallel. The MMU presents the virtual page number and every TLB entry compares against its stored key simultaneously. Parallel comparison completes in one cycle regardless of TLB size.
+
+Each TLB entry stores: virtual page number, physical page number, permission bits, valid bit, and address space identifier (ASID). The ASID tags entries by process. A lookup matches only when both virtual page number and ASID match. Context switches do not require flushing the TLB.
+
+The MMU splits each virtual address into page number and offset:
+
+```
+page_number = virtual_address / page_size
+offset      = virtual_address % page_size
+```
+
+With 4KB pages, the low 12 bits are the offset, the remaining bits are the page number. The physical address is:
+
+```
+physical_address = (physical_page * page_size) + offset
+```
+
+Modern CPUs split the TLB into levels. The L1 TLB is tiny (16-64 entries) and completes in 1 cycle. The L2 TLB is larger (512-2048 entries) and completes in 4-8 cycles. A miss in both triggers a page table walk.
+
+**ASID** extends the per-process address space abstraction into the TLB. The MMU gives each process its own virtual address space. The TLB caches translations from all running processes. ASID is a field in each TLB entry tagging which process owns that translation. A lookup matches only when both the virtual page number and the ASID match. Entries from different processes coexist in the TLB without interference. Without ASIDs, the OS must flush the TLB on every context switch.
+
+On a TLB miss, the **page table walker** fetches the mapping from RAM. The page table is a tree, typically four levels deep on x86-64. The walker reads the first-level table to find a pointer to the second-level, reads that to find the third, and so on until it reaches the entry containing the physical page number. Each level requires a memory read. A full walk costs four RAM accesses.
+
+**Huge pages** reduce TLB pressure for large working sets. Standard pages are 4KB. A 256-entry TLB covers 1MB. Huge pages are 2MB or 1GB. A single 2MB entry covers 512 times more memory than a 4KB entry. The same 256-entry TLB now covers 512MB. Database servers and virtual machines use huge pages. The tradeoff: huge pages waste memory when partially used, and the OS must find contiguous physical memory to back them.
+
+**History:** The Atlas computer (1962) included the first TLB, called "page address registers." Without it, every memory access required two RAM fetches: one for the page table entry, one for the data. The TLB eliminated the translation fetch for 95-99% of memory references. Virtual memory went from a 2x slowdown to near-zero overhead. The optimization made virtual memory practical. The term TLB emerged in IBM documentation during the 1970s. Modern x86 processors have separate TLBs for instructions and data, with multiple levels.
+
+**Jargon:** *TLB*: Translation Lookaside Buffer, a cache for page table entries. *CAM*: Content-Addressable Memory, memory that searches by content rather than address. *SRAM*: Static RAM, fast memory using flip-flops. *DRAM*: Dynamic RAM, dense memory using capacitors. *ASID*: Address Space Identifier, tag distinguishing entries from different processes. *Page table walk*: traversing the page table in RAM to find a translation. *Huge pages*: pages larger than 4KB (2MB or 1GB) to reduce TLB pressure.
+
+---
 
 ## Pages
 
