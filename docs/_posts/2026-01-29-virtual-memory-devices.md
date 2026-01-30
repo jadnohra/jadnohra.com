@@ -90,6 +90,54 @@ Changing CR3 switches the entire address space. Writing to CR3 is a privileged o
 
 ---
 
+## Hierarchical Page Tables - Page Table Space Optimization
+
+A process issues a virtual address. The MMU splits it into page number and offset. With 4KB pages, the low 12 bits are the offset, the remaining 36 bits are the page number.
+
+```
+Virtual address (48 bits):
+┌────────────────────────────────┬──────────────┐
+│        page number             │    offset    │
+│          36 bits               │   12 bits    │
+└────────────────────────────────┴──────────────┘
+```
+
+The MMU maps page numbers to physical pages. No arithmetic relates virtual to physical. The OS assigns physical pages at runtime, frees them on release, swaps them to disk, reloads them at different locations. The mapping is data, changing as the process runs.
+
+A process uses thousands of pages out of 2^36 possible. Sparse. A direct-mapped array costs 512 GB per process. Hash tables and radix trees can both represent sparse mappings. The MMU walks the page table in hardware on every TLB miss, and this context favors radix trees (see [Appendix: Radix Trees](#appendix-radix-trees) for how they compress sparse keys).
+
+Radix trees have three advantages over hash tables here:
+
+**Predictable traversal.** Fixed depth. Four levels, four memory reads. Hash tables probe until they find the entry or an empty slot.
+
+**Subtree deletion.** Clear one pointer, the subtree disappears. Hash tables visit every entry in the range.
+
+**Subtree sharing.** Two processes mapping the same library share the subtree.
+
+x86-64 uses a 4-level radix tree. Each level contains 512 entries, indexing 9 bits of the page number. A process using 1000 pages allocates a few dozen nodes, a few hundred KB.
+
+**Details:** Each table occupies one 4KB page: 512 entries × 8 bytes. An entry contains a physical address of the next-level table (or the final physical page) plus permission and status bits: present, read/write, user/supervisor, accessed, dirty.
+
+The virtual address splits into four 9-bit indices plus a 12-bit offset:
+
+```
+48-bit virtual address:
+┌────────┬────────┬────────┬────────┬──────────────┐
+│ L1 idx │ L2 idx │ L3 idx │ L4 idx │    offset    │
+│ 9 bits │ 9 bits │ 9 bits │ 9 bits │   12 bits    │
+└────────┴────────┴────────┴────────┴──────────────┘
+
+CR3 ──► L1[idx] ──► L2[idx] ──► L3[idx] ──► L4[idx] ──► physical page
+```
+
+The page table walker is dedicated hardware. On a TLB miss, it reads CR3, fetches L1[idx], fetches L2[idx], fetches L3[idx], fetches L4[idx], extracts the physical page number. Four sequential memory reads. Modern CPUs cache intermediate levels (paging structure caches) to reduce this cost.
+
+**History:** Multics (1965) introduced multi-level page tables. x86 used 2-level tables with 32-bit addresses, extended to 3-level with PAE (1995), and 4-level with x86-64 (2003). Intel introduced 5-level paging (2017) to support 57-bit virtual addresses.
+
+**Jargon:** *Radix tree*: a tree indexing by successive chunks of the key, storing shared prefixes as path structure. *Page table walk*: traversing the tree levels in RAM to find a mapping. *CR3*: x86 register holding the physical address of the L1 table. *Paging structure cache*: cache for intermediate page table entries, separate from the TLB.
+
+---
+
 ## TLB - Address Translation Optimization
 
 Every address the CPU issues is virtual. Every load, store, and instruction fetch requires translation before reaching RAM. The page table holds the mappings, but it lives in RAM. Fetching from RAM on every access would be slow. The TLB caches recent translations.
@@ -159,7 +207,7 @@ A 256-entry TLB covering 4KB pages spans 1MB of working memory. Most programs fi
 
 The TLB is a content-addressable memory (CAM). Regular RAM takes an address as input and returns data at that location. A CAM takes data as input and searches all entries in parallel. The MMU presents the virtual page number and every TLB entry compares against its stored key simultaneously. Parallel comparison completes in one cycle regardless of TLB size.
 
-Each TLB entry stores: virtual page number, physical page number, permission bits, valid bit, and address space identifier (ASID). The ASID tags entries by process. A lookup matches only when both virtual page number and ASID match. Context switches do not require flushing the TLB.
+Each TLB entry stores: virtual page number, physical page number, permission bits, valid bit, and address space identifier (ASID).
 
 The MMU splits each virtual address into page number and offset:
 
@@ -176,85 +224,17 @@ physical_address = (physical_page * page_size) + offset
 
 Modern CPUs split the TLB into levels. The L1 TLB is tiny (16-64 entries) and completes in 1 cycle. The L2 TLB is larger (512-2048 entries) and completes in 4-8 cycles. A miss in both triggers a page table walk.
 
-**ASID** extends the per-process address space abstraction into the TLB. The MMU gives each process its own virtual address space. The TLB caches translations from all running processes. ASID is a field in each TLB entry tagging which process owns that translation. A lookup matches only when both the virtual page number and the ASID match. Entries from different processes coexist in the TLB without interference. Without ASIDs, the OS must flush the TLB on every context switch.
+**ASID** is an optimization that exists because of the multi-process abstraction. The MMU gives each process its own address space. The TLB caches translations. Multiple processes share the TLB, but their translations must not collide. ASID is a field in each TLB entry tagging which process owns it. A lookup matches only when both the virtual page number and the ASID match. Entries from different processes coexist without interference. Without ASIDs, the OS must flush the TLB on every context switch, destroying cached translations.
 
 On a TLB miss, the **page table walker** fetches the mapping from RAM. The page table is a tree, typically four levels deep on x86-64. The walker reads the first-level table to find a pointer to the second-level, reads that to find the third, and so on until it reaches the entry containing the physical page number. Each level requires a memory read. A full walk costs four RAM accesses.
 
-**Huge pages** reduce TLB pressure for large working sets. Standard pages are 4KB. A 256-entry TLB covers 1MB. Huge pages are 2MB or 1GB. A single 2MB entry covers 512 times more memory than a 4KB entry. The same 256-entry TLB now covers 512MB. Database servers and virtual machines use huge pages. The tradeoff: huge pages waste memory when partially used, and the OS must find contiguous physical memory to back them.
+**Huge pages** are a performance optimization. Standard pages are 4KB. A 256-entry TLB covers 1MB. Huge pages are 2MB or 1GB. A single 2MB entry covers 512 times more memory than a 4KB entry. The same 256-entry TLB now covers 512MB. Database servers and virtual machines use huge pages to reduce TLB misses. The tradeoff: huge pages waste memory when partially used, and the OS must find contiguous physical memory to back them.
 
-**History:** The Atlas computer (1962) included the first TLB, called "page address registers." Without it, every memory access required two RAM fetches: one for the page table entry, one for the data. The TLB eliminated the translation fetch for 95-99% of memory references. Virtual memory went from a 2x slowdown to near-zero overhead. The optimization made virtual memory practical. The term TLB emerged in IBM documentation during the 1970s. Modern x86 processors have separate TLBs for instructions and data, with multiple levels.
+**History:** The Atlas computer (1962) included the first TLB, called "page address registers." Without it, every memory access required two RAM fetches: one for the page table entry, one for the data. The TLB eliminated the translation fetch for 95-99% of memory references. Virtual memory went from a 2x slowdown to near-zero overhead. The optimization made virtual memory practical. The term TLB emerged in IBM documentation during the 1970s. Modern x86 processors have separate TLBs for instructions and data, with multiple levels. Intel introduced 4MB pages with the Pentium (1993), documented with the Pentium Pro (1995). x86-64 (2003) added 2MB and 1GB page support. Linux gained transparent huge pages in kernel 2.6.38 (2011), automatically promoting contiguous 4KB pages to 2MB pages when beneficial.
 
 **Jargon:** *TLB*: Translation Lookaside Buffer, a cache for page table entries. *CAM*: Content-Addressable Memory, memory that searches by content rather than address. *SRAM*: Static RAM, fast memory using flip-flops. *DRAM*: Dynamic RAM, dense memory using capacitors. *ASID*: Address Space Identifier, tag distinguishing entries from different processes. *Page table walk*: traversing the page table in RAM to find a translation. *Huge pages*: pages larger than 4KB (2MB or 1GB) to reduce TLB pressure.
 
 ---
-
-## Pages
-
-Memory is divided into fixed-size units called pages, typically 4KB. The page table maps virtual pages to physical pages, not individual bytes.
-
-Per-byte mapping would require a table entry for every address. A 4GB address space would need 4 billion entries. At 8 bytes per entry, the table would be 32GB, larger than the memory it describes.
-
-Per-page mapping at 4KB granularity reduces this to 1 million entries for 4GB. The cost is that protection cannot be finer than a page.
-
-## Translation Speed
-
-Every memory access requires a page table lookup. The page table is in RAM. A memory access to perform a memory access would double latency at minimum.
-
-The MMU contains a cache called the TLB (Translation Lookaside Buffer) that holds recent translations.
-
-```
-MMU: ┌─────────────────────┐
-     │ TLB (hit: ~1 cycle) │
-     │ Walker (miss: ~100) │
-     └─────────────────────┘
-```
-
-A TLB hit completes in roughly one cycle. A TLB miss requires walking the page table in RAM, roughly 100 cycles.
-
-The translation cache is small, typically 64 to 1024 entries. Programs that touch many different pages see frequent misses.
-
-Large pages (2MB or 1GB instead of 4KB) reduce cache pressure by covering more memory per entry. The cost is internal fragmentation when a large page is only partially used.
-
-## Hierarchical Page Tables
-
-A 64-bit address space contains 2^52 pages at 4KB granularity. A flat table would require petabytes of storage.
-
-```
-Flat table (impossible):
-┌─────────────────────────────────────────┐
-│ Entry 0 │ Entry 1 │ ... │ Entry 2^52   │
-└─────────────────────────────────────────┘
-```
-
-Modern systems use multi-level page tables.
-
-```
-Multi-level (sparse):
-CR3 → L1 → L2 → L3 → L4 → Physical
-           ↓
-          NULL (unmapped: no deeper tables)
-```
-
-A 4-level structure has 512 entries at each level. Unmapped regions require no storage beyond a null pointer at the level where they diverge.
-
-| Approach | Space | Lookup cost |
-|----------|-------|-------------|
-| Flat table | Huge (impractical) | 1 memory access |
-| 4-level table | Sparse, small | 4 memory accesses |
-
-**How it works:** On a translation cache miss, the MMU hardware walks the table. The virtual address splits into four 9-bit indices (plus 12-bit offset):
-
-```
-Virtual address (48 bits used):
-┌────────┬────────┬────────┬────────┬─────────────┐
-│ L1 idx │ L2 idx │ L3 idx │ L4 idx │ Offset      │
-│ 9 bits │ 9 bits │ 9 bits │ 9 bits │ 12 bits     │
-└────────┴────────┴────────┴────────┴─────────────┘
-```
-
-The table walker hardware reads CR3 to find the L1 table, uses the L1 index to find an entry, reads that entry to find the L2 table address, and so on. Four memory accesses in sequence. Modern CPUs have dedicated hardware for this walk. Some cache intermediate results (page structure caches).
-
-The translation cache hides the lookup cost most of the time.
 
 ## Page Faults
 
@@ -511,3 +491,45 @@ Kernel configures: page tables, CR3, IOMMU tables.
 | device memory mapping | MMIO (Memory-Mapped I/O) |
 | device RAM access | DMA (Direct Memory Access) |
 | device translation | IOMMU, VT-d (Intel), AMD-Vi |
+
+---
+
+## Appendix: Radix Trees
+
+**Note:** The compression comes from storing shared prefixes once instead of repeating them.
+
+```
+We want to store:
+  0000 → 1
+  0001 → 1
+  0010 → 1
+  0011 → 1
+  (all other 4-bit keys → 0)
+
+Flat array:
+  Any 4-bit key might be looked up → 16 slots
+
+  index:  0000 0001 0010 0011 0100 0101 ... 1111
+  value:    1    1    1    1    0    0  ...   0
+
+  16 slots allocated, 12 hold zeros
+
+Radix tree:
+  All 4 keys share prefix 00.
+  Store 00 once, then store only the suffixes.
+
+  00 ─────► 00 → 1
+            01 → 1
+            10 → 1
+            11 → 1
+
+  01 ─────► null (no table allocated)
+  10 ─────► null (no table allocated)
+  11 ─────► null (no table allocated)
+
+  4 entries in L1 + 4 entries in one L2 = 8 slots
+```
+
+The flat array allocates 16 slots because any 4-bit key might be looked up. The radix tree allocates only the branch that contains data. Prefixes 01, 10, 11 point to null. No subtables behind them.
+
+A fully allocated radix tree is worse than a flat array: same leaf entries plus intermediate nodes. The tree saves space only when branches are null. Sparse, clustered keys make branches null. Page tables fit this pattern: processes use thousands of pages clustered in a few regions, leaving most of the address space empty.
