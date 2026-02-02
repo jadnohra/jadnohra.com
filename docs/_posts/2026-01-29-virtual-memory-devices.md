@@ -14,9 +14,9 @@ RAM chips are complex. They organize storage into rows and columns, require peri
 
 Programs are compiled assuming a linear address space starting at zero. Without this assumption, a program would need to know the physical memory layout of the machine it runs on, including which addresses are free, which are used by other processes, and where the operating system lives. The program would not be portable. A component called the MMU (Memory Management Unit) provides the abstraction that makes this assumption work. It translates every address a program issues into a physical address in RAM. The program sees simple linear memory. The MMU handles the mapping to physical reality. As a side effect, multiple programs can run simultaneously, each seeing its own private address space.
 
-The MMU translates every memory access, including loads, stores, and instruction fetches. Translation granularity matters. Translating each byte individually would require trillions of entries. Instead, memory is divided into pages, aligned chunks of 4096 bytes. One entry covers one page. An address splits into two parts: which page, and which byte within the page. The MMU translates the page number. The byte offset passes through unchanged.
+The MMU translates every memory access, including loads, stores, and instruction fetches. Translation granularity matters. Translating each byte individually would require trillions of entries. Instead, memory is divided into pages, aligned chunks of four kilobytes. One entry covers one page. An address splits into two parts: which page, and which byte within the page. The MMU translates the page number. The byte offset passes through unchanged.
 
-The translation data is called a page table. It lives in RAM. A simple array mapping all possible pages would cost 512 GB per process. Programs use thousands of pages out of billions possible, so the page table is stored as a tree that allocates nodes only where mappings exist. A typical process needs a few hundred KB of page table.
+The translation data is called a page table. It lives in RAM. A simple array mapping all possible pages would cost hundreds of gigabytes per process. Programs use thousands of pages out of billions possible, so the page table is stored as a tree that allocates nodes only where mappings exist. A typical process needs a few hundred kilobytes of page table.
 
 Translating an address means walking this tree in RAM, which costs multiple memory accesses. A cache called the TLB (Translation Lookaside Buffer) stores recent translations on the CPU chip, reducing repeated walks to a single-cycle lookup. Programs access the same pages repeatedly, so the cache hits most of the time.
 
@@ -82,7 +82,7 @@ The MMU (Memory Management Unit) provides the abstraction that makes this assump
 Process ──► virtual address 0x1000 ──► MMU ──► physical address 0x50000 ──► RAM
 ```
 
-The process issues address 0x1000. The MMU translates it to physical 0x50000. The process never sees 0x50000—it only knows about its own virtual addresses.
+The process issues address 0x1000. The MMU translates it to physical 0x50000.
 
 This also enables isolation. Two processes can both use virtual address 0x1000. The MMU gives each its own mapping:
 
@@ -91,7 +91,7 @@ Process A (0x1000) ──► MMU ──► Physical 0x50000
 Process B (0x1000) ──► MMU ──► Physical 0x80000
 ```
 
-Each process sees a private linear address space. The MMU multiplexes them onto physical RAM.
+Each process sees a private linear address space.
 
 **Details:** The MMU maintains a mapping from virtual addresses to physical addresses. This mapping lives in a page table, a data structure stored in RAM. Each process has its own page table, defining its own address space.
 
@@ -113,7 +113,7 @@ Because the MMU sits in the path of every memory access, translation speed matte
 
 The MMU translates virtual addresses to physical addresses. Per-byte mapping would give every virtual address its own entry specifying its physical address. A 48-bit address space has 2^48 addresses. The mapping metadata would exceed the memory it describes.
 
-Pages are the unit of translation. A page is an aligned chunk of contiguous bytes. A 4KB page contains 4096 bytes. One page table entry covers all 4096. The mapping metadata shrinks by a factor of 4096.
+Pages are the unit of translation. A page is an aligned chunk of contiguous bytes, typically four kilobytes. One page table entry covers an entire page. The mapping metadata shrinks by a factor of thousands.
 
 Page size determines address structure. A virtual address splits into two parts:
 
@@ -125,18 +125,12 @@ Virtual address (48 bits):
 └────────────────────────────────┴──────────────┘
 ```
 
-The split follows from page size:
-- Page size = 4KB = 2^12 bytes
-- 12 bits address any byte within a page (0 to 4095)
-- Low 12 bits = offset within the page
-- Remaining 36 bits = which page
+The split follows from page size. Four kilobytes is 2^12 bytes, so 12 bits for the offset, 36 bits for the page number.
 
 The MMU translates only the page number. The offset passes through unchanged. If virtual page 5 maps to physical page 0x50, then:
 - Virtual 0x5000 → Physical 0x50000
 - Virtual 0x5001 → Physical 0x50001
 - Virtual 0x5FFF → Physical 0x50FFF
-
-All addresses within the page follow the same translation, differing only in offset.
 
 ```
 Virtual:  [    page number    |   offset   ]
@@ -162,7 +156,7 @@ The MMU needs a data structure mapping virtual page numbers to physical page num
 
 A process with a 48-bit virtual address space and 4KB pages has 2^36 possible pages. Most are unused. A process typically uses thousands of pages, not billions. The mapping is sparse.
 
-A flat array indexed by virtual page number would cost 2^36 entries × 8 bytes = 512 GB per process. The page table is a sparse data structure.
+A flat array indexed by virtual page number would cost hundreds of gigabytes per process. The page table must be a sparse data structure.
 
 The page table is a radix tree. It indexes by successive chunks of the page number, allocating nodes only for regions that contain mappings. A process using 1000 pages allocates a few dozen nodes totaling a few hundred KB—not 512 GB.
 
@@ -178,7 +172,7 @@ x86-64 uses a 4-level radix tree. The 36-bit page number splits into four 9-bit 
 CR3 ──► L1[idx] ──► L2[idx] ──► L3[idx] ──► L4[idx] ──► physical page
 ```
 
-Each table level occupies one 4KB page containing 512 entries (512 × 8 bytes = 4KB). Each entry holds either:
+Each table level occupies one page containing 512 entries. Each entry holds either:
 - A pointer to the next-level table, or
 - At the final level (L4), the physical page number plus permission bits
 
@@ -202,7 +196,7 @@ Both hash tables and radix trees can represent sparse mappings. Radix trees have
 
 ## TLB - Caching Translation Results
 
-Walking the page table costs four RAM accesses, one per tree level. At 50-100 cycles per RAM access, a full walk costs 200-400 cycles. Every load, store, and instruction fetch requires translation. Four RAM accesses per memory access would dominate execution time.
+Walking the page table costs four RAM accesses, one per tree level. Each RAM access costs tens to hundreds of cycles. A full walk costs hundreds of cycles. Every load, store, and instruction fetch requires translation. Four RAM accesses per memory access would dominate execution time.
 
 The TLB (Translation Lookaside Buffer) caches the results of page table walks. It stores final mappings: virtual page number → physical page number. The tree structure remains in RAM. The TLB stores the results of walking it.
 
@@ -257,27 +251,34 @@ Virtual address from process
               └─────────────────────────────────┘
 ```
 
-A hit returns the physical page in one cycle. A miss walks the radix tree in RAM, taking hundreds of cycles, then caches the result for future accesses.
+A hit returns the physical page in one cycle. A miss walks the radix tree in RAM, taking hundreds of cycles.
 
-Consider summing an array starting at virtual 0x5000. Element 0 at 0x5000, element 1 at 0x5004, element 2 at 0x5008. All fall within page 5 (0x5000–0x5FFF). The first access misses, walks the tree, caches "page 5 → physical 0x50". Subsequent accesses hit. A thousand-element array: one miss, 999 hits.
+Summing an array that fits in one page costs one miss and hundreds of hits.
 
-A 256-entry TLB covering 4KB pages spans 1MB of working memory. Most programs fit their hot path in far less.
+A typical TLB spans about a megabyte of working memory. Most programs fit their hot path in far less.
 
 **Details:** The TLB is a content-addressable memory (CAM). Regular RAM takes an address and returns data. A CAM takes data and searches all entries in parallel. The MMU presents a virtual page number; every TLB entry compares against it simultaneously. Parallel comparison completes in one cycle.
 
 Each TLB entry stores: virtual page number, physical page number, permission bits, valid bit, and address space identifier (ASID). The ASID tags which process owns the entry, allowing multiple processes to share the TLB without collisions.
 
-The TLB uses SRAM. SRAM is fast, expensive, on-die. RAM uses DRAM. DRAM is slower, denser, off-chip. SRAM completes a lookup in one cycle. DRAM takes 50-100 cycles.
+The TLB uses SRAM (fast, on-die, one cycle). Main memory uses DRAM (slower, off-chip, tens to hundreds of cycles).
 
-Modern CPUs have multi-level TLBs. L1 TLB: 16-64 entries, 1 cycle. L2 TLB: 512-2048 entries, 4-8 cycles. Miss in both triggers a page table walk.
+Modern CPUs have multi-level TLBs:
 
-**Huge pages** reduce TLB pressure. A 2MB page covers 512× more memory than a 4KB page. The same TLB covers 512× more address space. Database servers and VMs use huge pages heavily.
+| Level | Entries | Latency |
+|-------|---------|---------|
+| L1 TLB | dozens | 1 cycle |
+| L2 TLB | hundreds to thousands | a few cycles |
+
+Miss in both triggers a page table walk.
+
+**Huge pages** reduce TLB pressure. A two-megabyte page covers hundreds of times more memory than a four-kilobyte page. The same TLB covers far more address space. Database servers and VMs use huge pages heavily.
 
 **Paging structure caches** are separate from the TLB. They cache L1, L2, and L3 page table entries, reducing walk cost when only the final level differs.
 
 **History:** The Atlas computer (1962) included the first TLB. Without it, virtual memory meant two RAM accesses per memory access. One for translation, one for data. The TLB eliminated the translation access 95-99% of the time, making virtual memory practical.
 
-**Jargon:** *TLB*: Translation Lookaside Buffer, caches virtual→physical mappings. *CAM*: Content-Addressable Memory. *ASID*: Address Space Identifier, tags entries by process. *Huge pages*: 2MB or 1GB pages reducing TLB pressure.
+**Jargon:** *TLB*: Translation Lookaside Buffer, caches virtual→physical mappings. *CAM*: Content-Addressable Memory. *ASID*: Address Space Identifier, tags entries by process. *Huge pages*: large pages (megabytes or gigabytes) reducing TLB pressure.
 
 ---
 
@@ -578,3 +579,36 @@ Radix tree:
 The flat array allocates 16 slots because any 4-bit key might be looked up. The radix tree allocates only the branch that contains data. Prefixes 01, 10, 11 point to null. No subtables behind them.
 
 A fully allocated radix tree is worse than a flat array: same leaf entries plus intermediate nodes. The tree saves space only when branches are null. Sparse, clustered keys make branches null. Page tables fit this pattern: processes use thousands of pages clustered in a few regions, leaving most of the address space empty.
+
+---
+
+## Reference Numbers
+
+| Item | Value |
+|------|-------|
+| **Pages** | |
+| Standard page size | 4 KB (4096 bytes) |
+| Huge page sizes | 2 MB, 1 GB |
+| Bits for page offset | 12 bits |
+| Bits for page number | 36 bits (48-bit address space) |
+| **Page Tables** | |
+| Levels (x86-64) | 4 |
+| Entries per table | 512 |
+| Entry size | 8 bytes |
+| Table size | 4 KB (one page) |
+| Index bits per level | 9 bits |
+| Flat table cost | 512 GB per process |
+| Typical process page table | ~100-500 KB |
+| **TLB** | |
+| L1 TLB entries | 16-64 |
+| L1 TLB latency | 1 cycle |
+| L2 TLB entries | 512-2048 |
+| L2 TLB latency | 4-8 cycles |
+| Coverage (256 entries × 4KB) | 1 MB |
+| **Latencies** | |
+| SRAM (TLB) access | ~1 cycle |
+| DRAM access | 50-100 cycles |
+| Page table walk (4 levels) | 200-400 cycles |
+| **Coverage multiples** | |
+| 2 MB page vs 4 KB page | 512× |
+| 1 GB page vs 4 KB page | 262,144× |
