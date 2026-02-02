@@ -48,9 +48,9 @@ Refresh runs continuously. Each row must be refreshed within a retention window 
 
 ## MMU - Address Space Abstraction
 
-A process wants simple memory: a linear address space starting at zero. It does not want to know which physical RAM chips exist, which addresses are already used by other processes, or where the kernel decided to place its data. Physical memory is the hardware's concern, not the program's.
+Programs are compiled assuming a linear address space starting at zero. Without this assumption, a program would need to know the physical memory layout of the specific machine it runs on - which addresses are free, which are used by other processes, where the kernel lives. The program would not be portable. The MMU provides the abstraction that makes this assumption work: each process gets its own virtual address space, mapped onto physical RAM at runtime.
 
-The MMU (Memory Management Unit) provides this abstraction. It intercepts every memory access—every load, store, and instruction fetch—and translates the virtual address the process uses into a physical address that reaches RAM. Every single memory access goes through this translation. A program running at 3 GHz might issue billions of memory accesses per second, each one translated by the MMU.
+The MMU (Memory Management Unit) implements this abstraction. It intercepts every memory access—every load, store, and instruction fetch—and translates the virtual address the process uses into a physical address that reaches RAM. Every single memory access goes through this translation. A program running at 3 GHz might issue billions of memory accesses per second, each one translated by the MMU.
 
 ```
 Process ──► virtual address 0x1000 ──► MMU ──► physical address 0x50000 ──► RAM
