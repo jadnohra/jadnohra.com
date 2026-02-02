@@ -286,25 +286,13 @@ Miss in both triggers a page table walk.
 
 ---
 
-## Page Faults and Protection
+## Page Faults
 
 When the MMU cannot complete a translation, it raises an exception called a page fault. The CPU saves the faulting address in a register, stops the current instruction, and jumps to a handler in the kernel.
 
 Translation can fail for two reasons. The page might not be mapped: the page table has no entry for that address. Or the access might violate permissions: the page is mapped but marked read-only and the instruction writes, or the page is marked kernel-only and user code attempts access.
 
-The kernel examines the faulting address and the reason for the fault, then decides how to proceed. An unmapped address in user code typically terminates the process. A page marked "not present" might trigger allocation or loading from disk.
-
-The same mechanism that translates addresses also enforces protection. Each page table entry contains permission bits controlling read, write, execute, and user access. The MMU checks these bits on every access. A violation faults to the kernel.
-
-Protection follows from the structure of translation.
-
-**No mapping means no access.** If the kernel does not create a mapping for an address, the process cannot reach it. There is no separate access control system. Protection is the absence of a mapping.
-
-**Each process has its own page table.** Process A cannot name an address that reaches process B's memory. They exist in separate address spaces, so isolation is structural.
-
-**The kernel builds all page tables.** User code cannot modify its own mappings. The kernel decides what each process can see.
-
-**Devices are absent from user page tables.** Device addresses exist in physical space. The kernel does not map them for user processes. User code cannot access device addresses because no mapping exists.
+The kernel examines the faulting address and the reason for the fault, then decides how to proceed. An unmapped address in user code typically terminates the process. A page marked "not present" might trigger allocation or loading from disk. The next section explains how the kernel uses faults for memory management.
 
 ```
 MMU lookup fails
@@ -327,15 +315,7 @@ MMU lookup fails
 └─────────────────────────────────────────┘
 ```
 
-The kernel uses faults to implement memory management techniques.
-
-**Lazy allocation** delays physical memory allocation until first access. The kernel marks pages "not present" initially. When the process touches a page, the fault handler allocates physical memory, updates the page table, and resumes execution. The process is unaware.
-
-**Lazy copying** makes process creation efficient. When a process forks, the child receives the same page table with all pages marked read-only. When either process writes, the fault handler copies that page, updates both page tables, and resumes. Most forked processes call exec() immediately, so most pages are never copied.
-
-**Disk overflow** extends memory onto disk. When RAM fills, the kernel picks a page, writes it to disk, and marks it "not present". The physical page can now hold other data. When the evicted page is accessed, the fault handler loads it back from disk. Disk is roughly 100,000 times slower than RAM.
-
-**Jargon:** *Page fault*: exception raised when translation fails. *Protection fault*: exception raised when permissions are violated. *Lazy allocation*: allocating physical memory on first access. *Copy-on-write*: sharing pages until written, then copying. *Swapping*: moving pages between RAM and disk.
+**Jargon:** *Page fault*: exception raised when translation fails. *Protection fault*: exception raised when permissions are violated.
 
 ---
 
@@ -367,7 +347,9 @@ The physical page number provides translation. The flags control access and enab
 
 **The user bit.** When clear, user-mode access faults. Kernel memory is mapped into every process's address space for efficiency during system calls, but marked supervisor-only. User code cannot read kernel memory even though the mapping exists in the page table.
 
-**Isolation from structure.** Each process has its own page table. Process A's address 0x5000 maps to physical 0x80000. Process B's address 0x5000 maps to physical 0x90000. Neither process can name an address that reaches the other's memory. The address does not exist in their view of memory.
+**Isolation from separate page tables.** Each process has its own page table. Process A's address 0x5000 maps to physical 0x80000. Process B's address 0x5000 maps to physical 0x90000. Neither process can name an address that reaches the other's memory. The address does not exist in their view of memory. Isolation is structural.
+
+**Protection from absence.** If the kernel does not create a mapping for an address, the process cannot reach it. There is no separate access control system. Device addresses exist in physical space, but the kernel does not map them for user processes. User code cannot access devices because no mapping exists.
 
 **Sharing without duplication.** The C library is loaded once in physical RAM. The kernel maps it into every process's address space with read and execute permission. Thousands of processes share one copy. Write permission is not granted, so no process can corrupt it.
 
@@ -377,7 +359,7 @@ The abstraction presented to processes is simple linear memory starting at zero.
 
 **History:** The Atlas computer (1962) introduced the present bit for demand paging, loading pages from drum storage on first access. Unix added copy-on-write to fork() in the 1970s, though early implementations varied. The user/supervisor bit dates to the same era, separating kernel and user memory. The execute-disable bit came later. AMD added it to x86-64 in 2004 as the NX (No-Execute) bit. Intel followed with the XD (Execute Disable) bit. Before this, x86 could not distinguish readable pages from executable pages, and stack-based code injection attacks were common.
 
-**Jargon:** *PTE*: Page Table Entry. *Demand paging*: loading pages into RAM only when accessed. *COW*: Copy-on-write. *NX bit*: No-Execute bit, AMD's name. *XD bit*: Execute Disable bit, Intel's name. *W^X*: Write XOR Execute, a security policy where pages are writable or executable but not both.
+**Jargon:** *PTE*: Page Table Entry. *Demand paging*: loading pages into RAM only when accessed. *COW*: Copy-on-write. *NX bit*: No-Execute bit, AMD's name. *XD bit*: Execute Disable bit, Intel's name. *W^X*: Write XOR Execute, a security policy where pages are writable or executable but not both. *Lazy allocation*: allocating physical memory on first access. *Swapping*: moving pages between RAM and disk.
 
 | Problem | Mechanism |
 |---------|-----------|
