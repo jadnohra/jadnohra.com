@@ -14,9 +14,9 @@ RAM chips are complex. They organize storage into rows and columns, require peri
 
 Programs are compiled assuming a linear address space starting at zero. Without this assumption, a program would need to know the physical memory layout of the machine it runs on, including which addresses are free, which are used by other processes, and where the operating system lives. The program would not be portable. A component called the MMU (Memory Management Unit) provides the abstraction that makes this assumption work. It translates every address a program issues into a physical address in RAM. The program sees simple linear memory. The MMU handles the mapping to physical reality. As a side effect, multiple programs can run simultaneously, each seeing its own private address space.
 
-The MMU translates every memory access, including loads, stores, and instruction fetches. Translation granularity matters. Translating each byte individually would require trillions of entries. Instead, memory is divided into pages, aligned chunks of four kilobytes. One entry covers one page. An address splits into two parts: which page, and which byte within the page. The MMU translates the page number. The byte offset passes through unchanged.
+The MMU translates every memory access, including loads, stores, and instruction fetches. Translation granularity matters. Translating each byte individually would require trillions of entries. Instead, memory is divided into pages, aligned chunks of 4096 bytes. One entry covers one page. An address splits into two parts: which page, and which byte within the page. The MMU translates the page number. The byte offset passes through unchanged.
 
-The translation data is called a page table. It lives in RAM. A simple array mapping all possible pages would cost hundreds of gigabytes per process. Programs use thousands of pages out of billions possible, so the page table is stored as a tree that allocates nodes only where mappings exist. A typical process needs a few hundred kilobytes of page table.
+The translation data is called a page table. It lives in RAM. A simple array mapping all possible pages would cost 512 GB per process. Programs use thousands of pages out of billions possible, so the page table is stored as a tree that allocates nodes only where mappings exist. A typical process needs a few hundred KB of page table.
 
 Translating an address means walking this tree in RAM, which costs multiple memory accesses. A cache called the TLB (Translation Lookaside Buffer) stores recent translations on the CPU chip, reducing repeated walks to a single-cycle lookup. Programs access the same pages repeatedly, so the cache hits most of the time.
 
@@ -27,8 +27,6 @@ Not all physical addresses are RAM. Some addresses reach devices: network cards,
 Devices that move bulk data do not use the CPU as intermediary. A network card receiving packets writes them directly to RAM. The CPU tells the device where to write and how much. The device handles the transfer and signals when done. This is called DMA (Direct Memory Access).
 
 A device with direct RAM access could read or write anywhere, including operating system memory. A component called the IOMMU restricts this. It translates device addresses the same way the MMU translates CPU addresses. Each device sees a limited view of memory. The operating system controls what each device can access.
-
-The architecture repeats a pattern. Each layer hides complexity behind a simpler interface. Caches hide latency. Sparse structures grow with actual usage rather than reserving space for every possibility. Each layer translates addresses and restricts access. The CPU issues virtual addresses. The MMU translates them. The bus routes them. Devices see restricted views. RAM sees physical addresses.
 
 ---
 
@@ -282,11 +280,25 @@ Miss in both triggers a page table walk.
 
 ---
 
-## Page Faults
+## Page Faults and Protection
 
-When the MMU cannot complete a translation, it raises an exception called a page fault. The CPU saves the faulting address in a register called CR2 and traps to the kernel.
+When the MMU cannot complete a translation, it raises an exception called a page fault. The CPU saves the faulting address in a register, stops the current instruction, and jumps to a handler in the kernel.
 
-**How it works:** The MMU has an output line for exceptions. When a lookup fails (page not present) or permission check fails (user accessing supervisor page, write to read-only), the MMU asserts this line instead of completing the access.
+Translation can fail for two reasons. The page might not be mapped: the page table has no entry for that address. Or the access might violate permissions: the page is mapped but marked read-only and the instruction writes, or the page is marked kernel-only and user code attempts access.
+
+The kernel examines the faulting address and the reason for the fault, then decides how to proceed. An unmapped address in user code typically terminates the process. A page marked "not present" might trigger allocation or loading from disk.
+
+The same mechanism that translates addresses also enforces protection. Each page table entry contains permission bits controlling read, write, execute, and user access. The MMU checks these bits on every access. A violation faults to the kernel.
+
+Protection follows from the structure of translation.
+
+**No mapping means no access.** If the kernel does not create a mapping for an address, the process cannot reach it. There is no separate access control system. Protection is the absence of a mapping.
+
+**Each process has its own page table.** Process A cannot name an address that reaches process B's memory. They exist in separate address spaces, so isolation is structural.
+
+**The kernel builds all page tables.** User code cannot modify its own mappings. The kernel decides what each process can see.
+
+**Devices are absent from user page tables.** Device addresses exist in physical space. The kernel does not map them for user processes. User code cannot access device addresses because no mapping exists.
 
 ```
 MMU lookup fails
@@ -295,62 +307,84 @@ MMU lookup fails
 ┌─────────────────────────────────────────┐
 │ MMU raises exception:                   │
 │   1. Block the memory access            │
-│   2. Store faulting address in CR2      │
-│   3. Assert interrupt line              │
+│   2. Store faulting address in register │
+│   3. Jump to kernel handler             │
 └────────────────────┬────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────┐
-│ CPU sees interrupt:                     │
-│   1. Save current state                 │
-│   2. Switch to ring 0                   │
-│   3. Jump to fault handler (from IDT)   │
+│ Kernel examines fault:                  │
+│   - Unmapped address → terminate        │
+│   - Permission violation → terminate    │
+│   - Lazy allocation → allocate, resume  │
+│   - Swapped page → load from disk       │
 └─────────────────────────────────────────┘
 ```
 
-The kernel examines CR2 (faulting address) and the error code (why it faulted) and decides how to proceed. A reference to an unmapped address in user code typically terminates the process with a segmentation fault. A reference to a page marked "not present" may trigger allocation or loading from disk.
+The kernel uses faults to implement memory management techniques.
 
-## Kernel Techniques
+**Lazy allocation** delays physical memory allocation until first access. The kernel marks pages "not present" initially. When the process touches a page, the fault handler allocates physical memory, updates the page table, and resumes execution. The process is unaware.
 
-The kernel configures the MMU, so programs do not need to know about physical addresses or page tables. What leaks through are page faults and timing. Programs see segfaults when they access invalid memory. Mapped and unmapped access times differ measurably.
+**Lazy copying** makes process creation efficient. When a process forks, the child receives the same page table with all pages marked read-only. When either process writes, the fault handler copies that page, updates both page tables, and resumes. Most forked processes call exec() immediately, so most pages are never copied.
 
-Page faults enable several memory management techniques.
+**Disk overflow** extends memory onto disk. When RAM fills, the kernel picks a page, writes it to disk, and marks it "not present". The physical page can now hold other data. When the evicted page is accessed, the fault handler loads it back from disk. Disk is roughly 100,000 times slower than RAM.
 
-**Lazy allocation** delays physical memory allocation until first access.
+**Jargon:** *Page fault*: exception raised when translation fails. *Protection fault*: exception raised when permissions are violated. *Lazy allocation*: allocating physical memory on first access. *Copy-on-write*: sharing pages until written, then copying. *Swapping*: moving pages between RAM and disk.
 
-```
-1. Process starts. Pages marked "not present" in table.
-2. Process accesses 0x1000.
-3. Page fault.
-4. Kernel allocates physical page, updates table, restarts instruction.
-5. Process continues, unaware.
-```
+---
 
-Most programs do not use all their memory. Lazy allocation allocates only what is touched.
+## Page Table Entry Design
 
-**Lazy copying** makes fork efficient.
+Address translation requires a mapping from virtual pages to physical pages. Protection requires permission checks. Isolation requires separate address spaces. Memory optimization requires a way to defer allocation and track usage. These could be separate mechanisms. One structure handles all of them: the page table entry.
+
+Each entry contains a physical page number and a few single-bit flags.
 
 ```
-1. Fork: child gets same page table, pages marked read-only.
-2. Either process writes.
-3. Page fault (write to read-only).
-4. Kernel copies just that page, updates tables, restarts.
-5. Process continues, unaware.
+┌─────────────────┬─────────┬───────┬─────────┬──────┐
+│ physical page   │ present │ write │ execute │ user │
+└─────────────────┴─────────┴───────┴─────────┴──────┘
 ```
 
-Most forked processes call exec() immediately. Lazy copying copies nothing until needed.
+The physical page number provides translation. The flags control access and enable optimizations.
 
-**Disk overflow** extends physical memory onto disk.
+**The present bit.** When set, the mapping is active. When clear, access faults. The kernel uses this bit to implement three different optimizations.
 
-```
-1. RAM full, need a page.
-2. Pick a victim page, write to disk.
-3. Mark victim's entry "not present".
-4. Use freed physical page.
-5. Later: victim accessed, page fault, load from disk.
-```
+*Lazy allocation.* A process allocates 1GB of memory. The kernel creates page table entries but marks them not present. No physical RAM is used yet. The process touches one page. The access faults. The kernel allocates 4KB of physical RAM, marks that entry present, and resumes execution. The process allocated 1GB but uses only what it touches.
 
-Disk overflow allows more programs to run than fit in RAM. The cost is substantial. Disk access is roughly 100,000 times slower than RAM. Overcommitting memory leads to thrashing.
+*Copy-on-write.* A process with 1000 pages forks. The kernel gives the child a copy of the page table and marks all pages read-only in both. No pages are copied yet. The child writes to one page. The write faults because the page is read-only. The kernel copies that one page, gives each process its own copy, marks both writable, and resumes. The other 999 pages remain shared.
+
+*Swap.* RAM fills up. The kernel picks a page, writes it to disk, and marks it not present. The physical RAM is now free for other use. Later, the process accesses that page. The access faults. The kernel loads the page from disk, marks it present, and resumes. The process sees more memory than physically exists.
+
+**The write bit.** When clear, writes fault. The kernel uses this for copy-on-write as described above. It also protects code from accidental corruption. Program code is mapped read-only. A bug that writes to code addresses faults instead of corrupting the program.
+
+**The execute bit.** When clear, instruction fetch faults. Stack and heap are mapped non-executable. An attacker who injects code into a buffer cannot execute it. Jumping to that address faults.
+
+**The user bit.** When clear, user-mode access faults. Kernel memory is mapped into every process's address space for efficiency during system calls, but marked supervisor-only. User code cannot read kernel memory even though the mapping exists in the page table.
+
+**Isolation from structure.** Each process has its own page table. Process A's address 0x5000 maps to physical 0x80000. Process B's address 0x5000 maps to physical 0x90000. Neither process can name an address that reaches the other's memory. The address does not exist in their view of memory.
+
+**Sharing without duplication.** The C library is loaded once in physical RAM. The kernel maps it into every process's address space with read and execute permission. Thousands of processes share one copy. Write permission is not granted, so no process can corrupt it.
+
+The MMU checks every memory access against these bits. The check happens in hardware, adding no software overhead. The kernel sets the bits. The MMU enforces them. One structure enables translation, isolation, protection, and memory optimization.
+
+The abstraction presented to processes is simple linear memory starting at zero. Faults are the leak. An invalid access terminates the process. A lazy-allocated page takes longer on first touch. A swapped page takes milliseconds to access instead of nanoseconds. The kernel hides most faults by handling them and resuming, but timing differences remain observable.
+
+**History:** The Atlas computer (1962) introduced the present bit for demand paging, loading pages from drum storage on first access. Unix added copy-on-write to fork() in the 1970s, though early implementations varied. The user/supervisor bit dates to the same era, separating kernel and user memory. The execute-disable bit came later. AMD added it to x86-64 in 2004 as the NX (No-Execute) bit. Intel followed with the XD (Execute Disable) bit. Before this, x86 could not distinguish readable pages from executable pages, and stack-based code injection attacks were common.
+
+**Jargon:** *PTE*: Page Table Entry. *Demand paging*: loading pages into RAM only when accessed. *COW*: Copy-on-write. *NX bit*: No-Execute bit, AMD's name. *XD bit*: Execute Disable bit, Intel's name. *W^X*: Write XOR Execute, a security policy where pages are writable or executable but not both.
+
+| Problem | Mechanism |
+|---------|-----------|
+| Programs need portable memory model | Physical page field translates addresses |
+| Programs could corrupt each other | Separate page tables isolate address spaces |
+| Programs could corrupt kernel | User bit restricts access to kernel pages |
+| Bugs could overwrite code | Write bit protects code pages |
+| Attackers could execute injected data | Execute bit prevents stack/heap execution |
+| Allocating unused memory wastes RAM | Present bit enables lazy allocation |
+| Copying all memory on fork is slow | Write bit enables copy-on-write |
+| RAM is finite | Present bit enables swap to disk |
+
+---
 
 ## Devices
 
