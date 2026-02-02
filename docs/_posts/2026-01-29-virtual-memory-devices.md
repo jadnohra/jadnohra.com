@@ -6,6 +6,32 @@ tags: [linux, memory, virtual-memory, mmu, dma, iommu, devices]
 toc: true
 ---
 
+## Overview
+
+A CPU reads and writes memory by issuing addresses. RAM chips store the data. The path between them is not direct.
+
+RAM chips are complex. They organize storage into rows and columns, require periodic refresh, and impose timing constraints between operations. A component called the memory controller handles this protocol and presents a simpler interface to the CPU: issue an address, receive data.
+
+Programs are compiled assuming a linear address space starting at zero. Without this assumption, a program would need to know the physical memory layout of the machine it runs on, including which addresses are free, which are used by other processes, and where the operating system lives. The program would not be portable. A component called the MMU (Memory Management Unit) provides the abstraction that makes this assumption work. It translates every address a program issues into a physical address in RAM. The program sees simple linear memory. The MMU handles the mapping to physical reality. As a side effect, multiple programs can run simultaneously, each seeing its own private address space.
+
+The MMU translates every memory access, including loads, stores, and instruction fetches. Translation granularity matters. Translating each byte individually would require trillions of entries. Instead, memory is divided into pages, aligned chunks of 4096 bytes. One entry covers one page. An address splits into two parts: which page, and which byte within the page. The MMU translates the page number. The byte offset passes through unchanged.
+
+The translation data is called a page table. It lives in RAM. A simple array mapping all possible pages would cost 512 GB per process. Programs use thousands of pages out of billions possible, so the page table is stored as a tree that allocates nodes only where mappings exist. A typical process needs a few hundred KB of page table.
+
+Translating an address means walking this tree in RAM, which costs multiple memory accesses. A cache called the TLB (Translation Lookaside Buffer) stores recent translations on the CPU chip, reducing repeated walks to a single-cycle lookup. Programs access the same pages repeatedly, so the cache hits most of the time.
+
+Sometimes translation fails. The page might not be mapped, or the access might violate permissions. The CPU stops and asks the operating system what to do. The OS uses these faults to implement useful tricks: allocating memory only when first touched, copying pages only when written, and moving unused pages to disk when RAM fills up.
+
+Not all physical addresses are RAM. Some addresses reach devices: network cards, disks, graphics chips. The address bus routes each address to the right destination based on address ranges. A write to one address stores data in RAM. A write to another address sends a command to a device. This is called memory-mapped I/O.
+
+Devices that move bulk data do not use the CPU as intermediary. A network card receiving packets writes them directly to RAM. The CPU tells the device where to write and how much. The device handles the transfer and signals when done. This is called DMA (Direct Memory Access).
+
+A device with direct RAM access could read or write anywhere, including operating system memory. A component called the IOMMU restricts this. It translates device addresses the same way the MMU translates CPU addresses. Each device sees a limited view of memory. The operating system controls what each device can access.
+
+The architecture repeats a pattern. Each layer hides complexity behind a simpler interface. Caches hide latency. Sparse structures grow with actual usage rather than reserving space for every possibility. Each layer translates addresses and restricts access. The CPU issues virtual addresses. The MMU translates them. The bus routes them. Devices see restricted views. RAM sees physical addresses.
+
+---
+
 ## Memory Controller - RAM Protocol Abstraction
 
 A CPU reads and writes values at addresses. RAM stores the values, but the protocol for accessing DRAM is complex. DRAM chips organize storage into rows and columns, require periodic refresh to retain data, and impose timing constraints between operations. A CPU cannot issue raw addresses and expect data back.
