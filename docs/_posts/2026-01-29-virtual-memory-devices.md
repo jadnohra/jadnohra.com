@@ -80,7 +80,7 @@ The MMU (Memory Management Unit) provides the abstraction that makes this assump
 Process ──► virtual address 0x1000 ──► MMU ──► physical address 0x50000 ──► RAM
 ```
 
-The process issues address 0x1000. The MMU translates it to physical 0x50000.
+The process issues address 0x1000. The MMU translates it to physical 0x50000. The process never sees 0x50000—it only knows about its own virtual addresses.
 
 This also enables isolation. Two processes can both use virtual address 0x1000. The MMU gives each its own mapping:
 
@@ -89,7 +89,7 @@ Process A (0x1000) ──► MMU ──► Physical 0x50000
 Process B (0x1000) ──► MMU ──► Physical 0x80000
 ```
 
-Each process sees a private linear address space.
+Each process sees a private linear address space. The MMU multiplexes them onto physical RAM.
 
 **Details:** The MMU maintains a mapping from virtual addresses to physical addresses. This mapping lives in a page table, a data structure stored in RAM. Each process has its own page table, defining its own address space.
 
@@ -111,7 +111,7 @@ Because the MMU sits in the path of every memory access, translation speed matte
 
 The MMU translates virtual addresses to physical addresses. Per-byte mapping would give every virtual address its own entry specifying its physical address. A 48-bit address space has 2^48 addresses. The mapping metadata would exceed the memory it describes.
 
-Pages are the unit of translation. A page is an aligned chunk of contiguous bytes, typically four kilobytes. One page table entry covers an entire page. The mapping metadata shrinks by a factor of thousands.
+Pages are the unit of translation. A page is an aligned chunk of contiguous bytes. A 4KB page contains 4096 bytes. One page table entry covers all 4096. The mapping metadata shrinks by a factor of 4096.
 
 Page size determines address structure. A virtual address splits into two parts:
 
@@ -123,12 +123,18 @@ Virtual address (48 bits):
 └────────────────────────────────┴──────────────┘
 ```
 
-The split follows from page size. Four kilobytes is 2^12 bytes, so 12 bits for the offset, 36 bits for the page number.
+The split follows from page size:
+- Page size = 4KB = 2^12 bytes
+- 12 bits address any byte within a page (0 to 4095)
+- Low 12 bits = offset within the page
+- Remaining 36 bits = which page
 
 The MMU translates only the page number. The offset passes through unchanged. If virtual page 5 maps to physical page 0x50, then:
 - Virtual 0x5000 → Physical 0x50000
 - Virtual 0x5001 → Physical 0x50001
 - Virtual 0x5FFF → Physical 0x50FFF
+
+All addresses within the page follow the same translation, differing only in offset.
 
 ```
 Virtual:  [    page number    |   offset   ]
