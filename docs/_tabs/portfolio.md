@@ -83,15 +83,10 @@ Interactive visualization of connections between career, projects, algorithms, a
 
 ## Projects
 
-- **Feb 2026 - [ThatSlop](https://www.thatslop.com/)** — AI content detector browser extension
-  - Detects AI-generated posts on LinkedIn and Twitter/X. Chrome/Firefox extension.
-  <div class="thumb-strip"><img src="/assets/img/portfolio/thatslop-float-panel.png"></div>
-  - <span class="algo">Tech: JavaScript, Browser Extension APIs.</span>
-
-- **Dec 2025 - [ELIZA2](https://eliza2.ai/)** — Modern recreation of Weizenbaum's 1966 chatbot
-  - Web-based reimagining of the classic ELIZA psychotherapist chatbot.
-  <div class="thumb-strip"><img src="/assets/img/portfolio/eliza2-screenshot.png"></div>
-  - <span class="algo">Tech: Python, JavaScript. Classical AI.</span>
+- **Mini Projects**
+  - **Feb 2026 - [ThatSlop](https://www.thatslop.com/)** — AI content detector for LinkedIn/Twitter. Chrome/Firefox extension. <span class="algo">JavaScript.</span>
+  - **Dec 2025 - [ELIZA2](https://eliza2.ai/)** — Modern recreation of Weizenbaum's 1966 chatbot. <span class="algo">Python, Classical AI.</span>
+  <div class="thumb-strip"><img src="/assets/img/portfolio/thatslop-float-panel.png"><img src="/assets/img/portfolio/eliza2-screenshot.png"></div>
 
 - **2024-2025 - Linerate ZK Hardware Acceleration**
   - Hardware acceleration framework for zero-knowledge proof systems. Designed unified API supporting emulated (CPU), verilated (RTL simulation), and FPGA device execution modes. Implemented emulated mode and core interfaces; led architecture decisions for team-developed verilated and FPGA modes.
