@@ -88,6 +88,11 @@ Interactive visualization of connections between career, projects, algorithms, a
   <div class="thumb-strip"><img src="/assets/img/portfolio/thatslop-float-panel.png"></div>
   - <span class="algo">Tech: JavaScript, Browser Extension APIs.</span>
 
+- **Dec 2025 - [ELIZA2](https://eliza2.ai/)** — Modern recreation of Weizenbaum's 1966 chatbot
+  - Web-based reimagining of the classic ELIZA psychotherapist chatbot.
+  <div class="thumb-strip"><img src="/assets/img/portfolio/eliza2-screenshot.png"></div>
+  - <span class="algo">Tech: Python, JavaScript. Classical AI.</span>
+
 - **2024-2025 - Linerate ZK Hardware Acceleration**
   - Hardware acceleration framework for zero-knowledge proof systems. Designed unified API supporting emulated (CPU), verilated (RTL simulation), and FPGA device execution modes. Implemented emulated mode and core interfaces; led architecture decisions for team-developed verilated and FPGA modes.
   - **Three-Mode Architecture:** Designed unified device abstraction across emulated (pure software), verilated ([Verilator](https://en.wikipedia.org/wiki/Verilator) RTL simulation), and FPGA hardware. Implemented emulated mode; led team on verilated and FPGA modes. Single codebase. Hardware-software co-design enabling algorithm development on CPU, cycle-accurate validation on Verilator, deployment on FPGA.
