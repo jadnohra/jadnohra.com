@@ -83,6 +83,11 @@ Interactive visualization of connections between career, projects, algorithms, a
 
 ## Projects
 
+- **Feb 2026 - [ThatSlop](https://www.thatslop.com/)** — AI content detector browser extension
+  - Detects AI-generated posts on LinkedIn and Twitter/X. Chrome/Firefox extension.
+  <div class="thumb-strip"><img src="/assets/img/portfolio/thatslop-float-panel.png"></div>
+  - <span class="algo">Tech: JavaScript, Browser Extension APIs.</span>
+
 - **2024-2025 - Linerate ZK Hardware Acceleration**
   - Hardware acceleration framework for zero-knowledge proof systems. Designed unified API supporting emulated (CPU), verilated (RTL simulation), and FPGA device execution modes. Implemented emulated mode and core interfaces; led architecture decisions for team-developed verilated and FPGA modes.
   - **Three-Mode Architecture:** Designed unified device abstraction across emulated (pure software), verilated ([Verilator](https://en.wikipedia.org/wiki/Verilator) RTL simulation), and FPGA hardware. Implemented emulated mode; led team on verilated and FPGA modes. Single codebase. Hardware-software co-design enabling algorithm development on CPU, cycle-accurate validation on Verilator, deployment on FPGA.
