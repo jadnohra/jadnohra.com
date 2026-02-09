@@ -1,0 +1,1011 @@
+---
+layout: none
+permalink: /music/
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slow Techno Production Bible</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a2e;
+    --bg2: #0d0d3a;
+    --bg3: #141450;
+    --accent: #ff2a2a;
+    --accent2: #e01e1e;
+    --accent-dim: #ff2a2a22;
+    --text: #b0b8e8;
+    --text-dim: #6a72a8;
+    --text-bright: #e8ecff;
+    --border: #1e1e5a;
+    --kick: #ff2a2a;
+    --bass: #3df53d;
+    --sat: #ff4444;
+    --dyn: #3df53d;
+    --groove: #ff5555;
+    --arr: #5566ff;
+    --reverb: #7755ff;
+    --freq: #ff3333;
+    --between: #3df53d;
+    --harmony: #ff6666;
+    --signal: #8888cc;
+    --phil: #ff2a2a;
+    --warmth: #ff4444;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    line-height: 1.7;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; gap: 8px;
+    overflow-x: auto; padding: 12px 0;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-dot {
+    flex-shrink: 0;
+    font-size: 11px; font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 5px 12px; border-radius: 20px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-dot:hover { color: var(--text-bright); border-color: var(--border); cursor: pointer; }
+
+  /* HERO */
+  .hero {
+    padding: 140px 24px 80px;
+    text-align: center;
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, #ff2a2a10, transparent);
+  }
+  .hero-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(32px, 6vw, 58px);
+    font-weight: 700; color: var(--text-bright);
+    line-height: 1.1; margin-bottom: 20px;
+    letter-spacing: -0.02em;
+  }
+  .hero p {
+    max-width: 640px; margin: 0 auto;
+    color: var(--text-dim); font-size: 16px; line-height: 1.8;
+  }
+  .hero-meta {
+    margin-top: 40px; display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+  }
+  .hero-meta span {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px; color: var(--text-dim); letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .hero-meta strong { color: var(--text); }
+
+  /* SECTIONS */
+  .content { max-width: 800px; margin: 0 auto; padding: 0 24px 120px; }
+
+  .section {
+    padding-top: 80px;
+    margin-bottom: 60px;
+    border-top: 1px solid var(--border);
+  }
+  .section:first-child { border-top: none; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 10px;
+  }
+  .section-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .section-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .section h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(22px, 3.5vw, 30px);
+    font-weight: 600; color: var(--text-bright);
+    line-height: 1.25; margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .section-subtitle {
+    color: var(--text-dim); font-size: 15px;
+    margin-bottom: 32px; line-height: 1.6;
+  }
+
+  .section h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 17px; font-weight: 600; color: var(--text-bright);
+    margin: 36px 0 12px; letter-spacing: -0.005em;
+  }
+
+  .section p { margin-bottom: 16px; }
+
+  strong, b { color: var(--text-bright); font-weight: 500; }
+
+  /* CALLOUT BOXES */
+  .callout {
+    background: var(--bg2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  .callout.tip { border-left-color: var(--dyn); }
+  .callout.warn { border-left-color: var(--sat); }
+  .callout.key { border-left-color: var(--kick); }
+  .callout p { margin-bottom: 8px; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* TABLES */
+  .table-wrap {
+    overflow-x: auto; margin: 20px 0;
+    border: 1px solid var(--border); border-radius: 8px;
+  }
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: left; padding: 10px 16px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #1e1e30;
+    color: var(--text);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  /* PATCH BLOCKS */
+  .patch {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  .patch-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .patch-row {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;
+  }
+  .patch-label {
+    color: var(--text-dim); min-width: 90px; flex-shrink: 0;
+    font-size: 13px;
+  }
+  .patch-val { color: var(--text-bright); font-size: 13px; }
+
+  /* CHECKLIST */
+  .check-list { list-style: none; margin: 16px 0; }
+  .check-list li {
+    padding: 6px 0 6px 28px;
+    position: relative; font-size: 14px;
+  }
+  .check-list li::before {
+    content: '☐';
+    position: absolute; left: 0; top: 6px;
+    color: var(--accent); font-size: 15px;
+  }
+
+  /* QUOTE */
+  blockquote {
+    border-left: 2px solid var(--accent-dim);
+    padding: 4px 0 4px 20px;
+    margin: 20px 0;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+  blockquote strong { color: var(--text); }
+
+  /* INLINE CODE */
+  code {
+    background: var(--bg3);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--accent);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 60px 24px 40px;
+    border-top: 1px solid var(--border);
+    max-width: 800px; margin: 0 auto;
+  }
+  .footer p { color: var(--text-dim); font-size: 13px; }
+  .footer strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-dot" onclick="document.getElementById('kicks').scrollIntoView({behavior:'smooth'})">Kicks</span>
+    <span class="nav-dot" onclick="document.getElementById('bass').scrollIntoView({behavior:'smooth'})">Bass</span>
+    <span class="nav-dot" onclick="document.getElementById('warmth').scrollIntoView({behavior:'smooth'})">Warmth</span>
+    <span class="nav-dot" onclick="document.getElementById('dynamics').scrollIntoView({behavior:'smooth'})">Dynamics</span>
+    <span class="nav-dot" onclick="document.getElementById('groove').scrollIntoView({behavior:'smooth'})">Groove</span>
+    <span class="nav-dot" onclick="document.getElementById('arrangement').scrollIntoView({behavior:'smooth'})">Arrangement</span>
+    <span class="nav-dot" onclick="document.getElementById('reverb').scrollIntoView({behavior:'smooth'})">Reverb &amp; Space</span>
+    <span class="nav-dot" onclick="document.getElementById('frequency').scrollIntoView({behavior:'smooth'})">Frequency</span>
+    <span class="nav-dot" onclick="document.getElementById('between').scrollIntoView({behavior:'smooth'})">Between Sounds</span>
+    <span class="nav-dot" onclick="document.getElementById('harmony').scrollIntoView({behavior:'smooth'})">Harmony</span>
+    <span class="nav-dot" onclick="document.getElementById('signal').scrollIntoView({behavior:'smooth'})">Signal Chain</span>
+    <span class="nav-dot" onclick="document.getElementById('philosophy').scrollIntoView({behavior:'smooth'})">Philosophy</span>
+    <span class="nav-dot" onclick="document.getElementById('gems').scrollIntoView({behavior:'smooth'})">Pro Gems</span>
+    <span class="nav-dot" onclick="document.getElementById('gear').scrollIntoView({behavior:'smooth'})">Your Gear</span>
+    <span class="nav-dot" onclick="document.getElementById('references').scrollIntoView({behavior:'smooth'})">Listening</span>
+    <span class="nav-dot" onclick="document.getElementById('villalobos').scrollIntoView({behavior:'smooth'})">Artist Stories</span>
+    <span class="nav-dot" onclick="document.getElementById('sources').scrollIntoView({behavior:'smooth'})">Sources</span>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">The Converged Reference</div>
+  <h1>Slow Techno<br>Production Bible</h1>
+  <p>Everything that actually matters for minimal techno at 95–105 BPM. Distilled from real artists, buried forum posts, RBMA lectures, and practitioner interviews. No filler. No "experiment with." Just recipes.</p>
+  <div class="hero-meta">
+    <span>Tempo <strong>95–105 BPM</strong></span>
+    <span>Tracks <strong>≤ 8</strong></span>
+    <span>Peak <strong>-6 dBFS</strong></span>
+    <span>Philosophy <strong>Subtract</strong></span>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ==================== 1. KICKS ==================== -->
+<div class="section" id="kicks">
+  <div class="section-header">
+    <div class="section-icon" style="background:#f472b622;color:var(--kick)">◉</div>
+    <div class="section-num" style="color:var(--kick)">01</div>
+  </div>
+  <h2>Kick Design at 100 BPM</h2>
+  <p class="section-subtitle">The 909 was designed for 130 BPM. At 100, its decay is too short — 600ms of silence between hits exposes every flaw.</p>
+
+  <h3>Three-Layer Kick Architecture</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Layer</th><th>Range</th><th>Source</th><th>Role</th></tr>
+    <tr><td><strong>Sub</strong></td><td>20–120 Hz</td><td>Sine wave, LP @ 120 Hz</td><td>Weight, chest-rattle. Start at -8 dBFS.</td></tr>
+    <tr><td><strong>Body</strong></td><td>120–400 Hz</td><td>Bandpass 120–400 Hz</td><td>Felt impact, mid-punch.</td></tr>
+    <tr><td><strong>Click</strong></td><td>400 Hz+</td><td>Short noise/transient</td><td>Identity, small-speaker translation.</td></tr>
+  </table></div>
+
+  <p>At slow tempos, the sub tail can extend <strong>200–400ms</strong> without interfering with the next hit. But this also means every kick is more exposed — a poorly designed kick at 100 BPM is far more noticeable than one at 135.</p>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--kick)">Operator Kick Patch</div>
+    <div class="patch-row"><span class="patch-label">Osc A</span><span class="patch-val">Sine, fixed ~50 Hz</span></div>
+    <div class="patch-row"><span class="patch-label">Pitch Env</span><span class="patch-val">Start +48 semi, exponential decay 5–30 ms</span></div>
+    <div class="patch-row"><span class="patch-label">Osc B</span><span class="patch-val">Triangle, mid-punch, decay 135 ms</span></div>
+    <div class="patch-row"><span class="patch-label">Osc C</span><span class="patch-val">Beater click, very short decay ~57 ms</span></div>
+    <div class="patch-row"><span class="patch-label">Osc D</span><span class="patch-val">White noise, decay ~45 ms</span></div>
+    <div class="patch-row"><span class="patch-label">Filter</span><span class="patch-val">LP 12dB @ 425 Hz</span></div>
+    <div class="patch-row"><span class="patch-label">Tip</span><span class="patch-val">Offset sine phase so it doesn't start at zero — creates natural click</span></div>
+  </div>
+
+  <div class="callout key">
+    <p><strong>Tuning kicks to key is non-negotiable.</strong> Target 48–55 Hz. Pitch up a few octaves, check against your root note, pitch back down. G# at 52 Hz is a producer-recommended sweet spot.</p>
+  </div>
+
+  <h3>Frequency Zones</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Zone</th><th>Role</th><th>Action</th></tr>
+    <tr><td>40–60 Hz</td><td>Kick sub (chest-rattle)</td><td>Sine tail lives here</td></tr>
+    <tr><td>80–120 Hz</td><td>Club punch (most important)</td><td>Shape attack transient here</td></tr>
+    <tr><td>130–250 Hz</td><td>Mud / boom zone</td><td>Almost always CUT</td></tr>
+    <tr><td>3–5 kHz</td><td>Crack / attack</td><td>Subtle boost for definition</td></tr>
+  </table></div>
+
+  <h3>Phase &amp; Processing</h3>
+  <p><strong>Zoom to sample level</strong> — ensure zero-crossings align between layers. Use polarity flip to test. Fade the kick tail rather than relying solely on amp decay — use the filter envelope to close the LP as the kick decays. Add saturation <em>before</em> final EQ to gently tame transients.</p>
+</div>
+
+<!-- ==================== 2. BASS ==================== -->
+<div class="section" id="bass">
+  <div class="section-header">
+    <div class="section-icon" style="background:#ff2a2a18;color:var(--kick)">◈</div>
+    <div class="section-num" style="color:var(--bass)">02</div>
+  </div>
+  <h2>Bass as Lead</h2>
+  <p class="section-subtitle">In minimal techno, bass and lead are rarely separate. The filter cutoff is your instrument — closed it's sub, open it's a lead.</p>
+
+  <p>Surgeon literally split the same synth into two mixer channels — one EQ'd for bass, the other delayed by a quarter bar with swept midrange EQ — then performed arrangement by dubbing faders up and down. <strong>The bass and lead were the same sound, differentiated only by real-time filtering.</strong></p>
+
+  <h3>Waveform Selection</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Wave</th><th>Character</th><th>Use Case</th></tr>
+    <tr><td><strong>Saw</strong></td><td>All harmonics, richest spectrum</td><td>Standard for bass-as-lead — most material for filter to sweep</td></tr>
+    <tr><td><strong>Square</strong></td><td>Odd harmonics, hollow</td><td>Classic techno bass, add PWM for movement</td></tr>
+    <tr><td><strong>Triangle</strong></td><td>Mild odd harmonics</td><td>Subtle visibility without aggression</td></tr>
+    <tr><td><strong>Sine</strong></td><td>No harmonics</td><td>Sub layer only — invisible on small speakers alone</td></tr>
+  </table></div>
+
+  <h3>The 3 Valid Kick/Bass Configurations</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Config</th><th>Kick Owns</th><th>Bass Owns</th><th>Best For</th></tr>
+    <tr><td><strong>A</strong></td><td>All sub (long tail)</td><td>Mid-bass melody only (HP @ 80 Hz)</td><td>Very sparse, 4–5 elements. Purest minimal.</td></tr>
+    <tr><td><strong>B ★</strong></td><td>Transient + short sub</td><td>Separate sine sub between kicks (sidechained) + melodic bass (HP @ 100 Hz)</td><td>Heavy slow techno. Recommended.</td></tr>
+    <tr><td><strong>C</strong></td><td>Click + punch only (HP @ 60 Hz)</td><td>Full range saw, filtered @ 400 Hz</td><td>Quick sketches, rawer sound.</td></tr>
+  </table></div>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--bass)">Repro-1 "Bass That IS the Lead"</div>
+    <div class="patch-row"><span class="patch-label">Oscillator</span><span class="patch-val">Saw</span></div>
+    <div class="patch-row"><span class="patch-label">Filter</span><span class="patch-val">24dB LP, cutoff 350 Hz, res 15%, env amount 50%</span></div>
+    <div class="patch-row"><span class="patch-label">Filter Env</span><span class="patch-val">A=0, D=1.2s, S=20%, R=300ms</span></div>
+    <div class="patch-row"><span class="patch-label">Amp Env</span><span class="patch-val">A=0, D=2s, S=40%, R=500ms</span></div>
+    <div class="patch-row"><span class="patch-label">Glide</span><span class="patch-val">ON, 40ms</span></div>
+    <div class="patch-row"><span class="patch-label">Automate</span><span class="patch-val">Cutoff 350 Hz (bass) → 1.2 kHz over 16 bars (lead) → back</span></div>
+  </div>
+
+  <div class="callout tip">
+    <p><strong>Psychoacoustic bass trick:</strong> Saturate the sub, then LP at 300 Hz. Harmonics at 100–200 Hz+ let the brain "hear" bass even on speakers that can't reproduce 50 Hz. A <strong>1–2 dB boost at 4–5 kHz</strong> on bass adds clarity that translates on phones and laptops.</p>
+  </div>
+
+  <h3>Bodzin's Technique</h3>
+  <p>Bass is "almost always very gritty" with multiband distortion (heavier on low-mids, subtler on highs). Filter cutoff is the primary performance parameter — automated alongside drive, resonance, feedback, glide, detuning, and LFO targets simultaneously. Each creates micro-variation that prevents monotony.</p>
+</div>
+
+<!-- ==================== 3. WARMTH ==================== -->
+<div class="section" id="warmth">
+  <div class="section-header">
+    <div class="section-icon" style="background:#fb923c22;color:var(--warmth)">◎</div>
+    <div class="section-num" style="color:var(--warmth)">03</div>
+  </div>
+  <h2>Warmth &amp; Saturation</h2>
+  <p class="section-subtitle">Multiple gentle stages beat one heavy stage every time. The cumulative effect of subtle processing across the chain creates cohesive analog feel.</p>
+
+  <h3>Saturation Types</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Type</th><th>Harmonics</th><th>Character</th><th>Tool</th></tr>
+    <tr><td><strong>Tube</strong></td><td>Even (2nd, 4th)</td><td>Warm, smooth, musical. Acts as gentle compressor.</td><td>Dynamic Tube, Diva/Repro internal</td></tr>
+    <tr><td><strong>Tape</strong></td><td>Odd + even</td><td>Rounds transients, glues. Slow compression behavior.</td><td>Airwindows ToTape</td></tr>
+    <tr><td><strong>Transistor</strong></td><td>Odd (3rd, 5th)</td><td>Grittier, midrange presence. Helps small speakers.</td><td>Saturator Analog Clip, Pedal OD</td></tr>
+    <tr><td><strong>Soft clip</strong></td><td>Mixed</td><td>Rounded peaks, subtle density.</td><td>Glue Compressor clipper</td></tr>
+  </table></div>
+
+  <h3>DIY "Sound Heater" Rack</h3>
+  <p>6× Dynamic Tube in series. Vary models (A/B/C), no two identical. Keep everything subtle — magic comes from stacking.</p>
+
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Model</th><th>Bias</th><th>Drive</th><th>Tone</th></tr>
+    <tr><td>1</td><td>A</td><td>~20%</td><td>~15%</td><td>0.30</td></tr>
+    <tr><td>2</td><td>B</td><td>~25%</td><td>~15%</td><td>0.35</td></tr>
+    <tr><td>3</td><td>C</td><td>~15%</td><td>~10%</td><td>0.25</td></tr>
+    <tr><td>4</td><td>A</td><td>~20%</td><td>~15%</td><td>0.40</td></tr>
+    <tr><td>5</td><td>B</td><td>~25%</td><td>~10%</td><td>0.30</td></tr>
+    <tr><td>6</td><td>C</td><td>~20%</td><td>~15%</td><td>0.35</td></tr>
+  </table></div>
+  <p>After the 6 tubes: <strong>Saturator</strong> in Sinoid Fold mode, Drive 0 dB, Dry/Wet 15–25%. Optionally add <strong>EQ Eight</strong> as gentle LP above 8–10 kHz. Map macros: Drive → all Bias knobs, Tone → all Tone knobs, Saturate → Saturator Dry/Wet.</p>
+
+  <h3>Radiator Replacement (Ableton Stock)</h3>
+  <p>Saturator in Analog Clip (drive 3–6 dB, Soft Clip on) → EQ Eight (low shelf +2 dB @ 200 Hz, high shelf -2 dB @ 6 kHz) → Dynamic Tube Model B (low drive). This approximates the Altec 1567A tube mixer that Radiator models.</p>
+
+  <h3>Noise, Hum &amp; Drift</h3>
+  <p><strong>Noise floor as composition:</strong> Layer at -30 to -20 dB — felt more than heard. Sidechain to main elements so it breathes. Use Operator (sine at 50/60 Hz + noise osc, very low) or free Izotope Vinyl.</p>
+  <p><strong>Oscillator drift:</strong> Use Diva's Voice Drift knob or Repro's built-in drift. For others: extremely slow sine LFOs (0.01–0.1 Hz) modulating pitch at 0.1–1.5% depth, different rates per oscillator. Route same modulation to resonance and filter frequency at tiny amounts.</p>
+
+  <div class="callout">
+    <p><strong>Free alternatives:</strong> Airwindows ToTape &amp; Desk, Analog Obsession CHANNEV, Klanghelm IVGI (closest to Radiator character), Softube Saturation Knob, Camel Crusher.</p>
+  </div>
+</div>
+
+<!-- ==================== 4. DYNAMICS ==================== -->
+<div class="section" id="dynamics">
+  <div class="section-header">
+    <div class="section-icon" style="background:#34d39922;color:var(--dyn)">◆</div>
+    <div class="section-num" style="color:var(--dyn)">04</div>
+  </div>
+  <h2>Hit Hard = Hit Soft</h2>
+  <p class="section-subtitle">A track at -8 LUFS with preserved dynamics physically hits harder on a Funktion-One than one crushed to -5 LUFS. The physics are real.</p>
+
+  <h3>Why This Works</h3>
+  <p><strong>Club limiters:</strong> Every club runs limiters. An already-crushed track gets crushed again, destroying transients. <strong>Speaker physics:</strong> A constantly hot signal keeps cones at high excursion, constantly distorting. Dynamic signals allow speakers to rest, producing cleaner peaks. <strong>Human hearing:</strong> The ear resets during quiet sections. No quiet = no loud.</p>
+
+  <div class="callout key">
+    <p><strong>Target a crest factor of 8–12 dB</strong> (peak minus RMS). Below 8 = over-compressed. Above 15 = transients too hot. Use saturation and soft clipping on drums to tame peaks without destroying feel.</p>
+  </div>
+
+  <h3>Gain Staging Numbers</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Stage</th><th>Level</th></tr>
+    <tr><td>Individual tracks average</td><td><strong>-18 dBFS</strong> (where analog-modeled plugins behave correctly)</td></tr>
+    <tr><td>Kick peaks</td><td><strong>-8 to -10 dBFS</strong></td></tr>
+    <tr><td>Mix bus peak</td><td><strong>-6 dBFS</strong> before mastering</td></tr>
+    <tr><td>Final master (club)</td><td><strong>-6 to -8 LUFS</strong>, true peak -1 dBTP</td></tr>
+  </table></div>
+
+  <h3>Sidechain as Architecture</h3>
+  <p>Sidechain compression is <strong>structural</strong>, not an effect. Standard: compressor on bass, sidechained from kick, 4:1, fast attack, 30ms release, 3–6 dB gain reduction. <strong>Advanced:</strong> frequency-selective sidechain — compress only below 120 Hz, leaving upper harmonics untouched. <strong>Ghost kick:</strong> muted kick drives sidechain consistently even when audible kick pattern changes.</p>
+
+  <h3>Pre-Finish Checklist</h3>
+  <ul class="check-list">
+    <li>Master peaks at -6 dB, NO limiter while producing</li>
+    <li>Kick is loudest peak by 3–6 dB</li>
+    <li>Everything below 120 Hz is mono</li>
+    <li>High-pass at 35–40 Hz on master</li>
+    <li>Kick and bass in the same key</li>
+    <li>Phase check: flip polarity on bass, keep whichever sounds fuller</li>
+    <li>Bass has harmonics above 100 Hz for small speaker translation</li>
+    <li>Sidechain creates silence before each kick</li>
+    <li>Spectrum shows energy at 50–150 Hz, not a wall of 20–60 Hz</li>
+    <li>Decided: kick owns sub OR bass owns sub — not both</li>
+  </ul>
+</div>
+
+<!-- ==================== 5. GROOVE ==================== -->
+<div class="section" id="groove">
+  <div class="section-header">
+    <div class="section-icon" style="background:#fbbf2422;color:var(--groove)">◇</div>
+    <div class="section-num" style="color:var(--groove)">05</div>
+  </div>
+  <h2>Groove &amp; Micro-Timing</h2>
+  <p class="section-subtitle">At 100 BPM, a 16th note = 150ms. The same swing percentage shifts offbeats 30% more than at 130 BPM. Use lighter values.</p>
+
+  <h3>Swing at Slow Tempos</h3>
+  <p>Most minimal techno uses <strong>1/16 swing at 50%</strong> — meaning no global swing at all. Groove comes from <strong>selective micro-timing offsets on individual hits</strong>, not a global parameter. Research confirmed: 10–30ms performer timing deviations trigger stronger physical entrainment than quantized versions.</p>
+
+  <div class="table-wrap"><table>
+    <tr><th>Offset</th><th>Effect</th></tr>
+    <tr><td>5–15 ms</td><td>Subliminal — felt but not heard</td></tr>
+    <tr><td>15–30 ms</td><td>Audible "drag" or "push" — sweet spot for groove</td></tr>
+    <tr><td>30–50 ms</td><td>Flammy, intentionally off-grid</td></tr>
+  </table></div>
+
+  <h3>Velocity Patterns</h3>
+  <p>Hi-hats: descending/ascending pattern on 16ths — <code>100, 70, 85, 60, 100, 65, 90, 55</code>. Ghost notes at velocity 20–50 on weak subdivisions. Barely audible solo'd, adds movement in context.</p>
+
+  <h3>Digitakt II Specifics</h3>
+  <p><strong>Conditional triggers:</strong> 50–70% probability on non-essential percussion. Lock essential pillars at 100%. A:B format (<code>2:4</code> = play on 2nd cycle out of 4) turns 1-bar patterns into 4 bars of variation. Combine with free-running LFOs on filter cutoff, decay, and attack for continuous humanization.</p>
+
+  <div class="callout tip">
+    <p><strong>The breathing effect:</strong> Offset bass by an 8th note (300ms) or 16th note (150ms) from the kick. Sidechain ducks bass on kick, releases to let bass swell. Kick pushes air out, bass pulls it in. Match compressor release to tempo.</p>
+  </div>
+</div>
+
+<!-- ==================== 6. ARRANGEMENT ==================== -->
+<div class="section" id="arrangement">
+  <div class="section-header">
+    <div class="section-icon" style="background:#60a5fa22;color:var(--arr)">▬</div>
+    <div class="section-num" style="color:var(--arr)">06</div>
+  </div>
+  <h2>Subtractive Arrangement</h2>
+  <p class="section-subtitle">Build your full loop with ALL elements. Fill the timeline. Then subtract — mute, remove, filter down. It's easier to hear when something is bad than to imagine something good.</p>
+
+  <h3>The 16-Bar Grid</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Interval</th><th>Change</th></tr>
+    <tr><td>Every 16 bars</td><td>Introduce or remove one element</td></tr>
+    <tr><td>Every 32 bars</td><td>Significant change (filter sweep, new melodic element)</td></tr>
+    <tr><td>Every 64 bars</td><td>Major structural shift</td></tr>
+    <tr><td>Intro / Outro</td><td>32–64 bars beat-only (DJ-friendly)</td></tr>
+  </table></div>
+
+  <h3>Typical 7-Minute Arc</h3>
+  <p><strong>0:00–1:00</strong> Sparse filtered intro · <strong>1:00–2:30</strong> Element introduction at 16-bar intervals · <strong>2:30–4:00</strong> Core groove, subtle automation · <strong>4:00–5:00</strong> Tension peak or breakdown, kick drops, filter sweep · <strong>5:00–6:00</strong> Return with full groove · <strong>6:00–7:00</strong> Gradual subtraction back to minimal state</p>
+
+  <div class="callout">
+    <p><strong>Ghost kick technique:</strong> Short sine pulse on a muted track, 4-on-the-floor, routed as sidechain input to all compressors. Your audible kick can syncopate, drop out, change pitch — the pumping stays constant. Your arrangement changes but the physics of the mix don't.</p>
+  </div>
+
+  <h3>The Rule of Never More Than 5</h3>
+  <p>Never have more than 5 elements playing simultaneously. If you open a 9th track, delete one. One automation per track maximum. Filter cutoff on the bass = your "movement." The track should feel like it's always about to lose something, not gain something.</p>
+</div>
+
+<!-- ==================== 7. REVERB ==================== -->
+<div class="section" id="reverb">
+  <div class="section-header">
+    <div class="section-icon" style="background:#a78bfa22;color:var(--reverb)">◌</div>
+    <div class="section-num" style="color:var(--reverb)">07</div>
+  </div>
+  <h2>Reverb &amp; Space</h2>
+  <p class="section-subtitle">Villalobos: "Dry recordings are timeless, and reverb recordings are always fixed to the time of a technology."</p>
+
+  <p>Hood brought Minimal Nation to mastering completely dry. The spatial dimension that defined the album came at the very end, applied by someone with fresh ears. <strong>Keep things dry by default. Add reverb with extreme intention.</strong></p>
+
+  <h3>Reverb Return Processing</h3>
+  <p>High-pass return at <strong>200–600 Hz</strong> (prevents mud). Low-pass at <strong>4–8 kHz</strong> (prevents metallic harshness). Sidechain return to dry signal — reverb ducks when source plays, blooms in gaps. Pre-delay synced to <code>1/64</code> or <code>1/32</code> preserves transient clarity.</p>
+
+  <div class="table-wrap"><table>
+    <tr><th>Source</th><th>Decay Time</th></tr>
+    <tr><td>Percussion</td><td>150–300 ms (1/16 to 1/8 note — dies before next hit)</td></tr>
+    <tr><td>Stabs / Chords</td><td>600–1200 ms</td></tr>
+    <tr><td>Atmosphere</td><td>2000–4000 ms, automated</td></tr>
+  </table></div>
+
+  <h3>Dub Delay as Composition</h3>
+  <p>Delay → EQ → reverb → saturation. Remove lows for thin dubby character, remove highs for lo-fi. <strong>Placing saturation after delay and reverb mimics redlining the channel on an analog mixer</strong> — where classic dub techno warmth actually comes from. Feed ONE hit, delay creates rhythmic pattern. Automate feedback 60–70% for 8 bars, then pull back.</p>
+
+  <h3>Width Rules</h3>
+  <p>Kick + bass: <strong>100% mono, center, dry. Always.</strong> Hats/percussion: slight stereo, subtle delay sends. Pads: wider, reverb sends, but roll off reverb below 200 Hz. Put warmth chain AFTER reverb on return track — makes reverb sound vintage instead of digital.</p>
+</div>
+
+<!-- ==================== 8. FREQUENCY ==================== -->
+<div class="section" id="frequency">
+  <div class="section-header">
+    <div class="section-icon" style="background:#f8717122;color:var(--freq)">≋</div>
+    <div class="section-num" style="color:var(--freq)">08</div>
+  </div>
+  <h2>Frequency &amp; Club Translation</h2>
+  <p class="section-subtitle">Tracks that sound thin at home sound enormous on club systems. Less low end often = more perceived bass on Funktion-One.</p>
+
+  <h3>Frequency Allocation</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Zone</th><th>Range</th><th>What Lives Here</th></tr>
+    <tr><td>Sub</td><td>20–60 Hz</td><td>Kick fundamental + bass fundamental ONLY</td></tr>
+    <tr><td>Low mid</td><td>60–250 Hz</td><td>Kick body + bass body. Cut narrow at 200–300 Hz on non-bass</td></tr>
+    <tr><td>Mid</td><td>250 Hz–2 kHz</td><td>Pad, melody, percussion body. Sparse by design.</td></tr>
+    <tr><td>High mid</td><td>2–8 kHz</td><td>Hats, rim clicks, bass "cut"</td></tr>
+    <tr><td>Air</td><td>8–16 kHz</td><td>Noise floor, hat shimmer. Roll off for vintage.</td></tr>
+  </table></div>
+
+  <p><strong>Only ONE element dominates each zone at any moment.</strong> Kick and bass take turns — sidechain enforces this mechanically. High-pass non-bass elements aggressively: claps at 300 Hz, hi-hats at 200 Hz+, synths at 80–150 Hz.</p>
+
+  <div class="callout warn">
+    <p><strong>Mono below 150 Hz.</strong> Use mid/side EQ to remove bass from side channel. Pheek (mastering engineer): "I usually put everything under 150 Hz in mono. This really solidifies the low-end." Check in mono regularly — if it sounds good summed, it translates to most club systems.</p>
+  </div>
+
+  <p><strong>Reference with a spectrum analyzer:</strong> Load a reference track you love. Compare where energy sits. Match your track to that, not to what your monitors suggest. Excessive sub below 40 Hz eats headroom and creates mud on club systems. Clean, focused bass at 50–80 Hz with harmonics to 200 Hz+ moves the room while staying clear.</p>
+</div>
+
+<!-- ==================== 9. BETWEEN SOUNDS ==================== -->
+<div class="section" id="between">
+  <div class="section-header">
+    <div class="section-icon" style="background:#2dd4bf22;color:var(--between)">∿</div>
+    <div class="section-num" style="color:var(--between)">09</div>
+  </div>
+  <h2>The "Between" Sounds</h2>
+  <p class="section-subtitle">The textures that aren't drums, bass, or pads — the sounds that fill the spaces between — define minimal techno's character more than primary elements.</p>
+
+  <h3>Filtered Noise Sweeps</h3>
+  <p>White noise → LP filter with ~50% resonance → automate cutoff upward over 8–16 bars → send to ping-pong delay. Automate both HP and LP filters independently for complex movement. Process through long reverb, sidechain to kick for rhythmic pumping.</p>
+
+  <h3>Resonant Filter Pings</h3>
+  <p>Route a trigger impulse to a filter with resonance set just below self-oscillation. Filter frequency determines the pitch. Result: decaying tonal percussion — snappy and musical. In Diva: crank Ladder or Cascade resonance, use filter envelope as pitch envelope. This is the "Buchla bongo" sound across minimal techno.</p>
+
+  <h3>Self-Oscillating Filters as Instruments</h3>
+  <p>All oscillators to zero. Crank resonance past self-oscillation. Key tracking to 100% — filter becomes a playable sine oscillator. Modulate cutoff with audio-rate signals for FM-like effects. <strong>Ride resonance at the edge of self-oscillation</strong> for a "living" filter sound where small automation changes create dramatic shifts.</p>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--between)">Repro-1 Filter Ping</div>
+    <div class="patch-row"><span class="patch-label">Oscillator</span><span class="patch-val">Volume at ZERO</span></div>
+    <div class="patch-row"><span class="patch-label">Resonance</span><span class="patch-val">~90%</span></div>
+    <div class="patch-row"><span class="patch-label">Filter Env</span><span class="patch-val">Very short — A=0, D=50–150ms, S=0</span></div>
+    <div class="patch-row"><span class="patch-label">Result</span><span class="patch-val">Pitched tonal percussion from the filter alone</span></div>
+  </div>
+
+  <h3>Tape Hiss / Room Tone</h3>
+  <p>Constant low-level noise through LP at 4–5 kHz on a dedicated always-on track. Makes silence sound full. Sidechain to main elements. This is <em>structural</em> — the "air" that digital production lacks.</p>
+</div>
+
+<!-- ==================== 10. HARMONY ==================== -->
+<div class="section" id="harmony">
+  <div class="section-header">
+    <div class="section-icon" style="background:#e879f922;color:var(--harmony)">♮</div>
+    <div class="section-num" style="color:var(--harmony)">10</div>
+  </div>
+  <h2>Harmony &amp; Theory</h2>
+  <p class="section-subtitle">Open fifths. No thirds. Hypnotic ambiguity through harmonic stasis.</p>
+
+  <h3>The Open Fifth</h3>
+  <p>Root + fifth, no third. Without the third, the chord is "chameleon-like" — sounding major where major is expected, minor where minor is expected. <strong>In saturated contexts, thirds sound muddy while bare fifths remain crisp.</strong> Root + minor seventh (no third) creates suspended, unresolved quality for pads.</p>
+
+  <h3>Chord Movements</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Movement</th><th>Character</th><th>Use</th></tr>
+    <tr><td><strong>i → bVII</strong></td><td>Constant tension, no resolution</td><td>Loops indefinitely — backbone of countless tracks</td></tr>
+    <tr><td><strong>i → iv</strong></td><td>Classic melancholic</td><td>Dark but not aggressive</td></tr>
+    <tr><td><strong>i → VI</strong></td><td>Slightly hopeful</td><td>Deeper, more emotional</td></tr>
+    <tr><td><strong>i → v</strong></td><td>Darkest, most hypnotic</td><td>Hood / Mills vibe</td></tr>
+  </table></div>
+
+  <h3>Modal Flavors</h3>
+  <p><strong>Dorian</strong> (raised 6th) — brighter minor, groovy. Detroit-influenced. <strong>Aeolian</strong> (natural minor) — cold, dark. Berlin/Berghain. <strong>Phrygian</strong> (flat 2nd) — exotic, ritualistic. Dozzy-style hypnotic.</p>
+
+  <div class="callout">
+    <p><strong>Harmonic rhythm is extremely slow.</strong> One chord per 4–8 bars is common. One chord for the entire track is valid. When chords do change, the movement feels seismic because everything else has been static. A bass note moving by a fifth every 8 bars provides harmonic motion without chords.</p>
+  </div>
+</div>
+
+<!-- ==================== 11. SIGNAL CHAIN ==================== -->
+<div class="section" id="signal">
+  <div class="section-header">
+    <div class="section-icon" style="background:#94a3b822;color:var(--signal)">⫘</div>
+    <div class="section-num" style="color:var(--signal)">11</div>
+  </div>
+  <h2>Signal Chain</h2>
+  <p class="section-subtitle">Cut first, shape second, glue last.</p>
+
+  <h3>Per-Track Order</h3>
+  <p><strong>Corrective subtractive EQ → Saturation → Compression → Tonal additive EQ.</strong> The "EQ sandwich" — cutting before compression prevents resonances from triggering unnecessary gain reduction. Post-compression EQ shapes tone after compression has changed harmonic balance.</p>
+
+  <h3>Master Bus Chain</h3>
+  <p>HP filter 20–25 Hz (24 dB/oct) → Corrective EQ (subtle moves only) → Optional multiband compressor (2–3 dB max GR per band) → <strong>Glue Compressor 2:1–4:1, 10–30ms attack, auto release, 2–4 dB GR</strong> → Optional subtle saturation → LP 18–20 kHz → Transparent limiter -1 dBTP ceiling (no more than 3–4 dB reduction)</p>
+
+  <div class="callout tip">
+    <p><strong>Glue Compressor hidden trick:</strong> Set Soft on, Range to 0 (bypasses compression), drive Makeup gain. It becomes a 2× oversampled soft clipper — zero attack, zero release peak shaping. Tames drum peaks while adding density. Many producers skip the compressor entirely and just use the clipper.</p>
+  </div>
+
+  <h3>Soundtoys → Ableton Replacements</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Soundtoys</th><th>Use Instead</th></tr>
+    <tr><td>Radiator</td><td>6× Dynamic Tube warmth chain</td></tr>
+    <tr><td>Decapitator</td><td>Saturator (Analog Clip) or Pedal (OD)</td></tr>
+    <tr><td>Plate reverb</td><td>Ableton Reverb + warmth chain on return</td></tr>
+    <tr><td>Microshift</td><td>Chorus-Ensemble (very subtle settings)</td></tr>
+  </table></div>
+</div>
+
+<!-- ==================== 12. PHILOSOPHY ==================== -->
+<div class="section" id="philosophy">
+  <div class="section-header">
+    <div class="section-icon" style="background:#facc1522;color:var(--phil)">✦</div>
+    <div class="section-num" style="color:var(--phil)">12</div>
+  </div>
+  <h2>Artist Philosophy</h2>
+  <p class="section-subtitle">Every artist researched — without exception — converges on constraint as creative engine.</p>
+
+  <blockquote>
+    <p>"When I didn't have anything, I had to squeeze blood from it. That caused me to really use my mind, which is the most powerful computer in the universe."</p>
+    <p><strong>— Robert Hood</strong></p>
+  </blockquote>
+
+  <p>Hood made Minimal Nation on pawnshop instruments for $100. He traced minimalism to funk breakdowns: "The best part of the record was always the breakdown. I saw what that did to people if you extended that break… Stay in the pocket and watch it put people in a trance."</p>
+
+  <blockquote>
+    <p>"Dry recordings can be timeless and reverb recordings are always fixed to the time of a technology."</p>
+    <p><strong>— Ricardo Villalobos</strong></p>
+  </blockquote>
+
+  <p>On soft kicks: "Harder bass drums with long decay don't leave much space in the mix for all the other stuff and details." Tracks that sound enormous in clubs often sound underwhelming at home — by design.</p>
+
+  <blockquote>
+    <p>"That thing of when people say 'right then, today, I'm going to make a dark techno track.' That attitude is the absolute recipe for shit music."</p>
+    <p><strong>— Surgeon</strong></p>
+  </blockquote>
+
+  <p>Surgeon split one synth into two channels for the bass/lead duality. He advocates deliberate discomfort: "When you become comfortable — sometimes it's time to tear that all up and become uncomfortable again."</p>
+
+  <blockquote>
+    <p>"Creating a repetition in which we feel comfortable. You don't expect annoying elements inside, but rather you get lost in the loop."</p>
+    <p><strong>— Donato Dozzy</strong></p>
+  </blockquote>
+
+  <p>Dozzy and Neel's Voices From The Lake process: after intensive live jamming, they drove 200km in a Mercedes listening through a 9-speaker Bose system without speaking. Then almost entirely reworked the live recording. Willingness to destroy good work in pursuit of the right work.</p>
+
+  <h3>The Three Recipes</h3>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--phil)">Recipe 1 — "The Hood" · Digitakt 2 + Repro-1</div>
+    <div class="patch-row"><span class="patch-label">Tempo</span><span class="patch-val">98–102 BPM</span></div>
+    <div class="patch-row"><span class="patch-label">Digitakt</span><span class="patch-val">4 drum tracks max: kick (909, LP ~70), HH (HP, velocity variation), rim OR clap (dry, sparse), one perc (one step per bar, conditional trigs)</span></div>
+    <div class="patch-row"><span class="patch-label">Repro-1</span><span class="patch-val">Bass: saw, cutoff 30%, res 15%, 2–3 note pattern. Optional pad: square, cutoff 20%, slow LFO, mix LOW.</span></div>
+    <div class="patch-row"><span class="patch-label">Ableton</span><span class="patch-val">8 tracks max. Introduce one element / 16 bars. Remove one / 16 bars. Never &gt;5 simultaneous.</span></div>
+  </div>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--phil)">Recipe 2 — "All Ableton" · Operator + Drum Rack</div>
+    <div class="patch-row"><span class="patch-label">Tempo</span><span class="patch-val">100 BPM</span></div>
+    <div class="patch-row"><span class="patch-label">Drums</span><span class="patch-val">4 pads only. Warmth chain on entire drum rack bus. Swing 54–56%.</span></div>
+    <div class="patch-row"><span class="patch-label">Bass</span><span class="patch-val">Operator: Alg 1, saw 80%, LP24 800 Hz, res 20%, filter env D=2s S=30%.</span></div>
+    <div class="patch-row"><span class="patch-label">Sends</span><span class="patch-val">Ping-pong 3/16 fb 25% (rim @ 20%). Reverb 3–4s, HC 3 kHz, warmth chain after.</span></div>
+  </div>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--phil)">Recipe 3 — "Diva Minimal" · Diva + Digitakt 2</div>
+    <div class="patch-row"><span class="patch-label">Tempo</span><span class="patch-val">100 BPM</span></div>
+    <div class="patch-row"><span class="patch-label">Bass</span><span class="patch-val">JUNO saw, Cascade LP24, cutoff 400 Hz, res 10%, env 40%, mono + glide 30ms. 2 notes/bar.</span></div>
+    <div class="patch-row"><span class="patch-label">Pad</span><span class="patch-val">JUNO square, cutoff 200 Hz, chorus ON, A=1s, sustain ∞, R=2s. One held note 32 bars. Automate cutoff 200→600 Hz.</span></div>
+    <div class="patch-row"><span class="patch-label">Drums</span><span class="patch-val">Digitakt 2, same as Recipe 1.</span></div>
+  </div>
+
+  <h3>The Rules (All Recipes)</h3>
+  <ul class="check-list">
+    <li>Pick ONE recipe. Finish in one session. Don't switch synths.</li>
+    <li>8 tracks maximum. Open a 9th? Delete one.</li>
+    <li>No presets. Init patch → set values → done (30 seconds).</li>
+    <li>Warmth chain on master OR one return — not on every channel.</li>
+    <li>Master peaks ~-6 dB. Minimal techno breathes.</li>
+    <li>One automation per track max. Filter cutoff on bass = your "movement."</li>
+    <li>Arrangement = subtraction. Always about to lose, not gain.</li>
+  </ul>
+</div>
+
+<!-- ==================== 13. PRODUCTION GEMS ==================== -->
+<div class="section" id="gems">
+  <div class="section-header">
+    <div class="section-icon" style="background:#f59e0b22;color:#f59e0b">⚡</div>
+    <div class="section-num" style="color:#f59e0b">13</div>
+  </div>
+  <h2>Production Gems</h2>
+  <p class="section-subtitle">Specific tricks buried in interviews and forums that courses never teach.</p>
+
+  <h3>The Bodzin Bass Recipe</h3>
+  <div class="patch">
+    <div class="patch-title" style="color:#f59e0b">Stephan Bodzin — Signature Bass</div>
+    <div class="patch-row"><span class="patch-label">OSC 1</span><span class="patch-val">Saw +0</span></div>
+    <div class="patch-row"><span class="patch-label">OSC 2</span><span class="patch-val">Saw +7 semitones (a fifth up!)</span></div>
+    <div class="patch-row"><span class="patch-label">OSC 3</span><span class="patch-val">Triangle -12 (octave below, for sub weight)</span></div>
+    <div class="patch-row"><span class="patch-label">Noise</span><span class="patch-val">Touch of noise mixed in</span></div>
+    <div class="patch-row"><span class="patch-label">Filter</span><span class="patch-val">Closed, soft attack, long decay, long release</span></div>
+    <div class="patch-row"><span class="patch-label">Distortion</span><span class="patch-val">Emphasize low-mids</span></div>
+    <div class="patch-row"><span class="patch-label">Key</span><span class="patch-val">LOTS of automation — cutoff, drive, resonance, glide. "The magic comes from turning a LOT of synth knobs"</span></div>
+    <div class="patch-row"><span class="patch-label">In Diva</span><span class="patch-val">JUNO or Moog mode. Two saws (one a fifth apart). Triangle sub. Cascade filter. Automate everything.</span></div>
+  </div>
+
+  <h3>Bodzin's Glide Manipulation</h3>
+  <p>He changes the glide/portamento amount <strong>within a phrase</strong> — not just set-and-forget. Some notes slide, others don't. This makes robotic sequences feel human and unpredictable.</p>
+
+  <h3>Bodzin on Presets</h3>
+  <blockquote><p>"What's very important is that this synth doesn't save any presets. I have to create any sound from scratch and very much live. This leads to random results, random errors and random highlights."</p><p><strong>— Bodzin on the Moog Matriarch</strong></p></blockquote>
+  <p><strong>Translation:</strong> On your Digitakt 2 and Diva, start from INIT patches every time. Don't load presets. The 30 seconds it takes to build a patch gives you ownership of the sound.</p>
+
+  <h3>Bodzin on Melody + Sound Design</h3>
+  <blockquote><p>"A good melody is only half as good with the wrong sounds. With the right sound, that stupid little 3-tone thing becomes a powerful enduring evolving part with character."</p></blockquote>
+
+  <h3>Specific Tricks from Felix Lehrer's Workflow</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Trick</th><th>How</th></tr>
+    <tr><td><strong>Breakbeat-under-kick</strong></td><td>Layer a micro-breakbeat slice (10–20ms) under the 909 kick. Just a noise transient changes the feel — kick sounds pluckier and organic.</td></tr>
+    <tr><td><strong>Ghost sidechain</strong></td><td>Ghost kick and ghost hat tracks that never play audibly but drive sidechain. Arrangement changes but groove physics don't break.</td></tr>
+    <tr><td><strong>Tuned ride</strong></td><td>Modulate ride cymbal pitch with slow LFO (same as manually tweaking 909 tuning). Creates tonal movement that interacts with harmony.</td></tr>
+    <tr><td><strong>Bit-crush in key</strong></td><td>Redux in Ableton tuned to root note or fifth of track key. Aliasing artifacts become harmonically related instead of noise.</td></tr>
+    <tr><td><strong>M/S EQ on synths</strong></td><td>Remove bass from sides, keep in mid (mono). Tight low end + stereo width up top.</td></tr>
+    <tr><td><strong>LFO on clap release</strong></td><td>Modulate clap RELEASE time with LFO. Each clap = slightly different length. Simulates manual performance.</td></tr>
+  </table></div>
+
+  <h3>The MusicRadar Minimal Tip</h3>
+  <p>"Program synth patches with short decay times and zero sustain, turning the sound into a series of blips. Decay time can be automated to add interest. A lot of minimal producers get a great deal of mileage out of making tiny, almost imperceptible adjustments to sounds as the track progresses."</p>
+</div>
+
+<!-- ==================== 14. YOUR GEAR ==================== -->
+<div class="section" id="gear">
+  <div class="section-header">
+    <div class="section-icon" style="background:#6366f122;color:#6366f1">⬡</div>
+    <div class="section-num" style="color:#6366f1">14</div>
+  </div>
+  <h2>Your Gear → Your Recipe</h2>
+  <p class="section-subtitle">Hood used an Akai XR20, a microKorg, and a Yamaha QY1000. Handheld Japanese electronics and borrowed gear. You have 10× that.</p>
+
+  <h3>What to Use for Slow Minimal (~100 BPM)</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Role</th><th>Use This</th><th>Why</th></tr>
+    <tr><td><strong>ALL drums</strong></td><td>Digitakt 2</td><td>Hands-on, performance-oriented, conditional trigs</td></tr>
+    <tr><td><strong>Bass/lead</strong></td><td>Repro-1 or Diva (JUNO mode)</td><td>Best analog modeling you own, mono, filter character</td></tr>
+    <tr><td><strong>Pad (if needed)</strong></td><td>Diva (poly) or Repro-5</td><td>Warm poly, built-in chorus, drift</td></tr>
+    <tr><td><strong>Arrangement/mixing</strong></td><td>Ableton</td><td>Session view for jams, arrangement for editing</td></tr>
+    <tr><td><strong>Warmth/saturation</strong></td><td>Dynamic Tube chain</td><td>On every track, drum bus, returns, master</td></tr>
+    <tr><td><strong>Sub layer</strong></td><td>Operator (sine/saw filtered)</td><td>Simple, CPU light, precise</td></tr>
+    <tr><td><strong>Effects</strong></td><td>Echo, Reverb, Auto Filter</td><td>Wobble, plate-style verb, filter sweeps</td></tr>
+  </table></div>
+
+  <div class="callout warn">
+    <p><strong>DON'T use for this genre:</strong> Serum 2, Sylenth, Hive. Too clean and digital for this aesthetic. Save them for other projects. For slow minimal, Diva and Repro are your weapons.</p>
+  </div>
+
+  <h3>The One-Session Recipe</h3>
+  <ol style="list-style:none;counter-reset:steps;margin:16px 0;">
+    <li style="padding:6px 0 6px 36px;position:relative;counter-increment:steps;font-size:14px;"><span style="position:absolute;left:0;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;">01</span> Digitakt 2: program kick + hat + one perc (4 tracks max)</li>
+    <li style="padding:6px 0 6px 36px;position:relative;counter-increment:steps;font-size:14px;"><span style="position:absolute;left:0;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;">02</span> Repro-1: make bass patch from init (saw, filter low, glide on)</li>
+    <li style="padding:6px 0 6px 36px;position:relative;counter-increment:steps;font-size:14px;"><span style="position:absolute;left:0;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;">03</span> Write 1-bar bass loop, 3 notes maximum</li>
+    <li style="padding:6px 0 6px 36px;position:relative;counter-increment:steps;font-size:14px;"><span style="position:absolute;left:0;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;">04</span> Warmth chain on bass, on drum bus, on master</li>
+    <li style="padding:6px 0 6px 36px;position:relative;counter-increment:steps;font-size:14px;"><span style="position:absolute;left:0;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;">05</span> One reverb return (plate style) with warmth chain after it</li>
+    <li style="padding:6px 0 6px 36px;position:relative;counter-increment:steps;font-size:14px;"><span style="position:absolute;left:0;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;">06</span> One delay return (ping pong or dub)</li>
+    <li style="padding:6px 0 6px 36px;position:relative;counter-increment:steps;font-size:14px;"><span style="position:absolute;left:0;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;">07</span> Perform arrangement live in session view → record</li>
+    <li style="padding:6px 0 6px 36px;position:relative;counter-increment:steps;font-size:14px;"><span style="position:absolute;left:0;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;">08</span> Edit recording in arrangement view (trim, not add)</li>
+    <li style="padding:6px 0 6px 36px;position:relative;counter-increment:steps;font-size:14px;"><span style="position:absolute;left:0;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;">09</span> Total tracks: 6–8 maximum</li>
+    <li style="padding:6px 0 6px 36px;position:relative;counter-increment:steps;font-size:14px;"><span style="position:absolute;left:0;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;">10</span> Finish in one session. Export. Move on.</li>
+  </ol>
+
+  <h3>Bodzin's One-Take Method</h3>
+  <p>He performs tracks live rather than building bar-by-bar. His album Boavista came from selecting 25 pieces from a huge collection, editing/sculpting to 17. <strong>"Less pondered-over, more direct and immediate."</strong></p>
+  <p><strong>For you:</strong> Stop building 64 bars in arrangement view. Start with 8 bars in session view. Perform variations live with Digitakt 2. Record the performance. THAT is your arrangement. Edit the recording — trim, not add.</p>
+</div>
+
+<!-- ==================== 15. REFERENCES ==================== -->
+<div class="section" id="references">
+  <div class="section-header">
+    <div class="section-icon" style="background:#ec489922;color:#ec4899">♫</div>
+    <div class="section-num" style="color:#ec4899">15</div>
+  </div>
+  <h2>Essential Listening</h2>
+  <p class="section-subtitle">Study these for your specific sound: slow, ~100 BPM, minimal.</p>
+
+  <div class="table-wrap"><table>
+    <tr><th>Artist</th><th>What</th><th>Why</th></tr>
+    <tr><td><strong>Robert Hood</strong></td><td>Minimal Nation</td><td>The blueprint. Study the spaces, not the sounds.</td></tr>
+    <tr><td><strong>Planetary Assault Systems</strong></td><td>Catalogue</td><td>Luke Slater — 30 years of perfecting craft.</td></tr>
+    <tr><td><strong>Tadio</strong></td><td>Chronicles of the Future</td><td>Contemporary Mills-school.</td></tr>
+    <tr><td><strong>Token Records</strong></td><td>Full catalogue</td><td>Consistently high quality standard.</td></tr>
+    <tr><td><strong>Ricardo Villalobos</strong></td><td>Anything on Perlon</td><td>Deep, organic, groovy.</td></tr>
+    <tr><td><strong>Stephan Bodzin</strong></td><td>Powers of Ten, Boavista</td><td>Melodic but minimal philosophy.</td></tr>
+  </table></div>
+
+  <h3>What to Listen FOR</h3>
+  <ul class="check-list">
+    <li>How FEW elements are playing at any moment</li>
+    <li>Where the kick's energy sits (not as much sub as you think)</li>
+    <li>How dry/wet the mix is (less reverb than you expect)</li>
+    <li>The micro-timing relationships between kick, hat, bass</li>
+    <li>How filter automation carries the entire emotional arc</li>
+    <li>The noise floor — it's always there in the good ones</li>
+  </ul>
+</div>
+
+<!-- ==================== 16. VILLALOBOS EXTRA ==================== -->
+<div class="section" id="villalobos">
+  <div class="section-header">
+    <div class="section-icon" style="background:#14b8a622;color:#14b8a6">◐</div>
+    <div class="section-num" style="color:#14b8a6">16</div>
+  </div>
+  <h2>Hidden Artist Stories</h2>
+  <p class="section-subtitle">The buried context that changes how you understand the music.</p>
+
+  <h3>Hood's Actual Gear</h3>
+  <p>Akai XR20 drum machine. microKorg for basslines. Yamaha QY1000 for sequencing. <strong>Tiny handheld Japanese electronics and pawnshop instruments for ~$100 each.</strong> "When I didn't have anything, I had to squeeze blood from it."</p>
+
+  <h3>Hood on What Minimal Actually IS</h3>
+  <blockquote><p>"It's not just about a kick drum, a hi-hat, a bassline or some Morse code sound, for the sake of being minimal. It's about finding rhythm inside rhythms. If you listen closely to some of those tracks, you find other hidden rhythms inside of the rhythm."</p></blockquote>
+  <p><strong>Translation:</strong> The hi-hat pattern IS a melody. The kick pattern IS an arrangement. The space between hits IS a sound. Stop thinking of drums as "just drums."</p>
+
+  <h3>Villalobos' "Easy Lee" Story</h3>
+  <p>His wife made him add the bassline. He would have left it as just drums and voice. Sometimes you need someone outside your head. His tight circle is <strong>10–15 people sharing 4 studios behind Berghain.</strong> The feedback loop is tiny and trusted.</p>
+
+  <h3>Villalobos on Groove</h3>
+  <blockquote><p>"The most important thing about dance, the secret about the dancefloor, is the rhythm. What relationship the bass drum has with the hi-hat, the snare and the bassline in-between — only little differences define whether it is groovy or not."</p></blockquote>
+  <p><strong>Translation:</strong> Groove is not swing percentage. It's the RELATIONSHIP between timing of kick, hat, snare, and bass. Move the hat 5ms late. Move the bass note 10ms early. Program by feel, not by grid.</p>
+
+  <h3>Villalobos' Soft Kicks — On Purpose</h3>
+  <p>"His tracks might sound soft at home, but in the night club the story is quite different. Harder bass drums with long decay don't leave much space in the mix for all the other stuff and details."</p>
+  <p><strong>If your kick sounds "not hard enough" on monitors but the mix has detail and space, it might be PERFECT for a club.</strong> Don't judge club music on laptop speakers.</p>
+
+  <h3>Hood's 909 Approach</h3>
+  <p>Each voice serves a clearly defined role. The kick is not just rhythm — it's the pulse. Hi-hats structure space. Claps/rimshots build tension without overwhelming. He works with <strong>subtle variations within static patterns</strong> — adding an offbeat, altering velocity minimally, shifting an accent slightly. Alternating higher and lower-pitched kick drums. Using ride cymbals to introduce transitions.</p>
+</div>
+
+<!-- ==================== 17. SOURCES ==================== -->
+<div class="section" id="sources">
+  <div class="section-header">
+    <div class="section-icon" style="background:#71717a22;color:#a1a1aa">↗</div>
+    <div class="section-num" style="color:#a1a1aa">17</div>
+  </div>
+  <h2>Sources &amp; Further Reading</h2>
+  <p class="section-subtitle">The actual interviews, forums, and articles this guide is built from. Open in new tabs to go deeper.</p>
+
+  <h3>Artist Interviews &amp; Profiles</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Source</th><th>Topic</th></tr>
+    <tr><td><a href="https://daily.redbullmusicacademy.com/2019/05/robert-hood-minimal-nation-track-by-track/" target="_blank" rel="noopener" style="color:var(--accent)">RBMA Daily</a></td><td>Robert Hood — Minimal Nation track-by-track breakdown</td></tr>
+    <tr><td><a href="https://djmag.com/features/how-robert-hoods-minimal-nation-became-defining-work-minimal-techno" target="_blank" rel="noopener" style="color:var(--accent)">DJ Mag</a></td><td>How Hood's Minimal Nation became the defining work of minimal techno</td></tr>
+    <tr><td><a href="https://xlr8r.com/features/ricardo-villalobos-sacred-art/" target="_blank" rel="noopener" style="color:var(--accent)">XLR8R</a></td><td>Ricardo Villalobos — "Sacred Art" (dry recordings, groove philosophy)</td></tr>
+    <tr><td><a href="https://www.soundonsound.com/people/generations-part2-surgeon" target="_blank" rel="noopener" style="color:var(--accent)">Sound On Sound</a></td><td>Surgeon — studio techniques, bass/lead duality, dub influence</td></tr>
+    <tr><td><a href="https://www.orbmag.com/features/donato-dozzy-decoding-a-musical-language/" target="_blank" rel="noopener" style="color:var(--accent)">Orb Mag</a></td><td>Donato Dozzy — decoding a musical language, hypnotic repetition</td></tr>
+    <tr><td><a href="https://www.productionmusiclive.com/blogs/news/sound-design-how-to-create-a-stephan-bodzin-bass-or-lead" target="_blank" rel="noopener" style="color:var(--accent)">Production Music Live</a></td><td>Stephan Bodzin — bass/lead sound design recreation</td></tr>
+    <tr><td><a href="https://www.soundonsound.com/reviews/elektron-digitakt-ii" target="_blank" rel="noopener" style="color:var(--accent)">Sound On Sound</a></td><td>Elektron Digitakt II — full review &amp; capabilities</td></tr>
+  </table></div>
+
+  <h3>Kick Drum Design</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Source</th><th>Topic</th></tr>
+    <tr><td><a href="https://www.audiotent.com/blogs/production-tips/anatomy-of-the-techno-kick" target="_blank" rel="noopener" style="color:var(--accent)">Audiotent</a></td><td>Anatomy of the techno kick — layers, frequency zones, processing</td></tr>
+    <tr><td><a href="https://www.aulart.com/blog/create-a-custom-kick-drum-with-ableton-operator/" target="_blank" rel="noopener" style="color:var(--accent)">Aulart</a></td><td>Custom kick drum with Ableton Operator</td></tr>
+    <tr><td><a href="https://www.studiobrootle.com/techno-kick-ableton-rack/" target="_blank" rel="noopener" style="color:var(--accent)">Studio Brootle</a></td><td>Techno kick Ableton rack</td></tr>
+    <tr><td><a href="https://toolroomacademy.com/features/how-to-make-techno-perfecting-your-kick/" target="_blank" rel="noopener" style="color:var(--accent)">Toolroom Academy</a></td><td>Perfecting your techno kick</td></tr>
+    <tr><td><a href="https://dsokolovskiy.com/blog/all/kick-synthesis/" target="_blank" rel="noopener" style="color:var(--accent)">D. Sokolovskiy</a></td><td>3 ways to make a kick drum from scratch</td></tr>
+    <tr><td><a href="https://forum.ableton.com/viewtopic.php?t=98140" target="_blank" rel="noopener" style="color:var(--accent)">Ableton Forum</a></td><td>Fat, clear heavy kicks for techno — community thread</td></tr>
+    <tr><td><a href="https://www.kvraudio.com/forum/viewtopic.php?t=484376" target="_blank" rel="noopener" style="color:var(--accent)">KVR Audio</a></td><td>Kick drum analog synthesis — three questions</td></tr>
+  </table></div>
+
+  <h3>Bass, Saturation &amp; Warmth</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Source</th><th>Topic</th></tr>
+    <tr><td><a href="https://www.soundonsound.com/techniques/saturation-strategies" target="_blank" rel="noopener" style="color:var(--accent)">Sound On Sound</a></td><td>Saturation strategies — stacking, types, signal chain placement</td></tr>
+    <tr><td><a href="https://musictech.com/tutorials/subs-for-small-speakers/" target="_blank" rel="noopener" style="color:var(--accent)">MusicTech</a></td><td>Making subs cut through on small speakers (psychoacoustic bass)</td></tr>
+    <tr><td><a href="https://www.soundonsound.com/reviews/sound-toys-radiator" target="_blank" rel="noopener" style="color:var(--accent)">Sound On Sound</a></td><td>Soundtoys Radiator review — what it actually does</td></tr>
+    <tr><td><a href="https://www.kvraudio.com/forum/viewtopic.php?t=475116" target="_blank" rel="noopener" style="color:var(--accent)">KVR Audio</a></td><td>Soundtoys Radiator — community discussion &amp; alternatives</td></tr>
+    <tr><td><a href="https://blog.liveschool.net/making-digital-sound-analog-layering-noise-textures-vinyl-crackle/" target="_blank" rel="noopener" style="color:var(--accent)">Liveschool</a></td><td>Enriching digital sounds with noise, textures, vinyl crackle</td></tr>
+    <tr><td><a href="https://gearspace.com/board/electronic-music-instruments-and-electronic-music-production/852329-simulating-analog-oscillator-drift.html" target="_blank" rel="noopener" style="color:var(--accent)">Gearspace</a></td><td>Simulating analog oscillator drift</td></tr>
+    <tr><td><a href="https://uniphonic.com/what-are-some-tips-for-getting-the-most-out-of-the-diva-vst-in-a-sound-design-workflow/" target="_blank" rel="noopener" style="color:var(--accent)">Uniphonic</a></td><td>7 expert tips to master u-he Diva for sound design</td></tr>
+  </table></div>
+
+  <h3>Dynamics, Mixing &amp; Club Translation</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Source</th><th>Topic</th></tr>
+    <tr><td><a href="https://www.izotope.com/en/learn/what-is-crest-factor" target="_blank" rel="noopener" style="color:var(--accent)">iZotope</a></td><td>Crest factor — what it is and why it matters</td></tr>
+    <tr><td><a href="https://www.masteringthemix.com/pages/mixing-with-levels" target="_blank" rel="noopener" style="color:var(--accent)">Mastering The Mix</a></td><td>Mixing with levels — gain staging reference</td></tr>
+    <tr><td><a href="https://www.musicguymixing.com/gain-staging-cheat-sheet/" target="_blank" rel="noopener" style="color:var(--accent)">Music Guy Mixing</a></td><td>Gain staging cheat sheet</td></tr>
+    <tr><td><a href="https://audioservices.studio/blog/bass-line-and-low-end-mixing-tips" target="_blank" rel="noopener" style="color:var(--accent)">Pheek's Audio Services</a></td><td>Bass line and low-end mixing tips (mono, referencing, HP)</td></tr>
+    <tr><td><a href="https://www.sageaudio.com/articles/how-to-mix-for-clarity" target="_blank" rel="noopener" style="color:var(--accent)">Sage Audio</a></td><td>How to mix for clarity</td></tr>
+    <tr><td><a href="https://www.bestcaraudio.com/speaker-distortion-increases-with-cone-excursion/" target="_blank" rel="noopener" style="color:var(--accent)">BestCarAudio</a></td><td>Speaker distortion &amp; cone excursion — the physics of "hit hard"</td></tr>
+    <tr><td><a href="https://www.pluginmusicschool.com/mixing-how-to-do-mixing-like-a-pro/" target="_blank" rel="noopener" style="color:var(--accent)">Plugin Music School</a></td><td>How to mix techno like a pro</td></tr>
+  </table></div>
+
+  <h3>Groove, Arrangement &amp; Sidechain</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Source</th><th>Topic</th></tr>
+    <tr><td><a href="https://makingmusic.ableton.com/arranging-as-a-subtractive-process" target="_blank" rel="noopener" style="color:var(--accent)">Ableton — Making Music</a></td><td>Arranging as a subtractive process</td></tr>
+    <tr><td><a href="https://forum.ableton.com/viewtopic.php?f=1&t=139855" target="_blank" rel="noopener" style="color:var(--accent)">Ableton Forum</a></td><td>Techno: to swing or not to swing?</td></tr>
+    <tr><td><a href="https://musicpsychology.co.uk/feeling-groovy-microtiming-in-swing-and-funk/" target="_blank" rel="noopener" style="color:var(--accent)">Music Psychology</a></td><td>Microtiming in swing and funk — the science of groove</td></tr>
+    <tr><td><a href="https://blog.faderpro.com/music-production-concepts/using-ghost-sidechain-compression/" target="_blank" rel="noopener" style="color:var(--accent)">FaderPro</a></td><td>Ghost sidechain compression technique</td></tr>
+    <tr><td><a href="https://www.edmprod.com/sidechain-compression/" target="_blank" rel="noopener" style="color:var(--accent)">EDMProd</a></td><td>Sidechain compression — 5 tips for tighter mixes</td></tr>
+    <tr><td><a href="https://gearspace.com/board/electronic-music-instruments-and-electronic-music-production/679893-getting-those-rob-hood-minimal-nation-style-arpeggios.html" target="_blank" rel="noopener" style="color:var(--accent)">Gearspace</a></td><td>Getting those Robert Hood / Minimal Nation style arpeggios</td></tr>
+  </table></div>
+
+  <h3>Reverb, Delay &amp; Spatial</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Source</th><th>Topic</th></tr>
+    <tr><td><a href="https://www.studiobrootle.com/dub-techno-tips/" target="_blank" rel="noopener" style="color:var(--accent)">Studio Brootle</a></td><td>Dub techno tips — delay, reverb, saturation chains</td></tr>
+    <tr><td><a href="https://www.studiobrootle.com/dub-techno-tutorial-ableton/" target="_blank" rel="noopener" style="color:var(--accent)">Studio Brootle</a></td><td>Dub techno tutorial in Ableton</td></tr>
+    <tr><td><a href="https://gearspace.com/board/electronic-music-instruments-and-electronic-music-production/620973-dub-techno-reverb-tips-tricks.html" target="_blank" rel="noopener" style="color:var(--accent)">Gearspace</a></td><td>Dub techno reverb tips and tricks</td></tr>
+    <tr><td><a href="https://www.musicradar.com/how-to/explainers-reverb-parameters-and-how-they-work" target="_blank" rel="noopener" style="color:var(--accent)">MusicRadar</a></td><td>Reverb parameters explained</td></tr>
+    <tr><td><a href="https://anotherproducer.com/online-tools-for-musicians/delay-reverb-time-calculator/" target="_blank" rel="noopener" style="color:var(--accent)">Another Producer</a></td><td>Delay &amp; reverb time calculator (sync to BPM)</td></tr>
+  </table></div>
+
+  <h3>Filter Techniques &amp; "Between" Sounds</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Source</th><th>Topic</th></tr>
+    <tr><td><a href="https://noiseengineering.us/blogs/loquelic-literitas-the-blog/quick-patch-filter-pinging/" target="_blank" rel="noopener" style="color:var(--accent)">Noise Engineering</a></td><td>Quick patch: filter pinging technique</td></tr>
+    <tr><td><a href="https://www.modwiggler.com/forum/viewtopic.php?t=197292" target="_blank" rel="noopener" style="color:var(--accent)">MOD WIGGLER</a></td><td>Why self-oscillate a filter?</td></tr>
+    <tr><td><a href="https://www.kvraudio.com/forum/viewtopic.php?t=470139" target="_blank" rel="noopener" style="color:var(--accent)">KVR Audio</a></td><td>Self-oscillating filters in soft synths</td></tr>
+    <tr><td><a href="https://www.musicradar.com/tuition/tech/how-to-produce-a-basic-white-noise-filter-sweep-566529" target="_blank" rel="noopener" style="color:var(--accent)">MusicRadar</a></td><td>How to produce a white noise filter sweep</td></tr>
+    <tr><td><a href="https://www.studiobrootle.com/ableton-operator-tutorial/" target="_blank" rel="noopener" style="color:var(--accent)">Studio Brootle</a></td><td>Ableton Operator tutorial — FM textures</td></tr>
+  </table></div>
+
+  <h3>Harmony &amp; Theory</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Source</th><th>Topic</th></tr>
+    <tr><td><a href="https://www.chordoo.com/blog/melodic-techno-chord-progressions-for-dark-atmosphere" target="_blank" rel="noopener" style="color:var(--accent)">Chordoo</a></td><td>Melodic techno chord progressions for dark atmosphere</td></tr>
+    <tr><td><a href="https://en.wikipedia.org/wiki/Perfect_fifth" target="_blank" rel="noopener" style="color:var(--accent)">Wikipedia</a></td><td>Perfect fifth — the open voicing foundation</td></tr>
+  </table></div>
+
+</div>
+
+</body>
+</html>
