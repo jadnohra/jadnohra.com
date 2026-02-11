@@ -91,6 +91,10 @@ layout: default
     border-radius: 8px;
   }
 
+  .course-wrapper.wide {
+    max-width: 960px;
+  }
+
   /* Chapter navigation (bottom) */
   .chapter-nav {
     max-width: 720px;
@@ -219,7 +223,7 @@ layout: default
   </div>
 </nav>
 
-<div class="course-wrapper">
+<div class="course-wrapper{% if page.wide %} wide{% endif %}">
   <div class="content">
     {{ content }}
   </div>
