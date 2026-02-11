@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }} — Learn Rust</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: #e2e8f0;
+      background: #0f172a;
+      line-height: 1.7;
+    }
+
+    /* Top nav */
+    .course-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .course-nav .brand {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #f97316;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    .course-nav .chapters {
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+    }
+
+    .course-nav .chapters a {
+      color: #64748b;
+      text-decoration: none;
+      font-size: 0.8rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+
+    .course-nav .chapters a:hover {
+      color: #e2e8f0;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .course-nav .chapters a.active {
+      color: #f97316;
+      background: rgba(249, 115, 22, 0.1);
+    }
+
+    /* Main content */
+    .course-content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 3rem 2rem 6rem;
+    }
+
+    .course-content h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 0.5rem;
+    }
+
+    .course-content .subtitle {
+      color: #64748b;
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .course-content h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-top: 2.5rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .course-content h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .course-content p {
+      margin-bottom: 1rem;
+      color: #cbd5e1;
+    }
+
+    .course-content a {
+      color: #f97316;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .course-content a:hover {
+      color: #fb923c;
+    }
+
+    .course-content ul, .course-content ol {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+      color: #cbd5e1;
+    }
+
+    .course-content li {
+      margin-bottom: 0.3rem;
+    }
+
+    .course-content code {
+      background: rgba(249, 115, 22, 0.15);
+      color: #f97316;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+      font-size: 0.9em;
+    }
+
+    .course-content pre {
+      background: #1e293b;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+      border-left: 3px solid #f97316;
+    }
+
+    .course-content pre code {
+      background: none;
+      color: #e2e8f0;
+      padding: 0;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .course-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .course-content th {
+      background: rgba(255,255,255,0.05);
+      color: #f1f5f9;
+      font-weight: 600;
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .course-content td {
+      padding: 0.5rem 0.75rem;
+      color: #cbd5e1;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .course-content blockquote {
+      border-left: 3px solid #f97316;
+      padding: 0.5rem 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 115, 22, 0.05);
+      color: #cbd5e1;
+    }
+
+    .course-content hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin: 2rem 0;
+    }
+
+    /* Chapter navigation (bottom) */
+    .chapter-nav {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .chapter-nav a {
+      color: #64748b;
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+
+    .chapter-nav a:hover {
+      color: #f97316;
+      border-color: rgba(249, 115, 22, 0.3);
+    }
+
+    /* Chapter list (for landing page) */
+    .chapter-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .chapter-list li {
+      margin-bottom: 0;
+    }
+
+    .chapter-list a {
+      display: block;
+      padding: 1rem 1.25rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+      text-decoration: none;
+      color: #e2e8f0;
+      transition: all 0.15s;
+    }
+
+    .chapter-list a:hover {
+      border-color: rgba(249, 115, 22, 0.3);
+      background: rgba(249, 115, 22, 0.05);
+    }
+
+    .chapter-list .ch-num {
+      color: #f97316;
+      font-weight: 600;
+      margin-right: 0.75rem;
+      font-size: 0.85rem;
+    }
+
+    .chapter-list .ch-desc {
+      display: block;
+      color: #64748b;
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+      margin-left: 2.1rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="course-nav">
+    <a href="/learn-rust/" class="brand">Learn Rust</a>
+    <div class="chapters">
+      {% assign rust_pages = site.pages | where_exp: "p", "p.path contains 'learn-rust/'" | where_exp: "p", "p.chapter" | sort: "chapter" %}
+      {% for p in rust_pages %}
+        <a href="{{ p.url }}" {% if page.url == p.url %}class="active"{% endif %}>{{ p.chapter }}. {{ p.short_title | default: p.title }}</a>
+      {% endfor %}
+    </div>
+  </nav>
+
+  <main class="course-content">
+    {{ content }}
+  </main>
+
+  {% if page.chapter %}
+  <nav class="chapter-nav">
+    {% assign prev_ch = page.chapter | minus: 1 %}
+    {% assign next_ch = page.chapter | plus: 1 %}
+    {% assign prev_page = rust_pages | where: "chapter", prev_ch | first %}
+    {% assign next_page = rust_pages | where: "chapter", next_ch | first %}
+
+    <div>
+      {% if prev_page %}
+        <a href="{{ prev_page.url }}">&larr; {{ prev_page.title }}</a>
+      {% elsif page.chapter == 1 %}
+        <a href="/learn-rust/">&larr; Overview</a>
+      {% endif %}
+    </div>
+    <div>
+      {% if next_page %}
+        <a href="{{ next_page.url }}">{{ next_page.title }} &rarr;</a>
+      {% endif %}
+    </div>
+  </nav>
+  {% endif %}
+</body>
+</html>
