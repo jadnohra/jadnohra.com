@@ -13,7 +13,8 @@
       "WebSearch",
       "Bash(git clone:*)",
       "Bash(git submodule:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(gem which:*)"
     ],
     "deny": [],
     "ask": []

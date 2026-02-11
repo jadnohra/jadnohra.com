@@ -1,28 +1,47 @@
+---
+---
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-mode="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ page.title }} — Learn Rust</title>
+
+  <!-- Chirpy theme CSS (gives us typography, code blocks, tables, colors) -->
+  <link rel="stylesheet" href="{{ '/assets/css/jekyll-theme-chirpy.css' | relative_url }}">
+
+  <!-- Bootstrap (same as Chirpy dev) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+
+  <!-- Course-specific overrides -->
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* Force light mode */
+    html[data-mode="light"] {
+      --body-bg: #ffffff;
+      --text-color: #1a1a2e;
+      --heading-color: #0f0f23;
+    }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      color: #e2e8f0;
-      background: #0f172a;
-      line-height: 1.7;
+      background: var(--body-bg, #ffffff);
+      color: var(--text-color, #1a1a2e);
+      font-size: 1rem;
+      line-height: 1.75;
     }
+
+    /* Hide Chirpy sidebar if it leaks through */
+    #sidebar { display: none !important; }
+    #topbar-wrapper { display: none !important; }
 
     /* Top nav */
     .course-nav {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(8px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      padding: 0.75rem 2rem;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 0.6rem 2rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -30,126 +49,136 @@
 
     .course-nav .brand {
       font-size: 0.85rem;
-      font-weight: 600;
-      color: #f97316;
+      font-weight: 700;
+      color: #0f0f23;
       text-decoration: none;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.01em;
     }
 
     .course-nav .chapters {
       display: flex;
-      gap: 0.25rem;
+      gap: 0.15rem;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .course-nav .chapters a {
-      color: #64748b;
+      color: #6b7280;
       text-decoration: none;
       font-size: 0.8rem;
-      padding: 0.3rem 0.6rem;
+      padding: 0.25rem 0.5rem;
       border-radius: 4px;
       transition: all 0.15s;
     }
 
     .course-nav .chapters a:hover {
-      color: #e2e8f0;
-      background: rgba(255,255,255,0.05);
+      color: #0f0f23;
+      background: #f3f4f6;
     }
 
     .course-nav .chapters a.active {
-      color: #f97316;
-      background: rgba(249, 115, 22, 0.1);
+      color: #0f0f23;
+      background: #f3f4f6;
+      font-weight: 600;
     }
 
-    /* Main content */
+    /* Main content area */
     .course-content {
       max-width: 720px;
       margin: 0 auto;
-      padding: 3rem 2rem 6rem;
+      padding: 2.5rem 2rem 4rem;
     }
 
     .course-content h1 {
       font-size: 2rem;
       font-weight: 700;
-      color: #f1f5f9;
-      margin-bottom: 0.5rem;
+      color: #0f0f23;
+      margin-bottom: 0.25rem;
+      border-bottom: none;
     }
 
     .course-content .subtitle {
-      color: #64748b;
-      font-size: 1rem;
-      margin-bottom: 2.5rem;
+      color: #6b7280;
+      font-size: 1.05rem;
+      margin-bottom: 2rem;
+      line-height: 1.6;
     }
 
     .course-content h2 {
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: #f1f5f9;
+      font-size: 1.35rem;
+      font-weight: 650;
+      color: #0f0f23;
       margin-top: 2.5rem;
-      margin-bottom: 0.75rem;
-      padding-bottom: 0.3rem;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid #e5e7eb;
     }
 
     .course-content h3 {
       font-size: 1.1rem;
       font-weight: 600;
-      color: #cbd5e1;
+      color: #1f2937;
       margin-top: 1.5rem;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
 
     .course-content p {
-      margin-bottom: 1rem;
-      color: #cbd5e1;
+      margin-bottom: 0.9rem;
+      color: #374151;
     }
 
     .course-content a {
-      color: #f97316;
+      color: #2563eb;
       text-decoration: underline;
       text-underline-offset: 2px;
     }
 
     .course-content a:hover {
-      color: #fb923c;
+      color: #1d4ed8;
     }
 
     .course-content ul, .course-content ol {
-      margin-bottom: 1rem;
-      padding-left: 1.5rem;
-      color: #cbd5e1;
+      margin-bottom: 0.9rem;
+      padding-left: 1.4rem;
+      color: #374151;
     }
 
     .course-content li {
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.25rem;
     }
 
+    .course-content strong {
+      color: #0f0f23;
+    }
+
+    /* Inline code */
     .course-content code {
-      background: rgba(249, 115, 22, 0.15);
-      color: #f97316;
-      padding: 0.15rem 0.4rem;
+      background: #f3f4f6;
+      color: #d63384;
+      padding: 0.15rem 0.35rem;
       border-radius: 3px;
-      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
-      font-size: 0.9em;
+      font-size: 0.88em;
     }
 
+    /* Code blocks */
     .course-content pre {
-      background: #1e293b;
+      background: #f8f9fa;
+      border: 1px solid #e5e7eb;
       border-radius: 6px;
       padding: 1rem 1.25rem;
       margin-bottom: 1rem;
       overflow-x: auto;
-      border-left: 3px solid #f97316;
     }
 
     .course-content pre code {
       background: none;
-      color: #e2e8f0;
+      color: #1a1a2e;
       padding: 0;
       font-size: 0.85rem;
       line-height: 1.6;
     }
 
+    /* Tables */
     .course-content table {
       width: 100%;
       border-collapse: collapse;
@@ -158,31 +187,32 @@
     }
 
     .course-content th {
-      background: rgba(255,255,255,0.05);
-      color: #f1f5f9;
+      background: #f9fafb;
+      color: #0f0f23;
       font-weight: 600;
-      padding: 0.6rem 0.75rem;
+      padding: 0.55rem 0.75rem;
       text-align: left;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 2px solid #e5e7eb;
     }
 
     .course-content td {
-      padding: 0.5rem 0.75rem;
-      color: #cbd5e1;
-      border-bottom: 1px solid rgba(255,255,255,0.03);
+      padding: 0.45rem 0.75rem;
+      color: #374151;
+      border-bottom: 1px solid #f3f4f6;
     }
 
     .course-content blockquote {
-      border-left: 3px solid #f97316;
+      border-left: 3px solid #2563eb;
       padding: 0.5rem 1rem;
       margin: 1rem 0;
-      background: rgba(249, 115, 22, 0.05);
-      color: #cbd5e1;
+      background: #eff6ff;
+      color: #374151;
+      border-radius: 0 4px 4px 0;
     }
 
     .course-content hr {
       border: none;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid #e5e7eb;
       margin: 2rem 0;
     }
 
@@ -196,21 +226,22 @@
     }
 
     .chapter-nav a {
-      color: #64748b;
+      color: #6b7280;
       text-decoration: none;
       font-size: 0.9rem;
       padding: 0.5rem 1rem;
-      border: 1px solid rgba(255,255,255,0.06);
+      border: 1px solid #e5e7eb;
       border-radius: 6px;
       transition: all 0.15s;
     }
 
     .chapter-nav a:hover {
-      color: #f97316;
-      border-color: rgba(249, 115, 22, 0.3);
+      color: #2563eb;
+      border-color: #93c5fd;
+      background: #eff6ff;
     }
 
-    /* Chapter list (for landing page) */
+    /* Chapter list (landing page) */
     .chapter-list {
       list-style: none;
       padding: 0;
@@ -222,33 +253,40 @@
 
     .chapter-list a {
       display: block;
-      padding: 1rem 1.25rem;
-      border: 1px solid rgba(255,255,255,0.06);
+      padding: 0.9rem 1.15rem;
+      border: 1px solid #e5e7eb;
       border-radius: 6px;
       margin-bottom: 0.5rem;
       text-decoration: none;
-      color: #e2e8f0;
+      color: #1f2937;
       transition: all 0.15s;
     }
 
     .chapter-list a:hover {
-      border-color: rgba(249, 115, 22, 0.3);
-      background: rgba(249, 115, 22, 0.05);
+      border-color: #93c5fd;
+      background: #eff6ff;
     }
 
     .chapter-list .ch-num {
-      color: #f97316;
-      font-weight: 600;
-      margin-right: 0.75rem;
+      color: #2563eb;
+      font-weight: 700;
+      margin-right: 0.65rem;
       font-size: 0.85rem;
     }
 
     .chapter-list .ch-desc {
       display: block;
-      color: #64748b;
+      color: #6b7280;
       font-size: 0.85rem;
-      margin-top: 0.25rem;
-      margin-left: 2.1rem;
+      margin-top: 0.2rem;
+      margin-left: 2rem;
+    }
+
+    /* Syntax highlighting (Chirpy's rouge) should inherit, but override bg */
+    .highlight {
+      background: #f8f9fa !important;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
     }
   </style>
 </head>
