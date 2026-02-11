@@ -83,6 +83,8 @@ Interactive visualization of connections between career, projects, algorithms, a
 
 ## Projects
 
+- **Feb 2026 - [Learn Rust](https://notes.jadnohra.com/learn-rust/)** — Course: Rust's memory model for C++ programmers. [GitHub](https://github.com/jadnohra/learn-rust)
+
 - **Mini Projects**
   - **Feb 2026 - [Psychotron](https://psychotron.ai/)** — Front-end for my flash fiction audiobook. Web Audio DSP chain with AudioWorklet pitch-shifting, 12-voice chorus, flanger, 13-band EQ, and convolver reverb. 2D canvas effect morphing engine. Synchronized teleprompter. <span class="algo">JavaScript, Web Audio API, AudioWorklet, Canvas 2D, CSS Grid.</span>
   - **Feb 2026 - [RecentWork](https://github.com/jadnohra/recent-work)** — macOS daemon that watches project directories and maintains ~/RecentWork/ as a flat folder of symlinks to recently modified files. Homebrew installable. <span class="algo">Swift, macOS, FSEvents, launchd.</span>

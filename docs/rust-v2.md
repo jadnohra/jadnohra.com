@@ -5,6 +5,8 @@ toc: true
 permalink: /rust-v2/
 ---
 
+> **For the course version, go to [Learn Rust](/learn-rust/).**
+
 ## The Framework
 
 Rust's memory model is a set of choices on the SPACE / TIME / IDENTITY triangle.
