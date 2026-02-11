@@ -95,18 +95,32 @@ layout: default
     max-width: 960px;
   }
 
-  /* Code block panels in chapters */
+  /* Code block panels in chapters — dark background */
   .course-wrapper .highlight {
-    border: 1px solid var(--border-color, #e5e7eb);
+    background: #1e1e2e;
     border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     overflow: hidden;
+  }
+
+  .course-wrapper .highlight pre {
+    background: #1e1e2e;
+    color: #cdd6f4;
+  }
+
+  .course-wrapper .highlight code {
+    background: transparent;
+    color: inherit;
   }
 
   /* Skip panel style inside details (exercises) */
   .course-wrapper details .highlight {
     box-shadow: none;
-    border: none;
+    background: transparent;
+  }
+
+  .course-wrapper details .highlight pre {
+    background: transparent;
   }
 
   /* Chapter navigation (bottom) */
