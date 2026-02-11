@@ -17,7 +17,7 @@ This chapter builds a framework for understanding memory bugs. The framework is 
 If you want to understand not just what Rust does, but why it does it, this is the foundation.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Understands this chapter explains the fundamental problem. Knows the framework is abstract and applies broadly. Motivated to learn the foundation.</p>
 </details>
 
@@ -56,7 +56,7 @@ Every copy creates a derived representation with a sync obligation.
 **TTL, invalidation.** The system discards stale copies after a time limit or when the source signals a change.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Sees coherence as a universal problem. Understands physics creates distance, distance forces copies, copies require coherence. Sees the pattern across layers from CPU caches to distributed systems.</p>
 </details>
 
@@ -75,7 +75,7 @@ Physics constrains computation along three axes. These constraints permeate into
 State is not a primitive, but it is central to the coherence problem. State is data that changes over time. A value at an address that may differ on the next read. Stateless computation has no coherence problem because there is nothing to get out of sync. Most coherence problems involve state.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Knows the three axes: SPACE, TIME, COORDINATES. Understands state is central but not a primitive. Has vocabulary to describe memory bugs.</p>
 </details>
 
@@ -212,7 +212,7 @@ COORD (p)                   ████████████████
 ```
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Sees each bug as a breakdown between primitives. Understands the diagrams. Recognizes these bugs from experience.</p>
 </details>
 
@@ -247,7 +247,7 @@ Different paradigms solve the coherence problem differently.
 **C/C++.** Any pointer can alias any memory. Any thread can write anywhere. No compiler enforcement. Coherence is entirely manual.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Sees how different languages approach coherence. Understands the spectrum from "eliminate the problem" to "programmer responsibility."</p>
 </details>
 
@@ -302,6 +302,6 @@ Languages solve coherence problems with specific features. Each feature targets 
 **Rust borrow checker.** Introduced in Rust in 2010. Enforces one writer or many readers at compile time. Rejects programs that violate this rule before they run. No runtime cost. Requires learning new patterns.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Has a catalog of features organized by which primitive interaction they solve. Knows the historical context. Understands trade-offs. Has a framework for understanding memory bugs. Knows the vocabulary. Ready to see how Rust applies these ideas.</p>
 </details>

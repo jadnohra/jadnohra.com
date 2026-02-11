@@ -13,7 +13,7 @@ Chapter 1 showed bugs that Rust catches and C++ misses. Chapter 2 explained why 
 This chapter asks: how can a compiler catch these bugs? What would it need to track? Why doesn't C++ do this? And how does Rust make it possible?
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Understands this chapter explains how a compiler could catch coordinate coherence failures. Motivated by the question: what would that require?</p>
 </details>
 
@@ -44,7 +44,7 @@ Both bindings are instantiations: a name bound to a location holding something. 
 Through `r`, you can access `x`. Each binding has its own name, location, and lifetime. Taking an address creates this situation: a new binding that refers to space controlled by another binding. The coordinate has its own lifetime. The space it points to has a different lifetime. When those lifetimes fall out of sync, coherence fails. Coordinates create a coherence obligation between independent lifetimes.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Sees the ch01 dangling reference analyzed in detail. Understands two bindings: x holds a value, r holds a COORDINATE. Understands that taking an address creates a coherence obligation between independent lifetimes.</p>
 </details>
 
@@ -59,7 +59,7 @@ Coordinates are not optional. Copying large data costs time and energy, so progr
 Coordinates are syntactically independent and semantically dependent. Syntactically independent means `r` has its own declaration, its own location, its own scope, and the compiler processes it separately from `x`. Semantically dependent means the purpose of `r` is to refer to `x`, and without `x`, the address in `r` points to nothing meaningful. One way that coherence problems arise is semantics that syntax does not capture.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Understands why we use "coordinate" as a term. Knows coordinates are unavoidable: physics (copying costs), data structures (indirection required). Understands coordinates are syntactically independent and semantically dependent. Knows coherence problems arise from semantics that syntax does not capture.</p>
 </details>
 
@@ -161,7 +161,7 @@ fn example(flag: bool) {
 The access at D is safe because no path from a death reaches it. The access at G is unsafe because a path from C reaches it through F. The compiler finds the unsafe path and rejects.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Understands source text has hierarchical structure that the RAM model lacks. Knows the compiler bridges them using intermediate representations like the control flow graph. Understands dead space detection as graph reachability: can any path lead from space death to coordinate access?</p>
 </details>
 
@@ -197,7 +197,7 @@ For dead space detection, the compiler can determine from the source text when s
 The stack's lexical structure makes functions natural units for dead space detection.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Understands memory regions: static (always valid), stack (lexical structure visible), heap (no lexical structure). Knows the compiler can see when stack coordinates are valid but not heap. Understands that stack's lexical structure makes functions natural units for dead space detection.</p>
 </details>
 
@@ -227,7 +227,7 @@ int** stored = &p;                // coordinate to coordinate
 In the next chapter, we will see why even without these obstacles, perfect analysis is still impossible.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Understands why C++ compilers cannot do this analysis. Knows the three obstacles: separate compilation (incomplete graph), function pointers (unknown destinations), unconstrained pointers (coordinates from nowhere).</p>
 </details>
 
@@ -246,7 +246,7 @@ In the next chapter, we will see why even without these obstacles, perfect analy
 **Ownership.** Rust. The language is designed so the compiler can build the complete graph and track where every coordinate points. Each value has a single owner. When ownership transfers, the previous binding becomes invalid. The analysis runs at compile time with zero runtime cost. The rest of this course explores how Rust makes this work.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Knows the landscape: no analysis (C/C++), static analyzers (heuristics), region annotations (Cyclone/ATS), garbage collection (runtime tracking), ownership (Rust). Understands GC inverts the problem: space lives as long as coordinates reach it.</p>
 </details>
 
@@ -405,6 +405,6 @@ For `greeting`, the output points to static space. Always valid. No connection t
 Connection information in signatures replaces path tracing through function bodies. The caller does not need to see the function's code. The signature declares which inputs the output may borrow from. The caller uses that information to ensure those inputs outlive the output. Complete coverage without complete visibility.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Understands how Rust makes compile-time coordinate analysis possible. Knows the constraints (constrained coordinates, heap lifetime control via ownership) and the encoding (connection information in function signatures replaces path tracing). Ready for lifetime syntax and mechanics in later chapters.</p>
 </details>

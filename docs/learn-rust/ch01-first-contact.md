@@ -68,7 +68,7 @@ fn main() {
 ```
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Sees Rust syntax. Recognizes it. Can read it.</p>
 </details>
 
@@ -206,7 +206,7 @@ error[E0277]: `Rc<i32>` cannot be sent between threads safely
 None of these compile in Rust. They compile in C++ and contain memory bugs.
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Sees buggy code. Knows the bugs. Sees Rust rejects it. Does not know how Rust detects them.</p>
 </details>
 
@@ -243,6 +243,6 @@ int main() {
 ```
 
 <details>
-<summary>Check your understanding</summary>
+<summary>Checkpoint</summary>
 <p>Sees one example explained. Connects Rust error to C++ undefined behavior. Knows Rust catches bugs C++ misses. Does not know how yet. Curious.</p>
 </details>

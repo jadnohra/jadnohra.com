@@ -204,6 +204,10 @@ layout: default
     {% for p in rust_pages %}
       <a href="{{ p.url }}" {% if page.url == p.url %}class="active"{% endif %}>{{ p.chapter }}. {{ p.short_title | default: p.title }}</a>
     {% endfor %}
+    {% assign nav_pages = site.pages | where_exp: "p", "p.path contains 'learn-rust/'" | where_exp: "p", "p.nav_title" %}
+    {% for p in nav_pages %}
+      <a href="{{ p.url }}" {% if page.url == p.url %}class="active"{% endif %}>{{ p.nav_title }}</a>
+    {% endfor %}
   </div>
 </nav>
 
