@@ -95,17 +95,16 @@ layout: default
     max-width: 960px;
   }
 
-  /* Code block header — round top corners */
-  .course-wrapper .code-header {
-    border-radius: 8px 8px 0 0;
+  /* Code block outer wrapper — round all corners */
+  .course-wrapper .highlighter-rouge {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   }
 
   /* Code block panels — dark background */
   .course-wrapper .highlight {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-    overflow: hidden;
   }
 
   .course-wrapper .highlight pre {
