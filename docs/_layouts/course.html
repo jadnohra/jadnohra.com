@@ -198,7 +198,7 @@ layout: default
 </style>
 
 <nav class="course-nav">
-  <a href="/learn-rust/" class="brand">Learn Rust</a>
+  <a href="/learn-rust/" class="brand"><i class="fab fa-rust"></i> Learn Rust</a>
   <div class="chapters">
     {% assign rust_pages = site.pages | where_exp: "p", "p.path contains 'learn-rust/'" | where_exp: "p", "p.chapter" | sort: "chapter" %}
     {% for p in rust_pages %}
