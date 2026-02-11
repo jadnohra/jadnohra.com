@@ -5,7 +5,9 @@ toc: true
 permalink: /rust-v2/
 ---
 
-> **For the course version, go to [Learn Rust](/learn-rust/).**
+*For the course version, see [Learn Rust](/learn-rust/).*
+
+---
 
 ## The Framework
 
