@@ -288,6 +288,41 @@
       border: 1px solid #e5e7eb;
       border-radius: 6px;
     }
+
+    /* Self-check collapsible */
+    .course-content details {
+      margin: 1.5rem 0 2rem;
+      padding: 0.75rem 1rem;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .course-content details summary {
+      cursor: pointer;
+      color: #6b7280;
+      font-weight: 500;
+      font-size: 0.85rem;
+      letter-spacing: 0.01em;
+      user-select: none;
+    }
+
+    .course-content details summary:hover {
+      color: #374151;
+    }
+
+    .course-content details[open] summary {
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+
+    .course-content details p {
+      color: #6b7280;
+      font-size: 0.88rem;
+      margin-bottom: 0.4rem;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
