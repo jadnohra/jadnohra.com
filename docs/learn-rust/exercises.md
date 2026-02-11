@@ -1,0 +1,1 @@
+../../repos/learn-rust/course/exercises.md

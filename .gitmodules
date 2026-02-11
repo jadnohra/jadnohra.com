@@ -10,3 +10,6 @@
 [submodule "repos/77-neurons-project-perelman"]
 	path = repos/77-neurons-project-perelman
 	url = https://github.com/jadnohra/77-neurons-project-perelman.git
+[submodule "repos/learn-rust"]
+	path = repos/learn-rust
+	url = git@github.com:jadnohra/learn-rust.git
