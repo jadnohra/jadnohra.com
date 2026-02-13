@@ -88,6 +88,8 @@ Interactive visualization of connections between career, projects, algorithms, a
 - **Mini Projects**
   - **Feb 2026 - [Psychotron](https://psychotron.ai/)** — Front-end for my flash fiction audiobook. Web Audio DSP chain with AudioWorklet pitch-shifting, 12-voice chorus, flanger, 13-band EQ, and convolver reverb. 2D canvas effect morphing engine. Synchronized teleprompter. <span class="algo">JavaScript, Web Audio API, AudioWorklet, Canvas 2D, CSS Grid.</span>
   - **Feb 2026 - [RecentWork](https://github.com/jadnohra/recent-work)** — macOS daemon that watches project directories and maintains ~/RecentWork/ as a flat folder of symlinks to recently modified files. Homebrew installable. <span class="algo">Swift, macOS, FSEvents, launchd.</span>
+  - **Feb 2026 - [mini-llm](https://github.com/jadnohra/mini-llm)** — Single command that turns a Mac Mini into a headless AI server. Installs Ollama, llama.cpp, MLX, Open WebUI. <span class="algo">Bash, macOS, launchd.</span>
+  - **Feb 2026 - [smux](https://github.com/jadnohra/smux)** — Human-friendly tmux wrapper. Homebrew installable. <span class="algo">Bash, tmux.</span>
   - **Feb 2026 - [ThatSlop](https://www.thatslop.com/)** — AI content detector for LinkedIn/Twitter. Chrome/Firefox extension. <span class="algo">JavaScript.</span>
   - **Dec 2025 - [ELIZA2](https://eliza2.ai/)** — Modern recreation of Weizenbaum's 1966 chatbot. <span class="algo">Python, Classical AI.</span>
   <div class="thumb-strip"><img src="/assets/img/portfolio/psychotron-screenshot.png"><img src="/assets/img/portfolio/recent-work-screenshot.png"><img src="/assets/img/portfolio/thatslop-float-panel.png"><img src="/assets/img/portfolio/eliza2-screenshot.png"></div>
