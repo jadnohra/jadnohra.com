@@ -150,14 +150,30 @@ layout: default
     font-weight: 700;
     margin-right: 0.65rem;
     font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .chapter-list .ch-title {
+    font-weight: 600;
+    font-size: 1.05rem;
   }
 
   .chapter-list .ch-desc {
     display: block;
     color: var(--text-muted-color, #6b7280);
-    font-size: 0.85rem;
-    margin-top: 0.2rem;
-    margin-left: 2rem;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin-top: 0.35rem;
+    padding-left: 2.05rem;
+  }
+
+  /* WIP chapter entries */
+  .chapter-list li.wip {
+    padding: 0.9rem 1.15rem;
+    border: 1px dashed var(--border-color, #e5e7eb);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    opacity: 0.45;
   }
 
   /* Self-check collapsible */
