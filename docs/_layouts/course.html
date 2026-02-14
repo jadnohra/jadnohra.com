@@ -177,6 +177,55 @@ layout: default
     opacity: 0.45;
   }
 
+  /* Table of contents */
+  .course-wrapper details.toc {
+    margin: 0.75rem 0 1.5rem;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 6px;
+    font-size: 0.88rem;
+    background: transparent;
+  }
+
+  .course-wrapper details.toc summary {
+    cursor: pointer;
+    color: var(--text-muted-color, #6b7280);
+    font-weight: 500;
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+    user-select: none;
+  }
+
+  .course-wrapper details.toc summary:hover {
+    color: var(--text-color);
+  }
+
+  .course-wrapper details.toc[open] summary {
+    margin-bottom: 0.4rem;
+    color: var(--text-color);
+  }
+
+  .course-wrapper details.toc ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    list-style: none;
+  }
+
+  .course-wrapper details.toc li {
+    margin-bottom: 0.15rem;
+  }
+
+  .course-wrapper details.toc a {
+    color: var(--text-muted-color, #6b7280);
+    text-decoration: none;
+    font-size: 0.87rem;
+    transition: color 0.15s;
+  }
+
+  .course-wrapper details.toc a:hover {
+    color: var(--link-color);
+  }
+
   /* Self-check collapsible */
   .course-wrapper details {
     margin: 1.5rem 0 2rem;
