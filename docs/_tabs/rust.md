@@ -145,8 +145,8 @@ a:hover {
 }
 </style>
 
-<div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 1px solid #f97316; border-radius: 10px; padding: 1.5rem 2rem; margin-bottom: 2rem; text-align: center;">
-  <a href="/learn-rust/" style="color: #f97316; font-size: 1.5rem; font-weight: 700; text-decoration: none;">For the course → Learn Rust</a>
+<div style="text-align: center; margin-bottom: 2rem;">
+  <a href="/learn-rust/" style="display: inline-block; background: #f97316; color: #fff; font-size: 1.3rem; font-weight: 700; padding: 0.8rem 2rem; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(249,115,22,0.3); transition: all 0.15s;">For the course → Learn Rust</a>
 </div>
 
 ## Derived Data Choices
