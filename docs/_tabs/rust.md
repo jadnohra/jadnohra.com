@@ -145,7 +145,10 @@ a:hover {
 }
 </style>
 
-<div></div>
+<div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 8px; padding: 1.2rem 1.5rem; margin-bottom: 2rem; text-align: center;">
+  <span style="color: #e2e8f0; font-size: 1.1rem;">For the course version → </span>
+  <a href="/learn-rust/" style="color: #f97316; font-size: 1.1rem; font-weight: 600; text-decoration: underline;">Learn Rust</a>
+</div>
 
 ## Derived Data Choices
 
