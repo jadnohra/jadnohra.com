@@ -2,8 +2,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-INPUT="${1:-docs/bio-extended-content.md}"
-OUTPUT="docs/bio-extended.html"
+INPUT="${1:-docs/bio-ext-content.md}"
+OUTPUT="docs/bio-ext.html"
 
 if [ ! -f "$INPUT" ]; then
   echo "Usage: ./scripts/update-bio.sh <path-to-content-file>"
@@ -16,4 +16,4 @@ echo "Encrypting $INPUT -> $OUTPUT"
 
 echo ""
 echo "Done. To publish:"
-echo "  git add docs/bio-extended.html && git commit -m 'Update bio-extended' && git push"
+echo "  git add docs/bio-ext.html && git commit -m 'Update bio-ext' && git push"

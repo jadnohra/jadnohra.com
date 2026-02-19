@@ -8,7 +8,7 @@ usage() {
   echo "If password is not provided, you will be prompted for it."
   echo ""
   echo "Example:"
-  echo "  $0 docs/bio-extended-content.md docs/bio-extended.html"
+  echo "  $0 docs/bio-ext-content.md docs/bio-ext.html"
   exit 1
 }
 
@@ -157,7 +157,7 @@ ENCRYPTED=$(echo "$CRYPTO_OUTPUT" | python3 -c "import json,sys; d=json.load(sys
 cat > "$OUTPUT_FILE" << 'HTMLEOF'
 ---
 layout: none
-permalink: /bio-extended/
+permalink: /bio-ext/
 sitemap: false
 ---
 <!DOCTYPE html>
@@ -260,7 +260,7 @@ ENCRYPTED_DATA
 
 <script>
 (function() {
-  const SESSION_KEY = 'bio-extended-pw';
+  const SESSION_KEY = 'bio-ext-pw';
 
   function hexToBytes(hex) {
     const bytes = new Uint8Array(hex.length / 2);

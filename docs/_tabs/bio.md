@@ -812,3 +812,9 @@ Favorite technical books studied throughout career.
 18. **[Mathematical Logic](https://global.oup.com/academic/product/mathematical-logic-9780198571001)** (Chiswell & Hodges) — First-order logic, [handwritten notes](https://github.com/jadnohra/TheNotes/blob/master/2017/math_logic_chiswell_1.jpeg)
 19. **[Reforming the Mathematical Language of Physics](http://geocalc.clas.asu.edu/pdf/OersijGAPhysics.pdf)** (Hestenes) — Geometric algebra for physics, [notes](https://github.com/jadnohra/TheNotes/blob/master/2015/Notes%20on%20Hestenes%27%20%27Reforming%20the%20Mathematical%20Language%20of%20Physics%27.pdf)
 20. **Euler's Writings** — Primary sources, [notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Euler's%20Writings.pdf)
+
+---
+
+## Bio Extended
+
+[Extended bio](/bio-ext/)
