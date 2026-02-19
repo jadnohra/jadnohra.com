@@ -171,24 +171,24 @@ sitemap: false
   *{margin:0;padding:0;box-sizing:border-box}
   body{
     font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;
-    background:#1b1b1e;color:#d1d1d6;min-height:100vh;
+    background:#ffffff;color:#1e293b;min-height:100vh;
     display:flex;align-items:center;justify-content:center;
   }
   #unlock-screen{
     text-align:center;padding:2rem;max-width:420px;width:100%;
   }
   #unlock-screen h1{
-    font-size:1.5rem;font-weight:600;color:#e5e5ea;margin-bottom:.5rem;
+    font-size:1.5rem;font-weight:600;color:#1e293b;margin-bottom:.5rem;
   }
   #unlock-screen p{
-    font-size:.9rem;color:#8e8e93;margin-bottom:1.5rem;
+    font-size:.9rem;color:#6b7280;margin-bottom:1.5rem;
   }
   .input-group{
     display:flex;gap:.5rem;margin-bottom:.75rem;
   }
   #password-input{
-    flex:1;padding:.65rem 1rem;border-radius:8px;border:1px solid #3a3a3c;
-    background:#2c2c2e;color:#e5e5ea;font-size:1rem;outline:none;
+    flex:1;padding:.65rem 1rem;border-radius:8px;border:1px solid #d1d5db;
+    background:#f9fafb;color:#1e293b;font-size:1rem;outline:none;
     transition:border-color .2s;
   }
   #password-input:focus{border-color:#0a84ff}
@@ -216,8 +216,8 @@ sitemap: false
     display:none;max-width:800px;margin:2rem auto;padding:1.5rem 2rem;
     line-height:1.7;font-size:1.05rem;
   }
-  #content h1,#content h2,#content h3{color:#e5e5ea;margin:1.5rem 0 .75rem;font-weight:600}
-  #content h1{font-size:1.8rem;border-bottom:1px solid #3a3a3c;padding-bottom:.5rem}
+  #content h1,#content h2,#content h3{color:#1e293b;margin:1.5rem 0 .75rem;font-weight:600}
+  #content h1{font-size:1.8rem;border-bottom:1px solid #e2e8f0;padding-bottom:.5rem}
   #content h2{font-size:1.4rem}
   #content h3{font-size:1.15rem}
   #content p{margin-bottom:1rem}
@@ -227,17 +227,17 @@ sitemap: false
   #content li{margin-bottom:.35rem}
   #content blockquote{
     border-left:3px solid #0a84ff;padding:.5rem 1rem;margin:1rem 0;
-    color:#a1a1a6;background:#2c2c2e;border-radius:0 8px 8px 0;
+    color:#6b7280;background:#f8fafc;border-radius:0 8px 8px 0;
   }
   #content code{
-    background:#2c2c2e;padding:.15rem .4rem;border-radius:4px;font-size:.9em;
+    background:#f1f5f9;padding:.15rem .4rem;border-radius:4px;font-size:.9em;
   }
   #content pre{
-    background:#2c2c2e;padding:1rem;border-radius:8px;overflow-x:auto;margin:1rem 0;
+    background:#f1f5f9;padding:1rem;border-radius:8px;overflow-x:auto;margin:1rem 0;
   }
   #content pre code{background:none;padding:0}
-  #content strong{color:#e5e5ea}
-  #content hr{border:none;border-top:1px solid #3a3a3c;margin:2rem 0}
+  #content strong{color:#1e293b}
+  #content hr{border:none;border-top:1px solid #e2e8f0;margin:2rem 0}
 </style>
 </head>
 <body>
