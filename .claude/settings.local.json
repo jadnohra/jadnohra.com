@@ -15,7 +15,12 @@
       "Bash(git submodule:*)",
       "Bash(python3:*)",
       "Bash(gem which:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "WebFetch(domain:notes.jadnohra.com)",
+      "Bash(curl:*)",
+      "Bash(tr:*)",
+      "Bash(chmod:*)",
+      "Bash(ENC_PASSWORD=\"test123\" ENC_INPUT=\"docs/bio-extended-content.md\" bash scripts/encrypt-page.sh:*)"
     ],
     "deny": [],
     "ask": []
