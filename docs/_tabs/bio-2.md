@@ -1,0 +1,114 @@
+---
+layout: post
+title: Bio 2
+icon: fas fa-microscope
+order: 2
+toc: true
+---
+
+<style>
+.bio-explorer *{margin:0;padding:0;box-sizing:border-box}
+.bio-explorer{color:#1e293b;font-family:system-ui,-apple-system,sans-serif;max-width:780px;margin:0 auto}
+.bio-explorer button{font-family:inherit}
+.bio-explorer h1{font-size:20px;font-weight:700}
+.bio-explorer .sub{color:#6b7280;font-size:11px;margin:2px 0 0}
+.bio-explorer .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.bio-explorer .header-right{display:flex;align-items:center;gap:12px}
+.bio-explorer .search-wrap{position:relative}
+.bio-explorer .search-wrap svg{position:absolute;left:8px;top:7px;color:#6b7280}
+.bio-explorer .search-wrap input{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:5px 10px 5px 28px;color:#1e293b;font-size:12px;width:140px;outline:none}
+.bio-explorer .row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.bio-explorer .pill{border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;transition:all 0.12s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;border:1px solid #e2e8f0;background:#f8fafc;color:#64748b}
+.bio-explorer .pill.active{background:var(--ac,#f97316)22;border-color:var(--ac,#f97316)66;color:var(--ac,#f97316)}
+.bio-explorer .pill .cnt{font-size:9px;opacity:0.5}
+.bio-explorer .pill .co-period{font-size:10px;opacity:0.6}
+.bio-explorer .pill .co-name{font-weight:600}
+.bio-explorer .toggle-btn{background:none;border:1px solid #e2e8f0;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.15s}
+.bio-explorer .toggle-btn.on{color:#f97316;border-color:rgba(249,115,22,0.3)}
+.bio-explorer .toggle-btn.off{color:#6b7280}
+.bio-explorer .clear-btn{background:none;border:none;color:#f97316;font-size:11px;cursor:pointer;padding:4px 6px;display:flex;align-items:center;gap:3px}
+.bio-explorer .cat-header{background:none;border:none;color:#6b7280;font-size:11px;cursor:pointer;padding:0;display:flex;align-items:center;gap:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px}
+.bio-explorer .cat-header .desc{font-weight:400;font-size:10px;opacity:0.6;text-transform:none}
+.bio-explorer .cat-header .ac-count{color:#f97316;font-size:10px;font-weight:400}
+.bio-explorer .cat-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.bio-explorer .filter-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;margin-top:12px}
+.bio-explorer .filter-row .count{font-size:11px;color:#6b7280}
+.bio-explorer .active-tags{display:flex;gap:3px;flex-wrap:wrap}
+.bio-explorer .active-tag{font-size:10px;padding:2px 6px;border-radius:4px;display:flex;align-items:center;gap:3px;cursor:pointer}
+.bio-explorer .cards{display:flex;flex-direction:column;gap:4px}
+.bio-explorer .card{border-radius:8px;padding:8px 12px;transition:all 0.12s;border:1px solid #e2e8f0;background:#fafbfc}
+.bio-explorer .card.open{background:#fff7ed;border-color:rgba(249,115,22,0.3)}
+.bio-explorer .card-head{cursor:pointer;display:flex;align-items:center;gap:8px}
+.bio-explorer .card-co{font-size:10px;font-weight:700;min-width:26px}
+.bio-explorer .card-id{color:#6b7280;font-size:10px;font-weight:600;min-width:40px;font-family:monospace}
+.bio-explorer .card-title{font-size:13px;font-weight:600;flex:1}
+.bio-explorer .card-period{font-size:10px;color:#94a3b8;min-width:50px;text-align:right}
+.bio-explorer .card-icons{display:flex;gap:2px}
+.bio-explorer .card-icons svg{width:12px;height:12px}
+.bio-explorer .card-body{margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0}
+.bio-explorer .card-body p{font-size:13px;color:#475569;line-height:1.55;margin:0 0 8px}
+.bio-explorer .card-body .tech-line{font-size:12px;color:#64748b;font-family:'SF Mono',SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:4px 8px;border-radius:4px;margin:0 0 8px;line-height:1.5}
+.bio-explorer .card-body .no-full{font-size:11px;color:#94a3b8;font-style:italic;margin:0 0 8px}
+.bio-explorer .card-links{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 6px}
+.bio-explorer .card-link{font-size:10px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#3b82f6;text-decoration:none;display:inline-flex;align-items:center;gap:3px;border:1px solid #bfdbfe}
+.bio-explorer .card-link:hover{background:#dbeafe}
+.bio-explorer .card-rel{font-size:10px;color:#f97316;margin:0 0 6px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.bio-explorer .card-rel span{background:rgba(249,115,22,0.1);padding:1px 6px;border-radius:3px}
+.bio-explorer .tag-row{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:3px;align-items:center}
+.bio-explorer .tag-row .cat-label{font-size:9px;color:#94a3b8;min-width:55px;text-transform:uppercase}
+.bio-explorer .mini-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:1px 6px;border-radius:3px;background:#f1f5f9;color:#64748b;cursor:pointer}
+.bio-explorer .mini-tag.active{color:var(--ac);background:var(--ac-bg)}
+.bio-explorer-popover{position:fixed;background:#fff;border:1px solid #f97316;border-radius:8px;padding:12px 16px;z-index:9999;pointer-events:none;box-shadow:0 4px 24px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.15s;max-height:60vh;overflow-y:auto}
+.bio-explorer-popover.visible{opacity:1}
+.bio-explorer-popover .pop-head{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.bio-explorer-popover .pop-co{font-size:10px;font-weight:700}
+.bio-explorer-popover .pop-id{color:#f97316;font-weight:700;font-size:14px}
+.bio-explorer-popover .pop-title{color:#1e293b;font-size:13px;font-weight:600}
+.bio-explorer-popover .pop-text{color:#475569;font-size:12px;line-height:1.6}
+.bio-explorer-popover .pop-tech{font-size:11px;color:#64748b;font-family:'SF Mono',SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:3px 6px;border-radius:3px;margin-top:6px;line-height:1.5}
+.bio-explorer-popover .pop-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.bio-explorer-popover .pop-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:1px 6px;border-radius:3px}
+.bio-explorer .arc{margin-top:24px;border-top:1px solid #e2e8f0;padding-top:16px}
+.bio-explorer .arc-header{background:none;border:none;color:#f97316;font-size:14px;font-weight:700;cursor:pointer;padding:0;display:flex;align-items:center;gap:6px}
+.bio-explorer .arc-header .a-sub{font-size:11px;font-weight:400;color:#6b7280}
+.bio-explorer .a-list{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.bio-explorer .a-card{background:#fafbfc;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;position:relative}
+.bio-explorer .a-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:6px 0 0 6px;background:var(--ac,#f97316)}
+.bio-explorer .a-card .a-head{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.bio-explorer .a-card .a-num{color:var(--ac,#f97316);font-size:16px;font-weight:400;min-width:20px}
+.bio-explorer .a-card .a-name{color:var(--ac,#f97316);font-weight:700;font-size:14px}
+.bio-explorer .a-card .a-period{font-size:11px;color:#94a3b8;margin-left:auto}
+.bio-explorer .a-card .a-short{color:#475569;font-size:13px;margin:0 0 6px;padding-left:28px}
+.bio-explorer .a-chain{padding-left:28px;display:flex;flex-direction:column;gap:4px}
+.bio-explorer .chain-step{display:flex;align-items:baseline;gap:6px;font-size:12px}
+.bio-explorer .chain-arrow{color:var(--ac);font-weight:700;font-size:14px;flex-shrink:0}
+.bio-explorer .chain-step .a-story-link{font-size:10px;padding:1px 6px;border-radius:3px;background:rgba(249,115,22,0.12);color:#f97316;cursor:pointer;flex-shrink:0}
+.bio-explorer .chain-note{color:#64748b;font-size:12px;line-height:1.4}
+.bio-explorer .empty{color:#94a3b8;font-size:13px;text-align:center;padding:20px}
+.bio-explorer svg.i{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.bio-explorer svg.i14{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.bio-explorer svg.i16{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.bio-explorer svg.i9{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.bio-explorer svg.i11{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.bio-explorer .card-title svg.i11{stroke:#eab308;fill:#eab308}
+.bio-explorer .gallery{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;margin-bottom:8px;scrollbar-width:thin}
+.bio-explorer .gallery::-webkit-scrollbar{height:4px}
+.bio-explorer .gallery::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:2px}
+.bio-explorer .gal-card{flex-shrink:0;width:180px;border-radius:8px;overflow:hidden;border:1px solid #e2e8f0;background:#fafbfc;cursor:pointer;transition:all 0.15s}
+.bio-explorer .gal-card:hover{border-color:rgba(249,115,22,0.4);box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+.bio-explorer .gal-card img{width:100%;height:101px;object-fit:cover;display:block;background:#f1f5f9}
+.bio-explorer .gal-card .gal-site{width:100%;height:101px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f8fafc,#f1f5f9);font-size:16px;font-weight:700;color:#64748b;letter-spacing:0.5px}
+.bio-explorer .gal-card .gal-info{padding:5px 8px}
+.bio-explorer .gal-card .gal-id{font-size:9px;color:#94a3b8;font-family:monospace}
+.bio-explorer .gal-card .gal-name{font-size:11px;font-weight:600;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bio-explorer .inline-thumb{margin:0 0 8px;display:flex;gap:6px;flex-wrap:wrap}
+.bio-explorer .inline-thumb a{display:block;border-radius:6px;overflow:hidden;border:1px solid #e2e8f0;transition:all 0.15s}
+.bio-explorer .inline-thumb a:hover{border-color:rgba(249,115,22,0.4)}
+.bio-explorer .inline-thumb img{height:80px;width:auto;display:block;background:#f1f5f9}
+/* SVG icons inside popover */
+.bio-explorer-popover svg.i9{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+</style>
+
+<div id="bio-app" class="bio-explorer"></div>
+
+<script src="{{ '/assets/js/bio-explorer.js' | relative_url }}"></script>
