@@ -113,6 +113,7 @@ toc: true
 .bio-lightbox{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:99999;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transition:opacity 0.2s}
 .bio-lightbox.visible{opacity:1;pointer-events:auto}
 .bio-lightbox img{max-width:90vw;max-height:90vh;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,0.4);object-fit:contain}
+.bio-lightbox iframe{width:80vw;height:45vw;max-width:960px;max-height:540px;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,0.4)}
 /* SVG icons inside popover */
 .bio-explorer-popover svg.i9{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 </style>

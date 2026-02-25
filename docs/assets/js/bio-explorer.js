@@ -237,7 +237,7 @@ function cardH(s){
     if(hasImgs||m.vids.length){
       h+='<div class="gal-thumbs">';
       if(hasImgs)for(const img of s.imgs)h+='<span class="gal-thumb" onclick="event.stopPropagation();showLightbox(\''+esc(img)+'\')"><img src="'+esc(img)+'" loading="lazy"></span>';
-      for(const v of m.vids)h+='<span class="gal-thumb" onclick="event.stopPropagation();showLightbox(\''+ytThumb(v.vid).replace(/'/g,"\\'")+'\')"><img src="'+ytThumb(v.vid)+'" loading="lazy"><span class="gal-play">'+icon('play','i')+'</span></span>';
+      for(const v of m.vids)h+='<span class="gal-thumb" onclick="event.stopPropagation();showLightbox(null,\''+esc(v.vid)+'\')"><img src="'+ytThumb(v.vid)+'" loading="lazy"><span class="gal-play">'+icon('play','i')+'</span></span>';
       h+='</div>';
     }
   }
@@ -388,7 +388,7 @@ function showPop(e,id){
 }
 function hidePop(){clearTimeout(hoverTimeout);pop.classList.remove('visible')}
 
-const lb=document.createElement('div');lb.className='bio-lightbox';lb.onclick=function(){lb.classList.remove('visible')};document.body.appendChild(lb);
-function showLightbox(src){lb.innerHTML='<img src="'+src+'">';lb.classList.add('visible')}
+const lb=document.createElement('div');lb.className='bio-lightbox';lb.onclick=function(){lb.innerHTML='';lb.classList.remove('visible')};document.body.appendChild(lb);
+function showLightbox(src,vid){if(vid){lb.innerHTML='<iframe src="https://www.youtube.com/embed/'+vid+'?autoplay=1" frameborder="0" allow="autoplay;encrypted-media" allowfullscreen></iframe>'}else{lb.innerHTML='<img src="'+src+'">'}lb.classList.add('visible')}
 
 render();
