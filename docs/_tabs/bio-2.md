@@ -133,8 +133,8 @@ Interactive visualization of connections between career, projects, algorithms, a
 <div id="portfolio-viz" style="display:flex;justify-content:center;margin:1rem 0"></div>
 
 <style>
-#portfolio-viz svg { font: 13px sans-serif !important; }
-#portfolio-viz svg text { font-size: 14px !important; }
+#portfolio-viz svg { font: 11px sans-serif !important; }
+#portfolio-viz svg text { font-size: 12px !important; }
 </style>
 
 <script src="{{ '/assets/js/portfolio-viz.js' | relative_url }}"></script>
