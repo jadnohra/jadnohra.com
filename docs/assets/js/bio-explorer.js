@@ -231,6 +231,15 @@ function cardH(s){
   if(s.per)h+='<span class="card-period">'+s.per+'</span>';
   h+=(open?icon('chevDown','i14'):icon('chevRight','i14'));
   h+='</div>';
+  if(galMode){
+    const m=getMedia(s);
+    if(m.vids.length||m.sites.length){
+      h+='<div class="gal-thumbs">';
+      for(const v of m.vids)h+='<a href="'+esc(v.url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><img src="'+ytThumb(v.vid)+'" alt="'+esc(v.label)+'" loading="lazy"></a>';
+      for(const st of m.sites)h+='<a href="'+esc(st.url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="gal-site-pill">'+icon('link','i9')+' '+esc(st.label)+'</a>';
+      h+='</div>';
+    }
+  }
   if(open){
     h+='<div class="card-body">';
     h+='<div class="tech-line">'+esc(s.tech)+'</div>';
