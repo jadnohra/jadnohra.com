@@ -9,7 +9,7 @@ toc: true
 <style>
 .bio-explorer *{margin:0;padding:0;box-sizing:border-box}
 .bio-explorer{color:#1e293b;font-family:system-ui,-apple-system,sans-serif;max-width:780px;margin:0 auto}
-.bio-explorer button{font-family:inherit}
+.bio-explorer button{font-family:inherit;display:inline-flex !important;width:auto !important;text-align:left !important;border:none !important;background:none !important}
 .bio-explorer h1{font-size:20px;font-weight:700}
 .bio-explorer .sub{color:#6b7280;font-size:11px;margin:2px 0 0}
 .bio-explorer .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
@@ -17,9 +17,9 @@ toc: true
 .bio-explorer .search-wrap{position:relative}
 .bio-explorer .search-wrap svg{position:absolute;left:8px;top:7px;color:#6b7280}
 .bio-explorer .search-wrap input{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:5px 10px 5px 28px;color:#1e293b;font-size:12px;width:140px;outline:none}
-.bio-explorer .be-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
-.bio-explorer .be-pill{border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;transition:all 0.12s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;border:1px solid #e2e8f0;background:#f8fafc;color:#64748b}
-.bio-explorer .be-pill.active{background:var(--ac,#f97316)22;border-color:var(--ac,#f97316)66;color:var(--ac,#f97316)}
+.bio-explorer .be-row{display:flex !important;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.bio-explorer .be-pill{border-radius:6px !important;padding:4px 10px !important;cursor:pointer;font-size:12px !important;transition:all 0.12s;display:inline-flex !important;align-items:center;gap:5px;white-space:nowrap;border:1px solid #e2e8f0 !important;background:#f8fafc !important;color:#64748b !important;width:auto !important}
+.bio-explorer .be-pill.active{background:var(--ac,#f97316)22 !important;border-color:var(--ac,#f97316)66 !important;color:var(--ac,#f97316) !important}
 .bio-explorer .be-pill .cnt{font-size:9px;opacity:0.5}
 .bio-explorer .be-pill .co-period{font-size:10px;opacity:0.6}
 .bio-explorer .be-pill .co-name{font-weight:600}
