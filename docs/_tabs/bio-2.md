@@ -121,3 +121,36 @@ toc: true
 <div id="bio-app" class="bio-explorer"></div>
 
 <script src="{{ '/assets/js/bio-explorer.js' | relative_url }}"></script>
+
+---
+
+## Books
+
+Favorite technical books studied throughout career.
+
+1. **[Statistics for Experimenters](https://www.wiley.com/en-us/Statistics+for+Experimenters%3A+Design%2C+Innovation%2C+and+Discovery%2C+2nd+Edition-p-9780471718130)** (Box, Hunter, Hunter) — Design of experiments, hypothesis testing, confidence intervals
+2. **[Probabilistic Safety Assessment in the Chemical and Nuclear Industries](https://books.google.de/books/about/Probabilistic_safety_assessment_in_the_c.html?id=CAUuWcTmNrQC)** (Fullwood) — Safety analysis for chemical and nuclear industries
+3. **AI Game Programming Wisdom** (4 volumes) — Game AI algorithms and techniques
+4. **[Linear Algebra](https://hefferon.net/linearalgebra/)** (Hefferon) — Free textbook, worked through completely in [77-neurons](https://github.com/jadnohra/77-neurons-project-perelman) with [detailed notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Hefferon's%20%27Linear%20Algebra%27.pdf)
+5. **[Book of Proof](https://www.people.vcu.edu/~rhammack/BookOfProof/)** (Hammack) — Introduction to mathematical proof techniques
+6. **[Linear Algebra Done Right](https://linear.axler.net/)** (Axler) — Abstract approach to linear algebra, [memo notes](https://github.com/jadnohra/TheNotes/blob/master/2019/memo_linear-algebra-done-right.pdf)
+7. **[Mathematical Thought from Ancient to Modern Times](https://global.oup.com/academic/product/mathematical-thought-from-ancient-to-modern-times-9780195061352)** (Morris Kline) — History of mathematics, [notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Morris%20Kline's%20%27Mathematical%20Thought%27.pdf)
+8. **[Euclid's Elements](https://mathcs.clarku.edu/~djoyce/elements/elements.html)** (Heath translation) — Classical foundations of geometry, [notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Euclid's%20Elements.pdf)
+9. **[The Calculus Lifesaver](https://press.princeton.edu/books/paperback/9780691130880/the-calculus-lifesaver)** (Banner) — Worked through in [77-neurons](https://github.com/jadnohra/77-neurons-project-perelman) weeks 1-20
+10. **[The Symmetric Eigenvalue Problem](https://epubs.siam.org/doi/book/10.1137/1.9781611971163)** (Parlett) — Numerical linear algebra, [notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Parlett's%20The%20Symmetric%20Eigenvalue%20Problem.pdf)
+11. **[Set Theory and its Philosophy](https://global.oup.com/academic/product/set-theory-and-its-philosophy-9780199270415)** (Potter) — Foundations of mathematics, [notes](https://github.com/jadnohra/TheNotes/blob/master/2015/Notes%20on%20Potter's%20Set%20Theory%20and%20its%20Philosophy.pdf)
+12. **[Reason's Nearest Kin](https://global.oup.com/academic/product/reasons-nearest-kin-9780199252619)** (Potter) — Philosophy of mathematics, [notes](https://github.com/jadnohra/TheNotes/blob/master/2015/Notes%20on%20Potter's%20%27Reason's%20Nearest%20Kin%27.pdf)
+13. **[The Liar: An Essay on Truth and Circularity](https://global.oup.com/academic/product/the-liar-9780195059441)** (Barwise & Etchemendy) — Logic and paradoxes, [notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Barwise's%20%27The%20Liar%27.pdf)
+14. **[Basic Concepts of Mathematics](https://www.trillia.com/zakon1.html)** (Zakon) — Foundations, [notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Elias%20Zakon's%20Basic%20Concepts%20of%20Mathematics.pdf)
+15. **[Concepts of Force](https://www.hup.harvard.edu/books/9780674017108)** (Jammer) — History and philosophy of physics, [notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Jammer's%20%27Force%27.pdf)
+16. **[A History of the Theories of Aether and Electricity](https://archive.org/details/historyoftheorie00whitrich)** (Whittaker) — Classical physics history, [notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20%27Theories%20of%20the%20Aether%20and%20Electricity%2C%20Whittaker%27.pdf)
+17. **[There's Something about Gödel](https://www.wiley.com/en-us/There's+Something+about+G%C3%B6del%3A+The+Complete+Guide+to+the+Incompleteness+Theorem-p-9781405197663)** (Berto) — Incompleteness theorem, [notes 1](https://github.com/jadnohra/TheNotes/blob/master/2015/Study%20of%20%27There's%20Something%20about%20Goedel%27.pdf), [notes 2](https://github.com/jadnohra/TheNotes/blob/master/2015/Study%20of%20%27There's%20Something%20about%20Goedel%27%202.pdf)
+18. **[Mathematical Logic](https://global.oup.com/academic/product/mathematical-logic-9780198571001)** (Chiswell & Hodges) — First-order logic, [handwritten notes](https://github.com/jadnohra/TheNotes/blob/master/2017/math_logic_chiswell_1.jpeg)
+19. **[Reforming the Mathematical Language of Physics](http://geocalc.clas.asu.edu/pdf/OersijGAPhysics.pdf)** (Hestenes) — Geometric algebra for physics, [notes](https://github.com/jadnohra/TheNotes/blob/master/2015/Notes%20on%20Hestenes%27%20%27Reforming%20the%20Mathematical%20Language%20of%20Physics%27.pdf)
+20. **Euler's Writings** — Primary sources, [notes](https://github.com/jadnohra/TheNotes/blob/master/2013-2014%20/Notes%20on%20Euler's%20Writings.pdf)
+
+---
+
+## Bio Extended
+
+[Extended bio](/bio-ext/)
