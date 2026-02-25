@@ -275,18 +275,18 @@ function render(){
   h+='<button class="toggle-btn '+(galMode?'on':'off')+'" onclick="galMode=!galMode;render()">'+(galMode?icon('toggleOn','i14'):icon('toggleOff','i14'))+' Gallery</button>';
   h+='<div class="search-wrap">'+icon('search')+'<input value="'+esc(search)+'" oninput="search=this.value;render()" placeholder="Search..."></div></div></div>';
 
-  h+='<div class="row">';
+  h+='<div class="be-row">';
   for(const[k,v]of Object.entries(CO)){
     const ac=selCo===k;
-    h+='<button class="pill '+(ac?'active':'')+'" style="--ac:'+v.c+'" onclick="selCo=selCo===\''+k+'\'?null:\''+k+'\';render()"><span class="co-name">'+v.n+'</span><span class="co-period">'+v.p+'</span></button>';
+    h+='<button class="be-pill '+(ac?'active':'')+'" style="--ac:'+v.c+'" onclick="selCo=selCo===\''+k+'\'?null:\''+k+'\';render()"><span class="co-name">'+v.n+'</span><span class="co-period">'+v.p+'</span></button>';
   }
-  h+='</div><div class="row">';
-  h+='<button class="pill '+(topOnly?'active':'')+'" style="--ac:#fbbf24" onclick="topOnly=!topOnly;render()">'+icon('star','i')+' Top Projects</button>';
-  h+='<button class="pill '+(starOnly?'active':'')+'" style="--ac:#fbbf24" onclick="starOnly=!starOnly;render()">'+icon('star','i')+' Starred</button>';
+  h+='</div><div class="be-row">';
+  h+='<button class="be-pill '+(topOnly?'active':'')+'" style="--ac:#fbbf24" onclick="topOnly=!topOnly;render()">'+icon('star','i')+' Top Projects</button>';
+  h+='<button class="be-pill '+(starOnly?'active':'')+'" style="--ac:#fbbf24" onclick="starOnly=!starOnly;render()">'+icon('star','i')+' Starred</button>';
   h+='<span style="color:#cbd5e1;font-size:11px;margin:0 2px">\u2502</span>';
-  h+='<button class="pill '+(scaleOn.major?'active':'')+'" style="--ac:#f97316" onclick="scaleOn.major=!scaleOn.major;render()">'+icon('rocket','i')+' Major</button>';
-  h+='<button class="pill '+(scaleOn.notable?'active':'')+'" style="--ac:#3b82f6" onclick="scaleOn.notable=!scaleOn.notable;render()">'+icon('bulb','i')+' Notable</button>';
-  h+='<button class="pill '+(scaleOn.minor?'active':'')+'" style="--ac:#94a3b8" onclick="scaleOn.minor=!scaleOn.minor;render()">'+icon('terminal','i')+' Minor</button>';
+  h+='<button class="be-pill '+(scaleOn.major?'active':'')+'" style="--ac:#f97316" onclick="scaleOn.major=!scaleOn.major;render()">'+icon('rocket','i')+' Major</button>';
+  h+='<button class="be-pill '+(scaleOn.notable?'active':'')+'" style="--ac:#3b82f6" onclick="scaleOn.notable=!scaleOn.notable;render()">'+icon('bulb','i')+' Notable</button>';
+  h+='<button class="be-pill '+(scaleOn.minor?'active':'')+'" style="--ac:#94a3b8" onclick="scaleOn.minor=!scaleOn.minor;render()">'+icon('terminal','i')+' Minor</button>';
   if(hasFilter)h+='<button class="clear-btn" onclick="sel.clear();selCo=null;selEra=null;topOnly=false;starOnly=false;scaleOn={major:false,notable:false,minor:false};search=\'\';render()">'+icon('x','i')+' Clear</button>';
   h+='</div>';
 
@@ -297,7 +297,7 @@ function render(){
       h+='<div class="cat-tags">';
       for(const name of tags){
         const cfg=TAGS[name];const ac2=sel.has(name);const ic=cfg.icon?icon(cfg.icon,'i'):'';
-        h+='<button class="pill '+(ac2?'active':'')+'" style="--ac:'+cfg.color+'" onclick="toggleTag(\''+esc(name).replace(/'/g,"\\'")+'\')">'+ic+' '+esc(name)+' <span class="cnt">'+(tagCounts[name]||0)+'</span></button>';
+        h+='<button class="be-pill '+(ac2?'active':'')+'" style="--ac:'+cfg.color+'" onclick="toggleTag(\''+esc(name).replace(/'/g,"\\'")+'\')">'+ic+' '+esc(name)+' <span class="cnt">'+(tagCounts[name]||0)+'</span></button>';
       }
       h+='</div>';
     }
@@ -311,7 +311,7 @@ function render(){
     for(const era of ERAS){
       const ac=selEra===era.id;
       const cnt=S.filter(s=>{const y=perToYear(s.per);return y>=era.from&&y<=era.to}).length;
-      h+='<button class="pill '+(ac?'active':'')+'" style="--ac:'+era.c+'" onclick="selEra=selEra===\''+era.id+'\'?null:\''+era.id+'\';render()">'+era.label+' <span class="cnt">'+cnt+'</span></button>';
+      h+='<button class="be-pill '+(ac?'active':'')+'" style="--ac:'+era.c+'" onclick="selEra=selEra===\''+era.id+'\'?null:\''+era.id+'\';render()">'+era.label+' <span class="cnt">'+cnt+'</span></button>';
     }
     h+='</div>';
   }
