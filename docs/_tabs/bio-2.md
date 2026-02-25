@@ -124,17 +124,20 @@ toc: true
 
 ---
 
-## Quotes
+## Knowledge Graph
 
-<div id="quotes-wheel"></div>
+Interactive visualization of connections between career, projects, algorithms, and theory. Hover over nodes to highlight relationships.
 
-<script src="{{ '/assets/js/quotes-wheel.js' | relative_url }}"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<div id="portfolio-viz" style="display:flex;justify-content:center;margin:1rem 0"></div>
 
 <style>
-#quotes-wheel #quote-text { font-size: 20px !important; line-height: 1.9 !important; }
-#quotes-wheel #quote-source { font-size: 14px !important; }
-#quotes-wheel #quote-gene { font-size: 24px !important; }
+#portfolio-viz svg { font: 13px sans-serif !important; }
+#portfolio-viz svg text { font-size: 14px !important; }
 </style>
+
+<script src="{{ '/assets/js/portfolio-viz.js' | relative_url }}"></script>
 
 ---
 
