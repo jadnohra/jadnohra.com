@@ -106,11 +106,13 @@ toc: true
 .bio-explorer .inline-thumb a:hover{border-color:rgba(249,115,22,0.4)}
 .bio-explorer .inline-thumb img{height:80px;width:auto;display:block;background:#f1f5f9}
 .bio-explorer .gal-thumbs{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:6px 0 2px 34px}
-.bio-explorer .gal-thumbs a{display:block;border-radius:4px;overflow:hidden;border:1px solid #e2e8f0;transition:all 0.15s;text-decoration:none !important}
-.bio-explorer .gal-thumbs a:hover{border-color:rgba(249,115,22,0.5);box-shadow:0 2px 12px rgba(0,0,0,0.1)}
-.bio-explorer .gal-thumbs img{height:48px;width:auto;display:block;background:#f1f5f9;transition:transform 0.15s}
-.bio-explorer .gal-thumbs a:hover img{transform:scale(2.5);transform-origin:center center;position:relative;z-index:100;border-radius:4px;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
-.bio-explorer .gal-site-pill{display:inline-flex !important;align-items:center;gap:3px;font-size:10px;padding:4px 8px;background:#f8fafc;color:#3b82f6 !important;border:1px solid #e2e8f0;border-radius:4px;height:48px;white-space:nowrap}
+.bio-explorer .gal-thumb{display:block;border-radius:4px;overflow:hidden;border:1px solid #e2e8f0;transition:all 0.15s;cursor:pointer;position:relative}
+.bio-explorer .gal-thumb:hover{border-color:rgba(249,115,22,0.5);box-shadow:0 2px 12px rgba(0,0,0,0.1)}
+.bio-explorer .gal-thumbs img{height:48px;width:auto;display:block;background:#f1f5f9}
+.bio-explorer .gal-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;background:rgba(0,0,0,0.5);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center}
+.bio-lightbox{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:99999;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.bio-lightbox.visible{opacity:1;pointer-events:auto}
+.bio-lightbox img{max-width:90vw;max-height:90vh;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,0.4);object-fit:contain}
 /* SVG icons inside popover */
 .bio-explorer-popover svg.i9{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 </style>
