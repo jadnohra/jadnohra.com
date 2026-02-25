@@ -187,7 +187,7 @@ const tagCounts={};S.forEach(s=>s.tags.forEach(t=>{tagCounts[t]=(tagCounts[t]||0
 const catTagsMap={};Object.entries(TAGS).forEach(([n,c])=>{if(!catTagsMap[c.cat])catTagsMap[c.cat]=[];catTagsMap[c.cat].push(n)});
 const storyMap={};S.forEach(s=>{storyMap[s.id]=s});
 
-let sel=new Set(),selCo=null,selEra=null,topOnly=false,starOnly=false,search='',expanded=null,rawMode=false,galMode=false;
+let sel=new Set(),selCo=null,selEra=null,topOnly=false,starOnly=false,search='',expanded=null,rawMode=true,galMode=true;
 let scaleOn={major:false,notable:false,minor:false};
 let collapsed={domain:false,technique:true,type:true,era:true};
 const CROSS_DOMAIN=[
@@ -340,28 +340,6 @@ function render(){
   if(!f.length)h+='<p class="empty">No projects match current filters</p>';
   h+='</div>';
 
-  h+='<div class="arc">';
-  h+='<button class="arc-header" onclick="arcOpen=!arcOpen;render()">'+(arcOpen?icon('chevDown','i16'):icon('chevRight','i16'))+' Cross-Domain Insights <span class="a-sub">\u2014 where domains connect</span></button>';
-  if(arcOpen){
-    h+='<div class="a-list">';
-    CROSS_DOMAIN.forEach((a,i)=>{
-      h+='<div class="a-card" style="--ac:'+a.color+'"><div class="a-head"><span class="a-num">'+(i+1)+'.</span><span class="a-name">'+esc(a.name)+'</span></div>';
-      h+='<p class="a-short">'+esc(a.short)+'</p>';
-      h+='<div class="a-chain">';
-      a.chain.forEach((c,j)=>{
-        const st=storyMap[c.id];
-        if(!st)return;
-        h+='<div class="chain-step">';
-        if(j>0)h+='<span class="chain-arrow">\u2192</span>';
-        h+='<span class="a-story-link" onclick="expanded=\''+c.id+'\';render();setTimeout(()=>document.getElementById(\'card-'+c.id+'\')?.scrollIntoView({behavior:\'smooth\',block:\'center\'}),50)">'+c.id+'</span>';
-        h+='<span class="chain-note">'+esc(c.note)+'</span>';
-        h+='</div>';
-      });
-      h+='</div></div>';
-    });
-    h+='</div>';
-  }
-  h+='</div>';
 
   document.getElementById('bio-app').innerHTML=h;
 }
