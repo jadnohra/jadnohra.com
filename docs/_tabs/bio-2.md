@@ -124,6 +124,20 @@ toc: true
 
 ---
 
+## Quotes
+
+<div id="quotes-wheel"></div>
+
+<script src="{{ '/assets/js/quotes-wheel.js' | relative_url }}"></script>
+
+<style>
+#quotes-wheel #quote-text { font-size: 20px !important; line-height: 1.9 !important; }
+#quotes-wheel #quote-source { font-size: 14px !important; }
+#quotes-wheel #quote-gene { font-size: 24px !important; }
+</style>
+
+---
+
 ## Books
 
 Favorite technical books studied throughout career.
