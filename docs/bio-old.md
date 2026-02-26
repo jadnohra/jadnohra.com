@@ -1,8 +1,6 @@
 ---
 layout: post
 title: Bio (Old)
-icon: fas fa-folder-tree
-order: 99
 toc: true
 permalink: /bio-old/
 ---
