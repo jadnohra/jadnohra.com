@@ -4,9 +4,6 @@ title: Bio
 icon: fas fa-folder-tree
 order: 1
 toc: true
-description: >-
-  Jad Nohra — physics simulation, game AI, autonomous vehicles,
-  ZK cryptography, and FPGA hardware acceleration.
 ---
 
 <style>
