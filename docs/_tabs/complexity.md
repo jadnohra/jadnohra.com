@@ -4,6 +4,9 @@ title: Complexity
 icon: fas fa-project-diagram
 order: 4
 toc: true
+description: >-
+  Complexity classes explained through convergence, information theory, and automata —
+  P, NP, PSPACE, EXPTIME with canonical algorithms and the compiler connection.
 ---
 
 <style>

@@ -4,6 +4,9 @@ date: 2026-01-29
 categories: [Systems, Computing]
 tags: [linux, memory, virtual-memory, mmu, dma, iommu, devices]
 toc: true
+description: >-
+  Virtual memory, MMU, DMA, and IOMMU explained — how CPUs address memory,
+  page tables, device I/O, and the hardware that makes modern operating systems work.
 ---
 
 ## Overview

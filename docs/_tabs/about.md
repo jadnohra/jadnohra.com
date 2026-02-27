@@ -3,6 +3,9 @@ layout: post
 icon: fas fa-info-circle
 order: 11
 title: About
+description: >-
+  About Jad Nohra — software engineer, mathematician, writer, and musician.
+  Links to LinkedIn, GitHub, publications, and music projects.
 ---
 
 <style>

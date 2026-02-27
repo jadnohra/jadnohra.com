@@ -4,6 +4,9 @@ title: Math Quotes
 icon: fas fa-quote-left
 order: 2
 toc: true
+description: >-
+  Curated mathematics quotes from years of self-study — foundations, analysis,
+  algebra, geometry, physics, and philosophy of mathematics.
 ---
 
 <script src="https://d3js.org/d3.v7.min.js"></script>

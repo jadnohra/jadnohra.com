@@ -4,6 +4,9 @@ title: Intuitions
 icon: fas fa-lightbulb
 order: 5
 toc: true
+description: >-
+  Better intuitions for algorithms — two-pointer elimination proofs, graph traversal
+  mechanics, streaming median derivation, merge sort vs insertion sort information theory.
 ---
 
 <style>

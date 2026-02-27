@@ -4,6 +4,9 @@ title: Bio
 icon: fas fa-folder-tree
 order: 1
 toc: true
+description: >-
+  Jad Nohra's interactive career portfolio — 170+ projects across physics simulation,
+  game AI, autonomous vehicles, ZK cryptography, and FPGA hardware acceleration.
 ---
 
 <style>
@@ -119,6 +122,63 @@ toc: true
 </style>
 
 <div id="bio-app" class="bio-explorer"></div>
+
+<noscript>
+<div class="bio-noscript" style="max-width:780px;margin:0 auto;font-family:system-ui,sans-serif;color:#1e293b">
+<h2>Jad Nohra — Career Overview</h2>
+<p>Software engineer and engineering leader with 25+ years spanning physics simulation, game AI, autonomous vehicle safety, zero-knowledge cryptography, and FPGA hardware acceleration. 170+ projects across 10 companies, 2 US patents, and published research.</p>
+
+<h3>Career Timeline</h3>
+<dl>
+<dt><strong>Irreducible</strong> (2024–25) — ZK Crypto / FPGA Hardware</dt>
+<dd>Three-mode architecture (emulated/verilated/FPGA) for ZK proof acceleration. XLang domain-specific compiler for VLIW FPGA cores — DAG computation graph, instruction scheduling, register allocation. ZK compute kernels (NTT, FRI fold). FPGA device management (VFIO, DMA, PCIe, IOMMU). Rust, Verilator, Xilinx FPGA.</dd>
+
+<dt><strong>FERNRIDE</strong> (2023–24) — Autonomous Trucking</dt>
+<dd>Hazard Zone Model for autonomous truck safety — LiDAR/radar perception pipeline with zero false negatives. Articulated truck-trailer kinematic modeling. TÜV SÜD safety case certification. C++, ROS2.</dd>
+
+<dt><strong>Argo AI</strong> (2021–22) — Autonomous Vehicles (Ford/VW)</dt>
+<dd>Statistical safety test design — Wilson score, binomial CI, Design of Experiments, stratified sampling. Scenario generation framework. Noise injection modeling library. 2 US patents. Python, SciPy.</dd>
+
+<dt><strong>Audi AID</strong> (2018–20) — Autonomous Driving</dt>
+<dd>VTT multi-layer AV simulation platform — discrete-event scheduling, driver models (IDM/Wiedemann), vehicle dynamics, sensor simulation. Grew team from 2 to 20 engineers. C++, Python.</dd>
+
+<dt><strong>Havok / Microsoft</strong> (2011–18) — Physics Engine</dt>
+<dd>Contact constraint solver rewrite shipped in all major games since ~2014. HoloLens spatial localization (US patent). High-fidelity MLCP solver R&D. Formal proof of TOI tunneling impossibility. WiiU math library. Numerical analysis, SIMD optimization. C++, Julia.</dd>
+
+<dt><strong>Guerrilla Games / Sony</strong> (2009–11) — Game AI</dt>
+<dd>Killzone 3 AI systems — jetpack navigation, vehicle AI, automated navmesh region generation. PS3/SPU. C++.</dd>
+
+<dt><strong>AiGameDev</strong> (2008–10) — AI Research</dt>
+<dd>AI Sandbox open-source framework. Co-authored "Parallel Pathfinding on Modern Hardware." HPA*, locomotion, reinforcement learning. C++.</dd>
+
+<dt><strong>Kimera Studios</strong> (2006–08) — Indie Game Engine</dt>
+<dd>World-Of-Football: complete engine from scratch — rendering, physics, neural network goalkeeper AI, spatial partitioning, scripting. C++, DirectX.</dd>
+</dl>
+
+<h3>Technical Domains</h3>
+<p>Physics simulation, game AI, graphics rendering, compiler design, zero-knowledge cryptography, FPGA hardware acceleration, autonomous vehicle safety, LiDAR/radar perception, numerical analysis, formal methods, statistics, AR/mixed reality, animation, concurrency.</p>
+
+<h3>Core Technologies</h3>
+<p>C++, Rust, Python, Julia, JavaScript, SIMD/SSE/AVX, FPGA (Xilinx/Verilator), ROS2, LiDAR, DirectX, OpenGL, PS3/SPU.</p>
+
+<h3>Side Projects (2025–26)</h3>
+<ul>
+<li><a href="https://vram.run">vram.run</a> — GPU/API model search across 19 providers, 220+ hardware configs</li>
+<li><a href="https://psychotron.ai/">Psychotron</a> — Web Audio DSP chain for flash fiction audiobook</li>
+<li><a href="https://www.thatslop.com/">ThatSlop</a> — AI content detector browser extension</li>
+<li><a href="https://eliza2.ai/">ELIZA2</a> — Modern recreation of Weizenbaum's 1966 chatbot</li>
+<li><a href="https://notes.jadnohra.com/learn-rust/">Learn Rust Course</a> — Rust memory model for C++ programmers</li>
+</ul>
+
+<h3>Publications & Patents</h3>
+<ul>
+<li><a href="https://patents.google.com/patent/US20230030474A1/en">AV Training Simulations (2023)</a> — US Patent</li>
+<li><a href="https://patents.google.com/patent/US10672159B2">Anchor Graph Spatial Optimization (2020)</a> — US Patent</li>
+<li><a href="https://arxiv.org/pdf/1605.08221.pdf">Uniqueness of Minima in Least Squares</a> — arXiv</li>
+<li>Parallel Pathfinding on Modern Computer Hardware — AiGameDev</li>
+</ul>
+</div>
+</noscript>
 
 <script src="{{ '/assets/js/bio-explorer.js' | relative_url }}"></script>
 

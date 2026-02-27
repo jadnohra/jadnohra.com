@@ -4,6 +4,9 @@ date: 2026-01-28
 categories: [Systems, Computing]
 tags: [linux, hypervisors, virtualization, kernel, memory, cpu]
 toc: true
+description: >-
+  Linux processes, syscalls, and hypervisors — why VMs exist, how KVM works,
+  the syscall boundary, and virtualization explained from first principles.
 ---
 
 ## Part 1: Why Do We Even Need VMs?

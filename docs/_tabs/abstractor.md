@@ -4,6 +4,9 @@ title: Abstractor
 icon: fas fa-layer-group
 order: 3
 toc: true
+description: >-
+  System design primitives for computing — memory hierarchies, derived data,
+  synchronization, and the fundamental concepts that underlie all software systems.
 ---
 
 <style>

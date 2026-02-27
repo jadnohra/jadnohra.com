@@ -4,6 +4,9 @@ title: Compilers
 icon: fas fa-cogs
 order: 6
 toc: true
+description: >-
+  Compiler stages explained through complexity classes — lexers, parsers, type checkers,
+  optimizers, SSA, IR design, register allocation, and EVM/Solidity specifics.
 ---
 
 <style>

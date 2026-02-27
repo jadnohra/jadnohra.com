@@ -4,6 +4,9 @@ title: Rust
 icon: fab fa-rust
 order: 7
 toc: true
+description: >-
+  Rust programming insights — ownership, borrowing, lifetimes, and memory model
+  concepts for systems programmers transitioning from C++.
 ---
 
 <style>

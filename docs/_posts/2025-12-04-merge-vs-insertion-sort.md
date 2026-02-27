@@ -4,6 +4,9 @@ date: 2025-12-04
 categories: [Mathematics, Computer Science]
 tags: [mathematics, notation, proofs, fundamentals]
 math: true
+description: >-
+  The search for a dense proving language — exploring graphical mathematical notation,
+  proof techniques, and the fundamental reasons behind how we express formal reasoning.
 ---
 
 ## The Search for Fundamental Reasons
