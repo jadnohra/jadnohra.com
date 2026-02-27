@@ -5,8 +5,8 @@ icon: fas fa-folder-tree
 order: 1
 toc: true
 description: >-
-  Jad Nohra's interactive career portfolio — 170+ projects across physics simulation,
-  game AI, autonomous vehicles, ZK cryptography, and FPGA hardware acceleration.
+  Jad Nohra — physics simulation, game AI, autonomous vehicles,
+  ZK cryptography, and FPGA hardware acceleration.
 ---
 
 <style>
@@ -126,7 +126,7 @@ description: >-
 <noscript>
 <div class="bio-noscript" style="max-width:780px;margin:0 auto;font-family:system-ui,sans-serif;color:#1e293b">
 <h2>Jad Nohra — Career Overview</h2>
-<p>Software engineer and engineering leader with 25+ years spanning physics simulation, game AI, autonomous vehicle safety, zero-knowledge cryptography, and FPGA hardware acceleration. 170+ projects across 10 companies, 2 US patents, and published research.</p>
+<p>Software engineer and engineering leader with 25+ years spanning physics simulation, game AI, autonomous vehicle safety, zero-knowledge cryptography, and FPGA hardware acceleration. 2 US patents and published research.</p>
 
 <h3>Career Timeline</h3>
 <dl>
