@@ -292,6 +292,7 @@ permalink: /music/
     <span class="nav-dot" onclick="document.getElementById('references').scrollIntoView({behavior:'smooth'})">Listening</span>
     <span class="nav-dot" onclick="document.getElementById('villalobos').scrollIntoView({behavior:'smooth'})">Artist Stories</span>
     <span class="nav-dot" onclick="document.getElementById('sources').scrollIntoView({behavior:'smooth'})">Sources</span>
+    <span class="nav-dot" onclick="document.getElementById('filters').scrollIntoView({behavior:'smooth'})">Filters &amp; Voices</span>
   </div>
 </nav>
 
@@ -1014,6 +1015,294 @@ permalink: /music/
     <tr><td><a href="https://en.wikipedia.org/wiki/Perfect_fifth" target="_blank" rel="noopener" style="color:var(--accent)">Wikipedia</a></td><td>Perfect fifth — the open voicing foundation</td></tr>
   </table></div>
 
+</div>
+
+<!-- ==================== 18. FILTERS, MODULATION & MULTI-VOICE ==================== -->
+<div class="section" id="filters">
+  <div class="section-header">
+    <div class="section-icon" style="background:#3df53d18;color:var(--bass)">◈</div>
+    <div class="section-num" style="color:var(--bass)">18</div>
+  </div>
+  <h2>Bass Bible Extension — Filters, Modulation &amp; Multi-Voice</h2>
+  <p class="section-subtitle">Companion to Section 02. Everything below assumes: kick owns sub, bass lives 80 Hz+, saw or square oscillator, mono.</p>
+
+  <h3>1. The Filter IS Your Instrument</h3>
+  <p>The oscillator is lumber. The filter is the carpenter. In minimal techno bass, you're not designing a waveform — you're designing a filter <em>behavior</em>.</p>
+
+  <h4>Filter Types &amp; Their Bass Character</h4>
+  <div class="table-wrap"><table>
+    <tr><th>Filter</th><th>Harmonics</th><th>Character</th><th>Best For</th><th>In Your Synths</th></tr>
+    <tr><td><strong>Ladder 24dB (Moog)</strong></td><td>Pulls bass as resonance rises</td><td>Fat, aggressive, thins at high res</td><td>Growling mid-bass, acid-adjacent lines</td><td>Diva Moog mode, Repro-1</td></tr>
+    <tr><td><strong>Cascade 24dB (Roland)</strong></td><td>Preserves bass at resonance</td><td>Smooth, musical, predictable</td><td>Warm sustained bass, Bodzin-style</td><td>Diva JUNO/Jupiter mode</td></tr>
+    <tr><td><strong>SEM 12dB (Oberheim)</strong></td><td>Gentle slope, more harmonics pass</td><td>Open, airy, less dramatic</td><td>Subtle tonal bass, pads-as-bass</td><td>Diva multimode</td></tr>
+    <tr><td><strong>Sallen-Key</strong></td><td>Mild resonance, wide peak</td><td>Polite, rounded</td><td>Deep house crossover, softer minimal</td><td>Repro-5</td></tr>
+  </table></div>
+
+  <div class="callout key">
+    <p><strong>Critical distinction:</strong> The Moog ladder <em>steals bass energy</em> as you raise resonance — the resonant peak gets louder but the fundamental weakens. The Roland Cascade doesn't.</p>
+    <p>Moog-style = needs bass compensation (boost below cutoff or use drive to restore). Cascade-style = naturally stays full, more forgiving.</p>
+    <p><strong>Pick your filter before your waveform.</strong> Switching from Moog to JUNO filter on the same saw wave is a bigger tonal change than switching from saw to square.</p>
+  </div>
+
+  <h4>Cutoff Frequency as Composition</h4>
+  <div class="table-wrap"><table>
+    <tr><th>Cutoff Zone</th><th>Character</th><th>Use</th></tr>
+    <tr><td><strong>80–200 Hz</strong></td><td>Dark sub-rumble, felt not heard</td><td>Verses, intro, "disappearing" bass</td></tr>
+    <tr><td><strong>200–500 Hz</strong></td><td>Warm body, classic techno bass</td><td>Main groove, most of the track</td></tr>
+    <tr><td><strong>500–1200 Hz</strong></td><td>Nasal, vocal, mid presence</td><td>Tension sections, lead moments</td></tr>
+    <tr><td><strong>1200–3000 Hz</strong></td><td>Bright, aggressive, exposes harmonics</td><td>Climax, breakdowns where bass becomes lead</td></tr>
+    <tr><td><strong>3000 Hz+</strong></td><td>Raw oscillator, harsh</td><td>Almost never — only for effect</td></tr>
+  </table></div>
+
+  <div class="callout tip">
+    <p><strong>The entire emotional arc of a minimal techno track can be one bass note with the cutoff moving between these zones over 7 minutes.</strong> That's not a simplification — that's literally what Hood and Surgeon do.</p>
+  </div>
+
+  <h3>2. Resonance — The Hidden Melodic Layer</h3>
+  <p>Resonance creates a peak at the cutoff frequency. At moderate levels, this peak <em>sings</em> — it adds a second pitch to your bass that moves with the cutoff.</p>
+
+  <h4>Resonance Zones</h4>
+  <div class="table-wrap"><table>
+    <tr><th>Resonance</th><th>Effect</th><th>Use</th></tr>
+    <tr><td><strong>0–15%</strong></td><td>No audible peak, just gentle slope shaping</td><td>Clean sub-bass, Bodzin sustained lines</td></tr>
+    <tr><td><strong>15–40%</strong></td><td>Mild peak, adds "nose" and character</td><td>Standard techno bass — present without aggressive</td></tr>
+    <tr><td><strong>40–65%</strong></td><td>Strong peak, audibly pitched, starts to sing</td><td>Acid-adjacent, hypnotic — the filter becomes a voice</td></tr>
+    <tr><td><strong>65–85%</strong></td><td>Dominant peak, fundamental nearly masked</td><td>Filter IS the sound — oscillator is just feeding energy</td></tr>
+    <tr><td><strong>85–100%</strong></td><td>Self-oscillation threshold — filter becomes sine oscillator</td><td>Pings, special effects, filter-as-instrument (see §09)</td></tr>
+  </table></div>
+
+  <h4>The Two-Pitch Bass Trick</h4>
+  <p>Set resonance to 50–65%. Set cutoff to a <em>different pitch</em> than your oscillator note. You now have two pitches: the oscillator fundamental and the resonant peak. These create beating, dissonance, or consonance depending on their interval.</p>
+
+  <div class="table-wrap"><table>
+    <tr><th>Cutoff Interval</th><th>Sound</th><th>Feeling</th></tr>
+    <tr><td><strong>Unison</strong> (cutoff = fundamental)</td><td>Reinforced, powerful</td><td>Stable, heavy</td></tr>
+    <tr><td><strong>Fifth above</strong></td><td>Hollow, open</td><td>Classic minimal — hypnotic</td></tr>
+    <tr><td><strong>Octave above</strong></td><td>Bright but consonant</td><td>Clean, modern</td></tr>
+    <tr><td><strong>Minor 7th</strong></td><td>Tension, unresolved</td><td>Dark, Berghain</td></tr>
+    <tr><td><strong>Tritone</strong></td><td>Dissonant, unstable</td><td>Anxiety, build sections</td></tr>
+  </table></div>
+
+  <div class="callout tip">
+    <p><strong>In Repro-1:</strong> Set your cutoff, enable key tracking at <em>less than 100%</em> — the interval between oscillator pitch and resonant peak changes as you play different notes. Each note has a slightly different harmonic character. Set key tracking to 100% to keep the interval constant across all notes.</p>
+  </div>
+
+  <h3>3. Filter Envelope — Independent from Amp</h3>
+  <p>Your amp envelope (ADSR) controls <em>volume</em>. Your filter envelope controls <em>timbre</em>. They should almost never be identical.</p>
+
+  <h4>The Four Bass Archetypes</h4>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--bass)">Archetype 1: "The Pluck"</div>
+    <div class="patch-row"><span class="patch-label">Amp</span><span class="patch-val">A=0, D=800ms, S=0, R=100ms</span></div>
+    <div class="patch-row"><span class="patch-label">Filter</span><span class="patch-val">A=0, D=150ms, S=10%, R=50ms</span></div>
+    <div class="patch-row"><span class="patch-label">Character</span><span class="patch-val">Bright attack → dark tail. Bass starts mid-range, fades into sub.</span></div>
+    <div class="patch-row"><span class="patch-label">Use when</span><span class="patch-val">Bass needs to cut through initially but not compete with ongoing elements.</span></div>
+  </div>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--bass)">Archetype 2: "The Bloom"</div>
+    <div class="patch-row"><span class="patch-label">Amp</span><span class="patch-val">A=0, D=2s, S=40%, R=500ms</span></div>
+    <div class="patch-row"><span class="patch-label">Filter</span><span class="patch-val">A=0, D=1.2s, S=30%, R=300ms</span></div>
+    <div class="patch-row"><span class="patch-label">Character</span><span class="patch-val">Note gradually darkens as it sustains. This is the Bible's Repro-1 "Bass That IS the Lead" patch.</span></div>
+    <div class="patch-row"><span class="patch-label">Use when</span><span class="patch-val">Bass carries the melodic content, notes are long (half or whole notes).</span></div>
+  </div>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--bass)">Archetype 3: "The Swell"</div>
+    <div class="patch-row"><span class="patch-label">Amp</span><span class="patch-val">A=0, D=∞, S=80%, R=500ms</span></div>
+    <div class="patch-row"><span class="patch-label">Filter</span><span class="patch-val">A=200ms, D=∞, S=60%, R=1s</span></div>
+    <div class="patch-row"><span class="patch-label">Character</span><span class="patch-val">Filter opens slowly — note starts dark and brightens. Opposite of pluck.</span></div>
+    <div class="patch-row"><span class="patch-label">Use when</span><span class="patch-val">Bass enters gradually, building sections, transitions.</span></div>
+  </div>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--bass)">Archetype 4: "The Accent"</div>
+    <div class="patch-row"><span class="patch-label">Amp</span><span class="patch-val">A=0, D=300ms, S=60%, R=200ms</span></div>
+    <div class="patch-row"><span class="patch-label">Filter</span><span class="patch-val">A=0, D=30ms, S=15%, R=10ms</span></div>
+    <div class="patch-row"><span class="patch-label">Character</span><span class="patch-val">Extremely short filter decay = percussive click at note start. Creates a transient the amp doesn't.</span></div>
+    <div class="patch-row"><span class="patch-label">Use when</span><span class="patch-val">Bass must coexist with dominant kick — click gives attack definition without sub energy. Most useful archetype when kick owns the low end.</span></div>
+  </div>
+
+  <h4>Envelope Amount — The Forgotten Parameter</h4>
+  <div class="table-wrap"><table>
+    <tr><th>Env Amount</th><th>Effect</th></tr>
+    <tr><td><strong>10–20%</strong></td><td>Subtle — adds life without obvious filter sweep</td></tr>
+    <tr><td><strong>30–50%</strong></td><td>Standard — clear timbral movement, the bread and butter</td></tr>
+    <tr><td><strong>60–80%</strong></td><td>Dramatic — full pluck/bloom, bass-as-lead territory</td></tr>
+    <tr><td><strong>90–100%</strong></td><td>Extreme — from closed to open, maximum dynamic range</td></tr>
+  </table></div>
+
+  <div class="callout tip">
+    <p><strong>The pro move:</strong> Automate envelope amount, not just cutoff. Over 16 bars, gradually increase from 20% to 60%. The bass slowly becomes more "alive" without changing pitch, volume, or pattern. More effective than automating cutoff directly because it changes <em>responsiveness</em>, not position.</p>
+  </div>
+
+  <h3>4. Modulation Sources — Making the Filter Breathe</h3>
+  <p>A static filter with a static envelope is a dead bass. Modulation makes it organic.</p>
+
+  <h4>LFO → Filter Cutoff</h4>
+  <div class="table-wrap"><table>
+    <tr><th>LFO Rate</th><th>Musical Effect</th><th>Use</th></tr>
+    <tr><td><strong>0.01–0.1 Hz</strong></td><td>Glacial drift — listener can't track consciously</td><td>Background bass evolution over entire sections</td></tr>
+    <tr><td><strong>0.1–0.5 Hz</strong></td><td>Slow breathing — audible movement, hypnotic</td><td>The sweet spot for minimal techno. 4–8 bar cycles.</td></tr>
+    <tr><td><strong>0.5–2 Hz</strong></td><td>Wobble — obvious modulation, rhythmic feel</td><td>Dubstep territory at higher depths — keep depth LOW</td></tr>
+    <tr><td><strong>2–10 Hz</strong></td><td>Tremolo/vibrato speed — rapid timbral flutter</td><td>Special effect, not standard bass</td></tr>
+    <tr><td><strong>10+ Hz (audio rate)</strong></td><td>FM-like harmonics — creates new frequencies</td><td>Grit, distortion, metallic overtones</td></tr>
+  </table></div>
+
+  <div class="callout key">
+    <p><strong>For minimal techno bass: rate 0.1–0.3 Hz, depth 5–15%.</strong> The bass subtly shifts over 4–8 bars. This is what makes listeners say "I can't stop listening to this loop" — they're unconsciously tracking the slow timbral change.</p>
+  </div>
+
+  <p><strong>Shape matters:</strong> <strong>Sine</strong> = smooth, organic, default. <strong>Triangle</strong> = slightly more linear. <strong>Random/S&amp;H</strong> = unpredictable but rhythmic (great on Digitakt 2 free-running LFOs). <strong>Ramp</strong> = asymmetric tension/release within each cycle.</p>
+
+  <h4>LFO → Resonance (The Overlooked Modulation)</h4>
+  <p>Modulating resonance instead of cutoff changes <em>how much</em> the filter colors the sound without changing <em>where</em>. The cutoff stays put, but the peak grows and shrinks.</p>
+
+  <div class="callout tip">
+    <p><strong>Repro-1 patch:</strong> Cutoff 400 Hz. Resonance 40%. LFO 1 (sine, 0.15 Hz) → resonance, depth 25%. Bass alternates between clean (low res) and nasal/singing (high res) without cutoff moving. Combine both — LFO 1 to cutoff (very slow), LFO 2 to resonance (slightly faster) — for complex, evolving timbre.</p>
+  </div>
+
+  <h4>Audio-Rate Filter Modulation (Filter FM)</h4>
+  <p>Route an actual audio-rate oscillator (not LFO) to filter cutoff. The cutoff vibrates at audible frequencies, creating new harmonics.</p>
+  <p><strong>In Diva:</strong> Second oscillator → filter cutoff via mod matrix. Start with sine at 50–100 Hz, very subtle. Increase: clean → gritty → metallic → chaotic.</p>
+  <p><strong>In Repro-1:</strong> Osc B → filter mod at ~10–20%. Creates sidebands around your cutoff — harmonics in the 100–400 Hz range where bass needs to live.</p>
+
+  <div class="callout key">
+    <p><strong>This is how you get "analog grit" that's harmonically related to your bass note</strong> — not random distortion. The grit changes pitch when you play different notes. It's musical dirt.</p>
+  </div>
+
+  <h4>Velocity → Filter (Performance Expression)</h4>
+  <div class="table-wrap"><table>
+    <tr><th>Velocity</th><th>Cutoff Result</th><th>Musical Meaning</th></tr>
+    <tr><td><strong>20–40</strong></td><td>Nearly closed — dark, subby</td><td>Ghost notes, background pulse</td></tr>
+    <tr><td><strong>50–70</strong></td><td>Partially open — warm body</td><td>Standard groove notes</td></tr>
+    <tr><td><strong>80–100</strong></td><td>Open — bright, present</td><td>Accents, melodic peaks</td></tr>
+    <tr><td><strong>127</strong></td><td>Fully open — raw, exposed</td><td>Climax moments, once per phrase</td></tr>
+  </table></div>
+
+  <p><strong>In Digitakt 2:</strong> Lock velocity per step. Create a velocity pattern <em>different</em> from your note pattern. 8 notes, each with different brightness. Instant complexity from a static pitch sequence.</p>
+
+  <h4>Envelope → Envelope (Meta-Modulation)</h4>
+  <p>Modulate filter envelope <em>amount</em> with an LFO. Some hits are bright and percussive, others dull and subdued — automatically.</p>
+
+  <div class="callout tip">
+    <p><strong>In Diva:</strong> Mod matrix → LFO 2 → Filter Env Amount. LFO 2 = random/S&amp;H synced to 2 bars. Each 2-bar cycle, the filter behavior changes character. Same note, same pattern, sounds different every time. This is the "alive" quality that separates programmed sequences from something that feels performed.</p>
+  </div>
+
+  <h3>5. Multi-Voice — Not Unison, Not Chords</h3>
+  <p>"Multi-voice" in minimal techno doesn't mean unison stacks (trance) or polyphonic chords (house). It means 2–3 voices creating <em>interference patterns</em> — beating, phasing, and timbral complexity from nearly-identical signals.</p>
+
+  <h4>Technique 1: Micro-Detune (2–7 cents)</h4>
+  <div class="table-wrap"><table>
+    <tr><th>Detune</th><th>Beat Frequency</th><th>Effect</th></tr>
+    <tr><td><strong>1 cent</strong></td><td>~0.3 Hz</td><td>Almost imperceptible — subtle thickening</td></tr>
+    <tr><td><strong>3 cents</strong></td><td>~0.9 Hz</td><td>Slow pulse, warm, analog feel</td></tr>
+    <tr><td><strong>5 cents</strong></td><td>~1.5 Hz</td><td>Obvious beating, classic detuned bass</td></tr>
+    <tr><td><strong>7 cents</strong></td><td>~2.1 Hz</td><td>Fast enough to feel like inherent texture</td></tr>
+    <tr><td><strong>12+ cents</strong></td><td>&gt;3.5 Hz</td><td>Honky, out-of-tune — generally too much</td></tr>
+  </table></div>
+
+  <div class="callout warn">
+    <p><strong>Critical: keep this mono.</strong> Don't pan the two oscillators. The beating happens in the <em>waveform itself</em>, not in stereo space. Stereo detuned bass = phase problems on club systems. Mono detuned bass = controlled warmth everywhere.</p>
+  </div>
+
+  <p><strong>In Repro-1:</strong> Set Osc B to same octave as Osc A (not -1), detune 3–5 cents. Filter processes both together — resonant peak interacts with beating, creating additional complexity.</p>
+  <p><strong>In Diva:</strong> Two oscillators, same wave, detune ~0.05–0.10. Add voice drift (30–50%) so detuning wanders — beating rate speeds up and slows down randomly, like real analog hardware.</p>
+
+  <h4>Technique 2: Interval Stacking (The Bodzin Fifth)</h4>
+  <p>Two oscillators at a musical interval — typically a fifth (+7 semi) or octave (+12). <strong>The Bodzin bass uses Osc 1 (root) + Osc 2 (fifth above) + Osc 3 (octave below).</strong> Not a chord — a <em>composite timbre</em>.</p>
+
+  <div class="table-wrap"><table>
+    <tr><th>Interval</th><th>Semitones</th><th>Character</th></tr>
+    <tr><td><strong>Octave below</strong></td><td>-12</td><td>Sub weight, reinforces fundamental. Safe, never wrong.</td></tr>
+    <tr><td><strong>Fifth above</strong></td><td>+7</td><td>Hollow power, adds 3rd harmonic. The Bodzin signature — massive.</td></tr>
+    <tr><td><strong>Fourth above</strong></td><td>+5</td><td>Slightly dissonant tension. Darker, more anxious.</td></tr>
+    <tr><td><strong>Minor 7th above</strong></td><td>+10</td><td>Jazz/unresolved. Sophisticated, Villalobos territory.</td></tr>
+  </table></div>
+
+  <div class="callout tip">
+    <p><strong>Mix ratios matter:</strong> Stacked interval should be -6 to -12 dB below the root oscillator. It's adding harmonic color, not a second note. If you can clearly hear "two pitches," it's too loud.</p>
+  </div>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--bass)">Diva "Bodzin Composite" (JUNO mode)</div>
+    <div class="patch-row"><span class="patch-label">Osc 1</span><span class="patch-val">Saw at root</span></div>
+    <div class="patch-row"><span class="patch-label">Osc 2</span><span class="patch-val">Saw at +7 semi, level -8 dB vs Osc 1</span></div>
+    <div class="patch-row"><span class="patch-label">Osc 3</span><span class="patch-val">Triangle at -12 semi (sub), level -4 dB vs Osc 1</span></div>
+    <div class="patch-row"><span class="patch-label">Voice Drift</span><span class="patch-val">35%</span></div>
+    <div class="patch-row"><span class="patch-label">Filter</span><span class="patch-val">Cascade 24dB LP, cutoff 350 Hz, res 12%</span></div>
+    <div class="patch-row"><span class="patch-label">Filter Env</span><span class="patch-val">A=0, D=1.5s, S=20%, R=400ms, Amount=50%</span></div>
+    <div class="patch-row"><span class="patch-label">LFO 1 → Cutoff</span><span class="patch-val">Sine, 0.12 Hz, depth 10%</span></div>
+    <div class="patch-row"><span class="patch-label">LFO 2 → Osc 2 Level</span><span class="patch-val">Random/S&amp;H, rate synced 4 bars, depth 20%</span></div>
+    <div class="patch-row"><span class="patch-label">Glide</span><span class="patch-val">ON, variable per phrase (automate glide time)</span></div>
+  </div>
+
+  <h4>Technique 3: Cross-Modulation Between Voices</h4>
+  <p><strong>Osc Sync:</strong> Osc 2 synced to Osc 1 — every time Osc 1 completes a cycle, Osc 2 restarts. Sweep Osc 2's pitch for screaming, aggressive harmonics that track the root note.</p>
+  <p><strong>In Repro-1:</strong> Enable Sync. Osc B slightly above Osc A. Modulate Osc B pitch with filter envelope. Attack = bright metallic edge, decay = settles into root. <strong>Sync harmonics live in 200–2000 Hz</strong> — exactly where bass needs presence since kick owns the sub.</p>
+
+  <h4>Technique 4: Parallel Filtering (Surgeon's Method)</h4>
+  <p>One oscillator split into two signal paths, each with different filter settings.</p>
+
+  <div class="table-wrap"><table>
+    <tr><th>Path</th><th>Filter</th><th>Role</th></tr>
+    <tr><td><strong>Path A</strong></td><td>LP @ 120 Hz, no res</td><td>Sub foundation</td></tr>
+    <tr><td><strong>Path B</strong></td><td>BP @ 400–1200 Hz, res 40%, HP @ 200 Hz</td><td>Mid-range character</td></tr>
+  </table></div>
+
+  <p>Mix both, automate Path B's level — when up, bass "opens" into a lead. When down, recedes into sub. <strong>In Ableton:</strong> Send to two returns. Return A = aggressive LP at 120 Hz. Return B = BP + Auto Filter with moderate resonance. Automate the return levels.</p>
+
+  <h3>6. Three Patch Recipes</h3>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--bass)">Recipe A: "The Breathing Sub" (Repro-1)</div>
+    <div class="patch-row"><span class="patch-label">Osc A</span><span class="patch-val">Saw</span></div>
+    <div class="patch-row"><span class="patch-label">Osc B</span><span class="patch-val">Saw, same octave, detune +4 cents</span></div>
+    <div class="patch-row"><span class="patch-label">Filter</span><span class="patch-val">24dB LP, cutoff 250 Hz, res 30%</span></div>
+    <div class="patch-row"><span class="patch-label">Filter Env</span><span class="patch-val">A=0, D=200ms, S=15%, R=80ms, Amount=45%</span></div>
+    <div class="patch-row"><span class="patch-label">Amp Env</span><span class="patch-val">A=0, D=1.5s, S=30%, R=400ms</span></div>
+    <div class="patch-row"><span class="patch-label">LFO 1 → Cutoff</span><span class="patch-val">Sine, 0.15 Hz, depth 8%</span></div>
+    <div class="patch-row"><span class="patch-label">LFO 2 → Res</span><span class="patch-val">Triangle, 0.22 Hz, depth 12%</span></div>
+    <div class="patch-row"><span class="patch-label">Velocity → Cutoff</span><span class="patch-val">30%</span></div>
+    <div class="patch-row"><span class="patch-label">Post-synth</span><span class="patch-val">HP at 70 Hz, warmth chain</span></div>
+  </div>
+
+  <div class="patch">
+    <div class="patch-title" style="color:var(--bass)">Recipe B: "The Sync Lead-Bass" (Repro-1)</div>
+    <div class="patch-row"><span class="patch-label">Osc A</span><span class="patch-val">Saw</span></div>
+    <div class="patch-row"><span class="patch-label">Osc B</span><span class="patch-val">Saw, +3 semi, Sync ON</span></div>
+    <div class="patch-row"><span class="patch-label">Filter</span><span class="patch-val">24dB LP, cutoff 400 Hz, res 20%</span></div>
+    <div class="patch-row"><span class="patch-label">Filter Env</span><span class="patch-val">A=0, D=1s, S=25%, R=300ms, Amount=55%</span></div>
+    <div class="patch-row"><span class="patch-label">LFO 1 → Osc B Pitch</span><span class="patch-val">Sine, 0.08 Hz, depth 5% (sweeps sync harmonics)</span></div>
+    <div class="patch-row"><span class="patch-label">Velocity → Env Amount</span><span class="patch-val">40%</span></div>
+    <div class="patch-row"><span class="patch-label">Glide</span><span class="patch-val">ON, 35ms</span></div>
+    <div class="patch-row"><span class="patch-label">Post-synth</span><span class="patch-val">HP at 60 Hz, saturation (Pedal OD, low drive), warmth chain</span></div>
+  </div>
+
+  <h3>7. The Cheat Sheet</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Want This</th><th>Do This</th></tr>
+    <tr><td>Bass sounds dead/static</td><td>Add LFO → cutoff, 0.15 Hz, 8% depth</td></tr>
+    <tr><td>Bass competes with kick</td><td>Use Archetype 4 (accent envelope), HP at 80 Hz</td></tr>
+    <tr><td>Bass too thin</td><td>Add micro-detuned second osc (+3-5 cents) or fifth (+7 semi at -8 dB)</td></tr>
+    <tr><td>Bass too clean/digital</td><td>Audio-rate filter mod (osc → cutoff) at low depth, or voice drift</td></tr>
+    <tr><td>Want movement without automation</td><td>Two LFOs at different rates to cutoff and resonance</td></tr>
+    <tr><td>Each note sounds the same</td><td>Velocity → filter cutoff or envelope amount</td></tr>
+    <tr><td>Want "alive" feel</td><td>LFO → envelope amount (meta-modulation), random/S&amp;H shape</td></tr>
+    <tr><td>Want bass-as-lead</td><td>Automate cutoff 350 Hz → 1.2 kHz over 16 bars, increase env amount</td></tr>
+    <tr><td>Want parallel sub + mid control</td><td>Split to two returns, filter independently, automate levels</td></tr>
+    <tr><td>Want harmonic grit that tracks pitch</td><td>Osc sync + filter envelope controlling sync osc pitch</td></tr>
+  </table></div>
+
+  <h4>Don'ts</h4>
+  <div class="callout warn">
+    <p><strong>Don't use unison/detune spread for stereo.</strong> That's trance. Keep bass mono.</p>
+    <p><strong>Don't stack more than 3 oscillators.</strong> Two is usually enough. Three is the Bodzin maximum for a reason.</p>
+    <p><strong>Don't modulate everything simultaneously.</strong> One or two mod routings per patch. If you can't hear what a modulation does solo'd, remove it.</p>
+    <p><strong>Don't forget: filter type &gt; waveform &gt; everything else.</strong> Switching from Moog to Cascade filter changes your bass more than any other single parameter change.</p>
+    <p><strong>Don't set and forget resonance.</strong> Automate it, modulate it, map it to velocity. Most expressive parameter after cutoff and the most commonly left static.</p>
+  </div>
 </div>
 
 </body>
