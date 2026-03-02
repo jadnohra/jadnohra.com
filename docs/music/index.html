@@ -157,38 +157,45 @@ permalink: /music/
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
-  .toc-grid {
+  .toc-groups {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px 20px;
+  }
+  .toc-group-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 0 6px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
   }
   .toc-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 7px 12px;
-    border-radius: 6px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 0;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: color 0.2s;
   }
-  .toc-item:hover { background: var(--surface); }
   .toc-num {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     color: var(--muted);
-    min-width: 22px;
+    min-width: 20px;
   }
-  .toc-item:nth-child(3n+1) .toc-num { color: var(--green); }
-  .toc-item:nth-child(3n+2) .toc-num { color: var(--pink); }
-  .toc-item:nth-child(3n) .toc-num { color: var(--purple); }
   .toc-label {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text);
     font-family: 'JetBrains Mono', monospace;
     font-weight: 400;
   }
+  .toc-item:hover .toc-num { color: var(--green); }
   .toc-item:hover .toc-label { color: var(--heading); }
 
   /* SECTIONS */
@@ -456,26 +463,51 @@ permalink: /music/
 
 <div class="toc">
   <div class="toc-title">Table of Contents</div>
-  <div class="toc-grid">
-    <a class="toc-item" href="#kicks"><span class="toc-num">01</span><span class="toc-label">Kick Design</span></a>
-    <a class="toc-item" href="#bass"><span class="toc-num">02</span><span class="toc-label">Bass as Lead</span></a>
-    <a class="toc-item" href="#warmth"><span class="toc-num">03</span><span class="toc-label">Warmth &amp; Saturation</span></a>
-    <a class="toc-item" href="#dynamics"><span class="toc-num">04</span><span class="toc-label">Hit Hard = Hit Soft</span></a>
-    <a class="toc-item" href="#groove"><span class="toc-num">05</span><span class="toc-label">Groove &amp; Micro-Timing</span></a>
-    <a class="toc-item" href="#arrangement"><span class="toc-num">06</span><span class="toc-label">Subtractive Arrangement</span></a>
-    <a class="toc-item" href="#reverb"><span class="toc-num">07</span><span class="toc-label">Reverb_&amp;_Space</span></a>
-    <a class="toc-item" href="#frequency"><span class="toc-num">08</span><span class="toc-label">Frequency &amp; Club Translation</span></a>
-    <a class="toc-item" href="#between"><span class="toc-num">09</span><span class="toc-label">The "Between" Sounds</span></a>
-    <a class="toc-item" href="#harmony"><span class="toc-num">10</span><span class="toc-label">Harmony &amp; Theory</span></a>
-    <a class="toc-item" href="#signal"><span class="toc-num">11</span><span class="toc-label">Signal_Chain</span></a>
-    <a class="toc-item" href="#philosophy"><span class="toc-num">12</span><span class="toc-label">Artist Philosophy</span></a>
-    <a class="toc-item" href="#gems"><span class="toc-num">13</span><span class="toc-label">Production Gems</span></a>
-    <a class="toc-item" href="#gear"><span class="toc-num">14</span><span class="toc-label">Your_Gear</span></a>
-    <a class="toc-item" href="#references"><span class="toc-num">15</span><span class="toc-label">Essential Listening</span></a>
-    <a class="toc-item" href="#villalobos"><span class="toc-num">16</span><span class="toc-label">Artist_Stories</span></a>
-    <a class="toc-item" href="#sources"><span class="toc-num">17</span><span class="toc-label">Sources</span></a>
-    <a class="toc-item" href="#filters"><span class="toc-num">18</span><span class="toc-label">Bass Bible Extension</span></a>
-    <a class="toc-item" href="#ambience"><span class="toc-num">19</span><span class="toc-label">Ambience &amp; Sub Bible</span></a>
+  <div class="toc-groups">
+
+    <div class="toc-group">
+      <div class="toc-group-label">Core Sounds</div>
+      <a class="toc-item" href="#kicks"><span class="toc-num">01</span><span class="toc-label">Kick Design</span></a>
+      <a class="toc-item" href="#bass"><span class="toc-num">02</span><span class="toc-label">Bass as Lead</span></a>
+      <a class="toc-item" href="#warmth"><span class="toc-num">03</span><span class="toc-label">Warmth &amp; Saturation</span></a>
+    </div>
+
+    <div class="toc-group">
+      <div class="toc-group-label">Mix &amp; Dynamics</div>
+      <a class="toc-item" href="#dynamics"><span class="toc-num">04</span><span class="toc-label">Hit Hard = Hit Soft</span></a>
+      <a class="toc-item" href="#groove"><span class="toc-num">05</span><span class="toc-label">Groove &amp; Micro-Timing</span></a>
+      <a class="toc-item" href="#arrangement"><span class="toc-num">06</span><span class="toc-label">Subtractive Arrangement</span></a>
+    </div>
+
+    <div class="toc-group">
+      <div class="toc-group-label">Space &amp; Frequency</div>
+      <a class="toc-item" href="#reverb"><span class="toc-num">07</span><span class="toc-label">Reverb &amp; Space</span></a>
+      <a class="toc-item" href="#frequency"><span class="toc-num">08</span><span class="toc-label">Frequency &amp; Club</span></a>
+      <a class="toc-item" href="#between"><span class="toc-num">09</span><span class="toc-label">Between Sounds</span></a>
+    </div>
+
+    <div class="toc-group">
+      <div class="toc-group-label">Theory &amp; Signal</div>
+      <a class="toc-item" href="#harmony"><span class="toc-num">10</span><span class="toc-label">Harmony &amp; Theory</span></a>
+      <a class="toc-item" href="#signal"><span class="toc-num">11</span><span class="toc-label">Signal Chain</span></a>
+    </div>
+
+    <div class="toc-group">
+      <div class="toc-group-label">Artists &amp; Reference</div>
+      <a class="toc-item" href="#philosophy"><span class="toc-num">12</span><span class="toc-label">Artist Philosophy</span></a>
+      <a class="toc-item" href="#gems"><span class="toc-num">13</span><span class="toc-label">Production Gems</span></a>
+      <a class="toc-item" href="#gear"><span class="toc-num">14</span><span class="toc-label">Your Gear</span></a>
+      <a class="toc-item" href="#references"><span class="toc-num">15</span><span class="toc-label">Essential Listening</span></a>
+      <a class="toc-item" href="#villalobos"><span class="toc-num">16</span><span class="toc-label">Artist Stories</span></a>
+      <a class="toc-item" href="#sources"><span class="toc-num">17</span><span class="toc-label">Sources</span></a>
+    </div>
+
+    <div class="toc-group">
+      <div class="toc-group-label">Deep Dives</div>
+      <a class="toc-item" href="#filters"><span class="toc-num">18</span><span class="toc-label">Bass Bible Extension</span></a>
+      <a class="toc-item" href="#ambience"><span class="toc-num">19</span><span class="toc-label">Ambience &amp; Sub Bible</span></a>
+    </div>
+
   </div>
 </div>
 
