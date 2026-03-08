@@ -26,7 +26,15 @@
       "WebFetch(domain:jekyll.github.io)",
       "Bash(bundle exec jekyll build:*)",
       "Bash(bundle install:*)",
-      "Bash(/Users/jad_irred/repos/jad/jadnohra.com/scripts/check-seo.sh:*)"
+      "Bash(/Users/jad_irred/repos/jad/jadnohra.com/scripts/check-seo.sh:*)",
+      "Bash(wc:*)",
+      "Bash(git -C /Users/jad_irred/repos/jad/jadnohra.com log --oneline --all)",
+      "Bash(git -C /Users/jad_irred/repos/jad/jadnohra.com branch -a)",
+      "Bash(git -C /Users/jad_irred/repos/jad/jadnohra.com log --name-status -10)",
+      "Bash(git -C /Users/jad_irred/repos/jad/jadnohra.com config --get remote.origin.url)",
+      "Bash(git -C /Users/jad_irred/repos/jad/jadnohra.com rev-list --count HEAD)",
+      "Bash(git -C /Users/jad_irred/repos/jad/jadnohra.com log --all --format='%h %s')",
+      "Bash(git -C /Users/jad_irred/repos/jad/jadnohra.com remote -v)"
     ],
     "deny": [],
     "ask": []
