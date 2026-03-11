@@ -174,6 +174,37 @@ window.__encSalt='272441b733d4aefbcfb70414588d6adc';window.__encIV='2aaf1a657af0
     return html;
   }
 
+  function postDecrypt(contentEl) {
+    // Inject print toolbar
+    const bar = document.createElement('div');
+    bar.id = 'bio-ext-toolbar';
+    bar.innerHTML = '<button id="bio-ext-print-btn">Print / PDF</button>';
+    contentEl.insertBefore(bar, contentEl.firstChild);
+    document.getElementById('bio-ext-print-btn').addEventListener('click', function() {
+      window.print();
+    });
+    // Inject print styles
+    const style = document.createElement('style');
+    style.textContent = `
+      #bio-ext-toolbar{position:sticky;top:0;background:#fff;padding:8px 0 12px;z-index:100;border-bottom:1px solid #e2e8f0;margin-bottom:16px;display:flex;gap:8px;align-items:center}
+      #bio-ext-print-btn{padding:6px 14px;border-radius:6px;border:1px solid #d1d5db;background:#f9fafb;color:#374151;font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s}
+      #bio-ext-print-btn:hover{background:#f3f4f6;border-color:#0a84ff;color:#0a84ff}
+      @media print{
+        #bio-ext-toolbar{display:none !important}
+        #content{max-width:100%;padding:0;margin:0;font-size:11pt;line-height:1.5}
+        #content h1{font-size:16pt}
+        #content h2{font-size:13pt}
+        #content h3{font-size:11pt}
+        #content p,#content li{font-size:10pt}
+        #content blockquote{border-left:2px solid #999;background:none}
+        #content code{background:none;border:1px solid #ddd}
+        #content a{color:#000;text-decoration:underline}
+        #content a::after{content:" (" attr(href) ")";font-size:8pt;color:#666}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   async function tryDecrypt(password) {
     try {
       const plaintext = await decrypt(password);
@@ -190,6 +221,7 @@ window.__encSalt='272441b733d4aefbcfb70414588d6adc';window.__encIV='2aaf1a657af0
         contentEl.innerHTML = trimmed;
         contentEl.style.display = 'block';
         document.body.style.alignItems = 'flex-start';
+        postDecrypt(contentEl);
       } else {
         // Markdown — render then inject
         document.getElementById('unlock-screen').style.display = 'none';
@@ -197,6 +229,7 @@ window.__encSalt='272441b733d4aefbcfb70414588d6adc';window.__encIV='2aaf1a657af0
         contentEl.innerHTML = renderMarkdown(plaintext);
         contentEl.style.display = 'block';
         document.body.style.alignItems = 'flex-start';
+        postDecrypt(contentEl);
       }
       sessionStorage.setItem(SESSION_KEY, password);
       return true;
