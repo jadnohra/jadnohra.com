@@ -296,126 +296,176 @@ permalink: /cv/
             <div class="header-line">
                 <h1>Jad Nohra</h1>
                 <div class="links">
-                    <a href="https://notes.jadnohra.com">Portfolio</a> •
                     <a href="https://linkedin.com/in/jadnohra">LinkedIn</a> •
-                    <a href="https://github.com/jadnohra">GitHub</a> •
-                    <a href="https://patents.google.com/?inventor=Jad+NOHRA">Patents</a> •
-                    <a href="https://scholar.google.com/citations?user=0pae59AAAAAJ">Articles</a>
+                    <a href="https://notes.jadnohra.com">Site</a> •
+                    <a href="https://patents.google.com/?inventor=Jad+NOHRA">Patents</a>
                 </div>
             </div>
             <div class="contact">
-                jadnohra@gmail.com • +4915787735162 • @jadnohra (X/TG) • Berlin/Munich
+                jadnohra@gmail.com • +4915787735162 • Berlin, Germany
             </div>
         </header>
 
         <div class="summary">
-            <p>Hands-on engineering leader with 25+ years spanning gaming physics (Sony/Microsoft), autonomous vehicles (Argo AI/Audi), and cryptographic hardware (Irreducible). Built and led organizations up to 25 engineers while staying hands-on with code and architecture. Equally drawn to IC deep-dives, team building, or hybrid technical leadership roles.</p>
+            <p>Engineering leader and direct technical contributor with 25+ years across four distinct domains: real-time physics engines (Microsoft/Havok, Sony/Guerrilla), autonomous vehicle simulation and safety (Audi/AID, Argo AI/Ford/VW, FERNRIDE/TÜV SÜD), and cryptographic hardware acceleration (Irreducible). Built and led organizations up to 25 engineers. 2 US patents. Deep foundations in mathematics, physics, and systems engineering applied across each of these domains.</p>
+        </div>
+
+        <h2>Cross-Domain Contributions</h2>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="company">Cryptographic Hardware (Irreducible)</span>
+            </div>
+            <ul>
+                <li>Three-mode execution architecture (simulated, verilated, hardware) for ZK proof acceleration; simulation revealed product competitiveness gap months before hardware would have</li>
+                <li>ZK circuit compiler and FPGA device interfaces in Rust</li>
+                <li>Co-design process connecting three siloed teams (FPGA, cryptography, compiler)</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="company">Autonomous Vehicles (FERNRIDE, Argo AI/Ford/VW, Audi/AID)</span>
+            </div>
+            <ul>
+                <li>Hazard Zone Model for autonomous truck safety; wrote first version of complete LiDAR/radar perception pipeline</li>
+                <li>Safety case methodology contributing to TÜV SÜD certification, ISO 26262 / ASIL-D</li>
+                <li>Statistical safety validation framework applying methods from nuclear, aviation, and medical device testing literature</li>
+                <li>Simulation validation pipeline; noise injection revealed significant percentage of false passes in existing test suites</li>
+                <li>Scenario generation patent (US20230030474A1)</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="company">Real-time Physics and Mixed Reality (Microsoft/Havok, Sony/Guerrilla)</span>
+            </div>
+            <ul>
+                <li>Core contact constraint solver for Havok physics engine, shipped globally across major game titles since ~2014</li>
+                <li>High-fidelity MLCP solver using blocked-form linear programming, after one year of independent mathematical study</li>
+                <li>Formal proof of TOI tunneling impossibility, resolving an open question</li>
+                <li>Numerical geometry solutions informed by floating-point analysis literature</li>
+                <li>Skeletonization algorithms from computational geometry literature applied to automated navmesh generation</li>
+                <li>Nintendo WiiU math library at ARM instruction level, working around compiler optimization defects</li>
+                <li>SIMD-optimized engine components across constraint solving, geometry, and multi-threading</li>
+                <li>Spatial localization algorithm for Microsoft HoloLens (US patent US10672159B2)</li>
+            </ul>
         </div>
 
         <h2>Experience</h2>
 
         <div class="job">
             <div class="job-line">
-                <span class="dates">Sep 2024 - Present</span>
-                <span class="company">Irreducible (ZK-crypto/hardware)</span>, Berlin • Hands-on Engineering Director
+                <span class="dates">Sep 2024 – Feb 2025</span>
+                <span class="company">Irreducible — Engineering Director (Hands-on)</span>
             </div>
+            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">ZK Cryptographic Infrastructure · Berlin</div>
             <ul>
-                <li>Built high-performance systems team for hardware-accelerated Zero-Knowledge Proofs; managing global remote team</li>
-                <li>Hands-on Rust: Contributed to bespoke ZK circuit compiler, developed FPGA embedded interfaces and acceleration tooling</li>
-                <li>Guided founder technical decisions on team scaling, architectural tradeoffs, and execution risks while maintaining startup velocity</li>
-                <li>Drove strategic product pivot through comprehensive hardware acceleration feasibility analysis</li>
+                <li>Built and led systems team for hardware-accelerated ZK Proofs: FPGA device interfaces, ZK circuit compiler, three-mode execution architecture</li>
+                <li>Introduced co-design sessions connecting FPGA, cryptography, and compiler teams</li>
+                <li>Retained as sole non-cryptography engineer during company restructuring; member of 3-person leadership team</li>
             </ul>
         </div>
 
         <div class="job">
             <div class="job-line">
-                <span class="dates">Jan 2023 - Sep 2024</span>
-                <span class="company">FERNRIDE (autonomous trucking)</span>, Munich • Principal Engineer / Senior Engineering Manager
+                <span class="dates">Jan 2023 – Sep 2024</span>
+                <span class="company">FERNRIDE — Principal Engineer / Senior Engineering Manager</span>
             </div>
+            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Autonomous Trucking · Munich</div>
             <ul>
-                <li>Built and led team developing ASIL-D compliant autonomous trucks; designed safe perception for LiDAR/Radar sensors</li>
-                <li>Designed system requirements framework with close code ties; collaborated with systems engineers on safety case for TÜV SÜD</li>
-                <li>Engineering leadership team: strategic decisions on safety/performance compute, feature selection for ODDs, release feasibility</li>
+                <li>Built safety perception team and system from inception. Conducted feasibility study for LiDAR and radar-based safety function; designed and prototyped the system; wrote first version of complete perception pipeline</li>
+                <li>Co-developed safety case contributing to TÜV SÜD certification. Established direct technical channel with Continental radar engineering</li>
+                <li>Member of engineering leadership team</li>
             </ul>
         </div>
 
         <div class="job">
             <div class="job-line">
-                <span class="dates">Jun 2021 - Dec 2022</span>
-                <span class="company">Argo AI (Ford/VW-backed AV)</span>, Munich • Engineering Manager & Staff Software Engineer
+                <span class="dates">Jun 2021 – Dec 2022</span>
+                <span class="company">Argo AI — Engineering Manager & Staff Software Engineer</span>
             </div>
+            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Ford/VW Autonomous Vehicles · Munich</div>
             <ul>
-                <li><strong>Systems Engineering & Safety Validation:</strong> Led critical bridge between software implementation and formal systems engineering; broke silos between V&V, safety, and development teams; earned request from systems engineers to join their organization to formalize test-to-requirements traceability</li>
-                <li><strong>Simulation Lead:</strong> Bootstrapped validation effort; assembled team; secured cross-functional buy-in; delivered comprehensive model library (compute, vehicle, traffic, scenario generation-patent pending, AV sensing) with theoretical/empirical validity boundaries</li>
-                <li>Managed Munich teams while coordinating with multiple US offices across time zones and cultures; presented to VW/Ford for EU requirements</li>
+                <li>Produced safety validation design documents that led to direct request from US-based systems engineering to join vehicle safety test planning</li>
+                <li>Developed simulation fidelity framework and noise injection models across compute, vehicle dynamics, traffic, sensor, and scenario generation components</li>
+                <li>Applied statistical safety testing methods. Led post-acquisition team integration (AID to Argo). Scenario generation patent</li>
             </ul>
         </div>
 
         <div class="job">
             <div class="job-line">
-                <span class="dates">Apr 2018 - Jun 2020</span>
-                <span class="company">Autonomous Intelligent Driving (Audi)</span>, Munich • Simulation Tech Lead
+                <span class="dates">Apr 2018 – Jun 2021</span>
+                <span class="company">Autonomous Intelligent Driving (Audi) — Simulation Tech Lead</span>
             </div>
+            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Autonomous Driving · Munich</div>
             <ul>
-                <li>Built 4 teams (20 senior engineers) covering SIL framework, traffic sim, sensor sim, scenario diagnostics</li>
-                <li>Delivered full-stack SIL for replay/simulation; owned vision, strategy, roadmap, execution while staying hands-on with code and prototyping</li>
-                <li>Empowered teams while getting hands dirty; managed technology scouting and vendor partnerships until acquisition by Argo AI</li>
+                <li>Grew organization from 2 to 20 engineers across 4 teams: SIL runtime, traffic simulation, sensor simulation, scenario evaluation</li>
+                <li>Direct code contributions across all team codebases. Evaluated and replaced external simulation platform; led transition to internal development</li>
             </ul>
         </div>
 
         <div class="job">
             <div class="job-line">
-                <span class="dates">Jun 2011 - Mar 2018</span>
-                <span class="company">Microsoft/Havok</span>, Munich • Lead Physics R&D
+                <span class="dates">Jun 2011 – Mar 2018</span>
+                <span class="company">Microsoft / Havok — Lead Physics R&D</span>
             </div>
+            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Platform Infrastructure · Munich</div>
             <ul>
-                <li><strong>Havok Destruction Lead</strong> (2017-18): Interim lead; requirements via data/interviews/surveys; identified problematic features through technical proof; developed/presented roadmap; maintenance and debugging</li>
-                <li><strong>Real-time Physics</strong> (2015-17): HoloLens integration R&D; co-invented localization algorithm (US10672159B2); prototyped cloud-distributed physics</li>
-                <li><strong>Core Physics Engine</strong> (2011-15): Low-level optimization (SIMD/vectorization, multi-threading); geometric queries; numerical analysis/optimization using linear programming in physics solvers; published "Parallel Pathfinding on Modern Computer Hardware"</li>
+                <li>Core physics engine R&D: constraint solver, high-fidelity MLCP solver, destruction systems, geometric queries, numerical optimization, SIMD vectorization</li>
+                <li>Co-invented HoloLens spatial localization (US patent). Formal proof of TOI tunneling impossibility. WiiU math library. Havok Destruction interim lead</li>
             </ul>
         </div>
 
         <div class="job">
             <div class="job-line">
-                <span class="dates">2009 - 2011</span>
-                <span class="company">Guerrilla Games (Sony)</span>, Amsterdam • Senior AI Programmer
+                <span class="dates">2009 – 2011</span>
+                <span class="company">Guerrilla Games (Sony) — Senior AI Programmer</span>
             </div>
+            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Game AI · Amsterdam</div>
             <ul>
-                <li>Killzone 3 (PlayStation 3) AI: motion planning for navigation/behavior (humanoids, land/air vehicles); multiplayer bots with complex behavioral systems; automated navigable space generation and tools; Maya animation tooling; automated AI testing</li>
+                <li>Killzone 3 AI: navigation, vehicle behavior, multiplayer bots, automated navmesh region generation using skeletonization algorithms. PS3/SPU optimization</li>
             </ul>
         </div>
 
         <strong style="font-size: 10pt;">Earlier:</strong>
         <div class="two-col">
             <div>
-                • <strong>Kimera Studios</strong> (2006-08): Indie game developer; built complete engine: rendering, physics, animation, NN based goalkeeper AI, spatial partitioning<br>
-                • <strong>AiGameDev</strong> (2008-09): Main contributor to open source AI framework: Motion Graphs, Locomotion Planning, Reinforcement Learning, A*/Hierarchical A*, Terrain Clustering<br>
-                • <strong>Guided Knowledge</strong> (2015): Nonlinear optimization consultant for IMU sensors
+                • <strong>Kimera Studios</strong> (2006–08): Complete game engine — rendering, physics, neural network AI, spatial partitioning<br>
+                • <strong>AiGameDev</strong> (2008–09): Co-authored "Parallel Pathfinding on Modern Hardware"; motion planning, reinforcement learning, hierarchical pathfinding
             </div>
             <div>
-                • <strong>Sixteen Tons</strong> (2008): Nintendo DS game engine, graphics, optimization, stochastic game AI<br>
-                • <strong>ACT-Kern</strong> (2002-03): Stereoscopic screen software suite, OpenGL/DirectX wrappers, video streaming<br>
-                • <strong>Living Systems</strong> (2001-02): Agent-based software<br>
-                • <strong>Gaming Logix</strong> (1999-2001): Online casino game engine, server/client architecture, C++/DirectX/Java
+                • <strong>Guided Knowledge</strong> (2015): Nonlinear optimization consulting, IMU sensor calibration<br>
+                • <strong>Gaming Logix</strong> (1999–2001): Online casino game engine, server/client architecture, C++/Java
             </div>
         </div>
 
         <div style="margin-top: 12px; margin-bottom: 12px; font-size: 10pt;">
-            <strong>Advisory:</strong> Coach tech leads and engineering managers on technical leadership and team scaling
+            <strong>Advisory</strong> (2024–present): Coaching engineering leaders on technical leadership and team scaling
         </div>
 
-        <h2>Technical Skills</h2>
+        <h2>Open Source & Independent Projects</h2>
         <div class="skills-section">
-            <strong>Technologies and methods applied in production systems:</strong><br>
-            <strong>Technologies:</strong> Rust, C++, Python • FPGA • Embedded Systems • Distributed Computing • SIMD • Multi-threading<br>
-            <strong>Specializations:</strong> Zero-Knowledge Proofs • Autonomous Vehicles (ISO 26262/SOTIF/ASIL-D) • Real-time Physics Engines • Rigid-body Dynamics • Traffic/Sensor Simulation • Safety-critical software development • Mathematical modeling and numerical analysis (linear programming, nonlinear optimization) • Patent development and technical innovation • Reinforcement Learning, Neural Networks, Motion Planning, A*/Hierarchical A*
+            • <strong><a href="https://vram.run">vram.run</a></strong> — GPU and API model search tool, 19 providers, 220+ hardware configurations<br>
+            • <strong><a href="https://notes.jadnohra.com/learn-rust/">Learn Rust</a></strong> — Open-source Rust memory model course for C++ programmers<br>
+            • <strong><a href="https://github.com/jadnohra">daisy</a></strong> — Agent-based traffic simulator (Python)<br>
+            • <strong><a href="https://github.com/jadnohra">PaCoS</a></strong> — Deterministic concurrency simulator
         </div>
 
-        <h2>Background & Credentials</h2>
+        <h2>Technical</h2>
         <div class="skills-section">
-            <strong>Education:</strong> MS Mathematics coursework (Emporia State 2018, 33% complete, 98%+ avg) • BE Computer Engineering (AUB 1995-99)<br>
-            <strong>Patents & Publications:</strong> <a href="https://patents.google.com/patent/US20230030474A1/en">AV training simulations (2023)</a> • <a href="https://patents.google.com/patent/US10672159B2">Anchor graph spatial optimization (2020)</a> • "Parallel Pathfinding on Modern Hardware" • "Uniqueness of Minima in Least Squares" • "Who is Psychotron" (flash fiction, <a href="https://www.amazon.de/-/en/Jad-Nohra-ebook/dp/B0C9FLY7Z7">ebook</a>, <a href="https://play.google.com/store/audiobooks/details/Who_is_Psychotron?id=AQAAAEDit1D3oM&hl=en">audio</a>)<br>
-            <strong>Languages:</strong> English (Fluent) • German, French (Working) • Arabic (Conversational) • Czech (Basic)
+            <strong>Languages & Systems:</strong> Rust, C++, Python, Java • FPGA (Xilinx/Verilator) • SIMD/SSE/AVX • Embedded systems • Distributed systems<br>
+            <strong>Cryptography & Hardware:</strong> Zero-Knowledge Proofs (polynomial commitments, NTT, finite fields) • FPGA-accelerated cryptographic compute • PCIe/DMA/VFIO device management<br>
+            <strong>Safety & Regulated Delivery:</strong> TÜV SÜD certification • ISO 26262 / ASIL-D • LiDAR/Radar perception • Requirements traceability • ROS2<br>
+            <strong>Quantitative Methods:</strong> Numerical analysis • Linear programming • Nonlinear optimization • Design of Experiments • Statistical safety validation
+        </div>
+
+        <h2>Credentials</h2>
+        <div class="skills-section">
+            <strong>Education:</strong> MS Mathematics coursework (Emporia State University, 98%+ average) • BE Computer Engineering (American University of Beirut)<br>
+            <strong>Patents:</strong> <a href="https://patents.google.com/patent/US20230030474A1/en">AV Training Simulations (2023)</a> • <a href="https://patents.google.com/patent/US10672159B2">Anchor Graph Spatial Optimization (2020)</a><br>
+            <strong>Publications:</strong> "Uniqueness of Minima in Least Squares" (arXiv) • "Parallel Pathfinding on Modern Hardware" (AiGameDev)<br>
+            <strong>Languages:</strong> English (Fluent) • German, French (Working proficiency) • Arabic (Conversational)
         </div>
     </div>
 </body>
