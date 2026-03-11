@@ -188,6 +188,7 @@ permalink: /cv/
             font-size: 10pt;
             line-height: 1.5;
             margin: 6px 0;
+            break-inside: avoid;
         }
 
         .skills-section strong {
@@ -363,7 +364,7 @@ permalink: /cv/
                 <span class="dates">Sep 2024 – Feb 2025</span>
                 <span class="company">Irreducible — Engineering Director (Hands-on)</span>
             </div>
-            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">ZK Cryptographic Infrastructure · Berlin</div>
+            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Berlin</div>
             <p>Built and led systems team for hardware-accelerated ZK Proofs: FPGA device interfaces, ZK circuit compiler, three-mode execution architecture. Introduced co-design sessions connecting FPGA, cryptography, and compiler teams. Retained as sole non-cryptography engineer during company restructuring; member of 3-person leadership team.</p>
         </div>
 
@@ -372,7 +373,7 @@ permalink: /cv/
                 <span class="dates">Jan 2023 – Sep 2024</span>
                 <span class="company">FERNRIDE — Principal Engineer / Senior Engineering Manager</span>
             </div>
-            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Autonomous Trucking · Munich</div>
+            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Munich</div>
             <p>Built safety perception team and system from inception. Conducted feasibility study for LiDAR and radar-based safety function; designed and prototyped the system; wrote first version of complete perception pipeline. Co-developed safety case contributing to TÜV SÜD certification. Established direct technical channel with Continental radar engineering. Member of engineering leadership team.</p>
         </div>
 
@@ -381,7 +382,7 @@ permalink: /cv/
                 <span class="dates">Jun 2021 – Dec 2022</span>
                 <span class="company">Argo AI — Engineering Manager & Staff Software Engineer</span>
             </div>
-            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Ford/VW Autonomous Vehicles · Munich</div>
+            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Munich</div>
             <p>Produced safety validation design documents that led to direct request from US-based systems engineering to join vehicle safety test planning. Developed simulation fidelity framework and noise injection models across compute, vehicle dynamics, traffic, sensor, and scenario generation components. Applied statistical safety testing methods. Led post-acquisition team integration (AID to Argo). Scenario generation patent.</p>
         </div>
 
@@ -390,7 +391,7 @@ permalink: /cv/
                 <span class="dates">Apr 2018 – Jun 2021</span>
                 <span class="company">Autonomous Intelligent Driving (Audi) — Simulation Tech Lead</span>
             </div>
-            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Autonomous Driving · Munich</div>
+            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Munich</div>
             <p>Grew organization from 2 to 20 engineers across 4 teams: SIL runtime, traffic simulation, sensor simulation, scenario evaluation. Direct code contributions across all team codebases. Evaluated and replaced external simulation platform; led transition to internal development.</p>
         </div>
 
@@ -399,7 +400,7 @@ permalink: /cv/
                 <span class="dates">Jun 2011 – Mar 2018</span>
                 <span class="company">Microsoft / Havok — Lead Physics R&D</span>
             </div>
-            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Platform Infrastructure · Munich</div>
+            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Munich</div>
             <p>Core physics engine R&D: constraint solver, high-fidelity MLCP solver, destruction systems, geometric queries, numerical optimization, SIMD vectorization. Co-invented HoloLens spatial localization (US patent). Formal proof of TOI tunneling impossibility. WiiU math library. Havok Destruction interim lead.</p>
         </div>
 
@@ -408,7 +409,7 @@ permalink: /cv/
                 <span class="dates">2009 – 2011</span>
                 <span class="company">Guerrilla Games (Sony) — Senior AI Programmer</span>
             </div>
-            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Game AI · Amsterdam</div>
+            <div style="font-size: 10pt; color: #555; margin-bottom: 4px; font-style: italic;">Amsterdam</div>
             <p>Killzone 3 AI: navigation, vehicle behavior, multiplayer bots, automated navmesh region generation using skeletonization algorithms. PS3/SPU optimization.</p>
         </div>
 
@@ -418,20 +419,10 @@ permalink: /cv/
         <p class="skills-section"><strong><a href="https://vram.run">vram.run</a></strong> — GPU and API model search tool, 19 providers, 220+ hardware configurations. <strong><a href="https://notes.jadnohra.com/learn-rust/">Learn Rust</a></strong> — Open-source Rust memory model course for C++ programmers. <strong><a href="https://github.com/jadnohra">daisy</a></strong> — Agent-based traffic simulator (Python). <strong><a href="https://github.com/jadnohra">PaCoS</a></strong> — Deterministic concurrency simulator.</p>
 
         <h2>Technical</h2>
-        <div class="skills-section">
-            <strong>Languages & Systems:</strong> Rust, C++, Python, Java • FPGA (Xilinx/Verilator) • SIMD/SSE/AVX • Embedded systems • Distributed systems<br>
-            <strong>Cryptography & Hardware:</strong> Zero-Knowledge Proofs (polynomial commitments, NTT, finite fields) • FPGA-accelerated cryptographic compute • PCIe/DMA/VFIO device management<br>
-            <strong>Safety & Regulated Delivery:</strong> TÜV SÜD certification • ISO 26262 / ASIL-D • LiDAR/Radar perception • Requirements traceability • ROS2<br>
-            <strong>Quantitative Methods:</strong> Numerical analysis • Linear programming • Nonlinear optimization • Design of Experiments • Statistical safety validation
-        </div>
+        <p class="skills-section"><strong>Languages & Systems:</strong> Rust, C++, Python, Java · FPGA (Xilinx/Verilator) · SIMD/SSE/AVX · Embedded systems · Distributed systems. <strong>Cryptography & Hardware:</strong> Zero-Knowledge Proofs (polynomial commitments, NTT, finite fields) · FPGA-accelerated cryptographic compute · PCIe/DMA/VFIO device management. <strong>Safety & Regulated Delivery:</strong> TÜV SÜD certification · ISO 26262 / ASIL-D · LiDAR/Radar perception · Requirements traceability · ROS2. <strong>Quantitative Methods:</strong> Numerical analysis · Linear programming · Nonlinear optimization · Design of Experiments · Statistical safety validation.</p>
 
         <h2>Credentials</h2>
-        <div class="skills-section">
-            <strong>Education:</strong> MS Mathematics coursework (Emporia State University, 98%+ average) • BE Computer Engineering (American University of Beirut)<br>
-            <strong>Patents:</strong> <a href="https://patents.google.com/patent/US20230030474A1/en">AV Training Simulations (2023)</a> • <a href="https://patents.google.com/patent/US10672159B2">Anchor Graph Spatial Optimization (2020)</a><br>
-            <strong>Publications:</strong> "Uniqueness of Minima in Least Squares" (arXiv) • "Parallel Pathfinding on Modern Hardware" (AiGameDev)<br>
-            <strong>Languages:</strong> English (Fluent) • German, French (Working proficiency) • Arabic (Conversational)
-        </div>
+        <p class="skills-section"><strong>Education:</strong> MS Mathematics coursework (Emporia State University, 98%+ average) · BE Computer Engineering (American University of Beirut). <strong>Patents:</strong> <a href="https://patents.google.com/patent/US20230030474A1/en">AV Training Simulations (2023)</a> · <a href="https://patents.google.com/patent/US10672159B2">Anchor Graph Spatial Optimization (2020)</a>. <strong>Publications:</strong> "Uniqueness of Minima in Least Squares" (arXiv) · "Parallel Pathfinding on Modern Hardware" (AiGameDev). <strong>Languages:</strong> English (Fluent) · German, French (Working proficiency) · Arabic (Conversational).</p>
     </div>
 </body>
 </html>
