@@ -187,7 +187,7 @@ const tagCounts={};S.forEach(s=>s.tags.forEach(t=>{tagCounts[t]=(tagCounts[t]||0
 const catTagsMap={};Object.entries(TAGS).forEach(([n,c])=>{if(!catTagsMap[c.cat])catTagsMap[c.cat]=[];catTagsMap[c.cat].push(n)});
 const storyMap={};S.forEach(s=>{storyMap[s.id]=s});
 
-let sel=new Set(),selCo=null,selEra=null,topOnly=false,starOnly=false,search='',expanded=null,rawMode=true,galMode=true;
+let sel=new Set(),selCo=null,selEra=null,topOnly=false,starOnly=false,search='',expanded=null,rawMode=true,galMode=true,listMode=false;
 let scaleOn={major:false,notable:false,minor:false};
 let collapsed={domain:false,technique:true,type:true,era:true};
 const CROSS_DOMAIN=[
@@ -274,7 +274,60 @@ function cardH(s){
   return h;
 }
 
+function listCardH(s){
+  let h='<div class="list-item">';
+  h+='<div class="list-head">';
+  h+='<span class="list-co" style="color:'+CO[s.co].c+'">'+CO[s.co].n+'</span>';
+  h+='<span class="list-title">'+(s.star?'\u2605 ':'')+esc(s.t)+'</span>';
+  if(s.per)h+='<span class="list-period">'+s.per+'</span>';
+  h+='</div>';
+  h+='<div class="list-tech">'+esc(s.tech)+'</div>';
+  h+='<p class="list-sum">'+esc(s.sum)+'</p>';
+  if(rawMode&&s.full)h+='<p class="list-full">'+esc(s.full)+'</p>';
+  if(s.links&&s.links.length){
+    h+='<div class="list-links">';
+    for(const lk of s.links)h+='<a class="list-link" href="'+esc(lk.u)+'" target="_blank" rel="noopener">'+esc(lk.l)+'</a>';
+    h+='</div>';
+  }
+  h+='<div class="list-tags">';
+  for(const tg of s.tags){const cfg=TAGS[tg];if(cfg)h+='<span class="list-tag" style="color:'+cfg.color+';background:'+cfg.color+'15;border-color:'+cfg.color+'40">'+esc(tg)+'</span>'}
+  h+='</div></div>';
+  return h;
+}
+
+function renderList(){
+  const f=filter();
+  let h='<div class="list-view">';
+  h+='<div class="list-controls no-print">';
+  h+='<button class="toggle-btn on" onclick="listMode=false;render()">'+icon('chevRight','i14')+' Back to Explorer</button>';
+  h+='<button class="toggle-btn '+(rawMode?'on':'off')+'" onclick="rawMode=!rawMode;render()">'+(rawMode?icon('toggleOn','i14'):icon('toggleOff','i14'))+' '+(rawMode?'Full detail':'Summary only')+'</button>';
+  h+='<button class="toggle-btn on" onclick="window.print()">'+icon('file','i14')+' Print / PDF</button>';
+  h+='</div>';
+  h+='<h2 class="list-title-main">Jad Nohra \u2014 Technical Portfolio</h2>';
+  h+='<p class="list-subtitle">'+f.length+' of '+S.length+' projects';
+  if(sel.size||selCo||selEra){
+    h+=' \u2014 Filtered by:';
+    if(selCo)h+=' <strong>'+CO[selCo].n+'</strong>';
+    sel.forEach(t=>h+=' <strong>'+esc(t)+'</strong>');
+    if(selEra){const era=ERAS.find(e=>e.id===selEra);if(era)h+=' <strong>'+era.label+'</strong>'}
+  }
+  h+='</p>';
+  // Group by company
+  const groups={};
+  for(const s of f){if(!groups[s.co])groups[s.co]=[];groups[s.co].push(s)}
+  for(const[co,items]of Object.entries(groups)){
+    const ci=CO[co];
+    h+='<div class="list-group">';
+    h+='<h3 class="list-group-head" style="border-color:'+ci.c+'"><span style="color:'+ci.c+'">'+ci.n+'</span> <span class="list-group-period">'+ci.p+'</span></h3>';
+    for(const s of items)h+=listCardH(s);
+    h+='</div>';
+  }
+  h+='</div>';
+  document.getElementById('bio-app').innerHTML=h;
+}
+
 function render(){
+  if(listMode)return renderList();
   const f=filter();
   const anyScale=scaleOn.major||scaleOn.notable||scaleOn.minor;
   const hasFilter=sel.size||selCo||selEra||topOnly||starOnly||anyScale||search;
@@ -283,6 +336,7 @@ function render(){
   h+='<div class="header"><div><h1>Technical Explorer</h1><p class="sub">'+S.length+' projects \xb7 OR within category, AND between</p></div><div class="header-right">';
   h+='<button class="toggle-btn '+(rawMode?'on':'off')+'" onclick="rawMode=!rawMode;render()">'+(rawMode?icon('toggleOn','i14'):icon('toggleOff','i14'))+' '+(rawMode?'Full detail':'Tech stack')+'</button>';
   h+='<button class="toggle-btn '+(galMode?'on':'off')+'" onclick="galMode=!galMode;render()">'+(galMode?icon('toggleOn','i14'):icon('toggleOff','i14'))+' Gallery</button>';
+  h+='<button class="toggle-btn off" onclick="listMode=true;render()">'+icon('file','i14')+' List / PDF</button>';
   h+='<div class="search-wrap">'+icon('search')+'<input value="'+esc(search)+'" oninput="search=this.value;render()" placeholder="Search..."></div></div></div>';
 
   h+='<div class="be-row">';

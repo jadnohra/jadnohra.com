@@ -116,6 +116,39 @@ toc: true
 .bio-lightbox iframe{width:80vw;height:45vw;max-width:960px;max-height:540px;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,0.4)}
 /* SVG icons inside popover */
 .bio-explorer-popover svg.i9{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+/* List / PDF view */
+.bio-explorer .list-view{max-width:780px;margin:0 auto}
+.bio-explorer .list-controls{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.bio-explorer .list-title-main{font-size:22px;font-weight:700;margin:0 0 4px}
+.bio-explorer .list-subtitle{font-size:12px;color:#6b7280;margin:0 0 16px}
+.bio-explorer .list-group{margin-bottom:20px}
+.bio-explorer .list-group-head{font-size:15px;font-weight:700;margin:0 0 8px;padding-bottom:4px;border-bottom:2px solid #e2e8f0;display:flex;align-items:baseline;gap:8px}
+.bio-explorer .list-group-period{font-size:11px;color:#94a3b8;font-weight:400}
+.bio-explorer .list-item{padding:8px 0;border-bottom:1px solid #f1f5f9}
+.bio-explorer .list-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.bio-explorer .list-co{font-size:10px;font-weight:700;min-width:60px;display:none}
+.bio-explorer .list-title{font-size:14px;font-weight:600;flex:1}
+.bio-explorer .list-period{font-size:11px;color:#94a3b8}
+.bio-explorer .list-tech{font-size:11px;color:#64748b;font-family:'SF Mono',SFMono-Regular,Consolas,monospace;background:#f8fafc;padding:3px 6px;border-radius:3px;margin:4px 0;line-height:1.5}
+.bio-explorer .list-sum{font-size:13px;color:#334155;line-height:1.55;margin:4px 0}
+.bio-explorer .list-full{font-size:12px;color:#64748b;line-height:1.55;margin:2px 0 4px;padding-left:12px;border-left:2px solid #e2e8f0}
+.bio-explorer .list-links{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0}
+.bio-explorer .list-link{font-size:10px;color:#3b82f6;text-decoration:none}
+.bio-explorer .list-link:hover{text-decoration:underline}
+.bio-explorer .list-link::before{content:'['}
+.bio-explorer .list-link::after{content:']'}
+.bio-explorer .list-tags{display:flex;gap:3px;flex-wrap:wrap;margin:4px 0 0}
+.bio-explorer .list-tag{font-size:9px;padding:1px 5px;border-radius:3px;border:1px solid}
+@media print{
+  body *{visibility:hidden}
+  .bio-explorer,.bio-explorer *{visibility:visible}
+  .bio-explorer{position:absolute;left:0;top:0;width:100%}
+  .bio-explorer .no-print{display:none !important}
+  .bio-explorer .list-item{break-inside:avoid}
+  .bio-explorer .list-group{break-inside:avoid-page}
+  .bio-explorer .list-tech{background:none;border:1px solid #e2e8f0}
+  .bio-explorer .list-tag{border:1px solid #ccc;color:#333 !important;background:none !important}
+}
 </style>
 
 <div id="bio-app" class="bio-explorer"></div>
