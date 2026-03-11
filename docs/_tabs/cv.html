@@ -135,6 +135,7 @@ permalink: /cv/
         /* Experience - Better Spacing */
         .job {
             margin-bottom: 12px;
+            break-inside: avoid;
         }
 
         .job-line {
@@ -273,7 +274,8 @@ permalink: /cv/
             filename: 'jad_nohra_cv.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+            pagebreak: { mode: ['avoid-all', 'css'] }
         };
         html2pdf().set(opt).from(element).save();
     }
@@ -410,22 +412,10 @@ permalink: /cv/
             <p>Killzone 3 AI: navigation, vehicle behavior, multiplayer bots, automated navmesh region generation using skeletonization algorithms. PS3/SPU optimization.</p>
         </div>
 
-        <strong style="font-size: 10pt;">Earlier:</strong>
-        <ul style="font-size: 9.5pt;">
-            <li><strong>Kimera Studios</strong> (2006–08): Complete game engine — rendering, physics, neural network AI, spatial partitioning</li>
-            <li><strong>AiGameDev</strong> (2008–09): Co-authored "Parallel Pathfinding on Modern Hardware"; motion planning, reinforcement learning, hierarchical pathfinding</li>
-            <li><strong>Guided Knowledge</strong> (2015): Nonlinear optimization consulting, IMU sensor calibration</li>
-            <li><strong>Gaming Logix</strong> (1999–2001): Online casino game engine, server/client architecture, C++/Java</li>
-            <li><strong>Advisory</strong> (2024–present): Coaching engineering leaders on technical leadership and team scaling</li>
-        </ul>
+        <p style="font-size: 9.5pt;"><strong>Earlier:</strong> <strong>Kimera Studios</strong> (2006–08): Complete game engine — rendering, physics, neural network AI, spatial partitioning. <strong>AiGameDev</strong> (2008–09): Co-authored "Parallel Pathfinding on Modern Hardware"; motion planning, reinforcement learning, hierarchical pathfinding. <strong>Guided Knowledge</strong> (2015): Nonlinear optimization consulting, IMU sensor calibration. <strong>Gaming Logix</strong> (1999–2001): Online casino game engine, server/client architecture, C++/Java. <strong>Advisory</strong> (2024–present): Coaching engineering leaders on technical leadership and team scaling.</p>
 
         <h2>Open Source & Independent Projects</h2>
-        <div class="skills-section">
-            <strong><a href="https://vram.run">vram.run</a></strong> — GPU and API model search tool, 19 providers, 220+ hardware configurations<br>
-            <strong><a href="https://notes.jadnohra.com/learn-rust/">Learn Rust</a></strong> — Open-source Rust memory model course for C++ programmers<br>
-            <strong><a href="https://github.com/jadnohra">daisy</a></strong> — Agent-based traffic simulator (Python)<br>
-            <strong><a href="https://github.com/jadnohra">PaCoS</a></strong> — Deterministic concurrency simulator
-        </div>
+        <p class="skills-section"><strong><a href="https://vram.run">vram.run</a></strong> — GPU and API model search tool, 19 providers, 220+ hardware configurations. <strong><a href="https://notes.jadnohra.com/learn-rust/">Learn Rust</a></strong> — Open-source Rust memory model course for C++ programmers. <strong><a href="https://github.com/jadnohra">daisy</a></strong> — Agent-based traffic simulator (Python). <strong><a href="https://github.com/jadnohra">PaCoS</a></strong> — Deterministic concurrency simulator.</p>
 
         <h2>Technical</h2>
         <div class="skills-section">
