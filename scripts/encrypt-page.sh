@@ -155,11 +155,6 @@ ENCRYPTED=$(echo "$CRYPTO_OUTPUT" | python3 -c "import json,sys; d=json.load(sys
 
 # Write the self-decrypting HTML page
 cat > "$OUTPUT_FILE" << 'HTMLEOF'
----
-layout: none
-permalink: /bio-ext/
-sitemap: false
----
 <!DOCTYPE html>
 <html lang="en">
 <head>

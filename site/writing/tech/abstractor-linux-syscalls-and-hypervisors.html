@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abstractor: Linux, Syscalls and Hypervisors — jadnohra.com</title>
+<link rel="stylesheet" href="/css/editor.css">
+</head>
+<body data-page="writing">
+
+<div class="content">
+<h2>Part 1: Why Do We Even Need VMs?</h2>
+<h3>What Linux Already Does</h3>
+<pre><code>┌──────────┐ ┌──────────┐ ┌──────────┐
+│ Process A│ │ Process B│ │ Process C│
+│ (user 1) │ │ (user 1) │ │ (user 2) │
+└────┬─────┘ └────┬─────┘ └────┬─────┘
+     │            │            │
+┌────┴────────────┴────────────┴────┐
+│            KERNEL                  │
+│  - Schedules CPU time              │
+│  - Manages memory (page tables)    │
+│  - Controls file access            │
+│  - Enforces user permissions       │
+└────────────────┬──────────────────┘
+                 │
+            Hardware
+</code></pre>
+<p><strong>Already isolated:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>How Linux Isolates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPU time</td>
+<td>Scheduler gives each process time slices</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>Page tables — process A can't see process B's RAM</td>
+</tr>
+<tr>
+<td>Files</td>
+<td>Permissions — user 2 can't read user 1's files</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>Ports, firewall rules</td>
+</tr>
+</tbody>
+</table>
+<h3>The Gaps — Why Linux Multi-User Isn't Enough</h3>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Why Linux Multi-User Isn't Enough</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Different OS</strong></td>
+<td>Process can't be Windows. It's all Linux.</td>
+</tr>
+<tr>
+<td><strong>Kernel bugs</strong></td>
+<td>One kernel. Bug affects everyone.</td>
+</tr>
+<tr>
+<td><strong>Root escape</strong></td>
+<td>If process gets root, game over for ALL users.</td>
+</tr>
+<tr>
+<td><strong>Kernel version</strong></td>
+<td>Everyone shares same kernel. Can't mix versions.</td>
+</tr>
+<tr>
+<td><strong>Full isolation</strong></td>
+<td>Processes share kernel memory, syscalls, timing. Information can leak.</td>
+</tr>
+<tr>
+<td><strong>Resource guarantees</strong></td>
+<td>Scheduler is "fair" but not guaranteed. No hard limits.</td>
+</tr>
+</tbody>
+</table>
+<h3>What VMs Add</h3>
+<p>Each VM gets its own kernel. Total separation.</p>
+<pre><code>┌─────────────────┐  ┌─────────────────┐
+│      VM 1       │  │      VM 2       │
+│  ┌───────────┐  │  │  ┌───────────┐  │
+│  │ Process A │  │  │  │ Process X │  │
+│  └─────┬─────┘  │  │  └─────┬─────┘  │
+│        │        │  │        │        │
+│  ┌─────┴─────┐  │  │  ┌─────┴─────┐  │
+│  │  Kernel 1 │  │  │  │  Kernel 2 │  │
+│  │  (Linux)  │  │  │  │ (Windows) │  │
+│  └───────────┘  │  │  └───────────┘  │
+└────────┬────────┘  └────────┬────────┘
+         │                    │
+┌────────┴────────────────────┴────────┐
+│            HYPERVISOR                 │
+└──────────────────┬───────────────────┘
+                   │
+               Hardware
+</code></pre>
+<p><strong>Now:</strong>
+- VM 1 root ≠ VM 2 root
+- VM 1 kernel crash ≠ VM 2 crash
+- VM 1 can run Linux, VM 2 can run Windows
+- Isolation is at hardware boundary, not syscall boundary</p>
+<p><strong>The Short Answer:</strong>
+- <strong>Linux multi-user:</strong> Trust the kernel. Isolation via permissions and page tables.
+- <strong>VMs:</strong> Don't trust anything. Each tenant gets their own kernel. Isolation via fake hardware.</p>
+<hr />
+<h2>Part 2: Linux Internals — The Three Boundaries</h2>
+<p>Everything in Linux is about enforcing three boundaries:</p>
+<pre><code>┌─────────────────────────────────────────────────┐
+│                                                 │
+│   BOUNDARY 1: Process ←→ Process               │
+│   (Memory isolation via page tables)           │
+│                                                 │
+│   BOUNDARY 2: Process ←→ Kernel                │
+│   (Ring 3 vs Ring 0, syscalls)                 │
+│                                                 │
+│   BOUNDARY 3: Kernel ←→ Hardware               │
+│   (Drivers, interrupts)                        │
+│                                                 │
+└─────────────────────────────────────────────────┘
+</code></pre>
+<hr />
+<h2>Part 3: CPU Has Two Modes (Hardware Enforced)</h2>
+<pre><code>┌─────────────────────────────────────┐
+│         RING 3 (User Mode)          │
+│                                     │
+│   - Your process runs here          │
+│   - CANNOT execute privileged ops   │
+│   - CANNOT access hardware directly │
+│   - CANNOT see other process memory │
+│                                     │
+│   If you try → CPU raises exception │
+└──────────────────┬──────────────────┘
+                   │ syscall instruction
+                   │ (controlled gate)
+                   ▼
+┌─────────────────────────────────────┐
+│         RING 0 (Kernel Mode)        │
+│                                     │
+│   - Kernel runs here                │
+│   - CAN touch hardware              │
+│   - CAN see all memory              │
+│   - CAN do anything                 │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>The CPU itself enforces this.</strong> A register holds current ring. Hardware checks every instruction.</p>
+<p><strong>What you remember:</strong></p>
+<blockquote>
+<p>"CPU has a mode bit. Ring 0 vs Ring 3. Hardware checks every instruction. Some instructions only work in ring 0."</p>
+</blockquote>
+<p><strong>If they ask details:</strong></p>
+<blockquote>
+<p>"I don't remember which register, but there's a bit that says 'kernel mode' or 'user mode'. CPU checks it on privileged operations."</p>
+</blockquote>
+<hr />
+<h2>Part 4: The Thin API (Syscalls)</h2>
+<p>Your process wants things. Hardware has things. Kernel is the middleman.</p>
+<pre><code>┌──────────────────────────────────────┐
+│            YOUR PROCESS              │
+│                                      │
+│   You can:                           │
+│     - Do math                        │
+│     - Access your own memory         │
+│     - Call the thin API              │
+│                                      │
+│   You cannot:                        │
+│     - Touch hardware                 │
+│     - See other processes            │
+│     - Do anything privileged         │
+│                                      │
+└──────────────────┬───────────────────┘
+                   │
+                   │  THE THIN API
+                   │
+                   │  get_handle(thing) → int
+                   │  bytes_in(int) → data
+                   │  bytes_out(int, data)
+                   │  release(int)
+                   │  do_anything(int, ???)
+                   │
+                   │  (officially: open, read, write, close, ioctl)
+                   │
+┌──────────────────▼───────────────────┐
+│         KERNEL + HARDWARE            │
+│                                      │
+│   Figures out what handle means.     │
+│   Does the actual work.              │
+│   Returns result.                    │
+│                                      │
+└──────────────────────────────────────┘
+</code></pre>
+<h3>How read(fd, buf, 100) Actually Works</h3>
+<pre><code class="language-c">read(fd, buf, 100);  // This calls a function in libc. That's it.
+</code></pre>
+<p><strong>The layers:</strong></p>
+<pre><code>YOUR CODE:
+    read(fd, buf, 100);
+         │
+         │ normal function call
+         ▼
+LIBC (glibc, musl, etc):
+    ssize_t read(int fd, void *buf, size_t count) {
+        // Put args in registers
+        // Do the actual syscall instruction
+        return syscall(SYS_read, fd, buf, count);
+    }
+         │
+         │ syscall instruction
+         ▼
+KERNEL:
+    sys_read(fd, buf, count) {
+        // actual work
+    }
+</code></pre>
+<h3>Why SYSCALL Is A CPU Instruction</h3>
+<p>Like <code>ADD</code> or <code>MOV</code>, there is literally an instruction called <code>SYSCALL</code>. It's opcode <code>0x0F 0x05</code>. Hardware knows what to do.</p>
+<p><strong>What SYSCALL does (hardware, atomically):</strong>
+1. Save rip → rcx (so kernel knows where to return)
+2. Save flags → r11
+3. Load rip from special register (MSR_LSTAR) — kernel set this at boot
+4. Set mode = privileged
+5. Continue at new rip (now in kernel)</p>
+<p><strong>Software can't change the mode bit.</strong> That would require... privileged mode. Chicken and egg. So CPU provides a special instruction that does all of this atomically, safely.</p>
+<hr />
+<h2>Part 4.5: The Trap Table</h2>
+<p>SYSCALL is one entry point, but the CPU handles many other events like divide by zero, page fault, debug breakpoint, and timer tick. Each of these must transfer control to kernel code.</p>
+<p>This transfer has to be indirect. If unprivileged code could jump directly to any kernel address, it would skip validation and corrupt state. So the CPU uses a table of fixed entry points that only the kernel can configure.</p>
+<p>When event N happens, the CPU looks up entry N, switches to privileged mode, and jumps to that address.</p>
+<pre><code>┌────────┬─────────────────────┐
+│ Number │ Jump address        │
+├────────┼─────────────────────┤
+│   0    │ 0x80100100          │  divide by zero
+│   1    │ 0x80100200          │  debug
+│  13    │ 0x80100D00          │  general protection fault
+│  14    │ 0x80100E00          │  page fault
+│  ...   │ ...                 │
+│  64    │ 0x80103000          │  syscall (legacy)
+└────────┴─────────────────────┘
+</code></pre>
+<p>The kernel writes this table at boot, and the <code>lidt</code> instruction tells the CPU where to find it. Both operations require privileged mode.</p>
+<table>
+<thead>
+<tr>
+<th>Who</th>
+<th>Does</th>
+<th>Privileged?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kernel</td>
+<td>Writes table, runs <code>lidt</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>User code</td>
+<td>Triggers entry (<code>int N</code>, or fault)</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Hardware</td>
+<td>Looks up, switches mode, jumps</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>User code triggers. Kernel code configures. Hardware enforces.</p>
+<p>(officially: Interrupt Descriptor Table / IDT)</p>
+<hr />
+<h2>Part 5: Page Tables (Memory Isolation)</h2>
+<h3>The Lie</h3>
+<p>Every process thinks: "I have all memory to myself. I start at address 0. I'm alone."</p>
+<h3>The Truth</h3>
+<pre><code>Process A's view:          Process B's view:
+
+0x1000 → my variable       0x1000 → my variable
+
+        │                          │
+        ▼                          ▼
+    ┌───────┐                  ┌───────┐
+    │ MMU   │                  │ MMU   │
+    │(CPU)  │                  │(CPU)  │
+    └───┬───┘                  └───┬───┘
+        │                          │
+        ▼                          ▼
+Physical 0x50000           Physical 0x80000
+(different!)               (different!)
+</code></pre>
+<p><strong>Page table</strong> = a map from virtual → physical</p>
+<pre><code>Virtual Address      Physical Address     Permissions
+─────────────────────────────────────────────────────
+0x0000 - 0x0FFF  →   UNMAPPED            (null trap)
+0x1000 - 0x1FFF  →   0x50000             read, write
+0x2000 - 0x2FFF  →   0x51000             read, execute
+</code></pre>
+<p><strong>Key insight:</strong>
+- CPU has a register (CR3 on x86) pointing to current page table
+- On EVERY memory access, hardware translates
+- Process can't change CR3 — it's privileged (ring 0 only)
+- Kernel swaps CR3 when switching processes</p>
+<h3>Process Virtual Address Space</h3>
+<pre><code>0xFFFFFFFF  ┌─────────────────┐
+            │  Kernel memory  │ ← Process CANNOT access
+            │  (mapped but    │   (page table says no)
+            │   protected)    │
+0xC0000000  ├─────────────────┤
+            │     Stack       │ ← Grows down
+            │       ↓         │
+            ├─────────────────┤
+            │       ↑         │
+            │     Heap        │ ← malloc() comes from here
+            │  (brk / mmap)   │
+            ├─────────────────┤
+            │    .bss         │ ← Uninitialized globals
+            ├─────────────────┤
+            │    .data        │ ← Initialized globals
+            ├─────────────────┤
+            │    .text        │ ← Your code (read + execute)
+0x00400000  ├─────────────────┤
+            │   Unmapped      │ ← NULL pointer catches
+0x00000000  └─────────────────┘
+</code></pre>
+<hr />
+<h2>Part 6: What A Process Actually Is</h2>
+<h3>Kernel's View</h3>
+<pre><code class="language-c">struct task_struct {
+    // IDENTITY
+    pid_t pid;
+    uid_t uid;
+    gid_t gid;
+
+    // SPACE
+    struct mm_struct *mm;       // → page tables, mappings
+
+    // STATE
+    struct pt_regs regs;        // saved registers
+
+    // RESOURCES (more IDENTITY)
+    struct files_struct *files; // open file descriptors
+
+    // SCHEDULING (TIME)
+    int prio;
+    u64 vruntime;               // how much time used
+
+    // ...hundreds more fields
+};
+</code></pre>
+<p><strong>A process is just a struct.</strong> Kernel allocates it, fills it in, links it to scheduler.</p>
+<hr />
+<h2>Part 7: Context Switch — The Big Moment</h2>
+<h3>There's ONE Physical CPU. ONE Set of Registers.</h3>
+<p>When process is NOT running, its registers live in memory:</p>
+<pre><code>MEMORY (kernel heap):
+
+    Process A's task_struct:       Process B's task_struct:
+    ┌─────────────────────┐        ┌─────────────────────┐
+    │ saved_rax = 5       │        │ saved_rax = 99      │
+    │ saved_rbx = 10      │        │ saved_rbx = 200     │
+    │ saved_rip = 0x4000  │        │ saved_rip = 0x5000  │
+    │ saved_rsp = 0x7fff  │        │ saved_rsp = 0x8fff  │
+    └─────────────────────┘        └─────────────────────┘
+
+    Just numbers in memory!
+</code></pre>
+<h3>Running vs Not Running</h3>
+<pre><code>PROCESS A RUNNING:
+
+    CPU hardware numbers:        A's blob in memory:
+    ┌──────────────────┐         ┌──────────────────┐
+    │ calc = 5         │ ← LIVE  │ saved_calc = ?   │ (stale)
+    │ position = 0x4000│         │ saved_pos = ?    │
+    └──────────────────┘         └──────────────────┘
+
+
+PROCESS A NOT RUNNING:
+
+    CPU hardware numbers:        A's blob in memory:
+    ┌──────────────────┐         ┌──────────────────┐
+    │ (some other      │         │ saved_calc = 5   │ ← SAVED
+    │  process's data) │         │ saved_pos = 0x4000│
+    └──────────────────┘         └──────────────────┘
+</code></pre>
+<h3>The Switch</h3>
+<pre><code>SWITCHING A → B:
+
+1. Hardware kicks kernel (timer interrupt)
+
+2. Kernel saves CPU numbers → A's blob
+   ┌──────────────────┐         ┌──────────────────┐
+   │ calc = 5         │ ──────► │ saved_calc = 5   │
+   │ position = 0x4000│         │ saved_pos = 0x4000│
+   └──────────────────┘         └──────────────────┘
+
+3. Kernel loads B's blob → CPU numbers
+   ┌──────────────────┐         ┌──────────────────┐
+   │ calc = 99        │ ◄────── │ saved_calc = 99  │
+   │ position = 0x7000│         │ saved_pos = 0x7000│
+   └──────────────────┘         └──────────────────┘
+
+4. Kernel changes map pointer to B's map
+
+5. Return to unprivileged mode
+
+6. B continues. Never knew it was paused.
+</code></pre>
+<p><strong>What gets saved/restored:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Saved</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Registers (rax, rbx, ...)</td>
+<td>B's computation state</td>
+</tr>
+<tr>
+<td>Instruction pointer</td>
+<td>Where B was executing</td>
+</tr>
+<tr>
+<td>Stack pointer</td>
+<td>B's stack position</td>
+</tr>
+<tr>
+<td>CR3 (page table)</td>
+<td>B's memory view</td>
+</tr>
+<tr>
+<td>FPU/SSE state</td>
+<td>B's floating point</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The insight:</strong> Registers are just numbers. When running: in hardware. When not running: in memory. "Copy registers" = copy numbers from one place to another.</p>
+<hr />
+<h2>Part 8: Process Interruption — What Actually Happens</h2>
+<h3>The Scary Question</h3>
+<p>Process is in the middle of <code>int x = a + b * c;</code> — timer fires. What happens?</p>
+<h3>Answer: CPU Saves EVERYTHING</h3>
+<pre><code>PROCESS RUNNING:
+
+    Registers:
+    ┌─────────────────┐
+    │ rax = 5         │ ← mid-calculation
+    │ rbx = 10        │
+    │ rip = 0x4001234 │ ← instruction pointer
+    │ rsp = 0x7fff100 │ ← stack pointer
+    │ flags = ...     │
+    └─────────────────┘
+
+         │
+         │  TIMER INTERRUPT
+         ▼
+
+    CPU AUTOMATICALLY (hardware):
+    1. Finishes current instruction
+    2. Saves rip, rsp, flags to special place
+    3. Switches to ring 0
+    4. Jumps to interrupt handler
+</code></pre>
+<p><strong>Key:</strong> CPU finishes current instruction. Never stops mid-instruction.</p>
+<h3>Each Process Has TWO Stacks</h3>
+<pre><code>┌─────────────────────────────────────────┐
+│              PROCESS A                  │
+│                                         │
+│   User Stack          Kernel Stack      │
+│   (your code uses)    (kernel uses)     │
+│                                         │
+│   ┌──────────┐       ┌──────────┐      │
+│   │ local    │       │ saved    │      │
+│   │ vars     │       │ regs     │      │
+│   │ ...      │       │ from     │      │
+│   │          │       │ interrupt│      │
+│   └──────────┘       └──────────┘      │
+│                                         │
+└─────────────────────────────────────────┘
+</code></pre>
+<p>When interrupted:
+- CPU switches to kernel stack (automatically)
+- Kernel pushes registers there
+- User stack is untouched</p>
+<hr />
+<h2>Part 9: Fork and Exec — How Processes Launch</h2>
+<pre><code class="language-c">// Shell runs this when you type &quot;./myprogram&quot;
+pid = fork();      // 1. Clone current process
+
+if (pid == 0) {
+    // Child process
+    exec(&quot;./myprogram&quot;);  // 2. Replace with new program
+}
+</code></pre>
+<h3>What fork() Does</h3>
+<pre><code>FORK DOES (inside kernel):
+
+    1. Allocate NEW task_struct in memory
+
+    2. Copy parent's CURRENT register values into it:
+
+       Child's task_struct (NEW):
+       ┌──────────────────┐
+       │ pid = 101        │  ← new PID
+       │ saved_rax = 5    │  ← copied from physical regs
+       │ saved_rbx = 10   │  ← copied from physical regs
+       │ saved_rip = 0x4000│ ← same instruction!
+       │ page_table = ... │  ← copy or share parent's
+       │ files = ...      │  ← copy parent's fd table
+       └──────────────────┘
+
+    3. Put child on scheduler's run queue
+
+    4. Return to parent (still running)
+</code></pre>
+<h3>Why Fork Returns Different Values</h3>
+<pre><code class="language-c">pid = fork();
+if (pid == 0) { /* child */ } else { /* parent */ }
+</code></pre>
+<p>How?</p>
+<pre><code>KERNEL DOES:
+
+    Parent's task_struct:        Child's task_struct:
+    ┌──────────────────┐         ┌──────────────────┐
+    │ saved_rax = 101  │         │ saved_rax = 0    │
+    │ (child's pid)    │         │ (zero!)          │
+    └──────────────────┘         └──────────────────┘
+
+    rax is where return value goes.
+    Kernel puts different values in each task_struct.
+    When each runs, they get their own return value.
+</code></pre>
+<h3>What exec() Does</h3>
+<ol>
+<li>Open the executable file</li>
+<li>Parse ELF header (where's code, data, entry point?)</li>
+<li>Wipe current memory mappings</li>
+<li>Map new segments: .text, .data, stack, heap</li>
+<li>Set instruction pointer to entry point</li>
+<li>Return to user mode</li>
+</ol>
+<hr />
+<h2>Part 10: File Descriptors — How I/O Works</h2>
+<pre><code class="language-c">int fd = open(&quot;/tmp/foo&quot;, O_RDONLY);
+</code></pre>
+<p>What happened:</p>
+<pre><code>USER:   fd = 3 (just a number)
+                │
+KERNEL:         ▼
+        ┌───────────────────────────┐
+        │ Process's FD table        │
+        │                           │
+        │ 0 → stdin (terminal)      │
+        │ 1 → stdout (terminal)     │
+        │ 2 → stderr (terminal)     │
+        │ 3 → struct file ──────────────┐
+        └───────────────────────────┘   │
+                                        ▼
+                              ┌──────────────────┐
+                              │  struct file     │
+                              │  inode: ...      │
+                              │  position: 0     │
+                              │  ops: read/write │
+                              └──────────────────┘
+</code></pre>
+<p><strong>fd is just an index.</strong> Kernel holds the actual file struct. You can only refer to it by number. Kernel validates on every operation.</p>
+<hr />
+<h2>Part 11: Multi-User — Just Numbers</h2>
+<pre><code class="language-c">struct task_struct {
+    uid_t uid;    // user id (just a number)
+    gid_t gid;    // group id (just a number)
+};
+
+struct inode {
+    uid_t uid;    // file owner
+    gid_t gid;    // file group
+    mode_t mode;  // permissions (rwxrwxrwx)
+};
+</code></pre>
+<p>When you <code>open()</code>:</p>
+<pre><code class="language-c">// Kernel does:
+if (process-&gt;uid == inode-&gt;uid) {
+    // Check owner permissions
+} else if (process-&gt;gid == inode-&gt;gid) {
+    // Check group permissions
+} else {
+    // Check other permissions
+}
+</code></pre>
+<p><strong>That's it.</strong> Users are just numbers. Permissions are just bits. Kernel does if-statements. Hardware knows nothing about users.</p>
+<hr />
+<h2>Part 12: The One-Page Linux Summary</h2>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│ HARDWARE ENFORCES:                                      │
+│   - Ring 0 vs Ring 3 (CPU mode bit)                     │
+│   - Page table translation (MMU on every access)        │
+│   - Interrupts (timer forces kernel to get control)     │
+└─────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│ KERNEL ENFORCES:                                        │
+│   - Which process has which page table                  │
+│   - Which process runs when (scheduler)                 │
+│   - Which files you can access (uid/gid checks)         │
+│   - Syscall validation (is this fd valid?)              │
+└─────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│ PROCESS SEES:                                           │
+│   - Illusion of own memory                              │
+│   - Illusion of own CPU                                 │
+│   - File descriptors (handles, not real access)         │
+│   - Syscall API (request things, can't take them)       │
+└─────────────────────────────────────────────────────────┘
+</code></pre>
+<hr />
+<h1>PART TWO: HYPERVISORS</h1>
+<hr />
+<h2>Part 13: Hypervisors — The Basics</h2>
+<p>A hypervisor is a program that pretends to be hardware.</p>
+<pre><code>┌─────────┐ ┌─────────┐ ┌─────────┐
+│  VM 1   │ │  VM 2   │ │  VM 3   │
+│ (Linux) │ │(Windows)│ │ (Linux) │
+└────┬────┘ └────┬────┘ └────┬────┘
+     │           │           │
+     │    &quot;I am a computer&quot;  │
+     │           │           │
+┌────┴───────────┴───────────┴────┐
+│          HYPERVISOR             │
+│   (lies to everyone above)      │
+└────────────────┬────────────────┘
+                 │
+         Real Hardware
+         (actual CPU, RAM, NIC)
+</code></pre>
+<p>Each VM thinks it has: its own CPU, RAM, network card, disk. It doesn't. The hypervisor fakes all of it.</p>
+<hr />
+<h2>Part 14: Same Patterns, One Level Deeper</h2>
+<pre><code>LINUX:                          HYPERVISOR:
+
+Ring 3 (user process)           Ring 3 (user process)
+    │                               │
+    │ syscall                       │ syscall
+    ▼                               ▼
+Ring 0 (kernel)                 Ring 0 (guest kernel)
+    │                               │
+    │ ← this is the bottom          │ VM exit
+    ▼                               ▼
+Hardware                        Ring -1 (hypervisor)
+                                    │
+                                    │ ← NOW this is the bottom
+                                    ▼
+                                Hardware
+</code></pre>
+<p><strong>Everything you learned about Linux applies. Just add one more layer.</strong></p>
+<h3>The New Lie</h3>
+<pre><code>Before hypervisor:
+    Process thinks: &quot;I have all memory&quot;
+    Kernel thinks:  &quot;I control the hardware&quot;
+
+After hypervisor:
+    Process thinks: &quot;I have all memory&quot;        (still a lie)
+    Kernel thinks:  &quot;I control the hardware&quot;   (NOW ALSO A LIE)
+</code></pre>
+<hr />
+<h2>Part 15: Same Concepts, Renamed</h2>
+<table>
+<thead>
+<tr>
+<th>Linux</th>
+<th>Hypervisor</th>
+<th>Same Idea?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ring 3 → Ring 0</td>
+<td>Ring 0 → Ring -1</td>
+<td>Yes, mode switch</td>
+</tr>
+<tr>
+<td>Syscall</td>
+<td>VM exit / hypercall</td>
+<td>Yes, controlled entry</td>
+</tr>
+<tr>
+<td>Page tables</td>
+<td>Nested page tables</td>
+<td>Yes, two levels now</td>
+</tr>
+<tr>
+<td>Process context switch</td>
+<td>VM context switch</td>
+<td>Yes, save/restore state</td>
+</tr>
+<tr>
+<td>Timer interrupt</td>
+<td>VM preemption</td>
+<td>Yes, forced scheduling</td>
+</tr>
+<tr>
+<td>Process = task_struct</td>
+<td>VM = VMCS</td>
+<td>Yes, state in memory</td>
+</tr>
+</tbody>
+</table>
+<h3>What's Different</h3>
+<table>
+<thead>
+<tr>
+<th>Linux</th>
+<th>Hypervisor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Virtualizes one program</td>
+<td>Virtualizes entire OS + hardware</td>
+</tr>
+<tr>
+<td>Fakes "I have all memory"</td>
+<td>Fakes "I have CPU, RAM, NIC, disk"</td>
+</tr>
+<tr>
+<td>Kernel trusts hardware</td>
+<td>Hypervisor doesn't trust guest kernel</td>
+</tr>
+<tr>
+<td>One level of page tables</td>
+<td>Two levels (guest + host)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Part 16: VM State Blob (VMCS)</h2>
+<p>Same idea as process. Just more stuff.</p>
+<pre><code>PROCESS STATE BLOB:            VM STATE BLOB:
+┌─────────────────────┐        ┌─────────────────────┐
+│ saved CPU numbers   │        │ saved CPU numbers   │
+│ map pointer         │        │ map pointer         │
+│ handles             │        │ guest's map pointer │ ← extra!
+│                     │        │ guest's mode bit    │ ← extra!
+│                     │        │ virtual devices     │ ← extra!
+└─────────────────────┘        └─────────────────────┘
+
+VM blob is bigger because we're faking entire hardware,
+not just &quot;a process.&quot;
+</code></pre>
+<hr />
+<h2>Part 17: Two Levels of Maps (Nested Page Tables / EPT)</h2>
+<pre><code>PROCESS (one map):
+
+    Virtual → Physical
+    0x1000  → 0x50000
+
+
+VM (two maps):
+
+    Guest Virtual → Guest Physical → Host Physical
+    0x1000        → 0x2000         → 0x80000
+
+    Guest thinks 0x1000 → 0x2000.
+    But 0x2000 is ALSO fake!
+    Real location is 0x80000.
+
+    (officially: nested page tables / EPT)
+</code></pre>
+<h3>Hardware Does Both Translations</h3>
+<pre><code>MEMORY ACCESS IN VM:
+
+    Guest code: load [0x1000]
+
+    1. Guest page table: 0x1000 → 0x2000 (guest physical)
+    2. Nested page table: 0x2000 → 0x8000 (real physical)
+    3. Actually read from 0x8000
+
+    Hardware does both lookups!
+    (officially: EPT - Extended Page Tables)
+</code></pre>
+<h3>Why It Matters</h3>
+<pre><code>WITHOUT HARDWARE SUPPORT:
+    Every memory access → VM exit → hypervisor translates
+    Impossibly slow.
+
+WITH HARDWARE SUPPORT (EPT):
+    CPU does both translations automatically.
+    No VM exit for normal memory access.
+    This is why modern VMs are fast.
+</code></pre>
+<hr />
+<h2>Part 18: When Does Hypervisor Get Control?</h2>
+<p>Same as kernel. Two doors:</p>
+<pre><code>1. VM does something sensitive
+   - Change its map pointer
+   - Talk to &quot;hardware&quot; (which is fake)
+   - Execute privileged instruction
+
+   CPU says: &quot;That's not real hardware. Let me ask hypervisor.&quot;
+   (officially: VM exit)
+
+2. Hardware kick (interrupt)
+   - Timer
+   - Real network packet
+   - Hypervisor needs to do something
+</code></pre>
+<hr />
+<h2>Part 19: What Nitro Does Differently</h2>
+<h3>Traditional Hypervisor</h3>
+<pre><code>┌───────────────────────────────────────┐
+│           HYPERVISOR                  │
+│                                       │
+│  - CPU scheduling         (complex)  │
+│  - Memory management      (complex)  │
+│  - Fake network card      (slow)     │
+│  - Fake disk              (slow)     │
+│                                       │
+└───────────────────────────────────────┘
+</code></pre>
+<h3>Nitro Splits It</h3>
+<pre><code>┌───────────────────────────────────────┐
+│           HYPERVISOR (tiny)           │
+│                                       │
+│  - CPU scheduling                     │
+│  - Memory management                  │
+│  - That's it                          │
+│                                       │
+└───────────────────────────────────────┘
+
+┌───────────────────────────────────────┐
+│           HARDWARE CARDS              │
+│                                       │
+│  - Network (Nitro card)               │
+│  - Disk (Nitro card)                  │
+│  - Real hardware, not emulated        │
+│                                       │
+└───────────────────────────────────────┘
+</code></pre>
+<p><strong>Hypervisor does less. Hardware does I/O. Faster + simpler.</strong></p>
+<h3>Why It's Better</h3>
+<pre><code>EMULATED NETWORK PACKET:
+    VM sends packet
+        → VM exit (expensive)
+        → Hypervisor handles it (software)
+        → Hypervisor talks to real NIC
+        → Return to VM
+    Every packet = VM exit = slow
+
+NITRO NETWORK PACKET:
+    VM sends packet
+        → Goes directly to Nitro card (SR-IOV)
+        → Nitro card handles it (hardware)
+        → No VM exit!
+    Packets bypass hypervisor = fast
+</code></pre>
+<hr />
+<h2>Part 20: The Whole Picture</h2>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│                    PROCESS                              │
+│  Has: own memory view, CPU time, handles                │
+│  Sees: &quot;I'm alone, I have everything&quot;                   │
+└────────────────────────┬────────────────────────────────┘
+                         │ thin API
+┌────────────────────────▼────────────────────────────────┐
+│                  GUEST KERNEL                           │
+│  Has: all processes, scheduling, handles                │
+│  Sees: &quot;I control the hardware&quot;                         │
+│  Truth: it's all fake                                   │
+└────────────────────────┬────────────────────────────────┘
+                         │ VM exit (sensitive op)
+┌────────────────────────▼────────────────────────────────┐
+│                   HYPERVISOR                            │
+│  Has: all VMs, real scheduling, real memory maps        │
+│  Sees: actual hardware                                  │
+│  Does: CPU + memory only (Nitro)                        │
+└────────────────────────┬────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────┐
+│                 NITRO CARDS                             │
+│  Does: network, disk (real hardware)                    │
+└────────────────────────┬────────────────────────────────┘
+                         │
+                     HARDWARE
+</code></pre>
+<hr />
+<h2>Part 21: Resource Isolation — Which Resources Are Hard?</h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Dedicate?</th>
+<th>Flush?</th>
+<th>Encrypt?</th>
+<th>Time-Slice?</th>
+<th>Risk If Shared</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CPU time</strong></td>
+<td>✓ pin cores</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>✓ scheduler</td>
+<td>✗ noisy neighbor</td>
+</tr>
+<tr>
+<td><strong>Cache</strong></td>
+<td>✓ CAT</td>
+<td>✗ slow</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>✗ side channel</td>
+</tr>
+<tr>
+<td><strong>RAM</strong></td>
+<td>✓ static partition</td>
+<td>✗ too slow</td>
+<td>✓ encrypt</td>
+<td>N/A</td>
+<td>✗ data leak</td>
+</tr>
+<tr>
+<td><strong>Network</strong></td>
+<td>✓ hardware queues</td>
+<td>N/A</td>
+<td>✓ encrypt traffic</td>
+<td>✓ one at a time</td>
+<td>~ depends</td>
+</tr>
+<tr>
+<td><strong>Disk I/O</strong></td>
+<td>✓ separate queues</td>
+<td>N/A</td>
+<td>✓ encrypt blocks</td>
+<td>✓ one at a time</td>
+<td>~ depends</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The Pattern:</strong> Stateful + shared = danger. Cache is the hardest because:
+- It's shared (cores share L3)
+- It retains state (previous VM's data)
+- Clearing is slow (flush penalties)
+- Can't easily encrypt (it's internal)</p>
+<hr />
+<h2>Part 22: The Nitro Architecture</h2>
+<pre><code>┌─────────────────────────────────────────────────────┐
+│                   EC2 Instance                       │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐   │
+│  │  VM 1   │ │  VM 2   │ │  VM 3   │ │   ...   │   │
+│  └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘   │
+│       │           │           │           │         │
+│  ┌────┴───────────┴───────────┴───────────┴────┐   │
+│  │         Nitro Hypervisor (minimal)          │   │
+│  │    - CPU/Memory allocation only             │   │
+│  │    - &quot;Firmware-like&quot; — deliberately small   │   │
+│  └─────────────────────┬───────────────────────┘   │
+│                        │ PCIe                       │
+│  ┌─────────────────────┴───────────────────────┐   │
+│  │              Nitro Cards (hardware)          │   │
+│  │  ┌─────────┐ ┌─────────┐ ┌─────────────┐    │   │
+│  │  │VPC Card │ │EBS Card │ │Storage Card │    │   │
+│  │  │(network)│ │(block)  │ │(local NVMe) │    │   │
+│  │  └─────────┘ └─────────┘ └─────────────┘    │   │
+│  └─────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────┘
+</code></pre>
+<p><strong>Key Insight:</strong> Nitro offloads I/O to hardware so hypervisor only does CPU+memory. This is the "secret sauce."</p>
+<hr />
+<h2>Part 23: Official Names Reference</h2>
+<table>
+<thead>
+<tr>
+<th>What I Said</th>
+<th>Official (Terrible) Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mode bit</td>
+<td>ring / privilege level</td>
+</tr>
+<tr>
+<td>privileged mode</td>
+<td>ring 0 / kernel mode</td>
+</tr>
+<tr>
+<td>unprivileged mode</td>
+<td>ring 3 / user mode</td>
+</tr>
+<tr>
+<td>ask kernel</td>
+<td>syscall</td>
+</tr>
+<tr>
+<td>hardware kick</td>
+<td>interrupt</td>
+</tr>
+<tr>
+<td>process state blob</td>
+<td>task_struct</td>
+</tr>
+<tr>
+<td>VM state blob</td>
+<td>VMCS</td>
+</tr>
+<tr>
+<td>map</td>
+<td>page table</td>
+</tr>
+<tr>
+<td>map pointer</td>
+<td>CR3</td>
+</tr>
+<tr>
+<td>two-level map</td>
+<td>nested page tables / EPT</td>
+</tr>
+<tr>
+<td>VM sensitive operation</td>
+<td>VM exit</td>
+</tr>
+<tr>
+<td>return to VM</td>
+<td>VM entry</td>
+</tr>
+<tr>
+<td>hypervisor mode</td>
+<td>VMX root / ring -1</td>
+</tr>
+<tr>
+<td><code>one_level_deeper_privileged</code></td>
+<td><code>ring -1</code> / <code>VMX root</code></td>
+</tr>
+<tr>
+<td><code>guest_thinks_its_privileged</code></td>
+<td><code>ring 0 in guest</code></td>
+</tr>
+<tr>
+<td><code>guest_did_something_sensitive</code></td>
+<td><code>VM exit</code></td>
+</tr>
+<tr>
+<td><code>return_to_guest</code></td>
+<td><code>VM entry</code></td>
+</tr>
+<tr>
+<td><code>vm_state_blob</code></td>
+<td><code>VMCS</code></td>
+</tr>
+<tr>
+<td><code>two_level_address_map</code></td>
+<td><code>nested page tables</code> / <code>EPT</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Part 24: How To Explain It</h2>
+<h3>"How does memory isolation work between VMs?"</h3>
+<blockquote>
+<p>"Two levels of maps. Guest has its map — virtual to 'physical'. But guest physical is fake. Hypervisor has another map — guest physical to real physical. Hardware walks both. VM-A's guest physical 0x2000 maps to real 0x8000. VM-B's guest physical 0x2000 maps to different real address. They can't see each other. Hypervisor controls the second-level map."</p>
+</blockquote>
+<h3>"Why does Nitro offload I/O to hardware cards?"</h3>
+<blockquote>
+<p>"CPU is general-purpose but slow for specific tasks. Every emulated I/O operation causes a VM exit — that's expensive, like a syscall but worse. Dedicated hardware handles I/O directly. VM talks to card, not hypervisor. Hypervisor stays minimal — just CPU and memory. Smaller attack surface, faster I/O, better density."</p>
+</blockquote>
+<h3>"How does VM isolation compare to process isolation?"</h3>
+<blockquote>
+<p>"Linux already isolates processes with page tables and ring protection. But processes share the kernel — one kernel bug, everyone's exposed. VMs add another layer: each VM gets its own kernel, and the hypervisor sits where hardware sits. It's the same pattern — ring separation, page tables — just one level deeper."</p>
+</blockquote>
+<h3>"What about cache/side-channel attacks?"</h3>
+<blockquote>
+<p>"Shared resource with state = leak path. Cache is worst — shared, stateful, slow to clear. Options: dedicate cores so cache isn't shared, flush on switch, or hardware partitioning if available. Nitro probably dedicates cores for sensitive workloads. It's the cleanest — no sharing, no leak. Costs density."</p>
+</blockquote>
+<hr />
+<h2>Part 25: Summary — Sketchy But Correct</h2>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What gets saved on interrupt?</td>
+<td>All registers. CPU saves some automatically, kernel saves rest.</td>
+</tr>
+<tr>
+<td>Where is it saved?</td>
+<td>Each process has a kernel stack. State goes there.</td>
+</tr>
+<tr>
+<td>Can process prevent interruption?</td>
+<td>No. Timer is hardware. <code>cli</code> is privileged.</td>
+</tr>
+<tr>
+<td>How is scheduling fair?</td>
+<td>Kernel tracks runtime per process. Lowest runtime goes next.</td>
+</tr>
+<tr>
+<td>How often does switching happen?</td>
+<td>Timer every ~1-10ms. Kernel checks and maybe switches.</td>
+</tr>
+<tr>
+<td>What about mid-calculation?</td>
+<td>CPU finishes current instruction first. Then interrupts.</td>
+</tr>
+<tr>
+<td>What's the difference between Linux and hypervisor?</td>
+<td>Same patterns (rings, page tables, state blobs), one level deeper.</td>
+</tr>
+<tr>
+<td>What makes Nitro special?</td>
+<td>Minimal hypervisor + hardware offload for I/O.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<script src="/js/shell.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+// ═══ CHAPTER 3: THE ANALYSIS ═══
+
+// --- Nodes ---
+
+N.bindings={ch:'The Analysis',t:'Bindings and Addresses',ctx:'How does the compiler see a dangling reference?',
+b:function(){return ''
++'<p>Chapter 1 showed a '+EA('e3_5','dangling reference')+' that C++ compiles and Rust rejects. The compiler catches it by analyzing what each binding holds and how long it remains valid.</p>'
++'<div class="cb"><code><span class="c">// C++</span>\n<span class="m">int</span>* r;\n{\n    <span class="m">int</span> x = <span class="n">5</span>;\n    r = &amp;x;\n}\nstd::cout &lt;&lt; *r;</code></div>'
++'<p>Two bindings. The binding <code>x</code> holds a value. The binding <code>r</code> holds an address — the location of <code>x</code>. When the block ends, <code>x</code> is gone. <code>r</code> still holds the address and the machine will read whatever bytes sit there.</p>'
++'<table><tr><th>Name</th><th>Location</th><th>Holds</th></tr>'
++'<tr><td><code>x</code></td><td>A</td><td><code>5</code> (a value)</td></tr>'
++'<tr><td><code>r</code></td><td>B</td><td>address of A (a '+EA('e3_9','coordinate')+')</td></tr></table>'
++'<p>We say "coordinate" rather than "pointer" or "reference" because languages define those terms differently. <code>T*</code> in C++, <code>&amp;T</code> in Rust, <code>*const T</code> for raw pointers. The conceptual problem is identical: something that tells you where data lives. "Coordinate" abstracts over the language-specific terms.</p>'
++'<p>Coordinates are not optional. Copying large data costs time and energy, so programs pass addresses instead of values. Graphs, trees, and linked lists require indirection because you cannot inline a cycle. Any language that cares about performance or expressiveness needs coordinates.</p>'
++'<p>The coordinate <code>r</code> is syntactically independent — it has its own declaration, its own location, its own scope. It is semantically dependent — its purpose is to refer to <code>x</code>, and without <code>x</code>, the address in <code>r</code> points to nothing meaningful. Coherence fails when these lifetimes fall out of sync.</p>';
+}};
+
+N.manage_space={ch:'The Analysis',t:'How Programs Manage Space',ctx:'Bindings hold values or coordinates. Where does the space live?',
+b:function(){return ''
++'<p>The dangling reference exploits a gap between two levels. At the language level, <code>x</code>\'s space is gone when the scope ends. At the machine level, the bytes are still there. Understanding this gap requires knowing how programs manage memory.</p>'
++'<p><strong>Stack.</strong> The compiler manages the stack. It determines at compile time how much space each function needs and lays out a stack frame for each call. When a scope ends, the compiler considers those slots available for reuse. The machine does not zero the bytes, does not reclaim them — it adjusts the stack pointer. A coordinate that still holds the old address can read the bytes, and the machine will comply. The language calls this undefined behavior. The machine calls it a normal read.</p>'
++'<p><strong>Heap.</strong> The heap is managed at runtime. An explicit allocation (<code>malloc</code>, <code>new</code>, <code>Box::new</code>) reserves bytes and returns a coordinate. An explicit deallocation (<code>free</code>, <code>delete</code>, dropping the owner) marks them reusable. The same gap applies: after deallocation, a coordinate that still holds the address can read stale bytes. The language calls this a '+EA('e3_6','use-after-free')+'. The machine calls it a normal read.</p>'
++'<p>The heap adds a problem the stack does not have. Stack space is tied to scope boundaries the compiler can see. Heap space is freed by an operation that can happen anywhere. Heap coordinates can be copied into other variables, passed to functions, stored in data structures. No lexical structure in the source text governs when heap space is freed.</p>'
++'<div class="cb"><code>STACK (tree)                          HEAP + STACK (hybrid)\n\n    main ─────────┐                      main\n    ├── foo       │                      ├── foo ──────────┐\n    │   └── bar   │                      │   └── bar       │\n    │       └── baz                      │                 ▼\n    └── qux       │                      └── qux        [heap]\n                  │                                        ▲\n                  │                                        │\nCoordinates point toward               Heap coordinates escape\nenclosing scopes.                      the scope tree.\nReclamation at scope end.              Reclamation: anywhere.\nCompiler sees both.                    Compiler sees neither.</code></div>'
++'<p>The rest of this chapter uses "reclaimed" to mean the language no longer considers the space as belonging to any live binding. Stack space is reclaimed when its scope ends. Heap space is reclaimed when something deallocates it. '+EA('e3_10','Ownership')+'  ties heap reclamation to scope boundaries, making heap behave like stack from the compiler\'s perspective.</p>';
+}};
+
+N.compiler_needs={ch:'The Analysis',t:'What the Compiler Needs to See',ctx:'Stack and heap manage space differently. What does the compiler need to catch bugs across both?',
+b:function(){return ''
++'<p>Source text has hierarchical structure. Functions contain blocks, blocks contain statements, statements contain expressions. A variable declared inside a block is visible only within that block and any nested blocks. Names respect the scope hierarchy. Coordinates do not.</p>'
++'<div class="cb"><code><span class="k">fn</span> <span class="m">first</span>(list: &amp;[<span class="m">i32</span>]) -> &amp;<span class="m">i32</span> {\n    &amp;list[<span class="n">0</span>]\n}\n\n<span class="k">fn</span> <span class="m">main</span>() {\n    <span class="k">let</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];\n    <span class="k">let</span> r = <span class="m">first</span>(&amp;v);\n    <span class="m">println!</span>(<span class="s">"{}"</span>, r);\n}</code></div>'
++'<p>The scope hierarchy sees <code>v</code> and <code>r</code> in <code>main</code>\'s scope, and <code>list</code> in <code>first</code>\'s scope. Three names, three declarations, three scope boundaries. The scope hierarchy does not see that <code>r</code> holds a coordinate into <code>v</code>\'s space. The coordinate traveled from <code>main</code> into <code>first</code> as the argument <code>list</code>, reached into the vector\'s first element, and traveled back as the return value bound to <code>r</code>. The connection between <code>r</code> and <code>v</code> crosses two scope boundaries and routes through a function body the caller cannot see.</p>'
++'<p>The analysis needs two things at every point in the program. Where does each coordinate point? When is each piece of space reclaimed? The compiler can answer the first question when every coordinate has a known origin. It can answer the second for stack space, because scope boundaries are visible. It cannot answer it for heap space, because heap deallocation has no lexical structure. '+EA('e3_7','Lifetime annotations')+'  at function signatures bridge this gap by declaring which input a borrowed output connects to.</p>'
++'<p>The scope hierarchy tracks names and boundaries. The analysis needs data flow and reclamation across boundaries. RAM has no scope structure at all — memory is a sequence of numbered cells, any address can read or write any cell. The compiler bridges these worlds by building a <strong>control flow graph</strong>. Nodes are statements. Edges connect statements where execution can flow from one to the next. Branches create multiple outgoing edges. Loops create backward edges.</p>';
+}};
+
+N.detecting_access={ch:'The Analysis',t:'Detecting Access to Reclaimed Space',ctx:'The compiler has a control flow graph. How does it find the bug?',
+b:function(){return ''
++'<p>The compiler analyzes the control flow graph by tracking coordinates along every path. It records where each coordinate is created, what space it points to, and when that space is reclaimed. A path connecting a reclamation point to an access point for the same space means the program can reach reclaimed memory. The compiler rejects when any such path exists.</p>'
++'<p>The dangling reference from Chapter 1, traced on the graph:</p>'
++'<div class="cb"><code><span class="k">fn</span> <span class="m">main</span>() {\n    <span class="k">let</span> r;\n    {\n        <span class="k">let</span> x = <span class="n">5</span>;       <span class="c">// A</span>\n        r = &amp;x;          <span class="c">// B</span>\n    }                    <span class="c">// C</span>\n    <span class="m">println!</span>(<span class="s">"{}"</span>, r);   <span class="c">// D</span>\n}\n\n       ┌───┐\n       │ A │ let x = 5\n       └─┬─┘\n         ▼\n       ┌───┐\n       │ B │ r = &amp;x\n       └─┬─┘\n         ▼\n       ┌───┐\n       │ C │ x\'s space reclaimed (scope ends)\n       └─┬─┘\n         ▼\n       ┌───┐\n       │ D │ *r  ACCESS with reclaimed space\n       └───┘</code></div>'
++'<p>One path. C reclaims the space. D accesses it through <code>r</code>. The path from C to D exists. The compiler rejects.</p>'
++'<p>A more complex example with '+EA('e3_8','branching')+' shows why the compiler must check all paths:</p>'
++'<div class="cb"><code><span class="k">fn</span> <span class="m">example</span>(flag: <span class="m">bool</span>) {\n    <span class="k">let</span> r;\n    <span class="k">if</span> flag {\n        <span class="k">let</span> x = <span class="n">5</span>;           <span class="c">// B</span>\n        r = &amp;x;\n        <span class="m">println!</span>(<span class="s">"{}"</span>, *r);  <span class="c">// D: safe, x alive</span>\n    } <span class="k">else</span> {\n        <span class="k">let</span> y = <span class="n">10</span>;          <span class="c">// C</span>\n        r = &amp;y;\n    }                        <span class="c">// y\'s space reclaimed</span>\n    <span class="m">println!</span>(<span class="s">"{}"</span>, *r);      <span class="c">// G: unsafe if else taken</span>\n}\n\n                   ┌───┐\n                   │ A │ if flag\n                   └─┬─┘\n             ┌──────┴──────┐\n             ▼             ▼\n           ┌───┐         ┌───┐\n           │ B │         │ C │\n           │x=5│         │y=10│\n           │r=&amp;x│        │r=&amp;y│\n           └─┬─┘         │ ✗ │ y reclaimed\n             │           └─┬─┘\n             ▼             ▼\n           ┌───┐         ┌───┐\n           │ D │         │ F │\n           │*r │         │ ✗ │ propagated\n           │safe│        └─┬─┘\n           └─┬─┘           │\n             └──────┬──────┘\n                    ▼\n                  ┌───┐\n                  │ G │\n                  │*r │ unsafe on else path ✗\n                  └───┘</code></div>'
++'<p>The access at D is safe because no reclamation reaches it along any path. The access at G is unsafe because a path from C reaches it through F. The compiler finds the unsafe path and rejects. It does not matter that the if-branch is safe — one unsafe path is enough.</p>'
++'<p>The compiler checks all paths because it cannot know at compile time which branch the program will take at runtime. This is a sound analysis: it may reject programs that would actually be safe, but it will never accept a program that can reach reclaimed memory.</p>';
+}};
+
+// --- Within-chapter edges (choice cards) ---
+
+ED.e3_1={from:'bindings',to:'manage_space',t:'How does the machine actually handle this memory?',w:'Stack vs heap, and the gap between the language model and the machine.',card:true};
+ED.e3_2={from:'manage_space',to:'compiler_needs',t:'What does the compiler need to catch this?',w:'Names respect scope. Coordinates escape it. The compiler needs more than scope analysis.',card:true};
+ED.e3_3={from:'compiler_needs',to:'detecting_access',t:'How does the compiler detect the bug?',w:'Build the control flow graph, track coordinates along all paths, reject when any path reaches reclaimed space.',card:true};
+ED.e3_4={from:'detecting_access',to:'cpp_skip',t:'What prevents this analysis from working?',w:'Four obstacles: flat RAM, cross-scope data flow, invisible duplication, undecidability.',card:true};
+
+// --- Cross-chapter inline edges ---
+
+ED.e3_5={from:'bindings',to:'dangling_detail',t:'remind me of that dangling reference',w:'The same program from chapter 1, Rust vs C++.'};
+ED.e3_6={from:'manage_space',to:'uaf',t:'what happens when freed memory is accessed?',w:'What happens when a coordinate outlives the space it points to?'};
+ED.e3_7={from:'compiler_needs',to:'sigs_lifetimes',t:'how do signatures help?',w:'Lifetime annotations declare which input a borrowed output connects to.'};
+ED.e3_8={from:'detecting_access',to:'branches_break',t:'what about branches?',w:'Branches create paths the compiler cannot resolve statically.'};
+ED.e3_9={from:'bindings',to:'primitives',t:'what are coordinates again?',w:'What are the three dimensions of memory?'};
+ED.e3_10={from:'manage_space',to:'ownership_deep',t:'how does Rust make heap predictable?',w:'Ownership ties heap reclamation to scope boundaries.'};
+
+// --- Edges from existing nodes INTO ch03 ---
+
+ED.e3_11={from:'dangling_detail',to:'bindings',t:'how does the compiler analyze this?',w:'The compiler tracks bindings, addresses, and coordinate lifetimes.',card:true};
+ED.e3_12={from:'features',to:'compiler_needs',t:'how does compile-time analysis actually work?',w:'Build the control flow graph, track coordinates, check all paths.',card:true};
+ED.e3_13={from:'features',to:'bindings',t:'How does a compiler catch these bugs?',w:'Track what each binding holds and when it becomes invalid.',card:true};

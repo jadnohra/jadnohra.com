@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rust — jadnohra.com</title>
+<link rel="stylesheet" href="/css/editor.css">
+</head>
+<body data-page="writing">
+
+<div class="content">
+<style>
+/* Compact layout */
+.content p { margin-bottom: 0.5rem; }
+.content h2 { margin-top: 1.5rem; margin-bottom: 0.5rem; display: block !important; visibility: visible !important; }
+.content h3 { margin-top: 1rem; margin-bottom: 0.3rem; display: block !important; visibility: visible !important; }
+.content ul, .content ol { margin-bottom: 0.5rem; }
+.content li { margin-bottom: 0.2rem; }
+.content blockquote { margin: 0.5rem 0; }
+.content hr { margin: 1rem 0; }
+
+/* All links should be blue and underlined by default */
+a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+a:hover {
+  color: #1d4ed8;
+}
+
+/* Derived Data styles (shared with abstractor) */
+.derived-box {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 1rem 0;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 13px;
+  color: #e2e8f0;
+  border-left: 3px solid #f97316;
+}
+.derived-box b {
+  color: #f97316;
+}
+.derived-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 12px;
+  margin: 1rem 0;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.derived-table th {
+  background: rgba(255,255,255,0.05);
+  color: #f1f5f9;
+  font-weight: 600;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.derived-table td {
+  padding: 8px 12px;
+  color: #cbd5e1;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.derived-table tr:last-child td {
+  border-bottom: none;
+}
+.derived-table tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+.derived-table code {
+  background: rgba(249, 115, 22, 0.2);
+  color: #f97316;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+/* Triangle diagram */
+.triangle-diagram {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+.triangle-diagram pre {
+  margin: 0;
+  color: #f97316;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Code blocks */
+.rust-code {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 1rem 0;
+  overflow-x: auto;
+  border-left: 3px solid #f97316;
+}
+.rust-code pre {
+  margin: 0;
+  color: #e2e8f0;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.rust-code .comment {
+  color: #64748b;
+}
+.rust-code .keyword {
+  color: #f97316;
+}
+
+/* Equivalences box */
+.equivalences-box {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 1rem 0;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 12px;
+  color: #cbd5e1;
+  line-height: 1.8;
+}
+
+/* Pipeline diagram */
+.pipeline-diagram {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+.pipeline-diagram pre {
+  margin: 0;
+  color: #e2e8f0;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-size: 11px;
+  line-height: 1.4;
+}
+</style>
+
+<div style="text-align: center; margin-bottom: 2rem;">
+  <a href="/learn-rust/" style="display: inline-block; background: #f97316; color: #fff; font-size: 1.3rem; font-weight: 700; padding: 0.8rem 2rem; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(249,115,22,0.3); transition: all 0.15s;">For the course → Learn Rust</a>
+</div>
+
+<h2>Derived Data Choices</h2>
+<p>Rust's memory model is a set of choices on the <a href="/abstractor/">SPACE / TIME / IDENTITY triangle</a>.</p>
+<div class="derived-box">
+Core strategy: <b>prove coherence at compile time</b>.
+</div>
+
+<hr />
+<h2>The Two Projections</h2>
+<p>Each axis exists in two forms:</p>
+<table class="derived-table">
+<tr><th>Axis</th><th>Compile-time</th><th>Runtime</th></tr>
+<tr><td>SPACE</td><td>Types, layouts</td><td>Bytes in memory</td></tr>
+<tr><td>TIME</td><td>CFG regions</td><td>Execution sequence</td></tr>
+<tr><td>IDENTITY</td><td>Names</td><td>Addresses</td></tr>
+</table>
+
+<p>The borrow checker works in compile-time projection. It tracks paths like <code>x</code> and <code>x.field</code> (not runtime addresses), analyzes control flow regions (not actual execution), and reasons about types (not bytes). It proves coherence in this abstract model.</p>
+<h3>Zero-Cost Abstraction</h3>
+<p>Rust claims "zero-cost abstractions" — safety checks that don't add runtime overhead.</p>
+<p>For the borrow checker, this means:
+- Analysis happens at compile time
+- Names and regions are erased before execution
+- At runtime: just addresses, just execution, no tracking</p>
+<p>The cost is compile time and programmer effort. The runtime pays nothing.</p>
+<hr />
+<h2>Vocabulary</h2>
+<p>Rust's terminology conflates projections. Before we use these terms, here's what they mean in the framework.</p>
+<h3>The Key Translations</h3>
+<table>
+<thead>
+<tr>
+<th>Rust says</th>
+<th>Suggests</th>
+<th>Actually means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&amp;T</code></td>
+<td>"reference"</td>
+<td>shared IDENTITY, frozen TIME</td>
+</tr>
+<tr>
+<td><code>&amp;mut T</code></td>
+<td>"mutable reference"</td>
+<td>exclusive IDENTITY, TIME flows</td>
+</tr>
+<tr>
+<td>"lifetime"</td>
+<td>runtime duration</td>
+<td>compile-time TIME region</td>
+</tr>
+<tr>
+<td>"borrow"</td>
+<td>lending</td>
+<td>creating IDENTITY relationship</td>
+</tr>
+<tr>
+<td>"move"</td>
+<td>relocating data</td>
+<td>transferring IDENTITY</td>
+</tr>
+<tr>
+<td>"borrow checker"</td>
+<td>rule checker</td>
+<td>coherence prover</td>
+</tr>
+</tbody>
+</table>
+<h3>The &amp;mut Misconception</h3>
+<p><code>&amp;mut T</code> is not about mutation. It's about <strong>exclusive IDENTITY</strong>.</p>
+<p>The exclusivity is what allows mutation safely. If you're the only one with access, you can change things without conflict.</p>
+<p><code>&amp;T</code> is not about immutability. It's about <strong>shared IDENTITY</strong>. Sharing requires frozen TIME to stay coherent.</p>
+<h3>Reading Rust with the Framework</h3>
+<table>
+<thead>
+<tr>
+<th>When you see</th>
+<th>Think</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&amp;x</code></td>
+<td>shared IDENTITY to x's SPACE</td>
+</tr>
+<tr>
+<td><code>&amp;mut x</code></td>
+<td>exclusive IDENTITY to x's SPACE</td>
+</tr>
+<tr>
+<td><code>'a</code></td>
+<td>compile-time TIME region</td>
+</tr>
+<tr>
+<td><code>let y = x</code></td>
+<td>IDENTITY transfer (if not Copy)</td>
+</tr>
+<tr>
+<td><code>x.clone()</code></td>
+<td>SPACE duplication</td>
+</tr>
+<tr>
+<td><code>drop(x)</code></td>
+<td>SPACE freed at TIME boundary</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>The Coherence Problem</h2>
+<p>Two paths to the same SPACE. One writes, one reads. The reader sees partial state. This is incoherence.</p>
+<div class="derived-box">
+Sharing freezes. Mutation isolates.
+</div>
+
+<p>Either:
+- <strong>Shared IDENTITY</strong> → many can access → TIME must freeze (no mutation)
+- <strong>Exclusive IDENTITY</strong> → one can access → TIME can flow (mutation ok)</p>
+<h3>How Rust Enforces This</h3>
+<p>The borrow checker analyzes your code at compile time:</p>
+<ol>
+<li><strong>Tracks names</strong> — which variables alias which SPACE</li>
+<li><strong>Builds a graph</strong> — possible execution paths (the CFG)</li>
+<li><strong>Computes regions</strong> — when each reference is live</li>
+<li><strong>Checks for conflicts</strong> — shared + mutation overlapping?</li>
+</ol>
+<div class="rust-code">
+<pre>let mut x = 5;
+let r = &x;        <span class="comment">// shared IDENTITY starts</span>
+println!("{}", r); <span class="comment">// shared IDENTITY used, then ends</span>
+let m = &mut x;    <span class="comment">// exclusive starts — OK, no overlap</span></pre>
+</div>
+
+<p>The borrow checker sees: shared region ends before exclusive begins. No conflict.</p>
+<div class="rust-code">
+<pre>let mut x = 5;
+let r = &x;        <span class="comment">// shared IDENTITY starts</span>
+let m = &mut x;    <span class="comment">// exclusive starts — ERROR</span>
+println!("{}", r); <span class="comment">// shared still live here</span></pre>
+</div>
+
+<p>The borrow checker sees: shared and exclusive regions overlap. Conflict. Rejected.</p>
+<h3>SPACE Granularity</h3>
+<p>The borrow checker tracks IDENTITY at a certain granularity:</p>
+<table>
+<thead>
+<tr>
+<th>Path type</th>
+<th>Can prove disjoint?</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>p.x</code> vs <code>p.y</code></td>
+<td>Yes</td>
+<td>Struct fields known at compile time</td>
+</tr>
+<tr>
+<td><code>v[0]</code> vs <code>v[1]</code></td>
+<td>No</td>
+<td>Indices are runtime values</td>
+</tr>
+</tbody>
+</table>
+<div class="rust-code">
+<pre>let mut p = Point { x: 1, y: 2 };
+let rx = &mut p.x;
+let ry = &mut p.y;  <span class="comment">// OK: different fields</span></pre>
+</div>
+
+<div class="rust-code">
+<pre>let mut v = vec![1, 2, 3];
+let r = &mut v[0];
+let s = &mut v[1];  <span class="comment">// ERROR: both "borrow v"</span></pre>
+</div>
+
+<p>The checker sees both as "borrow of v" — it can't prove <code>v[0] ≠ v[1]</code>. More on this in <a href="#borrow-checker-internals">Borrow Checker Internals</a>.</p>
+<h3>Zero Cost</h3>
+<p>All analysis happens at compile time. Names are erased. At runtime: just addresses and execution. No tracking, no checks, no overhead.</p>
+<hr />
+<h2>Bindings</h2>
+<table class="derived-table">
+<tr><th>Construct</th><th>SPACE</th><th>TIME</th><th>IDENTITY</th></tr>
+<tr><td><code>const</code></td><td>Inlined</td><td>Compile</td><td>Compile only</td></tr>
+<tr><td><code>static</code></td><td>Data segment</td><td>Compile init</td><td>Both</td></tr>
+<tr><td><code>static mut</code></td><td>Data segment</td><td>Runtime</td><td>Both (unsafe)</td></tr>
+<tr><td><code>let</code></td><td>Stack</td><td>Runtime</td><td>Both</td></tr>
+<tr><td><code>let mut</code></td><td>Stack</td><td>Runtime</td><td>Both</td></tr>
+</table>
+
+<p><strong>const</strong> — Purely compile-time. No runtime IDENTITY exists. Each use is inlined. Taking <code>&amp;CONST</code> may yield different addresses—there is no single location.</p>
+<div class="rust-code">
+<pre>const X: u32 = 5;
+let a = &X;
+let b = &X;
+<span class="comment">// a and b may have different addresses</span></pre>
+</div>
+
+<p><strong>static</strong> — Bridges projections. Initialized at compile-time, lives in data segment at runtime. Has a stable address.</p>
+<p><strong>static mut</strong> — Runtime mutation of global IDENTITY. The borrow checker can't prove safety across the whole program. Every access requires <code>unsafe</code>.</p>
+<p><strong>let / let mut</strong> — Runtime evaluation, stack SPACE. <code>mut</code> allows rebinding the name, not mutation through it.</p>
+<hr />
+<h2>References</h2>
+<p>References are how you create IDENTITY to existing SPACE.</p>
+<table class="derived-table">
+<tr><th>Reference</th><th>IDENTITY</th><th>TIME</th><th>Rule</th></tr>
+<tr><td><code>&T</code></td><td>Shared</td><td>Frozen</td><td>Many allowed</td></tr>
+<tr><td><code>&mut T</code></td><td>Exclusive</td><td>Flows</td><td>One allowed</td></tr>
+</table>
+
+<p>This is the coherence rule applied:</p>
+<p><strong>&amp;T — Shared IDENTITY:</strong></p>
+<div class="rust-code">
+<pre>let x = vec![1, 2, 3];
+let r1 = &x;
+let r2 = &x;  <span class="comment">// OK: multiple shared</span></pre>
+</div>
+
+<p>Many paths to same SPACE. TIME frozen—no mutation through any path. No conflict possible.</p>
+<p><strong>&amp;mut T — Exclusive IDENTITY:</strong></p>
+<div class="rust-code">
+<pre>let mut x = vec![1, 2, 3];
+let r = &mut x;
+r.push(4);  <span class="comment">// OK: exclusive access</span></pre>
+</div>
+
+<p>One path to SPACE. TIME flows—mutation allowed. No conflict possible because no one else can see.</p>
+<p>The borrow checker tracks: which names have IDENTITY to which SPACE, during which TIME regions. It proves no shared+exclusive overlap.</p>
+<hr />
+<h2>IDENTITY at Runtime</h2>
+<p>At runtime, names are gone. Only addresses remain.</p>
+<p><strong>RAM can reference itself.</strong></p>
+<p>RAM locations have addresses. Addresses are numbers. Numbers are data. Data can be stored in RAM. Therefore: RAM can store addresses of its own locations.</p>
+<pre><code>┌─────────┬───────────────┐
+│  100    │   5       ← x │ ←──┐
+├─────────┼───────────────┤    │
+│  108    │  100      ← r │ ───┘
+└─────────┴───────────────┘
+</code></pre>
+<p>This enables references, sharing, and complex structures.</p>
+<p><strong>Registers have no address.</strong></p>
+<p>Registers hold bytes but lack addresses. Taking a reference forces the value to stack.</p>
+<div class="rust-code">
+<pre>let x = 5;      <span class="comment">// might live in register</span>
+let r = &x;     <span class="comment">// x now has address (stack)</span></pre>
+</div>
+
+<p><strong>Cost of sharing:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Cost</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8 bytes</td>
+<td>Address storage</td>
+</tr>
+<tr>
+<td>Indirection</td>
+<td>Follow address to reach data</td>
+</tr>
+<tr>
+<td>Forces RAM</td>
+<td>Registers have no address</td>
+</tr>
+</tbody>
+</table>
+<p>For small types, copying is cheaper than referencing. This is why <code>Copy</code> exists.</p>
+<hr />
+<h2>Stack and Heap</h2>
+<p><strong>Stack SPACE is automatic.</strong> Variables live on the stack. When they go out of scope, their SPACE is reclaimed. The compiler knows the size at compile time.</p>
+<p><strong>Heap SPACE is dynamic.</strong> For SPACE whose size isn't known at compile time, or SPACE that outlives the current scope.</p>
+<div class="rust-code">
+<pre>let b = Box::new(String::from("hello"));</pre>
+</div>
+
+<p><code>Box::new(x)</code> allocates SPACE on the heap, puts x there, and returns owning coordinates.</p>
+<table>
+<thead>
+<tr>
+<th>Rust</th>
+<th>Ownership</th>
+<th>Cleanup</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&amp;y</code></td>
+<td>Borrowing</td>
+<td>Not responsible</td>
+</tr>
+<tr>
+<td><code>&amp;mut y</code></td>
+<td>Borrowing</td>
+<td>Not responsible</td>
+</tr>
+<tr>
+<td><code>Box::new(x)</code></td>
+<td>Owning</td>
+<td>Frees heap when dropped</td>
+</tr>
+</tbody>
+</table>
+<p>No garbage collector. No manual <code>free()</code>. The compiler inserts cleanup at scope end.</p>
+<hr />
+<h2>Ownership and Move</h2>
+<div class="rust-code">
+<pre>let v = vec![1, 2, 3];
+let w = v;  <span class="comment">// IDENTITY transfers to w</span>
+<span class="comment">// v is now invalid</span></pre>
+</div>
+
+<table class="derived-table">
+<tr><th>Axis</th><th>What happens</th></tr>
+<tr><td>IDENTITY</td><td>Transferred — old name invalid</td></tr>
+<tr><td>SPACE</td><td>Same or new (compiler decides)</td></tr>
+<tr><td>Coherence</td><td>Only one owner → no aliasing</td></tr>
+</table>
+
+<p>The borrow checker tracks these transfers. After <code>let w = v</code>, using <code>v</code> is an error—its IDENTITY is gone.</p>
+<p>Move semantics eliminate shared IDENTITY by default. No coherence problem if only one owner exists.</p>
+<hr />
+<h2>Copy vs Clone</h2>
+<p>Duplicating SPACE happens two ways:</p>
+<p><strong>Copy</strong> — Copy the bytes. Implicit on assignment.</p>
+<p><strong>Clone</strong> — Call <code>.clone()</code>. Always explicit.</p>
+<p><strong>When copying bytes works:</strong></p>
+<p>For <code>i32</code>, SPACE is self-contained. Copying bytes produces an independent value.</p>
+<pre><code>┌─────────┐    ┌─────────┐
+│    5    │    │    5    │
+└─────────┘    └─────────┘
+</code></pre>
+<p><strong>When copying bytes fails:</strong></p>
+<p>For <code>String</code>, SPACE contains coordinates to heap SPACE:</p>
+<pre><code>┌─────────────────┐
+│ addr: 0x1234    │     Heap:
+│ len: 5          │     ┌───────────┐
+│ capacity: 5     │     │ h e l l o │
+└─────────────────┘     └───────────┘
+</code></pre>
+<p>Copying bytes would create two owners of the same heap SPACE—two IDENTITYs, coherence problem. Rust requires explicit choice: <code>.clone()</code> for deep copy, <code>Rc::clone()</code> for shared ownership, or move.</p>
+<table class="derived-table">
+<tr><th>Type</th><th>Copy?</th><th>Clone?</th><th>Why</th></tr>
+<tr><td><code>i32</code></td><td>Yes</td><td>Yes</td><td>Self-contained</td></tr>
+<tr><td><code>&T</code></td><td>Yes</td><td>Yes</td><td>Coordinates, doesn't own</td></tr>
+<tr><td><code>String</code></td><td>No</td><td>Yes</td><td>Owns heap—must choose strategy</td></tr>
+<tr><td><code>Vec&lt;T&gt;</code></td><td>No</td><td>Yes</td><td>Owns heap</td></tr>
+</table>
+
+<hr />
+<h2>Shared Ownership</h2>
+<p><code>Box&lt;T&gt;</code> is unique IDENTITY to SPACE. One owner, clear responsibility.</p>
+<p>What if you need shared IDENTITY to the same SPACE? Who frees it?</p>
+<p><code>Rc&lt;T&gt;</code> / <code>Arc&lt;T&gt;</code>: count the IDENTITYs. When count hits zero, SPACE ends.</p>
+<table class="derived-table">
+<tr><th>Type</th><th>IDENTITY</th><th>SPACE lifetime</th><th>Thread</th></tr>
+<tr><td><code>Box&lt;T&gt;</code></td><td>Unique</td><td>Owner ends it</td><td>Any</td></tr>
+<tr><td><code>Rc&lt;T&gt;</code></td><td>Shared, counted</td><td>Last IDENTITY ends it</td><td>Single</td></tr>
+<tr><td><code>Arc&lt;T&gt;</code></td><td>Shared, atomic counted</td><td>Last IDENTITY ends it</td><td>Multi</td></tr>
+</table>
+
+<p>This solves SPACE × IDENTITY. But contents are immutable—TIME is frozen.</p>
+<p>To combine shared ownership with mutation, you need interior mutability.</p>
+<hr />
+<h2>Interior Mutability</h2>
+<p>The borrow checker is <strong>sound but incomplete</strong>:
+- If it accepts → definitely safe
+- If it rejects → might still be safe</p>
+<p>Interior mutability handles the "might still be safe" cases by moving verification to runtime. Same rule, different when checked.</p>
+<table class="derived-table">
+<tr><th>Type</th><th>Checked when</th><th>Cost</th><th>Thread</th></tr>
+<tr><td><code>&T</code> / <code>&mut T</code></td><td>Compile</td><td>Zero</td><td>Any</td></tr>
+<tr><td><code>Cell&lt;T&gt;</code></td><td>Runtime</td><td>Copy in/out</td><td>Single</td></tr>
+<tr><td><code>RefCell&lt;T&gt;</code></td><td>Runtime</td><td>Borrow count</td><td>Single</td></tr>
+<tr><td><code>Mutex&lt;T&gt;</code></td><td>Runtime</td><td>Lock</td><td>Multi</td></tr>
+<tr><td><code>RwLock&lt;T&gt;</code></td><td>Runtime</td><td>Lock</td><td>Multi</td></tr>
+<tr><td><code>Atomic*</code></td><td>Runtime</td><td>Hardware</td><td>Multi</td></tr>
+<tr><td><code>UnsafeCell&lt;T&gt;</code></td><td>Never</td><td>Zero</td><td>Any</td></tr>
+</table>
+
+<p><strong>Cell</strong> — Copy values in/out. No references into contents.</p>
+<div class="rust-code">
+<pre>let x = Cell::new(5);
+x.set(10);       <span class="comment">// mutate through shared ref</span>
+let v = x.get(); <span class="comment">// returns copy</span></pre>
+</div>
+
+<p><strong>RefCell</strong> — Runtime borrow checker. Panics on violation.</p>
+<div class="rust-code">
+<pre>let x = RefCell::new(vec![1, 2, 3]);
+let r = x.borrow();      <span class="comment">// shared</span>
+let s = x.borrow();      <span class="comment">// OK</span>
+<span class="comment">// x.borrow_mut();       // PANIC: already borrowed</span></pre>
+</div>
+
+<p><strong>Mutex</strong> — Serialize TIME. Only one accessor at a time.</p>
+<div class="rust-code">
+<pre>let x = Mutex::new(vec![1, 2, 3]);
+let mut guard = x.lock().unwrap();
+guard.push(4);
+<span class="comment">// other threads block until guard drops</span></pre>
+</div>
+
+<p><strong>When to use:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simple flag, single thread</td>
+<td><code>Cell&lt;T&gt;</code></td>
+</tr>
+<tr>
+<td>Complex data, single thread</td>
+<td><code>RefCell&lt;T&gt;</code></td>
+</tr>
+<tr>
+<td>Shared across threads</td>
+<td><code>Mutex&lt;T&gt;</code></td>
+</tr>
+<tr>
+<td>Read-heavy, multi-thread</td>
+<td><code>RwLock&lt;T&gt;</code></td>
+</tr>
+<tr>
+<td>Counter, multi-thread</td>
+<td><code>AtomicU64</code></td>
+</tr>
+<tr>
+<td>Borrow checker accepts code</td>
+<td>None needed</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Thread Safety</h2>
+<table class="derived-table">
+<tr><th>Trait</th><th>Meaning</th></tr>
+<tr><td><code>Send</code></td><td>IDENTITY can transfer across thread boundary</td></tr>
+<tr><td><code>Sync</code></td><td>Shared IDENTITY (<code>&T</code>) safe across threads</td></tr>
+</table>
+
+<div class="rust-code">
+<pre><span class="comment">// Rc&lt;T&gt; is !Send and !Sync — single-thread only</span>
+<span class="comment">// Arc&lt;T&gt; is Send and Sync — multi-thread safe</span>
+<span class="comment">// Mutex&lt;T&gt;: T is Send → Mutex&lt;T&gt; is Send + Sync</span></pre>
+</div>
+
+<p>The borrow checker proves these at compile time. If your code compiles, thread safety is proven.</p>
+<hr />
+<h2>Summary</h2>
+<table class="derived-table">
+<tr><th>Problem</th><th>Rust's Solution</th></tr>
+<tr><td>When to evaluate?</td><td><code>const</code> (compile) vs <code>let</code> (runtime)</td></tr>
+<tr><td>Where to store?</td><td>Inlined / stack / heap / static</td></tr>
+<tr><td>Aliasing + mutation?</td><td>Borrow checker: shared OR exclusive</td></tr>
+<tr><td>Global state?</td><td><code>static</code> with atomics or interior mutability</td></tr>
+<tr><td>Cross-thread sharing?</td><td><code>Send</code> / <code>Sync</code> traits</td></tr>
+<tr><td>Escaping the rules?</td><td><code>unsafe</code> — you prove coherence</td></tr>
+</table>
+
+<div class="derived-box">
+Rust's bet: prove coherence in compile-time projection. Pay with complexity. Gain zero-cost guarantees at runtime.
+</div>
+
+<h3>Equivalences</h3>
+<div class="equivalences-box">
+const         ≅  inlined value      ≅  no runtime IDENTITY<br>
+static        ≅  single replica     ≅  bridges projections<br>
+&T            ≅  read replica       ≅  shared IDENTITY, frozen TIME<br>
+&mut T        ≅  exclusive lock     ≅  unique IDENTITY, TIME flows<br>
+Mutex&lt;T&gt;      ≅  distributed lock   ≅  serialize TIME<br>
+move          ≅  transfer           ≅  IDENTITY changes hands<br>
+Clone         ≅  snapshot           ≅  new IDENTITY, new SPACE<br>
+unsafe        ≅  "trust me"         ≅  you prove coherence
+</div>
+
+<hr />
+<h2>Borrow Checker Internals</h2>
+<p>You've seen what the borrow checker enforces. Here's how it works.</p>
+<h3>The Pipeline</h3>
+<p>The borrow checker operates entirely in compile-time projection:</p>
+<div class="pipeline-diagram">
+<pre>
+Source Code
+     │
+     ▼
+┌───────────────┐
+│  Lower to MIR │ ← IDENTITY ops explicit
+└───────────────┘
+     │
+     ▼
+┌───────────────┐
+│   Build CFG   │ ← branching TIME
+└───────────────┘
+     │
+     ▼
+┌───────────────┐
+│   Liveness    │ ← "will this IDENTITY be used?"
+└───────────────┘
+     │
+     ▼
+┌───────────────┐
+│    Region     │ ← compute minimal TIME spans
+│   Inference   │
+└───────────────┘
+     │
+     ▼
+┌───────────────┐
+│   Conflict    │ ← SPACE × TIME × IDENTITY check
+│   Detection   │
+└───────────────┘
+     │
+  ▼       ▼
+ OK     ERROR
+</pre>
+</div>
+
+<h3>Phase 1: MIR</h3>
+<p>MIR makes IDENTITY operations explicit:</p>
+<div class="rust-code">
+<pre>_2 = &(*_1)     <span class="comment">// borrow: create IDENTITY</span>
+_3 = use(_2)   <span class="comment">// use: access through IDENTITY</span>
+drop(_2)       <span class="comment">// end: IDENTITY released</span></pre>
+</div>
+
+<h3>Phase 2: CFG</h3>
+<p>The function becomes a directed graph. Each node is a program point, edges are possible transitions.</p>
+<p>TIME in a program is not linear. The CFG captures all possible orderings.</p>
+<h3>Phase 3: Liveness</h3>
+<p>Liveness asks: "From this point, on some future path, will this IDENTITY be used?"</p>
+<p>Computed via backward dataflow. The IDENTITY must be valid at all points where it's live.</p>
+<h3>Phase 4: Region Inference</h3>
+<p>A region is a set of CFG points. Regions form a lattice under subset ordering.</p>
+<p>The solver finds the minimal region satisfying all constraints. Fixed-point iteration: expand regions until stable.</p>
+<h3>Phase 5: Conflict Detection</h3>
+<p>With regions computed, check for conflicts:</p>
+<div class="rust-code">
+<pre>ERROR if:
+  ∃ borrows B1, B2 of same SPACE where:
+    - regions overlap
+    - AND one is exclusive
+    - AND B1 ≠ B2</pre>
+</div>
+
+<h3>SPACE Granularity Deep Dive</h3>
+<p>The borrow checker tracks paths:
+- <code>x</code> — the whole binding
+- <code>x.field</code> — a struct field (statically known)
+- <code>x[i]</code> — an array element (runtime index)</p>
+<p><strong>Struct fields</strong>: statically known, can prove disjoint.</p>
+<p><strong>Array indices</strong>: runtime values, can't prove <code>i ≠ j</code> in general.</p>
+<p><strong>Workarounds:</strong></p>
+<div class="rust-code">
+<pre><span class="comment">// split_at_mut divides into disjoint slices</span>
+let (left, right) = v.split_at_mut(1);
+let r = &mut left[0];
+let s = &mut right[0];  <span class="comment">// OK: different slices</span></pre>
+</div>
+
+<h3>Decidability</h3>
+<p>The borrow checker uses decidable approximation:</p>
+<table>
+<thead>
+<tr>
+<th>Perfect question</th>
+<th>Approximation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Will this branch run?"</td>
+<td>"Assume all branches might run"</td>
+</tr>
+<tr>
+<td>"Same address?"</td>
+<td>"Same base → might alias"</td>
+</tr>
+<tr>
+<td>"Will this be used?"</td>
+<td>"Might be used on some path"</td>
+</tr>
+</tbody>
+</table>
+<p>Sound but incomplete:
+- OK → definitely safe
+- ERROR → might be safe (false positives exist)</p>
+<p>This is why interior mutability exists: to handle false positives.</p>
+<h3>Rejected Valid Programs</h3>
+<p><strong>Can't prove branch won't run:</strong></p>
+<div class="rust-code">
+<pre>let mut x = 5;
+let r = &mut x;
+if false {
+    println!("{}", r);  <span class="comment">// never runs</span>
+}
+let s = &x;  <span class="comment">// ERROR: r might be used</span></pre>
+</div>
+
+<p><strong>Can't distinguish indices:</strong></p>
+<div class="rust-code">
+<pre>let mut v = vec![1, 2, 3];
+let r = &mut v[0];
+let s = &mut v[1];  <span class="comment">// ERROR: two borrows of v</span></pre>
+</div>
+
+<h3>Curry-Howard</h3>
+<p>Types are propositions. Programs are proofs.</p>
+<p><code>&amp;'a T</code> is a proof of: "There exists SPACE containing T, and IDENTITY to it is valid for TIME span 'a."</p>
+<p>A successful borrow check means: "All IDENTITY/TIME claims are consistent."</p>
+<hr />
+<h2>Memory Ordering</h2>
+<p>Atomics make operations indivisible. But when does a write in one TIME line become visible in another?</p>
+<p><strong>Hardware defers coherence:</strong></p>
+<ul>
+<li><strong>Store buffers:</strong> Writes queue locally before reaching RAM.</li>
+<li><strong>Caches:</strong> Each core copies values locally. Writes don't instantly propagate.</li>
+<li><strong>Reordering:</strong> CPU executes out of order for performance.</li>
+</ul>
+<p>All three: optimizations assuming single TIME line. Multiple TIME lines expose the deferred sync.</p>
+<h3>The Orderings</h3>
+<p><strong>Relaxed</strong> — Atomic access only. No visibility guarantees.</p>
+<p><strong>Acquire/Release</strong> — Coherence at sync points.</p>
+<p>Release: everything before this point visible before this write.</p>
+<p>Acquire: everything after this sees writes from before a Release.</p>
+<pre><code>TIME line A:                TIME line B:
+
+write x = 1
+write y = 2
+Release(flag = true)  ───&gt;  Acquire(flag)
+                            read y  // sees 2
+                            read x  // sees 1
+</code></pre>
+<p><strong>SeqCst</strong> — Total order. All TIME lines observe same sequence. Expensive.</p>
+<table>
+<thead>
+<tr>
+<th>Ordering</th>
+<th>Guarantee</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Relaxed</td>
+<td>Operation is atomic</td>
+<td>Counters</td>
+</tr>
+<tr>
+<td>Release</td>
+<td>Writes before visible to Acquire</td>
+<td>Producer</td>
+</tr>
+<tr>
+<td>Acquire</td>
+<td>Reads after see writes before Release</td>
+<td>Consumer</td>
+</tr>
+<tr>
+<td>AcqRel</td>
+<td>Both</td>
+<td>Read-modify-write</td>
+</tr>
+<tr>
+<td>SeqCst</td>
+<td>Global total order</td>
+<td>When in doubt</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Syntax</h2>
+<p>Rust overloads <code>&amp;</code> and <code>mut</code> based on position.</p>
+<h3>Position Rules</h3>
+<table>
+<thead>
+<tr>
+<th>Position</th>
+<th><code>&amp;mut x</code> means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Expression (right of <code>=</code>)</td>
+<td>Produce reference to x</td>
+</tr>
+<tr>
+<td>Pattern (left of <code>=</code>)</td>
+<td>Expect reference, bind target</td>
+</tr>
+<tr>
+<td>Type (right of <code>:</code>)</td>
+<td>Type "reference to T"</td>
+</tr>
+</tbody>
+</table>
+<h3>Examples</h3>
+<p><strong>Expression:</strong></p>
+<div class="rust-code">
+<pre>let p = &mut x;  <span class="comment">// produce exclusive IDENTITY</span></pre>
+</div>
+
+<p><strong>Pattern:</strong></p>
+<div class="rust-code">
+<pre>let &mut target = some_ref;  <span class="comment">// follow IDENTITY, bind target</span></pre>
+</div>
+
+<h3>Primitives</h3>
+<table>
+<thead>
+<tr>
+<th>Primitive</th>
+<th>What</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&amp;</code></td>
+<td>shared IDENTITY</td>
+</tr>
+<tr>
+<td><code>&amp;mut</code></td>
+<td>exclusive IDENTITY</td>
+</tr>
+<tr>
+<td><code>mut</code></td>
+<td>rebindable binding</td>
+</tr>
+</tbody>
+</table>
+<p><code>&amp;mut</code> is one token. There is no <code>mut&amp;</code>.</p>
+<p><strong>Rebind vs mutate:</strong></p>
+<div class="rust-code">
+<pre>let mut x = &y;
+x = &z;         <span class="comment">// rebind: x now points elsewhere</span>
+
+let x = &mut y;
+*x = 5;         <span class="comment">// mutate: change what x points to</span></pre>
+</div>
+
+<h3>Clarifying Syntax</h3>
+<p>What if operations were explicit?</p>
+<table>
+<thead>
+<tr>
+<th>Current</th>
+<th>Clarified</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>let x = y</code></td>
+<td><code>let x = move_or_copy(y)</code></td>
+<td>compiler chooses</td>
+</tr>
+<tr>
+<td><code>let x = &amp;y</code></td>
+<td><code>let x = shared(y)</code></td>
+<td>shared IDENTITY</td>
+</tr>
+<tr>
+<td><code>let x = &amp;mut y</code></td>
+<td><code>let x = exclusive(y)</code></td>
+<td>exclusive IDENTITY</td>
+</tr>
+<tr>
+<td><code>let mut x = 5</code></td>
+<td><code>let rebindable(x) = 5</code></td>
+<td>binding can change</td>
+</tr>
+<tr>
+<td><code>let &amp;x = r</code></td>
+<td><code>let x = *r</code></td>
+<td>dereference</td>
+</tr>
+</tbody>
+</table>
+<h3>Framework Translation</h3>
+<table>
+<thead>
+<tr>
+<th>Rust</th>
+<th>Framework</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>value</td>
+<td>Occupies SPACE</td>
+</tr>
+<tr>
+<td>binding</td>
+<td>Name referring to SPACE</td>
+</tr>
+<tr>
+<td>reference</td>
+<td>IDENTITY pointing to SPACE</td>
+</tr>
+<tr>
+<td>scope</td>
+<td>TIME boundary for validity</td>
+</tr>
+<tr>
+<td><code>&amp;x</code> (expression)</td>
+<td>Create shared IDENTITY</td>
+</tr>
+<tr>
+<td><code>&amp;mut x</code> (expression)</td>
+<td>Create exclusive IDENTITY</td>
+</tr>
+<tr>
+<td><code>&amp;x</code> (pattern)</td>
+<td>Follow IDENTITY, bind result</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<script src="/js/shell.js"></script>
+</body>
+</html>

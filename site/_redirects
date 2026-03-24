@@ -1,0 +1,28 @@
+# Cloudflare Pages redirects
+# Old Jekyll/Chirpy paths → new paths
+
+/bio/                       /tech.html               301
+/bio-ext/                   /leadership/             301
+/portfolio/                 /tech.html               301
+/about/                     /                        301
+/archives/                  /writing/                301
+/abstractor/                /writing/tech/abstractor.html  301
+/compilers/                 /writing/tech/compilers.html   301
+/complexity/                /writing/tech/complexity.html   301
+/better-intuitions/         /writing/tech/better-intuitions.html 301
+/rust/                      /writing/tech/rust.html        301
+/categories/                /writing/                301
+/tags/                      /writing/                301
+
+# Blog post redirects
+/posts/the-failed-search-for-a-dense-proving-language/    /writing/tech/the-failed-search-for-a-dense-proving-language.html  301
+/posts/abstractor-linux-syscalls-and-hypervisors/          /writing/tech/abstractor-linux-syscalls-and-hypervisors.html       301
+/posts/abstractor-virtual-memory-and-devices/              /writing/tech/abstractor-virtual-memory-and-devices.html           301
+/posts/distributed-protocol-primitives/                    /writing/tech/distributed-protocol-primitives.html                 301
+
+# Learn-rust chapter redirects (old Jekyll pretty URLs)
+/learn-rust/first-contact/                    /learn-rust/first-contact.html                  301
+/learn-rust/space-time-coordinates/           /learn-rust/space-time-coordinates.html          301
+/learn-rust/how-compilers-track-references/   /learn-rust/how-compilers-track-references.html  301
+/learn-rust/limits-of-compile-time-analysis/  /learn-rust/limits-of-compile-time-analysis.html 301
+/learn-rust/exercises/                        /learn-rust/exercises.html                       301

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Contact
+short_First Contact — jadnohra.com</title>
+<link rel="stylesheet" href="/css/editor.css">
+</head>
+<body data-page="learn-rust">
+
+<div class="content">
+<h1>First Contact</h1>
+<p>Most Rust syntax matches C++. Some code that compiles in C++ does not compile in Rust. The compiler errors look opaque at first. Later chapters explain why the compiler rejects these programs and how it detects the problems.</p>
+<p>If you've written C++, most Rust syntax will feel familiar. Functions, structs, loops, and vectors work the same way.</p>
+<pre><code class="language-rust">fn main() {
+    println!(&quot;Hello, world!&quot;);
+}
+</code></pre>
+<pre><code class="language-rust">fn main() {
+    let x = 5;
+    let y = 10;
+    println!(&quot;{} + {} = {}&quot;, x, y, x + y);
+}
+</code></pre>
+<pre><code class="language-rust">fn add(a: i32, b: i32) -&gt; i32 {
+    a + b
+}
+
+fn main() {
+    let result = add(3, 4);
+    println!(&quot;Result: {}&quot;, result);
+}
+</code></pre>
+<pre><code class="language-rust">fn main() {
+    let v = vec![1, 2, 3, 4, 5];
+    println!(&quot;Vector: {:?}&quot;, v);
+    println!(&quot;Length: {}&quot;, v.len());
+}
+</code></pre>
+<pre><code class="language-rust">struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn main() {
+    let p = Point { x: 10, y: 20 };
+    println!(&quot;Point at ({}, {})&quot;, p.x, p.y);
+}
+</code></pre>
+<pre><code class="language-rust">fn main() {
+    let mut count = 0;
+    while count &lt; 5 {
+        println!(&quot;Count: {}&quot;, count);
+        count += 1;
+    }
+}
+</code></pre>
+<details>
+<summary>Checkpoint</summary>
+<p>You see Rust syntax. You recognize it. You can read it.</p>
+</details>
+
+<hr />
+<p>These examples do not compile:</p>
+<pre><code class="language-rust">fn main() {
+    let v = vec![1, 2, 3];
+    let w = v;
+    println!(&quot;{:?}&quot;, v);
+}
+</code></pre>
+<pre><code>error[E0382]: borrow of moved value: `v`
+</code></pre>
+<pre><code class="language-rust">fn main() {
+    let mut v = vec![1, 2, 3];
+    let r = &amp;v[0];
+    v.push(4);
+    println!(&quot;{}&quot;, r);
+}
+</code></pre>
+<pre><code>error[E0502]: cannot borrow `v` as mutable because it is also borrowed as immutable
+</code></pre>
+<pre><code class="language-rust">fn main() {
+    let r;
+    {
+        let x = 5;
+        r = &amp;x;
+    }
+    println!(&quot;{}&quot;, r);
+}
+</code></pre>
+<pre><code>error[E0597]: `x` does not live long enough
+</code></pre>
+<pre><code class="language-rust">fn main() {
+    let mut s = String::from(&quot;hello&quot;);
+    let r1 = &amp;mut s;
+    let r2 = &amp;mut s;
+    println!(&quot;{}, {}&quot;, r1, r2);
+}
+</code></pre>
+<pre><code>error[E0499]: cannot borrow `s` as mutable more than once at a time
+</code></pre>
+<pre><code class="language-rust">fn get_string() -&gt; &amp;String {
+    let s = String::from(&quot;hello&quot;);
+    &amp;s
+}
+
+fn main() {
+    let s = get_string();
+}
+</code></pre>
+<pre><code>error[E0106]: missing lifetime specifier
+</code></pre>
+<pre><code class="language-rust">fn main() {
+    let mut v = vec![1, 2, 3];
+    for x in &amp;v {
+        v.push(*x);
+    }
+}
+</code></pre>
+<pre><code>error[E0502]: cannot borrow `v` as mutable because it is also borrowed as immutable
+</code></pre>
+<pre><code class="language-rust">fn main() {
+    let mut v = vec![1, 2, 3];
+    let closure = || v.push(4);
+    println!(&quot;{:?}&quot;, v);
+    closure();
+}
+</code></pre>
+<pre><code>error[E0502]: cannot borrow `v` as immutable because it is also borrowed as mutable
+</code></pre>
+<pre><code class="language-rust">use std::thread;
+
+fn main() {
+    let v = vec![1, 2, 3];
+    thread::spawn(|| {
+        println!(&quot;{:?}&quot;, v);
+    });
+}
+</code></pre>
+<pre><code>error[E0373]: closure may outlive the current function
+</code></pre>
+<pre><code class="language-rust">use std::rc::Rc;
+use std::thread;
+
+fn main() {
+    let rc = Rc::new(5);
+    thread::spawn(move || {
+        println!(&quot;{}&quot;, rc);
+    });
+}
+</code></pre>
+<pre><code>error[E0277]: `Rc&lt;i32&gt;` cannot be sent between threads safely
+</code></pre>
+<p>These programs contain memory bugs. Rust's compiler rejects all of them. C++ compiles them.</p>
+<details>
+<summary>Checkpoint</summary>
+<p>You see buggy code you recognize. You know these bugs. You see Rust rejects them. You do not know how Rust detects them.</p>
+</details>
+
+<hr />
+<p>The dangling reference case:</p>
+<pre><code class="language-rust">fn main() {
+    let r;
+    {
+        let x = 5;
+        r = &amp;x;
+    }
+    println!(&quot;{}&quot;, r);
+}
+</code></pre>
+<p><code>r</code> refers to <code>x</code>. The block ends. <code>x</code> is gone. <code>r</code> points to nothing.</p>
+<p>The C++ equivalent compiles and runs. It prints garbage, or crashes, or prints 5 by accident. The C++ standard leaves this behavior undefined.</p>
+<pre><code class="language-cpp">int main() {
+    int* r;
+    {
+        int x = 5;
+        r = &amp;x;
+    }
+    printf(&quot;%d\n&quot;, *r);
+}
+</code></pre>
+<details>
+<summary>Checkpoint</summary>
+<p>You see one example explained in detail. You connect the Rust error to C++ undefined behavior. You know Rust catches bugs C++ misses. You do not know how yet. You are curious.</p>
+</details>
+</div>
+
+<script src="/js/shell.js"></script>
+</body>
+</html>

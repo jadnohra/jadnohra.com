@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CV of Jad Nohra — 25+ years in physics simulation, game AI, autonomous vehicles, ZK cryptography, and FPGA hardware. Havok, Guerrilla Games, Argo AI, FERNRIDE, Irreducible.">
+    <meta property="og:title" content="Jad Nohra - CV">
+    <meta property="og:description" content="CV of Jad Nohra — 25+ years in physics simulation, game AI, autonomous vehicles, ZK cryptography, and FPGA hardware.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jadnohra.com/cv/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Jad Nohra - CV">
+    <meta name="twitter:description" content="CV of Jad Nohra — 25+ years in physics simulation, game AI, autonomous vehicles, ZK cryptography, and FPGA hardware.">
+    <link rel="canonical" href="https://jadnohra.com/cv/">
+    <title>Jad Nohra - CV</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Calibri', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            color: #1a1a1a;
+            background: white;
+        }
+
+        /* Action buttons */
+        .actions {
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 12px 0.5in 0 0.5in;
+            display: flex;
+            gap: 10px;
+        }
+
+        .actions button {
+            padding: 8px 16px;
+            font-size: 10pt;
+            cursor: pointer;
+            border: 1px solid #2980b9;
+            background: #2980b9;
+            color: white;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .actions button:hover {
+            background: #1d6fa5;
+        }
+
+        .container {
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.4in 0.5in;
+        }
+
+        /* Header - More Professional */
+        header {
+            border-bottom: 1.5px solid #2980b9;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .header-line {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+
+        h1 {
+            font-size: 22pt;
+            font-weight: 600;
+            color: #0a0a0a;
+            letter-spacing: 0.5px;
+        }
+
+        .links {
+            font-size: 10.5pt;
+        }
+
+        .links a {
+            color: #2980b9;
+            text-decoration: none;
+            margin: 0 3px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .links a:first-child {
+            margin-left: 0;
+        }
+
+        .contact {
+            font-size: 10pt;
+            color: #333;
+        }
+
+        .contact a {
+            color: #2980b9;
+            text-decoration: none;
+            margin: 0 3px;
+        }
+
+        .contact a:hover {
+            text-decoration: underline;
+        }
+
+        /* Sections - More Readable */
+        h2 {
+            font-size: 12pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 1px solid #bdc3c7;
+            margin-top: 14px;
+            margin-bottom: 4px;
+            padding-bottom: 3px;
+            color: #0a0a0a;
+            letter-spacing: 0.5px;
+            break-after: avoid;
+        }
+
+        /* Experience - Better Spacing */
+        .job {
+            margin-bottom: 8px;
+            break-inside: avoid;
+        }
+
+        .job p {
+            margin: 0;
+        }
+
+        .job-line {
+            font-weight: 600;
+            font-size: 10.5pt;
+            margin-bottom: 4px;
+            color: #1a1a1a;
+        }
+
+        .company {
+            color: #1a1a1a;
+        }
+
+        .dates {
+            float: right;
+            font-weight: normal;
+            color: #555;
+            font-size: 10pt;
+        }
+
+        ul {
+            margin-left: 14px;
+            margin-bottom: 6px;
+        }
+
+        li {
+            margin-bottom: 3px;
+            line-height: 1.35;
+            color: #2c2c2c;
+        }
+
+        /* Better bullet style */
+        ul li::marker {
+            color: #666;
+            font-size: 9pt;
+        }
+
+        /* Earlier roles - One line each */
+        .compact-role {
+            font-size: 9.5pt;
+            margin-bottom: 3px;
+        }
+
+        .compact-role strong {
+            font-weight: 600;
+        }
+
+        /* Skills - Inline */
+        .skills-section {
+            font-size: 10pt;
+            line-height: 1.5;
+            margin: 6px 0;
+        }
+
+        .skills-section strong {
+            font-weight: bold;
+            color: #0a0a0a;
+        }
+
+        /* Patents & Publications - Compact */
+        .pub-item {
+            font-size: 10pt;
+            margin-bottom: 3px;
+        }
+
+        /* Two column for earlier work */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            font-size: 9.5pt;
+            line-height: 1.4;
+        }
+
+        /* Summary - Very compact */
+        .summary {
+            font-size: 10.5pt;
+            line-height: 1.45;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .summary p {
+            margin: 0;
+            font-size: 10.5pt;
+            line-height: 1.45;
+        }
+
+        /* Print optimization */
+        @media print {
+            .actions {
+                display: none;
+            }
+            body {
+                font-size: 10.5pt;
+            }
+            .container {
+                padding: 0.35in 0.45in;
+            }
+            .dates {
+                color: #444;
+            }
+            a {
+                color: #2980b9;
+                text-decoration: none;
+            }
+            h2 {
+                page-break-after: avoid;
+            }
+            .job {
+                page-break-inside: avoid;
+            }
+            /* Adjust margins for better page filling */
+            .job {
+                margin-bottom: 13px;
+            }
+            h2 {
+                margin-top: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="actions">
+        <button onclick="window.print()">Print / Save PDF</button>
+        <button type="button" onclick="saveAsHTML()">Save as HTML</button>
+    </div>
+
+    <script>
+    function saveAsHTML() {
+        const clone = document.documentElement.cloneNode(true);
+        clone.querySelector('.actions').remove();
+        clone.querySelectorAll('script').forEach(s => s.remove());
+        const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+        const blob = new Blob([html], {type: 'text/html'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'jad_nohra_cv.html';
+        a.click();
+    }
+    </script>
+
+    <div class="container">
+        <header>
+            <div class="header-line">
+                <h1>Jad Nohra</h1>
+                <div class="links">
+                    <a href="https://jadnohra.com">Site</a> •
+                    <a href="https://linkedin.com/in/jadnohra">LinkedIn</a> •
+                    <a href="https://github.com/jadnohra">GitHub</a> •
+                    <a href="https://patents.google.com/?inventor=Jad+NOHRA">Patents</a> •
+                    <a href="https://scholar.google.com/citations?user=0pae59AAAAAJ">Articles</a>
+                </div>
+            </div>
+            <div class="contact">
+                jadnohra@gmail.com • +4915787735162 • @jadnohra (X/TG) • Berlin, Germany
+            </div>
+        </header>
+
+        <div class="summary">
+            <p>Engineering leader and direct technical contributor with 25+ years across four distinct domains: real-time physics engines, autonomous vehicle simulation and safety, and cryptographic hardware acceleration. Built and led organizations up to 25 engineers. 2 US patents. Deep foundations in mathematics, physics, and systems engineering applied across each of these domains.</p>
+        </div>
+
+        <h2>Cross-Domain Contributions</h2>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="company">Cryptographic Hardware (Irreducible)</span>
+            </div>
+            <ul>
+                <li>Three-mode execution architecture (simulated, verilated, hardware) for ZK proof acceleration; simulation revealed product competitiveness gap months before hardware would have</li>
+                <li>ZK circuit compiler and FPGA device interfaces in Rust</li>
+                <li>Co-design process connecting three siloed teams (FPGA, cryptography, compiler)</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="company">Autonomous Vehicles (FERNRIDE, Argo AI/Ford/VW, Audi/AID)</span>
+            </div>
+            <ul>
+                <li>Hazard Zone Model for truck safety; first complete LiDAR/radar perception pipeline</li>
+                <li>Safety case methodology contributing to TÜV SÜD certification, ISO 26262 / ASIL-D</li>
+                <li>Statistical safety validation framework from nuclear, aviation, and medical device testing methods</li>
+                <li>Simulation validation pipeline; noise injection revealed false passes in existing test suites</li>
+                <li>Scenario generation patent (US20230030474A1)</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="company">Real-time Physics and Mixed Reality (Microsoft/Havok, Sony/Guerrilla)</span>
+            </div>
+            <ul>
+                <li>Core contact constraint solver for Havok physics engine, shipped across major game titles since ~2014</li>
+                <li>High-fidelity MLCP solver using blocked-form linear programming</li>
+                <li>Formal proof of TOI tunneling impossibility, resolving an open question</li>
+                <li>Numerical geometry solutions informed by floating-point analysis literature</li>
+                <li>Skeletonization algorithms from computational geometry applied to automated navmesh generation</li>
+                <li>Nintendo WiiU math library at ARM instruction level</li>
+                <li>SIMD-optimized engine components across constraint solving, geometry, and multi-threading</li>
+                <li>Spatial localization algorithm for Microsoft HoloLens (US patent US10672159B2)</li>
+            </ul>
+        </div>
+
+        <h2>Experience</h2>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="dates">Berlin · Sep 2024 – Feb 2025</span>
+                <span class="company">Irreducible — Engineering Director (Hands-on)</span>
+            </div>
+            <p>Built and led systems team for hardware-accelerated ZK Proofs: FPGA device interfaces, ZK circuit compiler, three-mode execution architecture. Introduced co-design sessions connecting FPGA, cryptography, and compiler teams. Retained as sole non-cryptography engineer during company restructuring; member of 3-person leadership team.</p>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="dates">Munich · Jan 2023 – Sep 2024</span>
+                <span class="company">FERNRIDE — Principal Engineer / Senior Engineering Manager</span>
+            </div>
+            <p>Built safety perception team and system from inception. Conducted feasibility study for LiDAR and radar-based safety function; designed and prototyped the system; wrote first version of complete perception pipeline. Co-developed safety case contributing to TÜV SÜD certification. Established direct technical channel with Continental radar engineering. Member of engineering leadership team.</p>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="dates">Munich · Jun 2021 – Dec 2022</span>
+                <span class="company">Argo AI — Engineering Manager & Staff Software Engineer</span>
+            </div>
+            <p>Produced safety validation design documents that led to direct request from US-based systems engineering to join vehicle safety test planning. Developed simulation fidelity framework and noise injection models across compute, vehicle dynamics, traffic, sensor, and scenario generation components. Applied statistical safety testing methods. Led post-acquisition team integration (AID to Argo). Scenario generation patent.</p>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="dates">Munich · Apr 2018 – Jun 2021</span>
+                <span class="company">Autonomous Intelligent Driving (Audi) — Simulation Tech Lead</span>
+            </div>
+            <p>Grew organization from 2 to 20 engineers across 4 teams: SIL runtime, traffic simulation, sensor simulation, scenario evaluation. Direct code contributions across all team codebases. Evaluated and replaced external simulation platform; led transition to internal development.</p>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="dates">Munich · Jun 2011 – Mar 2018</span>
+                <span class="company">Microsoft / Havok — Lead Physics R&D</span>
+            </div>
+            <p>Core physics engine R&D: constraint solver, high-fidelity MLCP solver, destruction systems, geometric queries, numerical optimization, SIMD vectorization. Co-invented HoloLens spatial localization (US patent). Formal proof of TOI tunneling impossibility. WiiU math library. Havok Destruction interim lead.</p>
+        </div>
+
+        <div class="job">
+            <div class="job-line">
+                <span class="dates">Amsterdam · 2009 – 2011</span>
+                <span class="company">Guerrilla Games (Sony) — Senior AI Programmer</span>
+            </div>
+            <p>Killzone 3 AI: navigation, vehicle behavior, multiplayer bots, automated navmesh region generation using skeletonization algorithms. PS3/SPU optimization.</p>
+        </div>
+
+        <p style="font-size: 9.5pt;"><strong>Earlier:</strong> <strong>Kimera Studios</strong> (2006–08): Complete game engine — rendering, physics, neural network AI, spatial partitioning. <strong>AiGameDev</strong> (2008–09): Co-authored "Parallel Pathfinding on Modern Hardware"; motion planning, reinforcement learning, hierarchical pathfinding. <strong>Guided Knowledge</strong> (2015): Nonlinear optimization consulting, IMU sensor calibration. <strong>Gaming Logix</strong> (1999–2001): Online casino game engine, server/client architecture, C++/Java. <strong>Advisory</strong> (2024–present): Coaching engineering leaders on technical leadership and team scaling.</p>
+
+        <h2>Open Source & Independent Projects</h2>
+        <p class="skills-section"><strong><a href="https://vram.run">vram.run</a></strong> — GPU and API model search tool, 19 providers, 220+ hardware configurations. <strong><a href="https://jadnohra.com/learn-rust/">Learn Rust</a></strong> — Open-source Rust memory model course for C++ programmers. <strong><a href="https://github.com/jadnohra">daisy</a></strong> — Agent-based traffic simulator (Python). <strong><a href="https://github.com/jadnohra">PaCoS</a></strong> — Deterministic concurrency simulator.</p>
+
+        <h2>Technical</h2>
+        <p class="skills-section"><strong>Languages & Systems:</strong> Rust, C++, Python, Java · FPGA (Xilinx/Verilator) · SIMD/SSE/AVX · Embedded systems · Distributed systems. <strong>Cryptography & Hardware:</strong> Zero-Knowledge Proofs (polynomial commitments, NTT, finite fields) · FPGA-accelerated cryptographic compute · PCIe/DMA/VFIO device management. <strong>Safety & Regulated Delivery:</strong> TÜV SÜD certification · ISO 26262 / ASIL-D · LiDAR/Radar perception · Requirements traceability · ROS2. <strong>Quantitative Methods:</strong> Numerical analysis · Linear programming · Nonlinear optimization · Design of Experiments · Statistical safety validation.</p>
+
+        <h2>Credentials</h2>
+        <p class="skills-section"><strong>Education:</strong> MS Mathematics coursework (Emporia State, 98%+ avg) · BE Computer Engineering (AUB). <strong>Patents:</strong> <a href="https://patents.google.com/patent/US20230030474A1/en">AV Training Simulations (2023)</a> · <a href="https://patents.google.com/patent/US10672159B2">Anchor Graph Spatial Optimization (2020)</a>. <strong>Publications:</strong> "Uniqueness of Minima in Least Squares" (arXiv) · "Parallel Pathfinding on Modern Hardware" (AiGameDev). <strong>Languages:</strong> English (Fluent) · German, French (Working proficiency) · Arabic (Conversational).</p>
+    </div>
+</body>
+</html>

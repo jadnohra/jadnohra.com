@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complexity — jadnohra.com</title>
+<link rel="stylesheet" href="/css/editor.css">
+</head>
+<body data-page="writing">
+
+<div class="content">
+<style>
+/* Compact layout */
+.content p { margin-bottom: 0.5rem; }
+.content h2 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+.content h3 { margin-top: 1rem; margin-bottom: 0.3rem; }
+.content ul, .content ol { margin-bottom: 0.5rem; }
+.content li { margin-bottom: 0.2rem; }
+.content blockquote { margin: 0.5rem 0; }
+.content hr { margin: 1rem 0; }
+</style>
+
+<h2>Part I: Complexity Classes</h2>
+<p>Computation transforms states. Some target states are easy to reach. Some are hard. Complexity classes characterize <em>why</em>.</p>
+<hr />
+<h3>Computation as Transformation</h3>
+<pre><code>Computation:
+  input state → transformation → output state
+
+The question:
+  reach a state with property P
+</code></pre>
+<p>Every computational problem is: navigate a state space to reach states satisfying some property.</p>
+<pre><code>Sorting:       reach the one permutation that is ordered
+SAT:           reach an assignment that satisfies all clauses
+Shortest path: reach the path with minimum weight
+Factoring:     reach the pair of numbers whose product is n
+</code></pre>
+<hr />
+<h3>Why Things Are Hard</h3>
+<p>Hardness comes from the relationship between:</p>
+<pre><code>1. State space size       how many possible states exist
+2. Solution density       what fraction satisfies the property
+3. Structure              does local information help navigate?
+4. Convergence            can each step guarantee progress?
+</code></pre>
+<hr />
+<h3>The Convergence View</h3>
+<p>Some computations <em>converge</em> — each step reduces distance to solution.</p>
+<pre><code>Sorting:
+  state space: n! permutations
+  property: sorted order
+  density: 1/n! (exactly one solution)
+
+  But: each comparison eliminates half the remaining permutations.
+  log(n!) ≈ n log n comparisons → found.
+
+  Convergent: each step halves the space.
+</code></pre>
+<pre><code>Binary search:
+  state space: n positions
+  property: target value
+
+  Each comparison halves the space.
+  log n steps → found.
+
+  Convergent: exponential shrinkage per step.
+</code></pre>
+<p>These are easy not because solutions are dense, but because structure enables convergence.</p>
+<hr />
+<h3>The Non-Convergent View</h3>
+<p>Some computations don't guarantee progress.</p>
+<pre><code>SAT:
+  state space: 2^n assignments
+  property: satisfies all clauses
+  density: sparse (often 0, sometimes tiny fraction)
+
+  Partial assignment tells you:
+    - definitely unsatisfiable (contradiction found) — prune
+    - definitely satisfiable (all clauses satisfied) — done
+    - unknown — keep going
+
+  The &quot;unknown&quot; case: you must commit without knowing if path leads anywhere.
+  Wrong commitment might require exponential backtracking.
+
+  Non-convergent: steps might make progress or hit dead end.
+</code></pre>
+<hr />
+<h3>The Asymmetry</h3>
+<p>Forward computation is cheap. Backward is expensive.</p>
+<pre><code>Hash:         input → output    O(n)
+              output → input    O(2^n) search
+
+Multiply:     (p, q) → n        O(n²)
+              n → (p, q)        sub-exponential (best known)
+
+Circuit:      input → output    O(gates)
+              output → input    potentially O(2^inputs)
+</code></pre>
+<p>Why?</p>
+<p>Forward: follow deterministic steps, one path.
+Backward: many inputs could produce this output, which one?</p>
+<p>Computation is <em>lossy</em> — multiple inputs map to same output. Going backward means recovering lost information.</p>
+<pre><code>Forward:   many → one (convergent, information lost)
+Backward:  one → many (divergent, must search)
+</code></pre>
+<hr />
+<h3>Properties and Witnesses</h3>
+<p>A <em>property</em> is a predicate: P(state) ∈ {true, false}.</p>
+<p>A <em>witness</em> is evidence that P holds: something that makes verification easy.</p>
+<pre><code>SAT:
+  property: formula is satisfiable
+  witness: a satisfying assignment
+  verification: substitute and check — O(clauses)
+
+Composite:
+  property: n is composite
+  witness: a factor
+  verification: divide and check — O(n²)
+
+Graph coloring:
+  property: k-colorable
+  witness: a valid coloring
+  verification: check each edge — O(edges)
+</code></pre>
+<p>The asymmetry:
+- Finding witness: might require searching exponential space
+- Checking witness: polynomial in witness size</p>
+<p>NP is precisely: properties where witnesses exist and are efficiently checkable.</p>
+<hr />
+<h3>Structure and Exploitability</h3>
+<p>Hardness isn't just about space size. It's about <em>exploitable structure</em>.</p>
+<pre><code>Structure type              Effect on search
+─────────────────────────────────────────────────────────
+Decomposable                solve parts independently, combine
+Monotonic                   partial progress is permanent
+Gradient-like               local information guides globally
+Constraint propagation      assignment forces other assignments
+Symmetry                    equivalence classes reduce space
+None                        must enumerate
+</code></pre>
+<p>P problems have structure that guarantees polynomial navigation.</p>
+<p>NP-hard problems (assuming P≠NP) have structure sufficient for verification but not navigation.</p>
+<hr />
+<h3>The Gradient Analogy</h3>
+<p>Optimization landscapes:</p>
+<pre><code>Convex:
+  every local step toward lower loss reaches global optimum
+  gradient always points right direction
+  polynomial convergence guaranteed
+
+Non-convex:
+  local minima trap you
+  might need to go uphill to reach global minimum
+  local information misleads
+
+  no polynomial guarantee
+</code></pre>
+<p>P vs NP is analogous:</p>
+<pre><code>P:
+  there exists a computation path where each step makes provable progress
+  &quot;downhill all the way&quot;
+  polynomial steps suffice
+
+NP:
+  verification is convex (check each clause, combine)
+  search is non-convex (partial assignment might lead nowhere)
+  local information insufficient for global navigation
+</code></pre>
+<hr />
+<h3>Information and Location</h3>
+<p>Finding a solution = locating it in state space.</p>
+<p>Location requires information. Each bit of information halves the candidates.</p>
+<pre><code>Space size 2^n → need n bits to locate a point.
+
+P: each computation step extracts enough bits to make polynomial total.
+   sorting: each comparison extracts 1 bit, n log n comparisons → located.
+
+NP: steps might extract bits, but dead ends waste work.
+    backtracking = discarding information, must re-acquire.
+</code></pre>
+<p>The witness is a compressed representation of the search path — all the information needed to navigate directly.</p>
+<pre><code>Witness size: poly(n)
+Information content: enough to verify
+But: extracting this information might require exponential search
+</code></pre>
+<hr />
+<h3>The Hierarchy Restated</h3>
+<pre><code>Class         Structure                       Convergence
+────────────────────────────────────────────────────────────────
+P             exploitable, poly navigation    guaranteed progress
+NP            verifiable, not navigable       progress or dead end
+PSPACE        alternating (games)             adversary blocks progress
+EXPTIME       provably unstructured           must enumerate
+</code></pre>
+<hr />
+<h3>Reductions as Structure Preservation</h3>
+<p>Reduction from A to B: transform A instances into B instances, preserving structure.</p>
+<p>If A reduces to B, then B has at least as much structure (or as little) as A.</p>
+<p>NP-complete: all NP problems reduce here. They share a common hard core — the irreducible structure that makes search hard.</p>
+<pre><code>SAT, 3-SAT, clique, coloring, TSP, knapsack, vertex cover...
+
+Different surfaces, same underlying hardness.
+All encode: sparse solution in exponential space, verifiable but not navigable.
+</code></pre>
+<hr />
+<h3>Concrete Numbers</h3>
+<pre><code>State space              Size at n=100
+──────────────────────────────────────
+Linear choices           100
+Polynomial (n²)          10,000
+Polynomial (n³)          1,000,000
+Permutations (n!)        10^158
+Subsets (2^n)            10^30
+</code></pre>
+<pre><code>Operations per second:   10^9 (modern CPU)
+Seconds in universe:     10^17
+Total operations ever:   10^26
+
+2^100 = 10^30 &gt; operations possible in universe lifetime
+</code></pre>
+<p>The exponential wall is physical. No speedup crosses it.</p>
+<hr />
+<h3>The Practical Upshot</h3>
+<p>When facing a problem:</p>
+<pre><code>1. Is there convergent structure?
+   → Each step guaranteed progress? → probably P
+
+2. Is there verifiable structure?
+   → Can check solution in poly time? → in NP
+
+3. Does it reduce from known NP-hard?
+   → Stop looking for poly algorithm
+   → Use heuristics, approximation, or exploit instance structure
+
+4. SAT solvers work on structured instances
+   → Real problems aren't random
+   → Structure = pruning opportunities
+   → Exponential worst case, often poly in practice
+</code></pre>
+<hr />
+<h3>Principle</h3>
+<blockquote>
+<p>Hardness is non-convergence: the inability to guarantee progress.</p>
+</blockquote>
+<p>P: structure ensures convergence — each step shrinks the search space by polynomial factor.</p>
+<p>NP: structure ensures verifiability — but search might diverge before converging.</p>
+<p>The open question (P vs NP): is there always hidden structure that enables convergence, or is non-convergence fundamental?</p>
+<hr />
+<h2>Part II: Why Polynomial?</h2>
+<h3>Why Polynomial? (The Real Answer)</h3>
+<p>The standard answer — "composition works" — is true but doesn't explain <em>why we care</em>.</p>
+<p>Here's the better angle:</p>
+<p><strong>Polynomial = processing the input itself.</strong>
+<strong>Exponential = enumerating what the input could represent.</strong></p>
+<pre><code>Input: n bits describing a SAT formula
+  Polynomial: process the formula — O(n) clauses, O(n²) pairs of clauses
+  Exponential: process the assignments — 2^n possible truth assignments
+
+Input: n nodes in a graph
+  Polynomial: process the graph — O(n²) edges, O(n³) triples
+  Exponential: process subsets — 2^n subsets of nodes
+</code></pre>
+<p>The transition from polynomial to exponential is crossing from "things derived from input" to "things the input quantifies over."</p>
+<hr />
+<h3>The Exponent's Location</h3>
+<pre><code>Polynomial:  n^k    — exponent k is fixed constant (from problem structure)
+Exponential: k^n    — exponent n is the input size
+
+O(n³) — &quot;consider all triples&quot; — 3 is fixed
+O(2^n) — &quot;consider all subsets&quot; — n grows with input
+</code></pre>
+<p>Polynomial: the structure of what you examine is fixed. Input size just scales it.</p>
+<p>Exponential: the structure of what you examine <em>depends on</em> input size. More input = qualitatively more structure to explore.</p>
+<hr />
+<h3>The Physical Angle</h3>
+<p>Polynomial growth is what physical processes do.</p>
+<pre><code>Heat diffusion:     spreads proportional to surface area (n²)
+Gravitational calc: all pairs interact (n²)
+Chemical mixing:    proportional to volume (n³)
+</code></pre>
+<p>These scale polynomially because physical space is 3D and time is 1D. No physical process naturally produces 2^n behavior — that requires <em>information structure</em>, not physical structure.</p>
+<p>Exponential (2^n) means: the number of <em>configurations</em> of n things. This is combinatorial, not physical. It's about <em>possibilities</em>, not <em>objects</em>.</p>
+<pre><code>10 light switches: 2^10 = 1024 configurations
+100 light switches: 2^100 ≈ 10^30 configurations
+
+The switches are physical (100 objects).
+The configurations are combinatorial (10^30 possibilities).
+</code></pre>
+<p>Processing objects: polynomial in object count.
+Enumerating configurations: exponential in object count.</p>
+<hr />
+<h3>The Information Angle</h3>
+<p>To solve a problem, you need enough information to locate the answer.</p>
+<pre><code>Sorting n elements:
+  Answer space: n! permutations ≈ 2^(n log n)
+  Information needed: n log n bits
+  Each comparison: 1 bit
+  Comparisons needed: n log n — polynomial
+
+  Why? Each comparison *guarantees* 1 bit of information.
+  Progress is certain.
+
+SAT with n variables:
+  Answer space: 2^n assignments
+  Information needed: n bits
+  Each step: might learn something, might hit dead end
+
+  Why exponential? Dead ends don't give proportional information.
+  You might do 2^(n/2) work before learning you're on wrong path.
+</code></pre>
+<p>Polynomial: information acquisition is efficient — work translates to progress.</p>
+<p>Exponential: information acquisition is inefficient — work might not translate to progress.</p>
+<hr />
+<h3>The Scaling Test</h3>
+<p>Here's a concrete test that distinguishes P from NP-hard:</p>
+<p><strong>Can solving size n help you solve size 2n?</strong></p>
+<pre><code>Sorting:
+  Sort first half (n), sort second half (n), merge (n).
+  Size 2n ≈ 2× work of size n.
+  Scaling is linear.
+
+SAT:
+  Solve first half of variables? Tells you nothing about second half.
+  Size 2n = 2^n × work of size n.
+  Scaling is exponential.
+</code></pre>
+<p>P problems decompose: solving smaller instances builds toward larger.</p>
+<p>NP-hard problems don't decompose: instances are coupled globally, small gives no foothold on large.</p>
+<hr />
+<h3>The Hierarchy Restated (With This Lens)</h3>
+<pre><code>Class         What you process                    Scaling
+─────────────────────────────────────────────────────────────────
+P             input + polynomial derived structure  size n → work n^k
+NP (search)   configurations input quantifies over  size n → work up to 2^n
+NP (verify)   single configuration (witness)        witness size m → work m^k
+</code></pre>
+<p>NP's asymmetry:
+- Verification processes the witness (polynomial-sized object) — P-like
+- Search processes the configuration space (exponential-sized space) — possibly not P</p>
+<hr />
+<h3>Adding to the Full Picture</h3>
+<p>Here's what we can add to connect everything:</p>
+<p><strong>Why convergent methods land in P:</strong></p>
+<p>Convergence means each step extracts information proportional to its cost. Work translates to progress. Total work = total information needed = polynomial (because you're locating something in the input's structure, not in the space of configurations).</p>
+<p><strong>Why non-convergent search might require exponential:</strong></p>
+<p>Non-convergence means steps might not extract information. Dead ends waste work. In worst case, you must enumerate the configuration space, which is exponential because it's the space of <em>possibilities</em>, not the space of <em>input-derived structures</em>.</p>
+<p><strong>Why witnesses make verification easy:</strong></p>
+<p>The witness is the compressed form of the search path — all the bits of information you'd need to locate the solution. Given the witness, you process it (polynomial) rather than search for it (exponential).</p>
+<pre><code>Search: locate witness in 2^n space → might need 2^n steps
+Verify: process witness of size poly(n) → poly(n) steps
+</code></pre>
+<p><strong>Why P vs NP is deep:</strong></p>
+<p>It asks: does every search problem have hidden structure that converts it to polynomial information-extraction?</p>
+<p>Or equivalently: is there always a way to process the input that implicitly navigates the configuration space?</p>
+<p>Or: is non-convergence fundamental, or always avoidable with the right insight?</p>
+<hr />
+<h3>Principle</h3>
+<pre><code>The state space has structure:
+  - derived from input → polynomial-sized
+  - configurations of input → exponential-sized
+
+The computation navigates this space:
+  - convergent navigation → each step is progress → polynomial total
+  - non-convergent navigation → dead ends → potentially exponential
+
+The boundary:
+  - P: exploitable structure enables convergent navigation
+  - NP-hard: verification structure exists, navigation structure unknown
+
+The witness:
+  - encodes the path through configuration space
+  - polynomial size (else verification wouldn't be polynomial)
+  - finding it = navigating exponential space
+  - checking it = processing polynomial object
+
+The open question (P vs NP):
+  - is there always hidden structure that enables convergent search?
+  - or is non-convergence sometimes fundamental?
+</code></pre>
+<hr />
+<h2>Part III: Better Class Names</h2>
+<h3>Better Names</h3>
+<p>The standard names are historical accidents. Here's what they actually mean:</p>
+<pre><code>Standard Name    What It Actually Means               Better Name
+───────────────────────────────────────────────────────────────────────
+L                log space                            pointer-bound
+NL               nondeterministic log space           pointer-bound + guessing
+P                polynomial time                      input-bound
+NP               nondeterministic polynomial          verifiable
+co-NP            complement of NP                     refutable
+PSPACE           polynomial space                     game-bound
+EXPTIME          exponential time                     history-bound
+</code></pre>
+<p>The intuitions:</p>
+<pre><code>pointer-bound (L):    can only hold pointers into input, can't accumulate
+input-bound (P):      work scales with input structure, guaranteed progress
+verifiable (NP):      can check a solution fast, finding it might be hard
+refutable (co-NP):    can check a counter-example fast
+game-bound (PSPACE):  adversary gets to respond, alternating moves
+history-bound (EXPTIME): must remember everything, can't compress or forget
+</code></pre>
+<hr />
+<h3>The Memory View (Unifies Everything)</h3>
+<p>The entire hierarchy is about <strong>what the machine can remember</strong>:</p>
+<pre><code>Machine              Memory                  What It Can Track
+─────────────────────────────────────────────────────────────────────────
+Finite automaton     finite states           &quot;which of k situations am I in?&quot;
+                     (constant)              nothing about input itself
+
+Pushdown automaton   finite states + stack   &quot;nesting depth, what's open&quot;
+                     (unbounded but LIFO)
+
+Log-space TM         O(log n) bits           &quot;O(1) pointers into input&quot;
+                                             can re-scan but not accumulate
+
+Poly-time TM         O(poly n) bits          &quot;polynomial amount about input&quot;
+                                             can accumulate, cross-reference
+
+Poly-space TM        O(poly n) bits          same memory as P, but unlimited time
+                     (reusable)              can try all possibilities serially
+
+Exp-time TM          O(2^n) bits             &quot;everything&quot;
+                                             must track full history
+</code></pre>
+<p><strong>Memory is the variable that moves.</strong></p>
+<hr />
+<h3>Regular Expressions and Finite Automata</h3>
+<p>A finite automaton has constant memory — just its state. No matter how long the input, it remembers only "which of k states am I in."</p>
+<pre><code>DFA for &quot;contains 'ab'&quot;:
+
+    ┌───┐  a   ┌───┐  b   ┌───┐
+───►│ 0 │─────►│ 1 │─────►│ 2 │◄──┐
+    └───┘      └───┘      └───┘   │
+      │ b        │ a        └──any┘
+      └──────────┘
+
+States: {0: haven't seen 'a', 1: just saw 'a', 2: saw 'ab'}
+Memory: which state (2 bits, constant forever)
+</code></pre>
+<p>The machine "forgets" everything except what state it's in. Input length doesn't matter — memory is fixed.</p>
+<p><strong>What regular expressions can't do:</strong></p>
+<pre><code>a^n b^n  (same number of a's then b's)
+
+Why? To check this, you must count how many a's you've seen.
+Count can grow to n. But DFA has constant memory.
+If n &gt; number of states, you'll confuse different counts.
+
+DFA can only ask: &quot;have I seen 0, 1, 2, or 3+ a's?&quot;
+Not: &quot;have I seen exactly 47 a's?&quot;
+</code></pre>
+<p>The limitation is <strong>counting</strong>. Finite memory can't count unboundedly.</p>
+<hr />
+<h3>Pushdown Automata and Context-Free</h3>
+<p>A pushdown automaton adds a stack — unbounded memory but LIFO access.</p>
+<pre><code>PDA for a^n b^n:
+
+  see 'a' → push 'a'
+  see 'b' → pop 'a'
+  accept if stack empty at end
+
+Stack grows to n, but only need top.
+Can count by accumulating on stack.
+</code></pre>
+<p><strong>What PDA can do that DFA can't:</strong></p>
+<pre><code>✓ a^n b^n          (count and match)
+✓ balanced parens  (push open, pop on close)
+✓ palindromes      (push first half, match second half)
+</code></pre>
+<p><strong>What PDA can't do:</strong></p>
+<pre><code>✗ a^n b^n c^n      (need to count twice, stack is consumed)
+✗ ww               (exact copy — need random access to first half)
+✗ {a^i b^j c^k : i=j or j=k}  (need to compare two different pairs)
+</code></pre>
+<p>The limitation is <strong>LIFO access</strong>. Stack can only see the top. Can't cross-reference or access middle.</p>
+<hr />
+<h3>The Language Hierarchy</h3>
+<pre><code>Regular  ⊂  Context-Free  ⊂  Context-Sensitive  ⊂  Decidable  ⊂  All Languages
+
+Machine:    DFA         PDA              LBA                TM
+Memory:     O(1)        O(n) stack       O(n) tape          unbounded
+</code></pre>
+<p>Each level adds memory/access capability.</p>
+<hr />
+<h3>How Automata Map to Complexity Classes</h3>
+<p>Here's the connection that's rarely explained clearly:</p>
+<pre><code>Automaton/Language        Complexity of membership testing
+──────────────────────────────────────────────────────────────────────
+DFA / Regular             O(n) time, O(1) space — in L
+PDA / Context-Free        O(n³) time worst case — in P
+LBA / Context-Sensitive   PSPACE-complete
+TM / Decidable            can be arbitrarily hard
+</code></pre>
+<p>But wait — the complexity depends on <strong>what's fixed vs what's input</strong>:</p>
+<hr />
+<h3>The Input Matters (This Is Key)</h3>
+<p><strong>Scenario 1: Fixed regex, string is input</strong></p>
+<pre><code>Regex: /[a-z]+@[a-z]+\.[a-z]+/  (email pattern)
+String: &quot;user@domain.com&quot;
+
+Compile regex to DFA once (at compile time).
+Run string through DFA: O(n) time, O(1) space.
+
+This is what a lexer does. Blazing fast.
+Complexity: O(n) — linear in string length.
+</code></pre>
+<p><strong>Scenario 2: Regex is input, string is input</strong></p>
+<pre><code>Given: arbitrary regex R and string S
+Question: does S match R?
+
+Must process R to build automaton.
+NFA is easy: O(|R|) size
+NFA → DFA can explode: up to O(2^|R|) states
+
+But: can simulate NFA directly in O(|R| × |S|) time.
+Complexity: P (polynomial in both inputs)
+</code></pre>
+<p><strong>Scenario 3: Two regexes as input, test equivalence</strong></p>
+<pre><code>Given: regex R1 and R2
+Question: is L(R1) = L(R2)?
+
+Must check: every string matched by R1 is matched by R2, and vice versa.
+
+Turns out: PSPACE-complete
+
+Why? The operations compound:
+  L(R1) = L(R2)  iff  (L(R1) ∩ L(R2)') ∪ (L(R1)' ∩ L(R2)) = ∅
+
+  Complementing DFA is easy but intersection can blow up.
+  Nested regex operations create exponential state spaces.
+</code></pre>
+<p><strong>Scenario 4: "Regexes" with backreferences</strong></p>
+<pre><code>Pattern: (a+)\1
+Meaning: some a's followed by the same number of a's (a^n a^n = a^2n)
+
+This is NOT regular! It requires counting and remembering.
+Programming language &quot;regexes&quot; aren't theoretical regular expressions.
+
+Matching with backreferences: NP-complete
+</code></pre>
+<hr />
+<h3>The Compiler Connection</h3>
+<pre><code>Compiler Stage     Language Class      Complexity (fixed grammar)
+──────────────────────────────────────────────────────────────────
+Lexer              Regular             O(n) per token — linear
+Parser             Context-Free        O(n) for LL/LR, O(n³) general
+Type checking      Context-Sensitive   depends on type system
+                   (or worse)          can be EXPTIME for complex systems
+</code></pre>
+<p>Why lexer is separate from parser (revisited):</p>
+<pre><code>Lexer:
+  Language class: Regular
+  Machine: DFA
+  Memory: O(1)
+  Time: O(n)
+
+Parser:
+  Language class: Context-Free
+  Machine: PDA (or table-driven equivalent)
+  Memory: O(n) stack in worst case
+  Time: O(n) for practical grammars
+
+Mixed (regex rules in CFG):
+  Language class: still Context-Free, but...
+  Grammar: huge (every character-level rule)
+  Time: much worse constants
+</code></pre>
+<p>Separation isn't about language power — it's about keeping each stage in its optimal complexity class.</p>
+<hr />
+<h3>The Full Picture</h3>
+<pre><code>Memory           Automaton        Languages         Complexity
+─────────────────────────────────────────────────────────────────────────
+O(1)             DFA              Regular           membership in L
+                                                    equivalence in PSPACE
+
+O(n) stack       PDA              Context-Free      membership in P
+                                                    equivalence undecidable!
+
+O(log n)         log-space TM     —                 L (between Regular and P)
+
+O(n) tape        LBA              Context-Sensitive PSPACE
+
+O(poly n)        poly-time TM     P                 definition of P
+
+O(poly n) +      poly-time NTM    NP                witness checkable
+guess
+
+O(poly n) +      poly-space TM    PSPACE            game trees,
+reuse time                                          alternation
+
+O(2^n)           exp-time TM      EXPTIME           full enumeration
+                                                    provably hard
+</code></pre>
+<hr />
+<h3>The Naming (Unified)</h3>
+<p>By memory/capability:</p>
+<pre><code>Class         Memory              Access           Better Name
+───────────────────────────────────────────────────────────────
+Regular       O(1) states         none             stateless
+Context-Free  O(n) stack          LIFO             stack-bound
+L             O(log n) tape       random           pointer-bound
+P             O(poly n) tape      random           input-bound
+NP            O(poly n) + guess   random           verifiable
+PSPACE        O(poly n) reused    random           game-bound
+EXPTIME       O(2^n) tape         random           history-bound
+</code></pre>
+<p>By what the computation processes:</p>
+<pre><code>Class         Processes                             Name
+───────────────────────────────────────────────────────────────
+Regular       characters, no memory                 streaming
+Context-Free  characters, with nesting              nested
+P             input structures                      structural
+NP            witness (finding: configuration)      verifiable
+PSPACE        configurations, adversarial           adversarial
+EXPTIME       configurations, with full history     archival
+</code></pre>
+<hr />
+<h3>Principle</h3>
+<pre><code>Regular:     &quot;I process characters but immediately forget them.&quot;
+             &quot;I only know which state I'm in — nothing about the past.&quot;
+             Can't count. Can't match nesting.
+
+Context-Free: &quot;I can remember nesting depth via a stack.&quot;
+              &quot;But I can't cross-reference or look back.&quot;
+              Can match parens. Can't match a^n b^n c^n.
+
+L:           &quot;I can hold a few pointers into the input.&quot;
+             &quot;I can re-read but can't accumulate.&quot;
+             Between Regular and P.
+
+P:           &quot;I can accumulate polynomial information about input.&quot;
+             &quot;Each step makes progress.&quot;
+             Processing the input itself.
+
+NP:          &quot;I can verify a polynomial-sized proof.&quot;
+             &quot;But finding that proof might require search.&quot;
+             Processing witnesses, searching configurations.
+
+PSPACE:      &quot;I can play games — consider your move, my response, your counter...&quot;
+             &quot;Memory is reused. Time is spent enumerating.&quot;
+             Adversarial alternation.
+
+EXPTIME:     &quot;I must track everything. No forgetting allowed.&quot;
+             &quot;The history IS the problem.&quot;
+             Full enumeration with memory.
+</code></pre>
+<hr />
+<h2>Part IV: Canonical Algorithms</h2>
+<h3>The Core Insight</h3>
+<p>Hardness comes from the relationship between:</p>
+<pre><code>1. State space size       how many possible states exist
+2. Solution density       what fraction satisfies the property
+3. Structure              does local information help navigate?
+4. Convergence            can each step guarantee progress?
+</code></pre>
+<p>The key asymmetry:</p>
+<pre><code>Forward:   follow deterministic steps, one path, information lost
+Backward:  many inputs could produce this output, must search
+</code></pre>
+<p>Computation is lossy — multiple inputs map to same output. Going backward means recovering lost information.</p>
+<hr />
+<h3>The Hierarchy</h3>
+<p>Each class is defined by what the machine can remember:</p>
+<pre><code>Name           Memory                    Canonical Structure      Canonical Algorithm
+─────────────────────────────────────────────────────────────────────────────────────────
+lookup         O(1) states               transition table         DFA traversal
+stack          O(n) stack                call stack               recursive descent
+scanner        O(log n) pointers         two pointers             Floyd's cycle detection
+accumulator    O(n^k) facts              visited set              BFS / Dijkstra
+verifier       O(n^k) witness            certificate              SAT solver (backtracking)
+explorer       O(n^k) reused             unmemoized recursion     minimax (no transposition)
+archivist      O(2^n) everything         memoized recursion       minimax (full transposition)
+</code></pre>
+<hr />
+<h3>Lookup (Regular)</h3>
+<p><strong>Memory:</strong> O(1) — fixed number of states, no matter input size.</p>
+<p><strong>Structure:</strong> Transition table. State × symbol → state.</p>
+<pre><code>        a    b    c
+      ┌────┬────┬────┐
+  S0  │ S1 │ S0 │ S0 │
+  S1  │ S1 │ S2 │ S0 │
+  S2  │ S1 │ S0 │ S3 │  ← accept
+      └────┴────┴────┘
+
+Size: |states| × |alphabet| — constant
+Memory: one cell — &quot;which row am I in?&quot;
+</code></pre>
+<p><strong>Behavior:</strong> Input flows through. State updates. Nothing accumulates.</p>
+<p><strong>Limitation:</strong> Can't count. Can't match nesting. The machine "forgets" everything except which state it's in.</p>
+<pre><code>Can:    &quot;contains 'ab'&quot;
+        &quot;ends with '.com'&quot;
+        &quot;valid identifier&quot;
+
+Can't:  a^n b^n (equal counts)
+        balanced parens (nesting)
+        palindromes (need to remember first half)
+</code></pre>
+<p><strong>Algorithm:</strong> DFA traversal.</p>
+<pre><code class="language-python">def match(table, accept_states, input):
+    state = 0
+    for char in input:
+        state = table[state][char]  # just a lookup
+    return state in accept_states
+</code></pre>
+<p><strong>One-liner:</strong> "I'm a table. Input goes in, answer comes out. I remember nothing."</p>
+<hr />
+<h3>Stack (Context-Free)</h3>
+<p><strong>Memory:</strong> O(n) — stack grows with nesting depth, but LIFO only.</p>
+<p><strong>Structure:</strong> Call stack. Recursion itself IS the pushdown automaton.</p>
+<pre><code class="language-python">def parse_expr():
+    parse_term()
+    while see('+'):
+        consume('+')
+        parse_term()
+
+def parse_term():
+    parse_factor()
+    while see('*'):
+        consume('*')
+        parse_factor()
+
+def parse_factor():
+    if see('('):
+        consume('(')
+        parse_expr()     # stack grows — recursion!
+        consume(')')     # stack shrinks — return!
+    else:
+        parse_number()
+</code></pre>
+<p><strong>Behavior:</strong> Nesting pushes. Return pops. When you return, you forget.</p>
+<p><strong>Limitation:</strong> Can't cross-reference. Can't look back. Only see top of stack.</p>
+<pre><code>Can:    balanced parens ( )
+        a^n b^n (push a's, pop on b's)
+        nested structures
+
+Can't:  a^n b^n c^n (need to count twice)
+        ww (exact copy — need random access)
+        cross-references between parts
+</code></pre>
+<p><strong>Algorithm:</strong> Recursive descent parsing.</p>
+<p><strong>One-liner:</strong> "I'm a stack. I track what's open. When it closes, I forget."</p>
+<hr />
+<h3>Scanner (L — Log Space)</h3>
+<p><strong>Memory:</strong> O(log n) — enough for constant number of pointers into input.</p>
+<p><strong>Structure:</strong> Two pointers. Positions only, no storage.</p>
+<pre><code class="language-python">def has_cycle(head):
+    slow = head
+    fast = head
+    while fast and fast.next:
+        slow = slow.next          # one step
+        fast = fast.next.next     # two steps
+        if slow == fast:
+            return True
+    return False
+
+# Memory: two pointers
+# Can re-read input, can't store anything about it
+</code></pre>
+<p><strong>Behavior:</strong> Scan input. Compare positions. Can re-read but can't accumulate findings.</p>
+<p><strong>Limitation:</strong> Can't mark "visited." Can't build up information. Just fingers on the page.</p>
+<pre><code>Can:    string equality (two pointers, compare char by char)
+        cycle detection (fast/slow pointers)
+        palindrome check (two pointers inward)
+
+Can't:  track visited nodes (need O(n) bits)
+        accumulate statistics
+        remember what you've seen
+</code></pre>
+<p><strong>Algorithm:</strong> Floyd's cycle detection, two-pointer techniques.</p>
+<p><strong>One-liner:</strong> "I'm a finger on the page. I can re-read, but I can't take notes."</p>
+<hr />
+<h3>Accumulator (P — Polynomial Time)</h3>
+<p><strong>Memory:</strong> O(n^k) — polynomial facts accumulated.</p>
+<p><strong>Structure:</strong> Visited set. Hash table. Growing collection of facts.</p>
+<pre><code class="language-python">def bfs(graph, start):
+    visited = {start}          # accumulates!
+    queue = [start]
+    while queue:
+        node = queue.pop(0)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)  # progress!
+                queue.append(neighbor)
+    return visited
+
+# Each step: one new fact
+# Never backtrack
+# Work = progress
+</code></pre>
+<p><strong>Behavior:</strong> Add facts. Never remove. Monotonic progress. Each step shrinks the remaining problem.</p>
+<p><strong>Why polynomial is natural:</strong></p>
+<pre><code>Polynomial = processing the input itself
+Exponential = enumerating what the input represents
+
+Input: n-node graph
+Polynomial work: O(n²) edges, O(n³) triples — derived from input
+Exponential work: O(2^n) subsets — configurations the input quantifies over
+</code></pre>
+<pre><code>Can:    shortest path
+        sorting
+        matrix multiplication
+        primality testing
+
+All share: each step = guaranteed progress toward answer
+</code></pre>
+<p><strong>Algorithm:</strong> BFS, Dijkstra, dynamic programming.</p>
+<p><strong>One-liner:</strong> "I'm a notebook. I write facts down. I never erase. Every note helps."</p>
+<hr />
+<h3>Verifier (NP — Nondeterministic Polynomial)</h3>
+<p><strong>Memory:</strong> O(n^k) for checking — but finding the witness might require searching 2^n.</p>
+<p><strong>Structure:</strong> Witness / certificate. The proof you can check.</p>
+<pre><code class="language-python"># Sudoku: hard to solve, easy to check
+
+def verify_sudoku(grid):          # O(n²) — polynomial
+    for row in grid:
+        if not valid_set(row): return False
+    for col in columns(grid):
+        if not valid_set(col): return False
+    for box in boxes(grid):
+        if not valid_set(box): return False
+    return True
+
+def solve_sudoku(grid):           # exponential search
+    # try configurations until one verifies
+    ...
+</code></pre>
+<p><strong>Behavior:</strong> Given proof, check fast. Finding proof, search hard.</p>
+<p><strong>The asymmetry:</strong></p>
+<pre><code>Verification: process witness (polynomial-sized) — accumulator-like
+Search: explore configurations (exponential-sized) — might not converge
+</code></pre>
+<pre><code>SAT:       verify assignment in O(n), find assignment in O(2^n)?
+Sudoku:    verify grid in O(n²), solve in O(k^n)?
+Factoring: verify factors in O(n²), find factors in ???
+</code></pre>
+<p><strong>Why this matters:</strong></p>
+<pre><code>Witness encodes the search path — compressed directions to the answer.
+Given witness: verify = polynomial (check each step)
+Without witness: search = exponential? (we don't know)
+</code></pre>
+<p><strong>Algorithm:</strong> SAT solver, backtracking with pruning.</p>
+<p><strong>One-liner:</strong> "I'm a proof-checker. Give me the proof, I'll check it fast. Don't ask me to find it."</p>
+<hr />
+<h3>Explorer (PSPACE — Polynomial Space)</h3>
+<p><strong>Memory:</strong> O(n^k) — but reused across branches. Same space, many paths.</p>
+<p><strong>Structure:</strong> Unmemoized recursion. Game tree DFS. Forget on backtrack.</p>
+<pre><code class="language-python">def minimax(position, depth, maximizing):
+    if depth == 0 or game_over(position):
+        return evaluate(position)
+
+    if maximizing:
+        value = -infinity
+        for move in legal_moves(position):
+            child = make_move(position, move)
+            value = max(value, minimax(child, depth-1, False))
+            # child is FORGOTTEN here — space reused!
+        return value
+    else:
+        value = +infinity
+        for move in legal_moves(position):
+            child = make_move(position, move)
+            value = min(value, minimax(child, depth-1, True))
+            # child is FORGOTTEN here — space reused!
+        return value
+
+# Space: O(depth) — polynomial
+# Time: O(2^depth) — exponential
+# Key: forgetting enables space reuse
+</code></pre>
+<p><strong>Behavior:</strong> Explore all paths. Backtrack = forget. Reuse space. Spend time instead.</p>
+<p><strong>Why PSPACE contains NP:</strong></p>
+<pre><code>NP: &quot;guess&quot; the right path (nondeterminism)
+PSPACE: &quot;try&quot; every path, one at a time (enumeration)
+
+Same configurations explored.
+NP does it with magic guessing.
+PSPACE does it with time and forgetting.
+</code></pre>
+<p><strong>The game connection:</strong></p>
+<pre><code>NP:     ∃ — &quot;does there exist a winning move?&quot;
+PSPACE: ∀∃∀∃ — &quot;for all opponent moves, exists my response, for all counters...&quot;
+
+Alternation = adversary takes turns.
+Can't just guess — opponent responds.
+</code></pre>
+<pre><code>Can:    QBF (quantified boolean formula)
+        optimal game play (polynomial-bounded)
+        regex equivalence
+
+All share: adversarial, alternating, must consider all responses
+</code></pre>
+<p><strong>Algorithm:</strong> Minimax, game tree search, DPLL without learning.</p>
+<p><strong>One-liner:</strong> "I'm a maze-walker. I try every path. When I backtrack, I forget where I've been. I have time."</p>
+<hr />
+<h3>Archivist (EXPTIME — Exponential Time)</h3>
+<p><strong>Memory:</strong> O(2^n) — must remember everything. Can't forget, can't compress.</p>
+<p><strong>Structure:</strong> Memoized recursion. Full transposition table.</p>
+<pre><code class="language-python">transposition = {}  # THIS is the exponential memory
+
+def minimax_memo(position, depth, maximizing):
+    key = (position, depth, maximizing)
+    if key in transposition:
+        return transposition[key]
+
+    if depth == 0 or game_over(position):
+        return evaluate(position)
+
+    if maximizing:
+        value = -infinity
+        for move in legal_moves(position):
+            child = make_move(position, move)
+            value = max(value, minimax_memo(child, depth-1, False))
+        transposition[key] = value  # NEVER FORGET
+        return value
+    else:
+        # ... similar
+
+# Space: O(positions) — exponential
+# Time: O(positions) — exponential
+# Key: remembering IS the problem
+</code></pre>
+<p><strong>Behavior:</strong> Explore all paths. Remember every position. Can't forget — problem structure requires the history.</p>
+<p><strong>Why provably hard:</strong></p>
+<pre><code>Unlike NP-hard (where we just can't prove P≠NP),
+EXPTIME-complete problems are provably not in P.
+
+The game tree IS the problem.
+Every position matters.
+No shortcut exists.
+</code></pre>
+<pre><code>Examples:
+    generalized chess (n×n board)
+    generalized Go
+    full game trees without repetition
+</code></pre>
+<p><strong>Algorithm:</strong> Minimax with full memoization.</p>
+<p><strong>One-liner:</strong> "I'm a maze-walker with a map. I try every path. I mark every room. I need a very big map."</p>
+<hr />
+<h3>The Convergence View</h3>
+<p>What separates the classes:</p>
+<pre><code>Class        Convergence                          Progress Guarantee
+───────────────────────────────────────────────────────────────────────────
+lookup       input flows through                  O(1) per character
+stack        nesting resolves                     O(1) per token
+scanner      pointers traverse                    O(1) per step
+accumulator  facts accumulate                     each step = permanent progress
+verifier     verify converges, search might not   verification: yes, search: ???
+explorer     enumerate all, forget between        no per-step guarantee, eventual completion
+archivist    enumerate all, remember all          no per-step guarantee, exponential total
+</code></pre>
+<hr />
+<h3>The Information View</h3>
+<p>How much information can be extracted:</p>
+<pre><code>Class        Information Capacity         Extraction Rate
+──────────────────────────────────────────────────────────────────────
+lookup       O(log k) bits — which state   O(1) per input symbol
+stack        O(n) bits — stack contents    O(1) per token
+scanner      O(log n) bits — positions     O(1) per comparison
+accumulator  O(n^k) bits — all findings    O(1) per step, guaranteed
+verifier     witness has O(n^k) bits       O(1) per step to verify; search: ???
+explorer     O(n^k) bits active at once    O(1) per step, but restarting
+archivist    O(2^n) bits total             O(1) per step, never discard
+</code></pre>
+<hr />
+<h3>The Physical View</h3>
+<pre><code>lookup       &quot;streaming — input through, nothing saved&quot;
+stack        &quot;call stack — nesting tracked, return forgets&quot;
+scanner      &quot;two fingers on page — scan, compare, no notes&quot;
+accumulator  &quot;notebook — write facts, never erase&quot;
+verifier     &quot;proof checker — verify easy, discovery hard&quot;
+explorer     &quot;maze walker — all paths, no map&quot;
+archivist    &quot;maze walker — all paths, full map&quot;
+</code></pre>
+<hr />
+<h3>The Compiler Connection</h3>
+<pre><code>Stage               Class           Why
+─────────────────────────────────────────────────────────────────────
+Lexer               lookup          DFA, fixed table, input flows through
+Parser              stack           recursive descent, nesting = stack depth
+Name resolution     accumulator     build symbol table, monotonic
+Type inference      accumulator     (usually) — propagate types
+                    archivist       (F-omega) — can blow up
+Register allocation verifier        NP-hard (graph coloring), use heuristics
+Instruction sched   verifier        NP-hard, use heuristics
+Optimization        accumulator     dataflow = fixed-point over lattice
+</code></pre>
+<hr />
+<h3>The Practical Implications</h3>
+<pre><code>You hit lookup:      use DFA, will be fast
+You hit stack:       use recursive descent or table parser
+You hit scanner:     use pointer tricks, very constrained
+You hit accumulator: use BFS/Dijkstra/DP, will converge
+You hit verifier:    stop looking for poly algorithm
+                     use heuristics, approximation, SAT solvers
+You hit explorer:    game tree, exponential time, be patient
+You hit archivist:   provably exponential, limit scope or approximate
+</code></pre>
+<hr />
+<h3>Principle</h3>
+<pre><code>lookup       &quot;I'm a table.&quot;
+             input flows through, state updates, nothing accumulates.
+
+stack        &quot;I'm a stack.&quot;
+             nesting pushes, return pops, pop forgets.
+
+scanner      &quot;I'm pointers.&quot;
+             scan and compare, can't take notes.
+
+accumulator  &quot;I'm a notebook.&quot;
+             write facts, never erase, every step = progress.
+
+verifier     &quot;I'm a proof-checker.&quot;
+             give me proof, I verify fast. finding it is your problem.
+
+explorer     &quot;I'm a maze-walker without a map.&quot;
+             try all paths, forget on backtrack, reuse space, spend time.
+
+archivist    &quot;I'm a maze-walker with a full map.&quot;
+             try all paths, remember all positions, exponential map required.
+</code></pre>
+</div>
+
+<script src="/js/shell.js"></script>
+</body>
+</html>

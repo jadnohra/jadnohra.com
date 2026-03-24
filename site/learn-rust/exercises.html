@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exercises
+nav_Exercises — jadnohra.com</title>
+<link rel="stylesheet" href="/css/editor.css">
+</head>
+<body data-page="learn-rust">
+
+<div class="content">
+<h1>Exercises</h1>
+<blockquote>
+<p><strong>This page and its exercises are a work in progress.</strong></p>
+</blockquote>
+<h2>How these are organized</h2>
+<p>Most Rust courses organize exercises around language features. Structs, then enums, then traits, then generics, then lifetimes, then concurrency. The progression follows the language's syntax, from simple constructs to complex ones.</p>
+<p>These exercises are organized around the framework. The progression follows space, time, coordinates, and coherence, and introduces language features as they become necessary to express each idea. You will encounter threads, mutexes, and memory ordering long before you would in a conventional Rust course, because the framework demands them early.</p>
+<p>Declarations come first because they are the vocabulary. Foundations come second because they connect the vocabulary to the problems Rust exists to solve. Ownership space, interior mutability, lifetimes, and memory ordering each explore one region of the design space in depth. Synthesis ties them together.</p>
+<h2>The sections</h2>
+<p><strong><a href="#0--declarations">0 · Declarations.</a></strong> The <code>explicit!</code> notation and its mapping to real Rust. Every combination of <code>owner</code>/<code>name</code>, <code>take</code>/<code>mem_copy</code>/<code>coord_shared</code>/<code>coord_exclusive</code>, and <code>rebindable</code>. 21 exercises.</p>
+<p><strong><a href="https://github.com/jadnohra/learn-rust/tree/main/exercises/01-foundations/src/bin">1 · Foundations.</a></strong> Derived data, the borrow rule, identity and validity, shadowing, move semantics, runtime coherence, threads, mutexes, memory ordering, and language design choices. The problems Rust exists to solve, seen from first principles. 10 exercises.</p>
+<p><strong><a href="https://github.com/jadnohra/learn-rust/tree/main/exercises/02-ownership-space/src/bin">2 · Ownership Space.</a></strong> Where values live. <code>const</code> vs <code>static</code>, stack vs heap, <code>Box</code>, <code>Rc</code>, <code>RefCell</code>, <code>Arc</code>, <code>Mutex</code>, <code>Weak</code>, drop order, and memory layout. 10 exercises.</p>
+<p><strong><a href="https://github.com/jadnohra/learn-rust/tree/main/exercises/03-interior-mutability/src/bin">3 · Interior Mutability.</a></strong> <code>Cell</code>, <code>RefCell</code>, <code>Mutex</code>, <code>RwLock</code>, and the spectrum between compile-time and runtime enforcement. Shared mutation still obeys the borrow rule, but the enforcement moves to runtime. 10 exercises.</p>
+<p><strong><a href="https://github.com/jadnohra/learn-rust/tree/main/exercises/04-lifetimes/src/bin">4 · Lifetimes.</a></strong> Validity, multiple inputs, elision rules, lifetimes in structs, <code>'static</code>, non-lexical lifetimes, value tracking, conservative analysis, restructuring code, and <code>unsafe</code> as an escape hatch. 10 exercises.</p>
+<p><strong><a href="https://github.com/jadnohra/learn-rust/tree/main/exercises/05-memory-ordering/src/bin">5 · Memory Ordering.</a></strong> Visibility, store buffers, release/acquire, <code>SeqCst</code>, <code>Relaxed</code>, spinlocks, double-checked locking, hardware models, acquire-release pairs, and lock-free queues. 10 exercises.</p>
+<p><strong><a href="https://github.com/jadnohra/learn-rust/tree/main/exercises/06-synthesis/src/bin">6 · Synthesis.</a></strong> Coherence strategies, weak reference cycles, thread pools, choosing between type strategies, implementing <code>Rc</code> from scratch, message passing vs shared state, the observer pattern, a lock-free stack, analyzing a real crate, and designing your own ownership scheme. 10 exercises.</p>
+<hr />
+<h2>0 · Declarations</h2>
+<blockquote>
+<p><strong>This page is a work in progress.</strong> Rust notation is compact because it is minimal and overloaded. The <code>spelled</code> crate undoes that compression for clarity. If you know Rust syntax but it feels tedious and convoluted, this page may help. We are working on expanding and explaining it better.</p>
+</blockquote>
+<p>Rust hides a lot behind simple syntax. <code>let y = x</code> might copy the value, move it, or borrow it. The type determines which one, and the syntax gives no indication.</p>
+<p>This is a design choice. Experienced Rust programmers carry the distinctions in their head. A learner does not have those distinctions yet, and learning them from syntax that hides them is working uphill.</p>
+<p>The course includes a companion crate called <code>spelled</code> — as in spelling out what happens. A macro called <code>explicit!</code> expands Rust's implicit syntax into a form where every operation says what it does.</p>
+<pre><code class="language-rust">explicit! {
+    let owner(y) = take_or_mem_copy(x);
+}
+</code></pre>
+<p>This compiles and runs. It does the same thing as <code>let y = x</code>, but it says what is happening.</p>
+<h3>The left side</h3>
+<p>The left side of a <code>let</code> says what the binding receives.</p>
+<ul>
+<li><code>owner(y)</code> — y receives ownership. It controls when the space dies.</li>
+<li><code>name(r)</code> — r receives coordinates to space owned elsewhere. A reference.</li>
+<li><code>rebindable()</code> — the binding can be pointed at something else later.</li>
+</ul>
+<h3>The right side</h3>
+<p>The right side says what happens to the source.</p>
+<ul>
+<li><code>take(x)</code> — transfers ownership. x becomes invalid.</li>
+<li><code>mem_copy(x)</code> — duplicates the bytes. x stays valid.</li>
+<li><code>take_or_mem_copy(x)</code> — lets the compiler decide based on the type. Copy types get copied, everything else gets moved.</li>
+<li><code>coord_shared(x)</code> — creates shared coordinates. Multiple allowed at the same time.</li>
+<li><code>coord_exclusive(x)</code> — creates exclusive coordinates. Only one allowed.</li>
+<li><code>at(r)</code> — follows coordinates to get the value.</li>
+</ul>
+<h3>The exercises</h3>
+<p>Each exercise shows the explicit version first, then asks you to write the real Rust equivalent. You learn by seeing what the translation erases.</p>
+<details>
+<summary>01 · literal</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    explicit! {
+        // Combination: let owner(x) = 5
+        // Meaning: new SPACE with literal value, x owns it
+        //
+        // Stack:
+        // ┌─────────┐
+        // │    5    │ &lt;--- x (owner)
+        // └─────────┘
+        let owner(x) = 5;
+        println!(&quot;x = {}&quot;, x);
+    }
+}
+
+fn exercise() {
+    // Write the real Rust equivalent:
+    // let ??? x = 5;
+    // println!(&quot;x = {}&quot;, x);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>02 · rebindable literal</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn example() {
+    explicit! {
+        // Combination: let owner(rebindable(x)) = 5
+        // Meaning: new SPACE, x owns it, rebindable
+        //
+        // Before:            After x = 10:
+        // ┌─────────┐        ┌─────────┐
+        // │    5    │ &lt;-- x  │   10    │ &lt;-- x  (same slot, new value)
+        // └─────────┘        └─────────┘
+        let owner(rebindable(x)) = 5;
+        x = take_or_mem_copy(10);
+        println!(&quot;x = {}&quot;, x);
+    }
+}
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn exercise() {
+    // Write the real Rust equivalent:
+    // let ??? x = 5;
+    // x = 10;
+    // println!(&quot;x = {}&quot;, x);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>03 · mem copy</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    let x = 5;
+    explicit! {
+        // Combination: let owner(y) = mem_copy(x)
+        // Meaning: duplicate SPACE, x remains valid, y owns the copy
+        //
+        // Stack:
+        // ┌─────────┐
+        // │    5    │ &lt;--- x (owner)
+        // ├─────────┤
+        // │    5    │ &lt;--- y (owner of copy)
+        // └─────────┘
+        //
+        // Both bindings own independent SPACE
+        let owner(y) = mem_copy(x);
+        println!(&quot;x = {}, y = {}&quot;, x, y);
+    }
+}
+
+fn exercise() {
+    let x = 5;
+    // Write the real Rust equivalent of: let owner(y) = mem_copy(x)
+    // let y = ??? x;
+    // println!(&quot;x = {}, y = {}&quot;, x, y);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>04 · rebindable mem copy</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn example() {
+    let x = 5;
+    explicit! {
+        // Combination: let owner(rebindable(y)) = mem_copy(x)
+        // Meaning: duplicate SPACE, y owns it, rebindable
+        let owner(rebindable(y)) = mem_copy(x);
+        y = take_or_mem_copy(20);
+        println!(&quot;x = {}, y = {}&quot;, x, y);
+    }
+}
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn exercise() {
+    let x = 5;
+    // Write the real Rust equivalent:
+    // let ??? y = ??? x;
+    // y = 20;
+    // println!(&quot;x = {}, y = {}&quot;, x, y);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>05 · take</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    let x = String::from(&quot;hello&quot;);
+    explicit! {
+        // Combination: let owner(y) = take(x)
+        // Meaning: transfer ownership, x invalidated, y now owns
+        //
+        // Before take(x):
+        //      Stack                     Heap
+        // ┌───────────────┐        ┌─────────────┐
+        // │ ptr ----------│-------&gt;│ &quot;hello&quot;     │
+        // │ len: 5        │ &lt;-- x  └─────────────┘
+        // │ cap: 5        │    (owner)
+        // └───────────────┘
+        //
+        // After take(x):
+        //      Stack                     Heap
+        // ┌───────────────┐        ┌─────────────┐
+        // │ ptr ----------│-------&gt;│ &quot;hello&quot;     │  (same heap)
+        // │ len: 5        │ &lt;-- y  └─────────────┘
+        // │ cap: 5        │    (owner) &lt;... x (invalid)
+        // └───────────────┘
+        let owner(y) = take(x);
+        println!(&quot;y = {}&quot;, y);
+        // println!(&quot;x = {}&quot;, x);  // won't compile: x moved
+    }
+}
+
+fn exercise() {
+    let x = String::from(&quot;hello&quot;);
+    // Write the real Rust equivalent:
+    // let y = ??? x;
+    // println!(&quot;y = {}&quot;, y);
+    // // println!(&quot;x = {}&quot;, x);  // won't compile: x moved
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>06 · rebindable take</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn example() {
+    let x = String::from(&quot;hello&quot;);
+    explicit! {
+        // Combination: let owner(rebindable(y)) = take(x)
+        // Meaning: transfer ownership to y, rebindable
+        let owner(rebindable(y)) = take(x);
+        // String::from() creates new owned SPACE on heap
+        y = take_or_mem_copy(String::from(&quot;world&quot;));
+        println!(&quot;y = {}&quot;, y);
+    }
+}
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn exercise() {
+    let x = String::from(&quot;hello&quot;);
+    // Write the real Rust equivalent:
+    // let ??? y = ??? x;
+    // y = String::from(&quot;world&quot;);
+    // println!(&quot;y = {}&quot;, y);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>07 · take or mem copy</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    let x1 = 5;                        // i32: Copy
+    let x2 = String::from(&quot;hello&quot;);    // String: Move
+    explicit! {
+        // Combination: let owner(y) = take_or_mem_copy(x)
+        // Meaning: compiler decides based on type, y owns result
+        //
+        // i32 (Copy):               String (Move):
+        // ┌─────────┐               ┌───────────┐        ┌─────────┐
+        // │    5    │ &lt;-- x1        │ ptr ------│-------&gt;│ &quot;hello&quot; │
+        // ├─────────┤    (owner)    │ len: 5    │ &lt;-- y2 └─────────┘
+        // │    5    │ &lt;-- y1        │ cap: 5    │    (owner) &lt;... x2 (invalid)
+        // └─────────┘    (owner)    └───────────┘
+        // x1 still valid            (same heap, moved)
+        let owner(y1) = take_or_mem_copy(x1);
+        let owner(y2) = take_or_mem_copy(x2);
+
+        println!(&quot;x1 = {}, y1 = {}&quot;, x1, y1);  // x1 still valid (was copied)
+        println!(&quot;y2 = {}&quot;, y2);
+        // println!(&quot;x2 = {}&quot;, x2);  // won't compile: x2 moved
+    }
+}
+
+fn exercise() {
+    let x1 = 5;                        // i32: Copy
+    let x2 = String::from(&quot;hello&quot;);    // String: Move
+    // Write the real Rust equivalent:
+    // Hint: real Rust uses the same syntax for both—the type determines behavior
+    // let y1 = x1;
+    // let y2 = x2;
+    // println!(&quot;x1 = {}, y1 = {}&quot;, x1, y1);
+    // println!(&quot;y2 = {}&quot;, y2);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>08 · coord shared</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    let x = 5;
+    explicit! {
+        // Combination: let name(r) = coord_shared(x)
+        // Meaning: create shared coordinates to x's SPACE, fixed label
+        //
+        // Stack:
+        // ┌─────────┐
+        // │    5    │ &lt;--- x
+        // ├─────────┤
+        // │ ptr  ---│---&gt; (x's slot)  &lt;--- r1 (shared)
+        // ├─────────┤
+        // │ ptr  ---│---&gt; (x's slot)  &lt;--- r2 (shared)
+        // └─────────┘
+        //
+        // Multiple shared coordinates to same SPACE: OK
+        let name(r1) = coord_shared(x);
+        let name(r2) = coord_shared(x);  // OK: multiple shared coordinates allowed
+        println!(&quot;r1 = {}, r2 = {}, x = {}&quot;, r1, r2, x);
+    }
+}
+
+fn exercise() {
+    let x = 5;
+    // Write the real Rust equivalent:
+    // let r1 = ??? x;
+    // let r2 = ??? x;
+    // println!(&quot;r1 = {}, r2 = {}, x = {}&quot;, r1, r2, x);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>09 · rebindable coord shared</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    let x = 5;
+    let z = 10;
+    explicit! {
+        // Combination: let name(rebindable(r)) = coord_shared(x)
+        // Meaning: shared coordinates, rebindable
+        //
+        // Before:                      After r = coord_shared(z):
+        // ┌─────────┐                  ┌─────────┐
+        // │    5    │ &lt;--- x           │    5    │ &lt;--- x
+        // ├─────────┤                  ├─────────┤
+        // │   10    │ &lt;--- z           │   10    │ &lt;--- z
+        // ├─────────┤                  ├─────────┤
+        // │ ptr ---&gt;│ (x's slot) &lt;-- r │ ptr ---&gt;│ (z's slot) &lt;-- r (retargeted)
+        // └─────────┘                  └─────────┘
+        let name(rebindable(r)) = coord_shared(x);
+        println!(&quot;r points to x: {}&quot;, r);
+        r = coord_shared(z);  // rebind to different SPACE
+        println!(&quot;r points to z: {}&quot;, r);
+    }
+}
+
+fn exercise() {
+    let x = 5;
+    let z = 10;
+    // Write the real Rust equivalent:
+    // let ??? r = ??? x;
+    // println!(&quot;r points to x: {}&quot;, r);
+    // r = ??? z;
+    // println!(&quot;r points to z: {}&quot;, r);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>10 · coord exclusive</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    let mut y = 5;
+    explicit! {
+        // Combination: let name(r) = coord_exclusive(y)
+        // Meaning: create exclusive coordinates to y's SPACE, mutation allowed, fixed label
+        //
+        // 1. Before borrow:
+        // ┌─────────┐
+        // │    5    │ &lt;--- y
+        // └─────────┘
+        //
+        // 2. During borrow (y suspended):
+        // ┌─────────┐
+        // │    5    │ &lt;... y (suspended while r lives)
+        // ├─────────┤
+        // │ ptr ---&gt;│ (y's slot) &lt;--- r (exclusive)
+        // └─────────┘
+        //
+        // 3. After r drops (y restored):
+        // ┌─────────┐
+        // │   10    │ &lt;--- y (usable again)
+        // └─────────┘
+        //
+        // Key: borrow = temporary suspension, not permanent deletion like move
+        let name(r) = coord_exclusive(y);
+        at(r) = 10;  // mutate through exclusive coordinates
+        println!(&quot;y = {}&quot;, y);
+    }
+}
+
+fn exercise() {
+    let mut y = 5;
+    // Write the real Rust equivalent:
+    // let r = ??? y;
+    // *r = 10;
+    // println!(&quot;y = {}&quot;, y);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>11 · rebindable coord exclusive</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn example() {
+    let mut a = 5;
+    let mut b = 10;
+    explicit! {
+        // Combination: let name(rebindable(r)) = coord_exclusive(y)
+        // Meaning: exclusive coordinates, rebindable
+        //
+        // Before:                       After at(r)=100, r=coord_exclusive(b):
+        // ┌─────────┐                   ┌─────────┐
+        // │    5    │ &lt;--- a            │   100   │ &lt;--- a (mutated via r)
+        // ├─────────┤                   ├─────────┤
+        // │   10    │ &lt;--- b            │   10    │ &lt;--- b
+        // ├─────────┤                   ├─────────┤
+        // │ ptr ---&gt;│ (a) &lt;-- r (excl)  │ ptr ---&gt;│ (b) &lt;-- r (retargeted)
+        // └─────────┘                   └─────────┘
+        let name(rebindable(r)) = coord_exclusive(a);
+        at(r) = 100;
+        r = coord_exclusive(b);  // rebind to different SPACE
+        at(r) = 200;
+        println!(&quot;a = {}, b = {}&quot;, a, b);
+    }
+}
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn exercise() {
+    let mut a = 5;
+    let mut b = 10;
+    // Write the real Rust equivalent:
+    // let ??? r = ??? a;
+    // *r = 100;
+    // r = ??? b;
+    // *r = 200;
+    // println!(&quot;a = {}, b = {}&quot;, a, b);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>12 · at mem copy</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    let x = 5;
+    explicit! {
+        let name(r) = coord_shared(x);
+        // Combination: let owner(y) = mem_copy(at(r))
+        // Meaning: get value at coordinates, then duplicate, y owns the copy
+        let owner(y) = mem_copy(at(r));
+        println!(&quot;x = {}, y = {}&quot;, x, y);
+    }
+}
+
+fn exercise() {
+    let x = 5;
+    // Write the real Rust equivalent:
+    // let r = ??? x;
+    // let y = *r;
+    // println!(&quot;x = {}, y = {}&quot;, x, y);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>13 · rebindable at mem copy</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn example() {
+    let x = 5;
+    explicit! {
+        let name(r) = coord_shared(x);
+        // Combination: let owner(rebindable(y)) = mem_copy(at(r))
+        // Meaning: get value at coordinates, duplicate, y owns it, rebindable
+        let owner(rebindable(y)) = mem_copy(at(r));
+        y = take_or_mem_copy(100);
+        println!(&quot;x = {}, y = {}&quot;, x, y);  // x unchanged, y modified
+    }
+}
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn exercise() {
+    let x = 5;
+    // Write the real Rust equivalent:
+    // let r = ??? x;
+    // let ??? y = *r;
+    // y = 100;
+    // println!(&quot;x = {}, y = {}&quot;, x, y);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>14 · at take</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    let b = Box::new(String::from(&quot;hello&quot;));
+    explicit! {
+        // Combination: let owner(x) = take(at(b))
+        // Meaning: get value at coordinates (Box), transfer ownership to x
+        //
+        // Before take(at(b)):
+        //   Stack                  Heap                    Heap
+        // ┌─────────┐        ┌─────────────┐         ┌─────────┐
+        // │ ptr ----│-------&gt;│ ptr/len/cap │--------&gt;│ &quot;hello&quot; │
+        // └─────────┘ &lt;-- b  └─────────────┘         └─────────┘
+        //   (Box owner)        (String)
+        //
+        // After take(at(b)):
+        //   Stack                                    Heap
+        // ┌─────────────┐                      ┌─────────┐
+        // │ ptr/len/cap │---------------------&gt;│ &quot;hello&quot; │
+        // └─────────────┘ &lt;-- x (owner)        └─────────┘
+        //                 &lt;... b (invalid)
+        // x owns String directly (same heap data)
+        let owner(x) = take(at(b));
+        println!(&quot;x = {}&quot;, x);
+        // println!(&quot;b = {:?}&quot;, b);  // won't compile: b moved
+    }
+}
+
+fn exercise() {
+    let b = Box::new(String::from(&quot;hello&quot;));
+    // Write the real Rust equivalent:
+    // Hint: You can move out of a Box by dereferencing it
+    // let x = *b;
+    // println!(&quot;x = {}&quot;, x);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>15 · rebindable at take</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn example() {
+    let b = Box::new(String::from(&quot;hello&quot;));
+    explicit! {
+        // Combination: let owner(rebindable(x)) = take(at(b))
+        // Meaning: get value at coordinates (Box), transfer ownership, rebindable
+        //
+        // Before (Box&lt;String&gt;):
+        //   Stack                 Heap
+        // ┌───────┐         ┌─────────────┐         ┌─────────┐
+        // │ ptr ──│────────&gt;│ ptr/len/cap │────────&gt;│ &quot;hello&quot; │
+        // └───────┘ &lt;-- b   └─────────────┘         └─────────┘
+        //   (Box owner)       (String)                (chars)
+        //
+        // After take(at(b)) - String moved to stack, Box freed:
+        //   Stack                                    Heap
+        // ┌─────────────┐                      ┌─────────┐
+        // │ ptr/len/cap │---------------------&gt;│ &quot;hello&quot; │
+        // └─────────────┘ &lt;-- x (owner, rebindable) └─────────┘
+        //                 &lt;... b (invalid)
+        //
+        // During x = String::from(&quot;world&quot;) - new String created first:
+        //   Stack                                    Heap
+        // ┌─────────────┐                      ┌─────────┐
+        // │ ptr/len/cap │---------------------&gt;│ &quot;hello&quot; │ &lt;-- x
+        // ├─────────────┤                      ├─────────┤
+        // │ ptr/len/cap │---------------------&gt;│ &quot;world&quot; │ (unnamed)
+        // └─────────────┘                      └─────────┘
+        //
+        // After assignment completes:
+        //   Stack                                    Heap
+        // ┌─────────────┐                      ┌─────────┐
+        // │ ptr/len/cap │---------------------&gt;│ &quot;world&quot; │
+        // └─────────────┘ &lt;-- x (owner)        └─────────┘
+        // (&quot;hello&quot; dropped, memory freed)
+        // Note: compiler may optimize, but this is the semantic model Rust guarantees
+        let owner(rebindable(x)) = take(at(b));
+        // String::from() creates new owned SPACE on heap
+        x = take_or_mem_copy(String::from(&quot;world&quot;));
+        println!(&quot;x = {}&quot;, x);
+    }
+}
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn exercise() {
+    let b = Box::new(String::from(&quot;hello&quot;));
+    // Write the real Rust equivalent:
+    // let ??? x = *b;
+    // x = String::from(&quot;world&quot;);
+    // println!(&quot;x = {}&quot;, x);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>16 · tuple unpack</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    let t = (1, 2);
+    explicit! {
+        // Combination: let (owner(a), owner(b)) = t
+        // Meaning: unpack structure, a and b own the unpacked values
+        let (owner(a), owner(b)) = t;
+        println!(&quot;a = {}, b = {}&quot;, a, b);
+    }
+}
+
+fn exercise() {
+    let t = (1, 2);
+    // Write the real Rust equivalent:
+    // let (a, b) = t;
+    // println!(&quot;a = {}, b = {}&quot;, a, b);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>17 · tuple at second</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    let x = 5;
+    let t = (1, &amp;x);
+    explicit! {
+        // Combination: let (owner(a), owner(b)) = (t.0, at(t.1))
+        // Meaning: pick first, get value at coordinates for second, both own their values
+        let (owner(a), owner(b)) = (t.0, at(t.1));
+        println!(&quot;a = {}, b = {}&quot;, a, b);
+    }
+}
+
+fn exercise() {
+    let x = 5;
+    let t = (1, &amp;x);
+    // Write the real Rust equivalent:
+    // Hint: in real Rust you can use pattern matching: let (a, &amp;b) = t;
+    // let (a, b) = (t.0, *t.1);
+    // println!(&quot;a = {}, b = {}&quot;, a, b);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>18 · tuple at both</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    let x = 5;
+    let y = 10;
+    let t = (&amp;x, &amp;y);
+    explicit! {
+        // Combination: let (owner(a), owner(b)) = (at(t.0), at(t.1))
+        // Meaning: get value at coordinates for both, a and b own the copies
+        let (owner(a), owner(b)) = (at(t.0), at(t.1));
+        println!(&quot;a = {}, b = {}&quot;, a, b);
+    }
+}
+
+fn exercise() {
+    let x = 5;
+    let y = 10;
+    let t = (&amp;x, &amp;y);
+    // Write the real Rust equivalent:
+    // Hint: in real Rust you can use pattern matching: let (&amp;a, &amp;b) = t;
+    // let (a, b) = (*t.0, *t.1);
+    // println!(&quot;a = {}, b = {}&quot;, a, b);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>19 · at then unpack</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+fn example() {
+    let t = (1, 2);
+    let r = &amp;t;
+    explicit! {
+        // Combination: let (owner(a), owner(b)) = at(r)
+        // Meaning: get value at coordinates, then unpack, a and b own the copies
+        let (owner(a), owner(b)) = at(r);
+        println!(&quot;a = {}, b = {}&quot;, a, b);
+    }
+}
+
+fn exercise() {
+    let t = (1, 2);
+    let r = &amp;t;
+    // Write the real Rust equivalent:
+    // Hint: in real Rust you can use pattern matching: let &amp;(a, b) = r;
+    // let (a, b) = *r;
+    // println!(&quot;a = {}, b = {}&quot;, a, b);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>20 · tuple rebindable</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn example() {
+    let t = (1, 2);
+    explicit! {
+        // Combination: let (owner(rebindable(a)), owner(rebindable(b))) = t
+        // Meaning: unpack, both own their values, both rebindable
+        let (owner(rebindable(a)), owner(rebindable(b))) = t;
+        a = take_or_mem_copy(100);
+        b = take_or_mem_copy(200);
+        println!(&quot;a = {}, b = {}&quot;, a, b);
+    }
+}
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn exercise() {
+    let t = (1, 2);
+    // Write the real Rust equivalent:
+    // let (??? a, ??? b) = t;
+    // a = 100;
+    // b = 200;
+    // println!(&quot;a = {}, b = {}&quot;, a, b);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+<details>
+<summary>21 · litmus test</summary>
+<pre><code class="language-rust">use spelled::explicit;
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn example() {
+    let mut y = 5;
+    let r = &amp;mut y;
+    explicit! {
+        // The litmus test: Rust's most confusing declaration syntax
+        //
+        // Current Rust: let mut &amp;mut x = r;
+        //   - mut after let: binding can change
+        //   - &amp;mut in pattern: match a mutable reference, extract target
+        //
+        // What it actually does:
+        //   - r must be &amp;mut T
+        //   - get value at coordinates
+        //   - bind x to a copy of the target (x owns the copy)
+        //   - x can be rebound later
+        let owner(rebindable(x)) = mem_copy(at(r));
+        x = take_or_mem_copy(100);
+        println!(&quot;x = {}&quot;, x);
+    }
+}
+
+// Allow unused_assignments: This exercise intentionally demonstrates reassignment,
+// so the initial value is overwritten before being read.
+#[allow(unused_assignments)]
+fn exercise() {
+    let mut y = 5;
+    let r = &amp;mut y;
+    // Write the real Rust equivalent:
+    // let ??? x = *r;
+    // x = 100;
+    // println!(&quot;x = {}&quot;, x);
+    todo!(&quot;Exercise incomplete&quot;);
+}
+
+fn main() {
+    example();
+    exercise();
+}
+</code></pre>
+</details>
+</div>
+
+<script src="/js/shell.js"></script>
+</body>
+</html>
