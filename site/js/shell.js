@@ -6,8 +6,8 @@
     { name: 'index', href: '/' },
     { name: 'tech', href: '/tech.html' },
     { name: 'writing', href: '/writing/' },
+    { name: 'math-quotes', href: '/quotes.html' },
     { name: 'learn-rust', href: '/learn-rust/' },
-    { name: 'quotes', href: '/quotes.html' },
     { name: 'music', href: '/music/' },
     { name: 'cv', href: '/cv/' }
   ];
