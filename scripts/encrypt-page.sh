@@ -160,42 +160,35 @@ cat > "$OUTPUT_FILE" << 'HTMLEOF'
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bio - Jad Nohra</title>
+<title>leadership — jadnohra.com</title>
 <meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="/css/editor.css">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;
-    background:#ffffff;color:#1e293b;min-height:100vh;
-    display:flex;align-items:center;justify-content:center;
-  }
   #unlock-screen{
-    text-align:center;padding:2rem;max-width:420px;width:100%;
+    max-width:620px;margin:80px auto;padding:0 20px;
   }
   #unlock-screen h1{
-    font-size:1.5rem;font-weight:600;color:#1e293b;margin-bottom:.5rem;
+    font-size:14px;font-weight:500;margin-bottom:8px;
   }
   #unlock-screen p{
-    font-size:.9rem;color:#6b7280;margin-bottom:1.5rem;
+    font-size:13px;color:#555;margin-bottom:16px;
   }
   .input-group{
-    display:flex;gap:.5rem;margin-bottom:.75rem;
+    display:flex;gap:8px;margin-bottom:8px;
   }
   #password-input{
-    flex:1;padding:.65rem 1rem;border-radius:8px;border:1px solid #d1d5db;
-    background:#f9fafb;color:#1e293b;font-size:1rem;outline:none;
-    transition:border-color .2s;
+    flex:1;padding:6px 10px;border:1px solid #ddd;
+    background:#fff;color:#111;font-size:13px;font-family:inherit;outline:none;
   }
-  #password-input:focus{border-color:#0a84ff}
+  #password-input:focus{border-color:#111}
   #unlock-btn{
-    padding:.65rem 1.25rem;border-radius:8px;border:none;
-    background:#0a84ff;color:#fff;font-size:1rem;font-weight:500;
-    cursor:pointer;transition:background .2s;white-space:nowrap;
+    padding:6px 16px;border:1px solid #111;
+    background:#fff;color:#111;font-size:13px;font-family:inherit;font-weight:500;
+    cursor:pointer;
   }
-  #unlock-btn:hover{background:#0070e0}
-  #unlock-btn:active{background:#005bb5}
+  #unlock-btn:hover{background:#111;color:#fff}
   #error-msg{
-    color:#ff453a;font-size:.85rem;min-height:1.2em;
+    color:#c00;font-size:12px;min-height:1.2em;
     transition:opacity .2s;opacity:0;
   }
   #error-msg.visible{opacity:1}
@@ -207,47 +200,22 @@ cat > "$OUTPUT_FILE" << 'HTMLEOF'
   .shake{animation:shake .4s ease-in-out}
 
   /* Decrypted content styles */
-  #content{
-    display:none;max-width:800px;margin:2rem auto;padding:1.5rem 2rem;
-    line-height:1.7;font-size:1.05rem;
-  }
-  #content h1,#content h2,#content h3{color:#1e293b;margin:1.5rem 0 .75rem;font-weight:600}
-  #content h1{font-size:1.8rem;border-bottom:1px solid #e2e8f0;padding-bottom:.5rem}
-  #content h2{font-size:1.4rem}
-  #content h3{font-size:1.15rem}
-  #content p{margin-bottom:1rem}
-  #content a{color:#0a84ff;text-decoration:none}
-  #content a:hover{text-decoration:underline}
-  #content ul,#content ol{margin:0 0 1rem 1.5rem}
-  #content li{margin-bottom:.35rem}
-  #content blockquote{
-    border-left:3px solid #0a84ff;padding:.5rem 1rem;margin:1rem 0;
-    color:#6b7280;background:#f8fafc;border-radius:0 8px 8px 0;
-  }
-  #content code{
-    background:#f1f5f9;padding:.15rem .4rem;border-radius:4px;font-size:.9em;
-  }
-  #content pre{
-    background:#f1f5f9;padding:1rem;border-radius:8px;overflow-x:auto;margin:1rem 0;
-  }
-  #content pre code{background:none;padding:0}
-  #content strong{color:#1e293b}
-  #content hr{border:none;border-top:1px solid #e2e8f0;margin:2rem 0}
+  #content{display:none}
 </style>
 </head>
-<body>
+<body data-page="writing">
 
 <div id="unlock-screen">
   <h1>Protected Page</h1>
   <p>This content is encrypted. Enter the password to view.</p>
   <div class="input-group">
-    <input type="password" id="password-input" placeholder="Password" autocomplete="off" autofocus>
-    <button id="unlock-btn">Unlock</button>
+    <input type="password" id="password-input" placeholder="password" autocomplete="off" autofocus>
+    <button id="unlock-btn">unlock</button>
   </div>
   <div id="error-msg">&nbsp;</div>
 </div>
 
-<div id="content"></div>
+<div class="content" id="content"></div>
 
 <script>
 ENCRYPTED_DATA
@@ -341,14 +309,12 @@ ENCRYPTED_DATA
         const contentEl = document.getElementById('content');
         contentEl.innerHTML = trimmed;
         contentEl.style.display = 'block';
-        document.body.style.alignItems = 'flex-start';
       } else {
         // Markdown — render then inject
         document.getElementById('unlock-screen').style.display = 'none';
         const contentEl = document.getElementById('content');
         contentEl.innerHTML = renderMarkdown(plaintext);
         contentEl.style.display = 'block';
-        document.body.style.alignItems = 'flex-start';
       }
       sessionStorage.setItem(SESSION_KEY, password);
       return true;
@@ -389,6 +355,7 @@ ENCRYPTED_DATA
 })();
 </script>
 
+<script src="/js/shell.js"></script>
 </body>
 </html>
 HTMLEOF

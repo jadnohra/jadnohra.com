@@ -1,3 +1,4 @@
 .claude/
 temp/
-docs/bio-ext-content.md
+bio-ext-content.md
+.DS_Store

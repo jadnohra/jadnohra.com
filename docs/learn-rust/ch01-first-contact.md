@@ -1,1 +1,0 @@
-../../repos/learn-rust/course/ch01-first-contact.md
