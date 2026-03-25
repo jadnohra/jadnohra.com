@@ -13,7 +13,3 @@ What this requires from the company is access. Understanding the org structure, 
 Every engagement looks different because every company's situation is different. There are no recipes. A practice that worked at one company may fail at another for reasons that only become visible in context. Research on best-practice transfer consistently finds that applying what worked elsewhere without understanding why it worked produces worse outcomes than careful diagnosis. The diagnosis determines the work, and the diagnosis changes as the work progresses. A longer research basis for these arguments is available in a companion document.
 
 Startups hire engineering managers for steady state and fractional CTOs for ongoing strategic advice. Transition leadership sits between the two. Full engagement, bounded duration, accountable for a specific organizational outcome. Several of the startups in your portfolio are at one of these inflection points. The ones who get them right build faster for the next two years.
-
----
-
-*Jad Nohra*

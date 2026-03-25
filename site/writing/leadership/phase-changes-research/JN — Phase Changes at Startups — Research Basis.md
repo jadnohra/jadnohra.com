@@ -95,7 +95,3 @@ Edmondson (1999, *Administrative Science Quarterly*, 51 teams): psychological sa
 Menon and Pfeffer (2003, *Management Science*): managers value identical knowledge more highly when it comes from an outsider than from an insider. The same diagnostic information, delivered by an external person, produces more organizational action.
 
 Antonioni (1994, *Personnel Psychology*): subordinates rating managers anonymously rated significantly lower than those whose identities were known. Ng et al. (2011, 1,447 raters, 172 officers): subordinates showed the most rating leniency of any rater group. Who evaluates affects the evaluation more than what is being evaluated.
-
----
-
-*Jad Nohra*
