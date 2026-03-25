@@ -1,3 +1,6 @@
+// ═══ MOBILE DETECT ═══
+var isMobile=window.innerWidth<=768;
+
 // ═══ STATE ═══
 var placed=[];      // node ids in document order
 var curN='';        // current node id
@@ -22,7 +25,7 @@ var $wl=document.getElementById('wl');
 // ═══ HELPERS ═══
 
 // ═══ MOUSE TRACKING ═══
-document.addEventListener('mousemove',function(e){
+if(!isMobile) document.addEventListener('mousemove',function(e){
   mouseX=e.clientX; mouseY=e.clientY;
   clearAutoHover();
 });
@@ -249,7 +252,7 @@ function closeFan(){
 }
 
 // Settled phase — proximity selection on overlay
-$fanOv.addEventListener('mousemove',function(e){
+if(!isMobile) $fanOv.addEventListener('mousemove',function(e){
   var mx=e.clientX,my=e.clientY;
   if(mx<fanWL||mx>fanWR||my<fanWT||my>fanWB){closeFan();return}
   var best=-1,bestD=Infinity;
@@ -272,7 +275,7 @@ $fanOv.addEventListener('mousemove',function(e){
 });
 
 // Settled phase — click (line selection OR click on card text)
-$fanOv.addEventListener('click',function(e){
+if(!isMobile) $fanOv.addEventListener('click',function(e){
   var idx=fanIdx;
   // Fallback: if no line selected, check if click is over a card item
   if(idx<0){
@@ -329,7 +332,7 @@ function findNearestInteractive(){
   return best;
 }
 
-$main.addEventListener('scroll',function(){
+if(!isMobile) $main.addEventListener('scroll',function(){
   if(scrollLock||scrollRAF)return;
   scrollRAF=requestAnimationFrame(function(){
     scrollRAF=null;
@@ -347,7 +350,7 @@ $main.addEventListener('scroll',function(){
 },{passive:true});
 
 // Click on empty space triggers auto-hovered element
-$main.addEventListener('click',function(e){
+if(!isMobile) $main.addEventListener('click',function(e){
   if(!autoHovered||scrollLock)return;
   if(e.target.closest('.ea.on')||e.target.closest('.nt[data-nid]')||e.target.closest('.nch')||e.target.closest('.ch')||e.target.closest('.tb')||e.target.closest('a')||e.target.closest('.em'))return;
   if(autoHovered.classList.contains('ea')) clickAnchor(autoHovered);
@@ -355,7 +358,7 @@ $main.addEventListener('click',function(e){
 });
 
 // ═══ DELEGATED TITLE CLICK ═══
-document.addEventListener('click',function(e){
+if(!isMobile) document.addEventListener('click',function(e){
   // Click inside edge menu → handled by the menu itself
   if(e.target.closest('.em'))return;
   // Skip collapse for "next" elements
@@ -396,17 +399,17 @@ $dir.addEventListener('click',function(){
 });
 
 // Anchor hover via delegation
-$doc.addEventListener('mouseover',function(e){
+if(!isMobile) $doc.addEventListener('mouseover',function(e){
   var ea=e.target.closest('.ea.on');
   if(ea&&!ea.classList.contains('autohover'))hoverAnchor(ea);
 });
-$doc.addEventListener('mouseout',function(e){
+if(!isMobile) $doc.addEventListener('mouseout',function(e){
   var ea=e.target.closest('.ea.on');
   if(ea&&!ea.classList.contains('autohover'))leaveAnchor(ea);
 });
 
 // Title/next hover → fan menu tracking phase
-$doc.addEventListener('mouseover',function(e){
+if(!isMobile) $doc.addEventListener('mouseover',function(e){
   if(Date.now()<fanScrollLockUntil)return;
   if(fanSettled)return;
   var nt=e.target.closest('.nt[data-nid]')||e.target.closest('.nxt[data-nid]');
@@ -422,7 +425,7 @@ $doc.addEventListener('mouseover',function(e){
 });
 
 // Tracking mousemove — reposition fan while mouse moves over title/next
-document.addEventListener('mousemove',function(e){
+if(!isMobile) document.addEventListener('mousemove',function(e){
   if(Date.now()<fanScrollLockUntil)return;
   if(fanSettled||!fanNode)return;
   var nt=e.target.closest('.nt[data-nid]')||e.target.closest('.nxt[data-nid]');
@@ -543,3 +546,5 @@ document.querySelectorAll('.ea[data-t]').forEach(function(a){
   if(placed.indexOf(tid)===-1) addNode(tid,true);
 });
 renderWalkList();
+// Mobile: expand all nodes, disable title click collapse
+if(isMobile){document.querySelectorAll('.node.collapsed').forEach(function(n){n.classList.remove('collapsed')})}

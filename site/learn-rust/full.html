@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn Rust — jadnohra.com</title>
+<meta name="description" content="A Rust course for experienced C++ programmers. Derives the borrow checker from SPACE × TIME × COORDINATES.">
+<link rel="stylesheet" href="/css/editor.css">
+<style>
+.node{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #ddd}
+.nch{font-size:10px;font-weight:500;color:#555;margin-bottom:3px}
+h2{font-size:14px;font-weight:500;margin-bottom:4px}
+.nctx{font-size:12px;line-height:1.5;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #eee}
+.pr p{margin-bottom:8px}
+.pr strong{font-weight:500}
+.pr code{font-size:12px;border:1px solid #ddd;padding:0 3px}
+.cb{border:1px solid #ddd;padding:8px 10px;margin:6px 0 10px;overflow-x:auto;white-space:pre}
+.cb code{font-size:12px;line-height:1.5;color:#111;border:none;padding:0}
+.cb .k{color:#7c4dff;font-weight:500}.cb .c{color:#999;font-style:italic}.cb .s{color:#2e7d32}.cb .n{color:#e65100}.cb .m{color:#1565c0}
+.er{border-left:2px solid #c62828;padding:6px 10px;margin:-2px 0 10px;font-size:11px;line-height:1.5;color:#c62828;background:#fafafa}
+.co{border-left:2px solid #ddd;padding:8px 12px;margin:10px 0;font-size:12px;line-height:1.5}
+.ea-static{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px}
+.pr table{width:100%;border-collapse:collapse;margin:8px 0 10px;font-size:11px;line-height:1.5}
+.pr th{text-align:left;font-weight:500;padding:4px 8px;border-bottom:1px solid #111}
+.pr td{padding:4px 8px;border-bottom:1px solid #eee;vertical-align:top}
+.nxt{display:none}
+</style>
+</head>
+<body data-page="learn-rust">
+<div class="content">
+<p style="font-size:11px;color:#555;margin-bottom:16px"><a href="/learn-rust/">Interactive version</a></p>
+<div class="node" id="nd-about">
+<div class="nch">Learn Rust · 1</div>
+<h2>Learn Rust</h2>
+<div class="pr"><p>This course exists because I cannot memorize rules and never could. If I understand the system that produces the rules, I remember it for years, because systems have structure and structure compresses.</p><p><a href="https://www.rust-lang.org/">Rust</a> tutorials gave me rules such as “one mutable reference or many immutable,” “moves invalidate the source,” and “lifetimes must not outlive their referent.” Stack architecture, computability constraints, and Rice’s theorem sit underneath these rules and explain every decision Rust’s designers made. Dig into them and the rules stop requiring memorization because they become derivable. The borrow checker becomes a consequence of what memory is, what compilers can analyze, and what tradeoffs Rust chose.</p><p>I did not find that path in any existing course. <a href="https://doc.rust-lang.org/book/">The Rust Book</a>, <a href="https://google.github.io/comprehensive-rust/">Google’s Comprehensive Rust</a>, <a href="https://github.com/nrc/r4cppp">r4cppp</a>, <a href="https://www.codecademy.com/learn/rust-for-programmers">Codecademy</a>, and <a href="https://www.udemy.com/courses/search/?src=ukw&q=rust">Udemy</a> teach the rules well. This course derives them. SPACE × TIME × COORDINATES is a framework for memory bugs. Use-after-free, data races, and dangling references are failures in one of these three dimensions. The course builds the framework first, and the borrow checker falls out of it.</p><p><strong>Who this course is for</strong></p><p>This course is for experienced programmers, particularly those with a C++ background, who already have a mental model of systems programming. The course updates that model. The density is high and the chapters are short, because we believe every sentence should be valuable and add to what you already know.</p><p>If you are new to programming or new to systems languages, start with <a href="https://doc.rust-lang.org/book/">The Rust Book</a>. It builds the mental model this course assumes you already have. Come back here when you want to understand the system underneath the rules.</p><p><strong>How to read this</strong></p><p>This is an interactive graph, not a linear book. Each section ends with an underlined <em>next.</em> — hover it to see where you can go, then click to continue. Underlined words inside the text link to related topics: hover for a preview, click to jump. You can also hover any section title to see its connections.</p><p>The sidebar on the left lists a guided “Textbook” walk that covers the full course in order. Click “Use this walk” to load all sections at once, collapsed. The sidebar tracks your progress and lets you jump to any section you’ve visited. You can also explore freely — every path through the graph is valid.</p></div>
+</div>
+
+<div class="node" id="nd-familiar">
+<div class="nch">First Contact · 2</div>
+<h2>Familiar Syntax</h2>
+<div class="pr"><p>Most Rust syntax matches C++. Functions, structs, loops, and vectors work the same way.</p><div class="cb"><code><span class="k">fn</span> <span class="m">main</span>() {
+    <span class="m">println!</span>(<span class="s">"Hello, world!"</span>);
+}</code></div><div class="cb"><code><span class="k">fn</span> <span class="m">main</span>() {
+    <span class="k">let</span> x = <span class="n">5</span>;
+    <span class="k">let</span> y = <span class="n">10</span>;
+    <span class="m">println!</span>(<span class="s">"{} + {} = {}"</span>, x, y, x + y);
+}</code></div><div class="cb"><code><span class="k">fn</span> <span class="m">add</span>(a: <span class="m">i32</span>, b: <span class="m">i32</span>) -> <span class="m">i32</span> {
+    a + b
+}
+
+<span class="k">fn</span> <span class="m">main</span>() {
+    <span class="k">let</span> result = <span class="m">add</span>(<span class="n">3</span>, <span class="n">4</span>);
+    <span class="m">println!</span>(<span class="s">"Result: {}"</span>, result);
+}</code></div><div class="cb"><code><span class="k">fn</span> <span class="m">main</span>() {
+    <span class="k">let</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>, <span class="n">4</span>, <span class="n">5</span>];
+    <span class="m">println!</span>(<span class="s">"Vector: {:?}"</span>, v);
+    <span class="m">println!</span>(<span class="s">"Length: {}"</span>, v.<span class="m">len</span>());
+}</code></div><div class="cb"><code><span class="k">struct</span> <span class="m">Point</span> {
+    x: <span class="m">i32</span>,
+    y: <span class="m">i32</span>,
+}
+
+<span class="k">fn</span> <span class="m">main</span>() {
+    <span class="k">let</span> p = <span class="m">Point</span> { x: <span class="n">10</span>, y: <span class="n">20</span> };
+    <span class="m">println!</span>(<span class="s">"Point at ({}, {})"</span>, p.x, p.y);
+}</code></div><div class="cb"><code><span class="k">fn</span> <span class="m">main</span>() {
+    <span class="k">let mut</span> count = <span class="n">0</span>;
+    <span class="k">while</span> count &lt; <span class="n">5</span> {
+        <span class="m">println!</span>(<span class="s">"Count: {}"</span>, count);
+        count += <span class="n">1</span>;
+    }
+}</code></div><p>All of this compiles and runs. But some code that compiles in C++ <span class="ea-static" title="The compiler rejects code that looks right.">does not compile in Rust</span>.</p></div>
+</div>
+
+<div class="node" id="nd-rejected">
+<div class="nch">First Contact · 3</div>
+<h2>Programs That Don't Compile</h2>
+<div class="nctx">You saw familiar syntax. Now see where it breaks.</div>
+<div class="pr"><p>These programs contain memory bugs. Rust rejects them. C++ compiles them.</p><div class="cb"><code><span class="k">let</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+<span class="k">let</span> w = v;
+<span class="m">println!</span>(<span class="s">"{:?}"</span>, v);</code></div><div class="er"><b>error[E0382]:</b> borrow of moved value: `v`</div><p>The value moved. <code>v</code> is gone. This is <span class="ea-static" title="Why does assigning a value invalidate the original?">ownership</span> in action.</p><div class="cb"><code><span class="k">let mut</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+<span class="k">let</span> r = &amp;v[<span class="n">0</span>];
+v.<span class="m">push</span>(<span class="n">4</span>);
+<span class="m">println!</span>(<span class="s">"{}"</span>, r);</code></div><div class="er"><b>error[E0502]:</b> cannot borrow `v` as mutable because it is also borrowed as immutable</div><p>A reference to <code>v[0]</code> exists while <code>push</code> tries to modify <code>v</code>. The <span class="ea-static" title="It tracks which borrows are live at each point and prevents conflicting access.">borrowing rule</span> prevents this.</p><div class="cb"><code><span class="k">let</span> r;
+{
+    <span class="k">let</span> x = <span class="n">5</span>;
+    r = &amp;x;
+}
+<span class="m">println!</span>(<span class="s">"{}"</span>, r);</code></div><div class="er"><b>error[E0597]:</b> `x` does not live long enough</div><p><code>x</code> is gone when the block ends. <code>r</code> would point to nothing. This is a <span class="ea-static" title="C++ compiles it. Rust refuses. The details reveal why.">dangling reference</span> caught at compile time.</p></div>
+</div>
+
+<div class="node" id="nd-rejected_more">
+<div class="nch">First Contact · 4</div>
+<h2>More Rejected Programs</h2>
+<div class="nctx">Three errors down. Six more categories of rejection.</div>
+<div class="pr"><div class="cb"><code><span class="k">let mut</span> s = <span class="m">String</span>::from(<span class="s">"hello"</span>);
+<span class="k">let</span> r1 = &amp;<span class="k">mut</span> s;
+<span class="k">let</span> r2 = &amp;<span class="k">mut</span> s;
+<span class="m">println!</span>(<span class="s">"{}, {}"</span>, r1, r2);</code></div><div class="er"><b>error[E0499]:</b> cannot borrow `s` as mutable more than once at a time</div><p>Two mutable references to the same data. The compiler forbids this because two writers to the same memory is a data race waiting to happen.</p><div class="cb"><code><span class="k">fn</span> <span class="m">get_string</span>() -> &amp;<span class="m">String</span> {
+    <span class="k">let</span> s = <span class="m">String</span>::from(<span class="s">"hello"</span>);
+    &amp;s
+}</code></div><div class="er"><b>error[E0106]:</b> missing lifetime specifier</div><p>The function tries to return a reference to a local variable. The local is destroyed when the function returns. The compiler demands a <span class="ea-static" title="An explicit marker that tells the compiler how long a reference lives.">lifetime annotation</span> to verify the reference outlives its scope.</p><div class="cb"><code><span class="k">let mut</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+<span class="k">for</span> x <span class="k">in</span> &amp;v {
+    v.<span class="m">push</span>(*x);
+}</code></div><div class="er"><b>error[E0502]:</b> cannot borrow `v` as mutable because it is also borrowed as immutable</div><p>The iterator borrows <code>v</code> immutably. <code>push</code> borrows it mutably. Same conflict, different shape.</p><div class="cb"><code><span class="k">let mut</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+<span class="k">let</span> closure = || v.<span class="m">push</span>(<span class="n">4</span>);
+<span class="m">println!</span>(<span class="s">"{:?}"</span>, v);
+closure();</code></div><div class="er"><b>error[E0502]:</b> cannot borrow `v` as immutable because it is also borrowed as mutable</div><p>The closure captures <code>v</code> mutably. <code>println!</code> tries to read it. The borrow conflict spans the closure's lifetime.</p></div>
+</div>
+
+<div class="node" id="nd-thread_errors">
+<div class="nch">First Contact · 5</div>
+<h2>Thread Safety Errors</h2>
+<div class="nctx">The compiler prevents data races too.</div>
+<div class="pr"><div class="cb"><code><span class="k">use</span> std::thread;
+
+<span class="k">fn</span> <span class="m">main</span>() {
+    <span class="k">let</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+    thread::spawn(|| {
+        <span class="m">println!</span>(<span class="s">"{:?}"</span>, v);
+    });
+}</code></div><div class="er"><b>error[E0373]:</b> closure may outlive the current function</div><p>The spawned thread might outlive <code>main</code>. The closure captures <code>v</code> by reference, but the reference could dangle when <code>main</code> returns. The fix: <code>move</code> the value into the closure, transferring <span class="ea-static" title="Where does the value go, and why can't the old scope see it?">ownership</span> to the thread.</p><div class="cb"><code><span class="k">use</span> std::rc::Rc;
+<span class="k">use</span> std::thread;
+
+<span class="k">fn</span> <span class="m">main</span>() {
+    <span class="k">let</span> rc = <span class="m">Rc</span>::new(<span class="n">5</span>);
+    thread::spawn(<span class="k">move</span> || {
+        <span class="m">println!</span>(<span class="s">"{}"</span>, rc);
+    });
+}</code></div><div class="er"><b>error[E0277]:</b> `Rc&lt;i32&gt;` cannot be sent between threads safely</div><p><code>Rc</code> uses non-atomic reference counting. Sharing it across threads would corrupt the count. The type system encodes this: <code>Rc</code> does not implement <code>Send</code>. The compiler rejects the program at the type level, before any runtime check.</p><p>The same <span class="ea-static" title="How does one rule prevent both single-threaded and multi-threaded bugs?">borrowing rule</span> that prevents single-threaded bugs also prevents <span class="ea-static" title="Two threads accessing the same memory, at least one writing, no synchronization. The timeline shows the mechanics.">data races</span>.</p></div>
+</div>
+
+<div class="node" id="nd-dangling_detail">
+<div class="nch">First Contact · 6</div>
+<h2>The Dangling Reference</h2>
+<div class="nctx">One rejected program examined in detail.</div>
+<div class="pr"><div class="cb"><code><span class="k">fn</span> <span class="m">main</span>() {
+    <span class="k">let</span> r;
+    {
+        <span class="k">let</span> x = <span class="n">5</span>;
+        r = &amp;x;
+    }
+    <span class="m">println!</span>(<span class="s">"{}"</span>, r);
+}</code></div><div class="er"><b>error[E0597]:</b> `x` does not live long enough</div><p><code>r</code> refers to <code>x</code>. The block ends. <code>x</code> is gone. <code>r</code> points to nothing.</p><p>The C++ equivalent compiles and runs. It prints garbage, or crashes, or prints 5 by accident. The C++ standard leaves this behavior undefined.</p><div class="cb"><code><span class="c">// C++</span>
+<span class="m">int</span> <span class="m">main</span>() {
+    <span class="m">int</span>* r;
+    {
+        <span class="m">int</span> x = <span class="n">5</span>;
+        r = &amp;x;
+    }
+    <span class="m">printf</span>(<span class="s">"%d\n"</span>, *r);
+}</code></div><p>Rust rejects the program before it runs. The compiler tracks where every reference points and when the target is <span class="ea-static" title="The space is returned to the stack. The bytes are still there, but the allocation has ended.">reclaimed</span>. A reference that outlives its target is a <span class="ea-static" title="One of the most common memory bugs in C and C++. The timeline shows exactly how it happens.">dangling pointer</span>.</p></div>
+</div>
+
+<div class="node" id="nd-physics">
+<div class="nch">S×T×C · 7</div>
+<h2>Distance Forces Copies</h2>
+<div class="nctx">Why do these bugs exist? Physics.</div>
+<div class="pr"><p>Physics creates distance. Distance forces copies. Copies require coherence.</p><p>CPU caches exist because RAM is far from the CPU. Database replicas exist because users are far from the primary. Thread-local storage exists because shared memory requires synchronization.</p><p>Every copy is <strong>derived data</strong> — a representation computed from a source that carries a sync obligation. A change to the source makes the derived copy stale. Cache invalidation, stale replicas, <span class="ea-static" title="A pointer whose target has been freed. The timeline shows the mechanics.">dangling pointers</span>, and torn register reads all follow from the same mechanism.</p><table><tr><th>Layer</th><th>Source</th><th>Copy</th><th>Sync Strategy</th></tr><tr><td>CPU cache</td><td>RAM</td><td>L1/L2/L3 line</td><td>MESI protocol</td></tr><tr><td>Compiler</td><td>Memory</td><td>Register</td><td>Register allocation</td></tr><tr><td>Language</td><td>Original value</td><td>Reference/alias</td><td>Ownership, locks, GC</td></tr><tr><td>Thread</td><td>Shared heap</td><td>Thread-local</td><td>Mutex, channels, atomics</td></tr><tr><td>Process</td><td>Shared memory</td><td>Process-local</td><td>IPC, message passing</td></tr><tr><td>Database</td><td>Primary</td><td>Replica</td><td>Replication protocol</td></tr><tr><td>Network</td><td>Origin server</td><td>CDN edge</td><td>TTL, invalidation</td></tr></table><p>Each layer resolves staleness with a different sync strategy. The pattern is the same. The <span class="ea-static" title="Three axes that explain every coherence failure.">three primitives</span> make the pattern precise.</p></div>
+</div>
+
+<div class="node" id="nd-primitives">
+<div class="nch">S×T×C · 8</div>
+<h2>Three Primitives</h2>
+<div class="nctx">The physics made precise.</div>
+<div class="pr"><p><strong>SPACE.</strong> Where data lives. Stack, heap, register, cache line, disk, remote server. Memory hierarchy is a ladder of spaces with different latencies.</p><p><strong>TIME.</strong> When things happen. Compile-time vs runtime. Sequential vs parallel. Scope entry to scope exit. A value's lifetime.</p><p><strong>COORDINATES.</strong> How we refer to data. Names at compile-time, addresses at runtime, references, pointers. Coordinates tell you where space is.</p><p>The rest of the course abbreviates these as <strong>S×T×C</strong>. Bugs are failures in one or more of the three. Fixes adjust one or more of the three.</p><p><strong>State</strong> is data that changes over TIME. Stateless computation has no coherence problem. Most coherence problems involve state.</p><p><strong>Derived data</strong> is the mechanism through which coherence problems propagate. A coordinate to a value is derived data. A cached copy is derived data. The source lives in one SPACE, the derived copy in another, and TIME determines when they fall out of sync.</p></div>
+</div>
+
+<div class="node" id="nd-bugs_table">
+<div class="nch">S×T×C · 9</div>
+<h2>Bugs as Interaction Failures</h2>
+<div class="nctx">Every memory bug maps to a specific interaction between primitives.</div>
+<div class="pr"><p>Interactions between the three primitives produce every category of memory bug.</p><p><strong>SPACE × TIME.</strong> When memory exists. Allocation, deallocation, lifetimes, scope.</p><p><strong>SPACE × COORDINATES.</strong> How many paths lead to memory. Aliasing, ownership, null.</p><p><strong>TIME × COORDINATES.</strong> When a reference is valid. Scope, shadowing, drop order.</p><table><tr><th>Bug</th><th>Primitives</th><th>Breakdown</th></tr><tr><td><span class="ea-static" title="A heap pointer followed after the heap is freed.">Use-after-free</span></td><td>S×T×C</td><td>Use (COORD) after (TIME) free (SPACE)</td></tr><tr><td><span class="ea-static" title="A reference that outlives the thing it points to.">Dangling pointer</span></td><td>T×C</td><td>Pointer (COORD) outlives target (TIME)</td></tr><tr><td><span class="ea-static" title="The allocator's bookkeeping is corrupted. Anything can happen.">Double free</span></td><td>S×T</td><td>Free (SPACE) twice (TIME)</td></tr><tr><td><span class="ea-static" title="Two threads writing the same memory with no synchronization.">Data race</span></td><td>S×T×C</td><td>Data (SPACE) race (TIME) via aliases (COORD)</td></tr><tr><td><span class="ea-static" title="The coordinate exceeds the allocated space. Whatever is at that address gets read or written.">Buffer overflow</span></td><td>S×C</td><td>Coord exceeds bounds of SPACE</td></tr><tr><td><span class="ea-static" title="The space exists but has no meaningful value yet. The program reads garbage.">Uninitialized read</span></td><td>S×T×C</td><td>Read (COORD) before (TIME) init (SPACE)</td></tr><tr><td><span class="ea-static" title="Space outlives all coordinates to it. The ability to free it is lost forever.">Memory leak</span></td><td>S×T</td><td>Space outlives all coords (TIME)</td></tr></table><p>Each of these has a timeline that shows exactly how the interaction breaks down.</p></div>
+</div>
+
+<div class="node" id="nd-uaf">
+<div class="nch">S×T×C · 10</div>
+<h2>Use-After-Free</h2>
+<div class="nctx">Use (COORDINATES) after (TIME) free (SPACE).</div>
+<div class="pr"><div class="cb"><code>TIME        t0              t1              t2              t3
+EVENTS      create heap     p ← addr(heap)  free heap       >at_addr(p)&lt;
+────────────────────────────────────────────────────────────────────────
+HEAP        ████████████████████████████████
+COORD (p)                   ████████████████░░░░░░░░░░░░░░░░▓▓▓▓░░░░░░░░
+                                                            >BUG&lt;</code></div><p>The heap is freed at t2. The coordinate <code>p</code> still exists. At t3, the program follows <code>p</code> to memory that no longer belongs to it.</p><p>In C++, this compiles and runs. The behavior is undefined. In Rust, <span class="ea-static" title="One owner. When the owner goes out of scope, the value is dropped. No coordinate can outlive the owner.">ownership</span> prevents any coordinate from outliving the space it points to.</p></div>
+</div>
+
+<div class="node" id="nd-dangling_ptr">
+<div class="nch">S×T×C · 11</div>
+<h2>Dangling Pointer</h2>
+<div class="nctx">Pointer (COORDINATES) dangles (TIME: target gone).</div>
+<div class="pr"><div class="cb"><code>TIME        t0              t1              t2              t3
+EVENTS      create x        r ← addr(x)     scope ends      >at_addr(r)&lt;
+────────────────────────────────────────────────────────────────────────
+SPACE (x)   ████████████████████████████████
+COORD (r)                   ████████████████░░░░░░░░░░░░░░░░▓▓▓▓░░░░░░░░
+                                                            >BUG&lt;</code></div><p>The variable <code>x</code> lives on the stack. The scope ends at t2. The space is reclaimed. The coordinate <code>r</code> now points to reclaimed space.</p><p>This is the same bug from <span class="ea-static" title="Rust rejects it at compile time. C++ prints garbage, crashes, or works by accident.">the first chapter</span>. The timeline makes the mechanism precise: TIME destroys the SPACE, but the COORDINATE survives.</p></div>
+</div>
+
+<div class="node" id="nd-double_free">
+<div class="nch">S×T×C · 12</div>
+<h2>Double Free</h2>
+<div class="nctx">Free (SPACE) twice (TIME).</div>
+<div class="pr"><div class="cb"><code>TIME        t0              t1              t2              t3
+EVENTS      create heap     p ← addr(heap)  free_at_addr(p) >free_at_addr(p)&lt;
+────────────────────────────────────────────────────────────────────────
+HEAP        ████████████████████████████████
+COORD (p)                   ████████████████░░░░░░░░░░░░░░░░▓▓▓▓░░░░░░░░
+                                                            >BUG&lt;</code></div><p>The heap is freed at t2. At t3, the program frees it again. The allocator's bookkeeping is corrupted. The consequences are unpredictable: crashes, silent corruption, security vulnerabilities.</p><p>Rust prevents this with <span class="ea-static" title="Each value has exactly one owner. The owner frees the value once, automatically, when it goes out of scope. No second free is possible.">single ownership</span>. One owner, one free, automatic.</p></div>
+</div>
+
+<div class="node" id="nd-data_race">
+<div class="nch">S×T×C · 13</div>
+<h2>Data Race</h2>
+<div class="nctx">Data (SPACE) race (TIME: parallel) via aliases (COORDINATES).</div>
+<div class="pr"><div class="cb"><code>TIME        t0              t1              t2
+EVENTS      create x        p ← addr(x)     ╭─ >write_at_addr(p)&lt;
+                            q ← addr(x)     ╰─ >write_at_addr(q)&lt;
+────────────────────────────────────────────────────────────────────────
+SPACE (x)   ████████████████████████████████▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░
+COORD (p)                   ████████████████████████████████████████████
+COORD (q)                   ████████████████████████████████████████████
+                                            >BUG&lt; (parallel writes)</code></div><p>Two coordinates reach the same space. Two threads write at the same time. No synchronization. The result depends on which write completes first — or whether they interleave at the byte level.</p><p>A data race needs three ingredients: shared data (SPACE), parallel access (TIME), at least one writer (COORDINATES). Remove any one and the race disappears.</p><p>The <span class="ea-static" title="How does one rule handle both single-threaded and multi-threaded bugs?">borrowing rule</span> removes the third ingredient at compile time: if any coordinate can write, no other coordinate can exist.</p></div>
+</div>
+
+<div class="node" id="nd-buffer_overflow">
+<div class="nch">S×T×C · 14</div>
+<h2>Buffer Overflow</h2>
+<div class="nctx">Coordinates that exceed the bounds of their space.</div>
+<div class="pr"><div class="cb"><code>TIME        t0              t1
+EVENTS      create buf[5]   >at_addr(buf[7])&lt;
+────────────────────────────────────────────────────────────
+SPACE       ████████████████████████████████ [0..4]
+COORD [7]                   ▓▓▓▓ (no SPACE here)
+                            >BUG&lt;</code></div><p>The buffer has 5 elements. The coordinate points to index 7. The space at that address belongs to something else — or to nothing. Whatever is there gets read or overwritten.</p><p>Rust prevents this at runtime: vector and slice indexing checks bounds. The coordinate cannot exceed the space.</p></div>
+</div>
+
+<div class="node" id="nd-uninit_read">
+<div class="nch">S×T×C · 15</div>
+<h2>Uninitialized Read</h2>
+<div class="nctx">Read (COORDINATES) before (TIME) the value exists (SPACE).</div>
+<div class="pr"><div class="cb"><code>TIME        t0                      t1
+EVENTS      declare x, p ← addr(x)  >at_addr(p)&lt;
+────────────────────────────────────────────────────────────
+SPACE (x)   ░░░░░░░░░░░░░░░░░░░░░░░░▓▓▓▓░░░░░░░░░░░░░░░░░░░░
+COORD (p)   ████████████████████████████████████████████████
+                                    >BUG&lt; (SPACE has no value)</code></div><p>The space is allocated. The coordinate is valid. But TIME has not yet given the space a value. The program reads whatever bits happen to be in that memory.</p><p>Rust prevents this at compile time: every variable must be initialized before use. The compiler tracks initialization along the control flow graph.</p></div>
+</div>
+
+<div class="node" id="nd-memory_leak">
+<div class="nch">S×T×C · 16</div>
+<h2>Memory Leak</h2>
+<div class="nctx">Space outlives all coordinates to it.</div>
+<div class="pr"><div class="cb"><code>TIME        t0              t1              t2
+EVENTS      create heap     p ← addr(heap)  >p scope ends&lt;
+────────────────────────────────────────────────────────────────────────
+HEAP        ████████████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░→
+COORD (p)                   ████████████████
+                                            >BUG&lt; (ability to free heap through p is lost)</code></div><p>The coordinate <code>p</code> goes out of scope. The heap allocation remains. No coordinate can reach it. The ability to free it is lost forever.</p><p>Rust prevents most leaks with <span class="ea-static" title="When the owner goes out of scope, the value is automatically dropped. No coordinate needs to explicitly free it.">ownership</span>: when the owner goes out of scope, the value is dropped automatically. Leaks are still possible (via <code>mem::forget</code> or reference cycles in <code>Rc</code>) but they require deliberate effort.</p></div>
+</div>
+
+<div class="node" id="nd-paradigms">
+<div class="nch">S×T×C · 17</div>
+<h2>Paradigms and Languages</h2>
+<div class="nctx">Different paradigms solve the coherence problem differently.</div>
+<div class="pr"><table><tr><th>Language</th><th>Paradigm</th><th>Coherence Strategy</th></tr><tr><td>Haskell</td><td>Functional</td><td>No mutation, no problem</td></tr><tr><td>Erlang</td><td>Actor</td><td>Process isolation, message passing</td></tr><tr><td>Clojure</td><td>Functional</td><td>Persistent data structures</td></tr><tr><td>Rust</td><td>Linear/ownership</td><td>Compile-time proof</td></tr><tr><td>Go</td><td>Imperative</td><td>Channels or locks</td></tr><tr><td>Java</td><td>OOP</td><td>Locks, volatile</td></tr><tr><td>C/C++</td><td>Imperative</td><td>Programmer responsibility</td></tr></table><p><strong>Haskell.</strong> Functions cannot modify state. Data structures are immutable. Nothing changes, so nothing gets out of sync.</p><p><strong>Erlang.</strong> Processes share no memory. Communication happens by copying messages. Each process owns its data exclusively.</p><p><strong>Clojure.</strong> Data structures appear mutable but are immutable. Modifying a map returns a new map that shares structure with the old one.</p><p><strong>Rust.</strong> Each value has one <span class="ea-static" title="What happens to the old binding after assignment?">owner</span>. <span class="ea-static" title="How does one rule enforce memory safety at compile time?">Borrowing rules</span> ensure one writer or many readers. Enforced at compile time with no runtime cost.</p><p><strong>Go.</strong> Goroutines share memory. Channels transfer data. Mutexes protect shared access. The programmer chooses.</p><p><strong>Java.</strong> Objects live on a shared heap. Locks and volatile exist but are not required. Correct synchronization is the programmer's job.</p><p><strong>C/C++.</strong> Any pointer can alias any memory. Any thread can write anywhere. No compiler enforcement. Coherence is entirely manual.</p></div>
+</div>
+
+<div class="node" id="nd-features">
+<div class="nch">S×T×C · 18</div>
+<h2>Features as Interaction Solutions</h2>
+<div class="nctx">Each language feature targets a specific interaction between primitives.</div>
+<div class="pr"><p><strong>SPACE × TIME</strong> — when memory exists.</p><p><strong>Garbage collection</strong> (Lisp, 1959). The runtime tracks reachable memory and reclaims the rest. Eliminates use-after-free and double-free. Cost: unpredictable pauses.</p><p><strong>RAII / destructors</strong> (C++, 1980s). Memory lifetime tied to scope. Destructor runs when the scope ends. Deterministic, no runtime tracking.</p><p><strong>Reference counting</strong> (1960s). Each allocation tracks how many references point to it. Count reaches zero, memory is freed. Cycles are a problem.</p><p><strong>SPACE × COORDINATES</strong> — how many paths lead to memory.</p><p><strong><span class="ea-static" title="let s2 = s1 moves the value. s1 is invalid afterward. One owner at a time.">Ownership / move semantics</span></strong> (C++11, central to Rust). Each value has one owner. Passing transfers ownership. Aliasing eliminated by default.</p><p><strong>Value types</strong> (ancient). Data copied rather than referenced. Each copy independent. No aliasing.</p><p><strong>Nullable types / Option</strong> (ML, 1970s). References must be explicitly nullable. Code must handle the null case to compile.</p><p><strong>TIME × COORDINATES</strong> — when a reference is valid.</p><p><strong>Lexical scope</strong> (ALGOL, 1958). References valid only within their declaring scope.</p><p><strong><span class="ea-static" title="fn longest<'a>(x: &'a str, y: &'a str) -> &'a str. The 'a declares how long the return lives.">Lifetime annotations</span> </strong> (Rust, 2010). Explicit markers for how long references live. No runtime cost.</p><p><strong>Closures</strong> (Lisp, 1958). Captures force the language to decide: copy, borrow, or move the captured variables.</p><p><strong>SPACE × TIME × COORDINATES</strong> — the full problem.</p><p><strong>Mutex / RwLock</strong> (1960s). Runtime enforcement of one writer or many readers. Deadlocks possible.</p><p><strong>Atomics</strong> (1970s). Hardware-level indivisible operations. Limited to simple operations.</p><p><strong>Channels / message passing</strong> (CSP, 1978). Transfer ownership between threads. Sender loses access.</p><p><strong>Immutability</strong> (ancient). No mutation means no write-read conflicts.</p><p><strong><span class="ea-static" title="One writer or many readers, enforced at compile time. No runtime cost.">Rust borrow checker</span> </strong> (2010). One writer or many readers at compile time. No runtime cost. The practical form of linear types.</p></div>
+</div>
+
+<div class="node" id="nd-bindings">
+<div class="nch">The Analysis · 19</div>
+<h2>Bindings and Addresses</h2>
+<div class="nctx">How does the compiler see a dangling reference?</div>
+<div class="pr"><p>Chapter 1 showed a <span class="ea-static" title="The same program from chapter 1, Rust vs C++.">dangling reference</span> that C++ compiles and Rust rejects. The compiler catches it by analyzing what each binding holds and how long it remains valid.</p><div class="cb"><code><span class="c">// C++</span>
+<span class="m">int</span>* r;
+{
+    <span class="m">int</span> x = <span class="n">5</span>;
+    r = &amp;x;
+}
+std::cout &lt;&lt; *r;</code></div><p>Two bindings. The binding <code>x</code> holds a value. The binding <code>r</code> holds an address — the location of <code>x</code>. When the block ends, <code>x</code> is gone. <code>r</code> still holds the address and the machine will read whatever bytes sit there.</p><table><tr><th>Name</th><th>Location</th><th>Holds</th></tr><tr><td><code>x</code></td><td>A</td><td><code>5</code> (a value)</td></tr><tr><td><code>r</code></td><td>B</td><td>address of A (a <span class="ea-static" title="What are the three dimensions of memory?">coordinate</span>)</td></tr></table><p>We say "coordinate" rather than "pointer" or "reference" because languages define those terms differently. <code>T*</code> in C++, <code>&amp;T</code> in Rust, <code>*const T</code> for raw pointers. The conceptual problem is identical: something that tells you where data lives. "Coordinate" abstracts over the language-specific terms.</p><p>Coordinates are not optional. Copying large data costs time and energy, so programs pass addresses instead of values. Graphs, trees, and linked lists require indirection because you cannot inline a cycle. Any language that cares about performance or expressiveness needs coordinates.</p><p>The coordinate <code>r</code> is syntactically independent — it has its own declaration, its own location, its own scope. It is semantically dependent — its purpose is to refer to <code>x</code>, and without <code>x</code>, the address in <code>r</code> points to nothing meaningful. Coherence fails when these lifetimes fall out of sync.</p></div>
+</div>
+
+<div class="node" id="nd-manage_space">
+<div class="nch">The Analysis · 20</div>
+<h2>How Programs Manage Space</h2>
+<div class="nctx">Bindings hold values or coordinates. Where does the space live?</div>
+<div class="pr"><p>The dangling reference exploits a gap between two levels. At the language level, <code>x</code>'s space is gone when the scope ends. At the machine level, the bytes are still there. Understanding this gap requires knowing how programs manage memory.</p><p><strong>Stack.</strong> The compiler manages the stack. It determines at compile time how much space each function needs and lays out a stack frame for each call. When a scope ends, the compiler considers those slots available for reuse. The machine does not zero the bytes, does not reclaim them — it adjusts the stack pointer. A coordinate that still holds the old address can read the bytes, and the machine will comply. The language calls this undefined behavior. The machine calls it a normal read.</p><p><strong>Heap.</strong> The heap is managed at runtime. An explicit allocation (<code>malloc</code>, <code>new</code>, <code>Box::new</code>) reserves bytes and returns a coordinate. An explicit deallocation (<code>free</code>, <code>delete</code>, dropping the owner) marks them reusable. The same gap applies: after deallocation, a coordinate that still holds the address can read stale bytes. The language calls this a <span class="ea-static" title="What happens when a coordinate outlives the space it points to?">use-after-free</span>. The machine calls it a normal read.</p><p>The heap adds a problem the stack does not have. Stack space is tied to scope boundaries the compiler can see. Heap space is freed by an operation that can happen anywhere. Heap coordinates can be copied into other variables, passed to functions, stored in data structures. No lexical structure in the source text governs when heap space is freed.</p><div class="cb"><code>STACK (tree)                          HEAP + STACK (hybrid)
+
+    main ─────────┐                      main
+    ├── foo       │                      ├── foo ──────────┐
+    │   └── bar   │                      │   └── bar       │
+    │       └── baz                      │                 ▼
+    └── qux       │                      └── qux        [heap]
+                  │                                        ▲
+                  │                                        │
+Coordinates point toward               Heap coordinates escape
+enclosing scopes.                      the scope tree.
+Reclamation at scope end.              Reclamation: anywhere.
+Compiler sees both.                    Compiler sees neither.</code></div><p>The rest of this chapter uses "reclaimed" to mean the language no longer considers the space as belonging to any live binding. Stack space is reclaimed when its scope ends. Heap space is reclaimed when something deallocates it. <span class="ea-static" title="Ownership ties heap reclamation to scope boundaries.">Ownership</span>  ties heap reclamation to scope boundaries, making heap behave like stack from the compiler's perspective.</p></div>
+</div>
+
+<div class="node" id="nd-compiler_needs">
+<div class="nch">The Analysis · 21</div>
+<h2>What the Compiler Needs to See</h2>
+<div class="nctx">Stack and heap manage space differently. What does the compiler need to catch bugs across both?</div>
+<div class="pr"><p>Source text has hierarchical structure. Functions contain blocks, blocks contain statements, statements contain expressions. A variable declared inside a block is visible only within that block and any nested blocks. Names respect the scope hierarchy. Coordinates do not.</p><div class="cb"><code><span class="k">fn</span> <span class="m">first</span>(list: &amp;[<span class="m">i32</span>]) -> &amp;<span class="m">i32</span> {
+    &amp;list[<span class="n">0</span>]
+}
+
+<span class="k">fn</span> <span class="m">main</span>() {
+    <span class="k">let</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+    <span class="k">let</span> r = <span class="m">first</span>(&amp;v);
+    <span class="m">println!</span>(<span class="s">"{}"</span>, r);
+}</code></div><p>The scope hierarchy sees <code>v</code> and <code>r</code> in <code>main</code>'s scope, and <code>list</code> in <code>first</code>'s scope. Three names, three declarations, three scope boundaries. The scope hierarchy does not see that <code>r</code> holds a coordinate into <code>v</code>'s space. The coordinate traveled from <code>main</code> into <code>first</code> as the argument <code>list</code>, reached into the vector's first element, and traveled back as the return value bound to <code>r</code>. The connection between <code>r</code> and <code>v</code> crosses two scope boundaries and routes through a function body the caller cannot see.</p><p>The analysis needs two things at every point in the program. Where does each coordinate point? When is each piece of space reclaimed? The compiler can answer the first question when every coordinate has a known origin. It can answer the second for stack space, because scope boundaries are visible. It cannot answer it for heap space, because heap deallocation has no lexical structure. <span class="ea-static" title="Lifetime annotations declare which input a borrowed output connects to.">Lifetime annotations</span>  at function signatures bridge this gap by declaring which input a borrowed output connects to.</p><p>The scope hierarchy tracks names and boundaries. The analysis needs data flow and reclamation across boundaries. RAM has no scope structure at all — memory is a sequence of numbered cells, any address can read or write any cell. The compiler bridges these worlds by building a <strong>control flow graph</strong>. Nodes are statements. Edges connect statements where execution can flow from one to the next. Branches create multiple outgoing edges. Loops create backward edges.</p></div>
+</div>
+
+<div class="node" id="nd-detecting_access">
+<div class="nch">The Analysis · 22</div>
+<h2>Detecting Access to Reclaimed Space</h2>
+<div class="nctx">The compiler has a control flow graph. How does it find the bug?</div>
+<div class="pr"><p>The compiler analyzes the control flow graph by tracking coordinates along every path. It records where each coordinate is created, what space it points to, and when that space is reclaimed. A path connecting a reclamation point to an access point for the same space means the program can reach reclaimed memory. The compiler rejects when any such path exists.</p><p>The dangling reference from Chapter 1, traced on the graph:</p><div class="cb"><code><span class="k">fn</span> <span class="m">main</span>() {
+    <span class="k">let</span> r;
+    {
+        <span class="k">let</span> x = <span class="n">5</span>;       <span class="c">// A</span>
+        r = &amp;x;          <span class="c">// B</span>
+    }                    <span class="c">// C</span>
+    <span class="m">println!</span>(<span class="s">"{}"</span>, r);   <span class="c">// D</span>
+}
+
+       ┌───┐
+       │ A │ let x = 5
+       └─┬─┘
+         ▼
+       ┌───┐
+       │ B │ r = &amp;x
+       └─┬─┘
+         ▼
+       ┌───┐
+       │ C │ x's space reclaimed (scope ends)
+       └─┬─┘
+         ▼
+       ┌───┐
+       │ D │ *r  ACCESS with reclaimed space
+       └───┘</code></div><p>One path. C reclaims the space. D accesses it through <code>r</code>. The path from C to D exists. The compiler rejects.</p><p>A more complex example with <span class="ea-static" title="Branches create paths the compiler cannot resolve statically.">branching</span> shows why the compiler must check all paths:</p><div class="cb"><code><span class="k">fn</span> <span class="m">example</span>(flag: <span class="m">bool</span>) {
+    <span class="k">let</span> r;
+    <span class="k">if</span> flag {
+        <span class="k">let</span> x = <span class="n">5</span>;           <span class="c">// B</span>
+        r = &amp;x;
+        <span class="m">println!</span>(<span class="s">"{}"</span>, *r);  <span class="c">// D: safe, x alive</span>
+    } <span class="k">else</span> {
+        <span class="k">let</span> y = <span class="n">10</span>;          <span class="c">// C</span>
+        r = &amp;y;
+    }                        <span class="c">// y's space reclaimed</span>
+    <span class="m">println!</span>(<span class="s">"{}"</span>, *r);      <span class="c">// G: unsafe if else taken</span>
+}
+
+                   ┌───┐
+                   │ A │ if flag
+                   └─┬─┘
+             ┌──────┴──────┐
+             ▼             ▼
+           ┌───┐         ┌───┐
+           │ B │         │ C │
+           │x=5│         │y=10│
+           │r=&amp;x│        │r=&amp;y│
+           └─┬─┘         │ ✗ │ y reclaimed
+             │           └─┬─┘
+             ▼             ▼
+           ┌───┐         ┌───┐
+           │ D │         │ F │
+           │*r │         │ ✗ │ propagated
+           │safe│        └─┬─┘
+           └─┬─┘           │
+             └──────┬──────┘
+                    ▼
+                  ┌───┐
+                  │ G │
+                  │*r │ unsafe on else path ✗
+                  └───┘</code></div><p>The access at D is safe because no reclamation reaches it along any path. The access at G is unsafe because a path from C reaches it through F. The compiler finds the unsafe path and rejects. It does not matter that the if-branch is safe — one unsafe path is enough.</p><p>The compiler checks all paths because it cannot know at compile time which branch the program will take at runtime. This is a sound analysis: it may reject programs that would actually be safe, but it will never accept a program that can reach reclaimed memory.</p></div>
+</div>
+
+<div class="node" id="nd-cpp_skip">
+<div class="nch">What Defeats the Analysis · 23</div>
+<h2>Why C++ Compilers Skip This Analysis</h2>
+<div class="nctx">The analysis from Chapter 3 exists. Most compilers don't attempt it.</div>
+<div class="pr"><p>Three properties of C and C++ prevent building the complete control flow graph the analysis requires.</p><p><strong>Separate compilation.</strong> Each source file becomes an object file independently. A call to a function defined in another file appears as an external symbol, resolved by the linker after analysis is over. The graph has edges leading to functions whose bodies are <span class="ea-static" title="The compiler builds the control flow graph and checks whether any path leads from reclamation to access.">invisible</span>.</p><p><strong>Function pointers.</strong> The call target is a runtime value. The compiler cannot determine which function executes. The graph has edges to unknown destinations.</p><p><strong>Unconstrained pointers.</strong> Even with a complete graph, the compiler needs to track where every coordinate points. C++ allows coordinates to be created without naming a target.</p><div class="cb"><code><span class="m">int</span>* p = (<span class="m">int</span>*)<span class="n">0x1234</span>;           <span class="c">// coordinate from integer</span>
+<span class="m">int</span>* q = p + <span class="n">5</span>;                   <span class="c">// coordinate from arithmetic</span>
+<span class="k">void</span>* v = p;                      <span class="c">// type erased</span>
+<span class="m">int</span>** stored = &amp;p;                <span class="c">// coordinate to coordinate</span></code></div><p>An integer cast to a pointer, pointer arithmetic, <code>void*</code> type erasure. The analysis requires knowing where every coordinate points. C++ provides no such guarantee. Rust <span class="ea-static" title="How does Rust make every reference traceable?">constrains coordinate creation</span> to fix this.</p><p>These are three specific obstacles. They generalize to <span class="ea-static" title="Two obstacles that any language must address, not just C++.">two deeper problems</span> that any language must address.</p></div>
+</div>
+
+<div class="node" id="nd-ram_flat">
+<div class="nch">What Defeats the Analysis · 24</div>
+<h2>RAM Is Flat</h2>
+<div class="nctx">One of two deeper problems behind C++'s obstacles.</div>
+<div class="pr"><p>The machine model has no scope hierarchy. Memory is a sequence of numbered cells. A pointer is a number. Any address can read or write any cell. Nothing in the machine prevents code from reading a cell after the scope that allocated it has ended. Nothing prevents fabricating an address the compiler cannot trace.</p><p>C++'s unconstrained pointers are a symptom of this deeper problem. The machine provides no structure for the compiler to exploit. Coordinates can arise from anywhere and point to anything.</p><p>A compiler that wants to answer "where does each coordinate point?" needs the language itself to constrain how coordinates are created. The <span class="ea-static" title="The compiler builds the control flow graph and checks whether any path leads from reclamation to access.">analysis</span> cannot work if coordinates appear from nowhere.</p><p>The second deeper problem: <span class="ea-static" title="The scope tree tracks names, not data flow between them.">data that crosses scope boundaries</span>.</p></div>
+</div>
+
+<div class="node" id="nd-cross_scope">
+<div class="nch">What Defeats the Analysis · 25</div>
+<h2>Data Flow Crosses Scope Boundaries</h2>
+<div class="nctx">Scopes track names. Data flows between them.</div>
+<div class="pr"><p>The scope tree tracks where names live. It does not track where data flows between them. A function argument carries a coordinate into a nested scope. A return value carries one out. An assignment can carry a coordinate to a binding with a different lifetime.</p><p>A function's caller passes <code>&amp;v</code> in and receives a coordinate out. The caller cannot determine whether the returned coordinate still points into <code>v</code>'s space. The signature says nothing about the connection. Separate compilation means the compiler cannot see the function body to find out.</p><p>C++'s separate compilation and function pointers are symptoms. The deeper problem is that data flow between scopes is invisible to the scope tree. A compiler that wants to trace coordinates across function boundaries needs the language to <span class="ea-static" title="How do function signatures declare where a reference points?">declare how data flows between scopes</span>.</p><p>One more obstacle remains: <span class="ea-static" title="Byte-copying a String duplicates the coordinate without duplicating the space.">types that contain pointers</span>.</p></div>
+</div>
+
+<div class="node" id="nd-invisible_dup">
+<div class="nch">What Defeats the Analysis · 26</div>
+<h2>Invisible Coordinate Copying</h2>
+<div class="nctx">Some types hide coordinates inside their stack representation.</div>
+<div class="pr"><p>A <code>String</code>'s stack representation holds a heap pointer, a length, and a capacity. The heap pointer is a coordinate to managed space. Byte-copying the stack representation duplicates that coordinate without duplicating the heap buffer. Two bindings now hold coordinates to the same buffer, and both believe they own it.</p><div class="cb"><code>Byte-copy on i32:                    Byte-copy on String (hypothetical):
+
++----------+                         +----------+        +----------+
+|    5     | &lt;- x (owner)            | ptr -----|-======&gt;| "hello"  |
++----------+                         +----------+   |    |          |
+|    5     | &lt;- y (owner)            | ptr -----|---+    +----------+
++----------+                         +----------+
+Independent space.                   Two owners, one space.</code></div><p>An <code>i32</code> has no heap pointer and no cleanup obligation. Duplicating its bytes produces two independent values. A <code>String</code> manages heap space, and byte-copying it duplicates the coordinate without duplicating the space itself. The analysis tracks one owner per allocation. Invisible duplication defeats that tracking by creating a second owner the compiler did not authorize.</p><p>The compiler needs to know which types are safe to byte-copy and which are not. Rust <span class="ea-static" title="Why does Rust move by default instead of copying?">prevents accidental byte-copying</span> of types that manage internal space.</p><p><span class="ea-static" title="Five strategies from doing nothing to compile-time proofs.">Other languages</span> approach these obstacles in entirely different ways.</p></div>
+</div>
+
+<div class="node" id="nd-other_langs">
+<div class="nch">What Defeats the Analysis · 27</div>
+<h2>How Other Languages Approach These Obstacles</h2>
+<div class="nctx">Five strategies, from doing nothing to doing everything at compile time.</div>
+<div class="pr"><table><tr><th>Strategy</th><th>Languages</th><th>Tradeoff</th></tr><tr><td>No analysis</td><td>C, C++</td><td>Fast, unsafe. Programmer responsibility.</td></tr><tr><td>Static analyzers</td><td>Clang SA, Coverity, Infer</td><td>Separate pass, expensive, heuristic. Misses real bugs, reports false positives.</td></tr><tr><td>Region annotations</td><td>Cyclone, ATS</td><td>Compile-time safety. High annotation burden, never widely adopted.</td></tr><tr><td>Garbage collection</td><td>Java, Go, Python, C#</td><td>Space lives until no coordinates reach it. Runtime cost: GC pauses, memory overhead.</td></tr><tr><td>Ownership</td><td>Rust</td><td>Compile-time proof. Zero runtime cost. Requires restructuring when the approximation rejects.</td></tr></table><p><strong>No analysis.</strong> C and C++ compilers do not attempt systematic tracking. Some warn about obvious cases like returning addresses of locals, but the obstacles described in this chapter prevent anything more.</p><p><strong>Static analyzers.</strong> Tools like Clang Static Analyzer, Coverity, and Infer run separately from compilation. They use abstract interpretation and symbolic execution to trace paths. The analysis is expensive and trades precision for scalability. Heuristics reduce false positives, which means real bugs are missed too.</p><p><strong>Region annotations.</strong> Cyclone added region types to C: every pointer carries a region annotation, and the compiler tracks region lifetimes. ATS uses dependent and linear types. Both achieve compile-time safety, but annotation requirements and limited C compatibility kept them in research settings.</p><p><strong>Garbage collection.</strong> The problem is coordinates pointing to space that no longer exists. GC inverts the relationship: space is not freed until no coordinates point to it. The runtime traces from roots to find reachable objects. The tradeoff is runtime overhead: memory for bookkeeping, CPU for tracing, unpredictable pauses.</p><p><strong>Ownership.</strong> Rust patches each obstacle so the compiler can build the complete graph and track every coordinate. Each value has one owner. Transfer invalidates the previous binding. Zero runtime cost. But the analysis faces a <span class="ea-static" title="Branches create paths that depend on runtime values.">fundamental limit</span> that no language design can remove.</p><p>Each <span class="ea-static" title="Which languages use which strategies?">paradigm</span> represents a different point in the design space.</p></div>
+</div>
+
+<div class="node" id="nd-branches_break">
+<div class="nch">What Defeats the Analysis · 28</div>
+<h2>Where Branches Break the Analysis</h2>
+<div class="nctx">Even with every obstacle patched, one problem remains.</div>
+<div class="pr"><p>Branches create paths that may or may not execute, depending on runtime values.</p><div class="cb"><code>r = uninitialized
+{
+    x = <span class="n">5</span>
+    <span class="k">if</span> some_condition(n) {
+        r = &amp;x
+    }
+}
+<span class="c">// x is gone here</span>
+<span class="k">if</span> some_condition(n) {
+    print(*r)      <span class="c">// r used after x's space is reclaimed?</span>
+}</code></div><p>Whether <code>*r</code> accesses reclaimed space depends on whether <code>some_condition(n)</code> returns true. The compiler would need to evaluate it. That evaluation depends on <code>n</code>, and <code>some_condition</code> might contain arbitrary computation. The <span class="ea-static" title="The compiler checks all paths and rejects when any path is unsafe.">analysis checks all paths</span> and rejects when any path is unsafe.</p><div class="cb"><code><span class="c">// Collatz sequence: does this terminate for all inputs?</span>
+n = input
+<span class="k">while</span> n != <span class="n">1</span> {
+    <span class="k">if</span> n is even { n = n / <span class="n">2</span> }
+    <span class="k">else</span> { n = <span class="n">3</span>*n + <span class="n">1</span> }
+}</code></div><p>Whether the Collatz sequence terminates for all inputs remains unknown. Mathematicians have tested every number up to 10<sup>20</sup>. No proof exists. A <code>some_condition(n)</code> that checks Collatz termination would force the compiler to solve an open problem in mathematics.</p><p>Arbitrary computation resists static prediction. <span class="ea-static" title="No. Turing proved it in 1936.">No algorithm can avoid this</span>.</p></div>
+</div>
+
+<div class="node" id="nd-perfect_impossible">
+<div class="nch">What Defeats the Analysis · 29</div>
+<h2>Why Perfect Analysis Is Impossible</h2>
+<div class="nctx">Not just hard. Mathematically impossible.</div>
+<div class="pr"><p><strong>The Halting Problem (Turing, 1936).</strong> A termination checker must return an answer for any program it examines. The program being examined has no such obligation. It can run forever, halt immediately, or do anything in between.</p><p>A program can read the checker's source code, call the checker on itself, and then do the opposite of what the checker predicts. If the checker predicts "terminates," the program loops forever. If the checker predicts "loops forever," the program terminates. The checker is wrong regardless of what it answers. No algorithm can avoid this contradiction.</p><p><strong>Rice's Theorem (1951)</strong> generalizes the result. Any non-trivial semantic property of programs is undecidable. "Non-trivial" means some programs have the property and some do not. "Semantic" means the property depends on what the program does, not how it is written.</p><p>"Does this COORDINATE reach reclaimed SPACE?" is such a property. So is "does this program have a data race?" and "does this program dereference a dangling pointer?" These are mathematical impossibilities that apply to any static analysis tool, in any language, built by any team.</p><p>The compiler cannot be perfect. It must <span class="ea-static" title="Choose between two failures: accept unsafe or reject safe.">choose between two failures</span>. When it rejects valid code, <span class="ea-static" title="Restructure, encode in types, runtime checks, or unsafe.">escape hatches</span> exist.</p></div>
+</div>
+
+<div class="node" id="nd-sound_complete">
+<div class="nch">What Defeats the Analysis · 30</div>
+<h2>Sound or Complete</h2>
+<div class="nctx">The compiler must choose which failure to accept.</div>
+<div class="pr"><p><strong>Sound</strong> means the compiler never accepts unsafe code. It may reject code that is actually safe.</p><p><strong>Complete</strong> means the compiler never rejects safe code. It may accept code that is actually unsafe.</p><p>No compile-time analysis can be both sound and complete for questions about program behavior. Accepting unsafe code means security vulnerabilities and undefined behavior. Rejecting safe code means restructuring or using escape hatches. The asymmetry between failure modes determines the choice.</p><p>Rust chooses soundness. The <span class="ea-static" title="What does the compiler actually enforce?">approximation</span> rejects some valid programs, and that is the acceptable cost. <span class="ea-static" title="Names are exact. Data flow is approximated.">What exactly</span> falls on the approximate side?</p></div>
+</div>
+
+<div class="node" id="nd-names_exact">
+<div class="nch">What Defeats the Analysis · 31</div>
+<h2>Names Are Exact, Data Flow Is Approximated</h2>
+<div class="nctx">The boundary between what the compiler knows precisely and what it approximates.</div>
+<div class="pr"><p>The compiler handles names exactly. Scope boundaries, variable declarations, and field names are all visible in source text. The scope tree captures where every name lives and when every name expires. This part of the analysis is decidable and precise.</p><p>The approximation falls entirely on data flow. Which path a branch takes, which method a function pointer calls, whether two indices refer to the same element. These depend on runtime values, and Rice's theorem says no algorithm answers correctly for all inputs. The compiler assumes the worst case for every question about data flow.</p><p>Four obstacles face the analysis: flat RAM, cross-scope data flow, invisible duplication, and undecidability. One fundamental constraint governs it: the compiler chooses soundness over completeness. The next chapter shows <span class="ea-static" title="Four design choices that make the analysis possible: constrained references, ownership, function signatures, and move-by-default.">how Rust patches each obstacle</span> with a specific design choice.</p></div>
+</div>
+
+<div class="node" id="nd-constrained_refs">
+<div class="nch">Rust's Patches · 32</div>
+<h2>Constrained Coordinates</h2>
+<div class="nctx">RAM is flat. Pointers are numbers. How does Rust fix this?</div>
+<div class="pr"><p>In C++, a pointer is a number that happens to serve as an address. The language provides operations on numbers, and pointers inherit them. You can cast an integer to a pointer, perform arithmetic to compute new addresses, erase type information through <code>void*</code>, and store pointers in integer variables. Each operation severs the connection between the coordinate and its origin. The compiler cannot trace where the pointer points.</p><div class="cb"><code><span class="c">// C++</span>
+<span class="m">int</span>* p = (<span class="m">int</span>*)<span class="n">0x1234</span>;           <span class="c">// coordinate from integer</span>
+<span class="m">int</span>* q = p + <span class="n">5</span>;                  <span class="c">// coordinate from arithmetic</span>
+<span class="m">void</span>* v = p;                     <span class="c">// type erased</span>
+<span class="m">uintptr_t</span> n = (<span class="m">uintptr_t</span>)p;      <span class="c">// stored as integer</span></code></div><p>Rust references are not numbers. A reference is a typed relationship between a binding and a target. The language provides one way to create a reference: the <code>&amp;</code> operator applied to an existing value. There is no syntax for creating a reference from an integer. There is no reference arithmetic. There is no type erasure for references.</p><div class="cb"><code><span class="k">let</span> x = <span class="n">5</span>;
+<span class="k">let</span> r = &amp;x;              <span class="c">// r points to x, compiler knows this</span></code></div><p>When the compiler sees <code>&amp;x</code>, it records that the resulting reference points to <code>x</code>. Every reference in the program has a known origin. The compiler can trace any reference back to the space it refers to.</p><table><tr><th>C++ allows</th><th>Rust equivalent</th><th>Why it matters</th></tr><tr><td><code>(int*)0x1234</code></td><td>Does not exist</td><td>Every reference has a known target</td></tr><tr><td><code>p + 5</code></td><td>Does not exist</td><td>References cannot drift to unknown locations</td></tr><tr><td><code>void* v = p</code></td><td>Does not exist for references</td><td>Type information preserved</td></tr><tr><td><code>(uintptr_t)p</code></td><td>Does not exist for references</td><td>References cannot become integers</td></tr></table><p>Raw pointers in Rust (<code>*const T</code>, <code>*mut T</code>) allow some of these operations, but dereferencing a raw pointer requires <code><span class="k">unsafe</span></code> code. The borrow checker analyzes safe Rust, where all coordinates are references with known origins. This patches the <span class="ea-static" title="Why can't the compiler just use RAM addresses as scope?">obstacle that RAM is flat</span>: constrained references ensure every coordinate has a known origin on the graph.</p></div>
+</div>
+
+<div class="node" id="nd-ownership_deep">
+<div class="nch">Rust's Patches · 33</div>
+<h2>Ownership</h2>
+<div class="nctx">Heap space has no lexical structure. How does the compiler know when it dies?</div>
+<div class="pr"><p>Stack space is reclaimed when scopes end, and the compiler sees scope boundaries in the source text. Heap space in C++ has unpredictable lifetimes. A <code>new</code> expression allocates, and that space lives until some code calls <code>delete</code>. The coordinate to that space can be copied, passed to functions, and stored in data structures. Any code holding the coordinate can free the space. Any code holding a copy can use it afterward and find the space gone. Nothing in the source text tells the compiler when heap space will die.</p><p>Rust makes heap lifetimes predictable by assigning exactly one owner to each allocation. The owner is a binding, and that binding has a scope. Rust deallocates the owned space when the owner's scope ends. Heap lifetime follows owner scope, the same way stack lifetime follows function scope.</p><div class="cb"><code><span class="k">fn</span> <span class="m">example</span>() {
+    <span class="k">let</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];    <span class="c">// v owns heap space</span>
+    <span class="c">// ... use v ...</span>
+}                              <span class="c">// v's scope ends, heap space freed</span></code></div><p>Ownership can transfer from one binding to another. This is a move. After the move, the original binding is no longer valid, and the new binding is the owner.</p><div class="cb"><code><span class="k">fn</span> <span class="m">example</span>() {
+    <span class="k">let</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];    <span class="c">// v owns</span>
+    <span class="k">let</span> w = v;                 <span class="c">// ownership moves to w, v now invalid</span>
+    <span class="c">// ... use w ...</span>
+}                              <span class="c">// w's scope ends, heap space freed</span></code></div><p>At any moment, exactly one binding owns each allocation. The compiler tracks ownership through assignments and function calls. This transforms the analysis: without ownership, heap space can be reclaimed at any point where code calls <code>free</code> or <code>delete</code>. Ownership ties heap reclamation to scope boundaries, which the compiler already sees. Heap behaves like stack for the purposes of lifetime analysis.</p></div>
+</div>
+
+<div class="node" id="nd-notation">
+<div class="nch">Rust's Patches · 34</div>
+<h2>The Notation</h2>
+<div class="nctx">Rust syntax hides which binding is owner vs alias. How do you see what is really happening?</div>
+<div class="pr"><p>Rust's assignment syntax hides which kind of binding a <code><span class="k">let</span></code> produces. <code><span class="k">let</span> result = create()</code> and <code><span class="k">let</span> elem = first(&amp;list)</code> look identical. One produces an owner. The other produces an alias. The language hides these distinctions deliberately. A learner building the model for the first time does not have the experience to recognize what the syntax conceals.</p><p>The course includes a companion crate called <code>notation</code> with a macro called <code>explicit!</code>. Inside the macro, every operation declares what it does.</p><div class="cb"><code><span class="m">explicit!</span> {
+    <span class="k">let</span> owner(s) = take(<span class="m">String</span>::from(<span class="s">"hello"</span>));       <span class="c">// s takes ownership</span>
+    <span class="k">let</span> owner(t) = take(s);                           <span class="c">// t takes from s, s invalid</span>
+    <span class="k">let</span> alias(r) = coord_exclusive(t);                 <span class="c">// r is a coordinate to t's space</span>
+    <span class="m">println!</span>(<span class="s">"{}"</span>, at(r));                             <span class="c">// follow the coordinate</span>
+}</code></div><p>The left side of each <code><span class="k">let</span></code> declares the kind of <span class="ea-static" title="What is a binding, and what can it hold?">binding</span>. <code>owner</code> means the binding controls when space is reclaimed. <code>alias</code> means the binding holds a coordinate to space owned elsewhere. The right side declares what happens. <code>take</code> means ownership transfers; an existing binding passed as the argument becomes invalid. <code>coord_exclusive</code> creates an exclusive coordinate. <code>at</code> follows a coordinate to its target.</p><p>The vocabulary maps to the framework from Chapter 2. <code>owner</code> tracks SPACE x TIME. <code>alias</code> tracks COORDINATES. <code>take</code> is an ownership transfer in TIME. <code>coord_exclusive</code> creates a COORDINATE with exclusive access. Coordinates come in two kinds: <code>coord_exclusive</code> grants read and write access, and <code>coord_shared</code> grants read access while allowing multiple coordinates to coexist.</p></div>
+</div>
+
+<div class="node" id="nd-sigs_lifetimes">
+<div class="nch">Rust's Patches · 35</div>
+<h2>Signatures and Lifetime Annotations</h2>
+<div class="nctx">Data flow crosses scope boundaries. How does the compiler track it?</div>
+<div class="pr"><p>The <span class="ea-static" title="Data flow crosses scope boundaries. The scope tree can't track it.">third obstacle</span> is that data flow crosses scope boundaries. Constrained coordinates and ownership make both questions answerable within a single function. Separate compilation limits this. The compiler processes each function independently. It sees the signature of each function it calls but not the body. A caller has no access to the body of a function that returns a reference and cannot determine where the reference points.</p><p>Function signatures solve this. The signature declares, for each output, what kind of thing the caller receives. An owned output returns new space to the caller. A value output returns a self-contained value. A borrowed output returns a reference that points into space owned by one of the inputs.</p><div class="cb"><code><span class="c">// Owned output: caller receives ownership</span>
+<span class="k">fn</span> <span class="m">create</span>() -&gt; <span class="m">Vec</span>&lt;<span class="m">i32</span>&gt; {
+    <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>]
+}
+
+<span class="c">// Value output: self-contained</span>
+<span class="k">fn</span> <span class="m">length</span>(list: &amp;[<span class="m">i32</span>]) -&gt; <span class="m">usize</span> {
+    list.<span class="m">len</span>()
+}
+
+<span class="c">// Borrowed output: points into input space</span>
+<span class="k">fn</span> <span class="m">first</span>(list: &amp;[<span class="m">i32</span>]) -&gt; &amp;<span class="m">i32</span> {
+    &amp;list[<span class="n">0</span>]
+}</code></div><p>Borrowed outputs require the signature to declare which input the output connects to. This declaration is what Rust calls a lifetime annotation. The <code>'a</code> label links an output to its input. The same label on an input and an output means "the output borrows from this input."</p><div class="cb"><code><span class="k">fn</span> <span class="m">first</span>&lt;<span class="k">'a</span>&gt;(list: &amp;<span class="k">'a</span> [<span class="m">i32</span>]) -&gt; &amp;<span class="k">'a</span> <span class="m">i32</span>
+<span class="c">//                  ^^              ^^  same label: output borrows from list</span>
+
+<span class="k">fn</span> <span class="m">search</span>&lt;<span class="k">'a</span>, <span class="k">'b</span>&gt;(map: &amp;<span class="k">'a</span> <span class="m">Map</span>, key: &amp;<span class="k">'b</span> K) -&gt; &amp;<span class="k">'a</span> V
+<span class="c">//                      ^^                       ^^  output borrows from map, not key</span>
+
+<span class="k">fn</span> <span class="m">either</span>&lt;<span class="k">'a</span>&gt;(a: &amp;<span class="k">'a</span> <span class="m">i32</span>, b: &amp;<span class="k">'a</span> <span class="m">i32</span>, flag: <span class="m">bool</span>) -&gt; &amp;<span class="k">'a</span> <span class="m">i32</span>
+<span class="c">//                ^^           ^^                      ^^  output borrows from both</span></code></div><p>C++ carries no information about where a returned reference points. The Rust signatures encode it.</p><table><tr><th>C++ signature</th><th>What Rust adds</th></tr><tr><td><code>const int&amp; first(const vector&lt;int&gt;&amp;)</code></td><td>Output borrows from <code>list</code></td></tr><tr><td><code>const V&amp; search(const Map&amp;, const K&amp;)</code></td><td>Output borrows from <code>map</code>, not <code>key</code></td></tr><tr><td><code>const int&amp; either(const int&amp;, const int&amp;, bool)</code></td><td>Output borrows from both</td></tr></table><p>The compiler verifies both directions. Given the function body, it checks that the implementation returns a reference derived from the declared input. Given the call site, it checks that the caller keeps the input alive while using the output. Function pointers, trait objects, and cross-crate calls all work from the signature alone.</p></div>
+</div>
+
+<div class="node" id="nd-desugaring">
+<div class="nch">Rust's Patches · 36</div>
+<h2>Desugaring and Lifetime Elision</h2>
+<div class="nctx">How do operators like v[0] connect to lifetimes?</div>
+<div class="pr"><p>Rust desugars operator syntax to trait method calls. <code>v[<span class="n">0</span>]</code> desugars to <code>*v.index(<span class="n">0</span>)</code>, and <code>Index::index</code> has this signature:</p><div class="cb"><code><span class="k">fn</span> <span class="m">index</span>(&amp;<span class="k">self</span>, index: <span class="m">usize</span>) -&gt; &amp;Self::<span class="m">Output</span>
+
+<span class="c">// With lifetime written out:</span>
+<span class="k">fn</span> <span class="m">index</span>&lt;<span class="k">'a</span>&gt;(&amp;<span class="k">'a</span> <span class="k">self</span>, index: <span class="m">usize</span>) -&gt; &amp;<span class="k">'a</span> Self::<span class="m">Output</span></code></div><p>The function takes a <code>&amp;<span class="m">Vec</span>&lt;<span class="m">i32</span>&gt;</code> and returns a <code>&amp;<span class="m">i32</span></code>. One coordinate goes in, one coordinate comes out. The shared <code>'a</code> declares that the returned element coordinate is valid only while the input Vec coordinate is valid. The compiler reads this temporal dependency from the signature and enforces it at every call site.</p><p>Rust calls this inference <em>lifetime elision</em>. A function with one reference input and one reference output infers the connection. A method on <code>&amp;<span class="k">self</span></code> or <code>&amp;<span class="k">mut</span> <span class="k">self</span></code> infers the output borrows from <code><span class="k">self</span></code>. The programmer writes explicit <code>'a</code> labels only when the inference is ambiguous: multiple reference inputs, no <code><span class="k">self</span></code>, or the output needs to declare which specific input it borrows from.</p></div>
+</div>
+
+<div class="node" id="nd-using_managing">
+<div class="nch">Rust's Patches · 37</div>
+<h2>Using Data, Managing Space</h2>
+<div class="nctx">What can a coordinate actually do?</div>
+<div class="pr"><p>An <code>owner</code> controls when <span class="ea-static" title="How do stack and heap differ at the machine level?">space</span> is reclaimed. An <code>alias</code> holds a coordinate to space owned elsewhere. Using the data and managing the space are different operations, and Rust enforces the difference.</p><p>A coordinate, even an exclusive one, lets code read and write the target data. It cannot free the space, move ownership out, or replace the allocation. Only the <code>owner</code> can manage the space.</p><div class="cb"><code><span class="m">explicit!</span> {
+    <span class="k">let</span> owner(b) = take(<span class="m">Box</span>::new(<span class="m">String</span>::from(<span class="s">"hello"</span>)));  <span class="c">// b owns heap space</span>
+    <span class="k">let</span> alias(r) = coord_exclusive(b);                      <span class="c">// r can read and write</span>
+    <span class="c">// take(at(r)) would be invalid: r is an alias, aliases cannot own</span>
+}</code></div><p><code>take(b)</code> works because <code>b</code> is an <code>owner</code>. The compiler forbids <code>take</code> when the argument is an <code>alias</code>. A function that receives an <code>alias</code> parameter cannot call <code>take</code> on it, cannot destroy the space, cannot move ownership away. The caller knows that after the function returns, the space still exists. The function accessed the data. The <code>owner</code> kept control of the space.</p><table><tr><th>Operation</th><th>C++ via <code>unique_ptr&lt;string&gt;&amp;</code></th><th>Rust via <code>alias(r) = coord_exclusive(b)</code></th></tr><tr><td>Read value</td><td><code>*ref</code></td><td><code>at(at(r))</code></td></tr><tr><td>Write value</td><td><code>*ref = v</code></td><td><code>at(at(r)) = v</code></td></tr><tr><td>Call methods</td><td><code>ref-&gt;method()</code></td><td><code>at(r).method()</code></td></tr><tr><td>Move out</td><td><code>auto s = move(*ref)</code></td><td><code>take(at(r))</code> <strong>forbidden</strong></td></tr><tr><td>Destroy space</td><td><code>ref.reset()</code></td><td><strong>forbidden</strong></td></tr></table><p>The first three rows use data. The last two manage space. C++ allows a coordinate to manage the space. Rust does not. This distinction makes the compiler's analysis airtight: signatures that declare <code>alias</code> connections are telling the truth in full, because an <code>alias</code> cannot do more than use the data.</p></div>
+</div>
+
+<div class="node" id="nd-move_default">
+<div class="nch">Rust's Patches · 38</div>
+<h2>Why Rust Moves by Default</h2>
+<div class="nctx">Why does assignment invalidate the source?</div>
+<div class="pr"><p>The <span class="ea-static" title="Byte-copying a managed type duplicates the heap pointer, creating two owners for the same space.">fourth obstacle</span> is invisible coordinate duplication. Byte-copying a <code><span class="m">String</span></code> duplicates the heap pointer, creating two owners of one space. Rust prevents this by making assignment transfer ownership rather than copy bytes.</p><p><code><span class="k">let</span> t = s</code> moves ownership to <code>t</code>, and <code>s</code> becomes invalid. The compiler does not know whether a type's bytes contain coordinates to managed space. Moving is the safe default.</p><p>Types that contain no coordinates to managed space opt into byte duplication by implementing the <code><span class="m">Copy</span></code> trait. <code><span class="m">i32</span></code>, <code><span class="m">bool</span></code>, <code><span class="m">f64</span></code>, <code><span class="m">char</span></code>, and tuples of Copy types are all Copy. <code><span class="m">String</span></code>, <code><span class="m">Vec</span></code>, and any type that manages heap space are not Copy.</p><div class="cb"><code><span class="m">explicit!</span> {
+    <span class="k">let</span> owner(x) = take(<span class="n">5</span>);
+    <span class="k">let</span> owner(y) = mem_copy(x);       <span class="c">// duplicate the bytes</span>
+    <span class="m">println!</span>(<span class="s">"x = {}, y = {}"</span>, x, y); <span class="c">// both valid</span>
+}</code></div><p><code><span class="k">let</span> y = x</code> does not say whether it copies or moves. The compiler decides based on the type. The notation surfaces this decision:</p><div class="cb"><code><span class="m">explicit!</span> {
+    <span class="k">let</span> owner(x1) = take(<span class="n">5</span>);
+    <span class="k">let</span> owner(y1) = take_or_mem_copy(x1);         <span class="c">// i32 is Copy: mem_copy</span>
+    <span class="m">println!</span>(<span class="s">"x1 = {}, y1 = {}"</span>, x1, y1);         <span class="c">// both valid</span>
+
+    <span class="k">let</span> owner(x2) = take(<span class="m">String</span>::from(<span class="s">"hello"</span>));
+    <span class="k">let</span> owner(y2) = take_or_mem_copy(x2);          <span class="c">// String is not Copy: take</span>
+    <span class="m">println!</span>(<span class="s">"y2 = {}"</span>, y2);
+    <span class="c">// x2 is invalid here</span>
+}</code></div><p><code>take_or_mem_copy</code> makes the compiler's decision visible. Standard Rust writes both operations as <code><span class="k">let</span> y = x</code>, and the same syntax produces different behavior depending on the type. For programs that need a full independent copy of a non-Copy type, <code>.clone()</code> allocates new space and copies the data.</p></div>
+</div>
+
+<div class="node" id="nd-struct_lifetimes">
+<div class="nch">Rust's Patches · 39</div>
+<h2>Struct Lifetime Annotations</h2>
+<div class="nctx">What about structs that hold references?</div>
+<div class="pr"><p>A struct can hold a coordinate to space owned by a different binding. That coordinate is derived data, and the struct depends on the external space staying alive. Rust requires the struct to declare this dependency. The <code>'a</code> on the struct states that it contains a coordinate that must not outlive space with lifetime <code>'a</code>.</p><div class="cb"><code><span class="k">struct</span> <span class="m">Viewer</span>&lt;<span class="k">'a</span>&gt; {
+    data: &amp;<span class="k">'a</span> [<span class="m">i32</span>],
+}</code></div><p>The compiler uses <code>'a</code> to verify that any code creating a <code><span class="m">Viewer</span></code> keeps the referenced space alive long enough. The rejection looks like this:</p><div class="cb"><code><span class="k">fn</span> <span class="m">main</span>() {
+    <span class="k">let</span> viewer;
+    {
+        <span class="k">let</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+        viewer = <span class="m">Viewer</span> { data: &amp;v };
+    }                                     <span class="c">// v's space reclaimed here</span>
+    <span class="m">println!</span>(<span class="s">"{:?}"</span>, viewer.data);        <span class="c">// REJECTED: viewer outlives v</span>
+}</code></div><div class="er"><b>error[E0597]:</b> `v` does not live long enough</div><p>Function lifetime annotations declare that an output holds a coordinate to an input's space. Struct lifetime annotations declare that the struct holds a coordinate to external space. Both tell the compiler which space a coordinate depends on. The solution is the same: the <code>'a</code> annotation declares the cross-scope dependency.</p></div>
+</div>
+
+<div class="node" id="nd-mut_binding">
+<div class="nch">Rust's Patches · 40</div>
+<h2>What mut Means on a Binding</h2>
+<div class="nctx">Rebinding and writing through a coordinate are different operations.</div>
+<div class="pr"><p>Every binding so far has been fixed for its scope. A rebindable binding can point to a different value or a different target. The notation writes this as <code>rebindable</code>. Standard Rust writes <code><span class="k">let</span> <span class="k">mut</span></code>.</p><div class="cb"><code><span class="m">explicit!</span> {
+    <span class="k">let</span> owner(rebindable(x)) = take(<span class="m">String</span>::from(<span class="s">"hello"</span>));
+    x = take(<span class="m">String</span>::from(<span class="s">"world"</span>));    <span class="c">// x now holds different space</span>
+    <span class="m">println!</span>(<span class="s">"{}"</span>, at(x));              <span class="c">// prints "world"</span>
+}</code></div><p>Reassigning <code>x</code> frees the old space, because <code>x</code> was its owner and the owner has moved to different space. Rebinding changes the binding itself, pointing it to a new target. Changing data at a coordinate modifies the contents of the target without changing what the binding points to. These are different operations.</p><p>C++ uses <code>const</code> for both purposes: <code>const int x = 5</code> prevents reassignment, <code>const int&amp; r = x</code> prevents writing through the reference. Rust separates them. <code><span class="k">mut</span></code> on the binding controls reassignment. <code>&amp;<span class="k">mut</span></code> on the coordinate controls write access. The two are orthogonal.</p><table><tr><th></th><th>Can reassign binding</th><th>Can write at coordinate</th></tr><tr><td><code><span class="k">let</span> r = &amp;x</code></td><td>No</td><td>No</td></tr><tr><td><code><span class="k">let</span> <span class="k">mut</span> r = &amp;x</code></td><td>Yes</td><td>No</td></tr><tr><td><code><span class="k">let</span> r = &amp;<span class="k">mut</span> x</code></td><td>No</td><td>Yes</td></tr><tr><td><code><span class="k">let</span> <span class="k">mut</span> r = &amp;<span class="k">mut</span> x</code></td><td>Yes</td><td>Yes</td></tr></table></div>
+</div>
+
+<div class="node" id="nd-shared_exclusive">
+<div class="nch">Rust's Patches · 41</div>
+<h2>Shared and Exclusive Coordinates</h2>
+<div class="nctx">Two kinds of coordinates exist. What are they?</div>
+<div class="pr"><p><code>coord_exclusive</code> (<code>&amp;<span class="k">mut</span> T</code>) grants read and write access to one coordinate at a time. <code>coord_shared</code> (<code>&amp;T</code>) grants read access and allows multiple coordinates to coexist. Rust calls <code>&amp;T</code> a shared reference and <code>&amp;<span class="k">mut</span> T</code> a mutable reference.</p><div class="cb"><code><span class="m">explicit!</span> {
+    <span class="k">let</span> owner(s) = take(<span class="m">String</span>::from(<span class="s">"hello"</span>));
+    <span class="k">let</span> alias(r1) = coord_shared(s);
+    <span class="k">let</span> alias(r2) = coord_shared(s);
+    <span class="m">println!</span>(<span class="s">"{}, {}"</span>, at(r1), at(r2));    <span class="c">// two shared coordinates, safe</span>
+}</code></div><div class="cb"><code><span class="m">explicit!</span> {
+    <span class="k">let</span> owner(<span class="k">mut</span> s) = take(<span class="m">String</span>::from(<span class="s">"hello"</span>));
+    <span class="k">let</span> alias(w) = coord_exclusive(s);
+    at(w).push_str(<span class="s">" world"</span>);              <span class="c">// one exclusive coordinate, safe</span>
+}</code></div><table><tr><th>Rust</th><th>Notation</th></tr><tr><td><code><span class="k">let</span> r = &amp;s</code></td><td><code><span class="k">let</span> alias(r) = coord_shared(s)</code></td></tr><tr><td><code><span class="k">let</span> w = &amp;<span class="k">mut</span> s</code></td><td><code><span class="k">let</span> alias(w) = coord_exclusive(s)</code></td></tr><tr><td><code>*r</code></td><td><code>at(r)</code></td></tr><tr><td><code><span class="k">let</span> <span class="k">mut</span> x</code></td><td><code>owner(rebindable(x))</code></td></tr></table><p>Rust's error messages say "borrowed as immutable" for a shared coordinate and "borrowed as mutable" for an exclusive coordinate. The <span class="ea-static" title="How do shared and exclusive coordinates interact?">borrowing rule</span> derives the rules governing how shared and exclusive coordinates interact: many shared or one exclusive.</p></div>
+</div>
+
+<div class="node" id="nd-composing_vocab">
+<div class="nch">Rust's Patches · 42</div>
+<h2>Composing the Vocabulary</h2>
+<div class="nctx">How do all these pieces fit together?</div>
+<div class="pr"><p><code>at</code> works on both sides of an assignment. On the right it follows the coordinate and reads the value. On the left it follows the coordinate and writes a new value.</p><div class="cb"><code><span class="m">explicit!</span> {
+    <span class="k">let</span> owner(rebindable(x)) = take(<span class="n">5</span>);
+    <span class="k">let</span> alias(r) = coord_exclusive(x);
+    at(r) = <span class="n">10</span>;                         <span class="c">// write: target now holds 10</span>
+    <span class="k">let</span> owner(y) = mem_copy(at(r));     <span class="c">// read: y gets a copy of 10</span>
+}</code></div><p>The owner cannot be used while an exclusive coordinate to its space exists. The compiler enforces this as part of the borrowing rule. The owner resumes when the coordinate expires. <code>take</code> permanently invalidates the source. An exclusive coordinate temporarily suspends it.</p><div class="cb"><code><span class="m">explicit!</span> {
+    <span class="k">let</span> owner(rebindable(x)) = take(<span class="n">5</span>);
+    <span class="k">let</span> alias(r) = coord_exclusive(x);
+    <span class="c">// x is suspended here</span>
+    at(r) = <span class="n">10</span>;
+    <span class="c">// r goes out of scope, x resumes</span>
+    <span class="m">println!</span>(<span class="s">"{}"</span>, x);                  <span class="c">// prints 10</span>
+}</code></div><p><code><span class="m">Box</span>&lt;T&gt;</code> owns heap space containing a <code>T</code>. Following the coordinate with <code>at</code> reaches the inner value, and <code>take</code> moves that value out, transferring ownership and invalidating the Box.</p><div class="cb"><code><span class="m">explicit!</span> {
+    <span class="k">let</span> owner(b) = take(<span class="m">Box</span>::new(<span class="m">String</span>::from(<span class="s">"hello"</span>)));
+    <span class="k">let</span> owner(s) = take(at(b));         <span class="c">// move String out of the Box</span>
+    <span class="m">println!</span>(<span class="s">"{}"</span>, s);
+    <span class="c">// b is invalid</span>
+}</code></div><p>Standard Rust writes <code><span class="k">let</span> s = *b</code>. Dereferencing a <code><span class="m">Box</span></code> transfers ownership of the inner value. Regular references do not support this operation.</p><table><tr><th>Notation</th><th>Framework</th></tr><tr><td><code>owner</code></td><td>SPACE x TIME</td></tr><tr><td><code>alias</code></td><td>COORDINATES</td></tr><tr><td><code>take</code></td><td>Ownership transfer in TIME</td></tr><tr><td><code>coord_exclusive</code></td><td>One COORDINATE, read/write</td></tr><tr><td><code>coord_shared</code></td><td>Many COORDINATES, read only</td></tr><tr><td><code>at</code></td><td>Follow a COORDINATE</td></tr><tr><td><code>mem_copy</code></td><td>Duplicate SPACE, independent owners</td></tr><tr><td><code>take_or_mem_copy</code></td><td>Compiler decides based on type</td></tr><tr><td><code>rebindable</code></td><td>Binding changes target over TIME</td></tr></table><p>The <code>explicit!</code> notation reveals what standard Rust leaves implicit. The next chapter derives the rule governing how shared and exclusive coordinates interact.</p></div>
+</div>
+
+<div class="node" id="nd-coord_dangle">
+<div class="nch">The Approximation · 43</div>
+<h2>How a Coordinate Can Dangle While Its Owner Lives</h2>
+<div class="nctx">Ownership prevents dangling after free. But coordinates can dangle for a different reason.</div>
+<div class="pr"><p>A <code>Vec</code> manages a growable heap buffer. A coordinate to the Vec struct and a coordinate to one of its elements refer to different space. The Vec struct sits on the stack. The element lives in the heap buffer at an address the Vec computes as <code>buffer_ptr + index * sizeof(T)</code>.</p><div class="cb"><code>Stack                    Heap
+┌─────────────┐         ┌───┬───┬───┐
+│ v           │         │ 1 │ 2 │ 3 │
+│  ptr ───────│────────&gt;│   │   │   │
+│  len: 3     │         └───┴───┴───┘
+│  cap: 3     │
+└─────────────┘
+
+coord_shared(v)    → the Vec struct on the stack
+coord_shared(v[0]) → the first element in the heap buffer</code></div><p><code>v.push(4)</code> can reallocate the heap buffer when capacity runs out. The Vec allocates a larger buffer, copies the elements, and frees the old one. A coordinate created before the push still holds the old address. The owner <code>v</code> remains alive. A coordinate to the Vec struct would still work. The element coordinate points to reclaimed space because the method changed the internal state that determines the address.</p><div class="cb"><code>     ┌───┐
+     │ A │  <span class="k">let</span> r = &amp;v[<span class="n">2</span>]
+     └─┬─┘
+       ▼
+     ┌───┐
+     │ B │  v.<span class="m">push</span>(<span class="n">4</span>)       — may reallocate, old buffer freed
+     └─┬─┘
+       ▼
+     ┌───┐
+     │ C │  <span class="m">println!</span>(<span class="s">"{}"</span>, r)  — r points to freed memory ✗
+     └───┘</code></div><p>The path from B to C exists. A method changed internal state while a coordinate computed from that state was still alive. This is the same pattern behind the <span class="ea-static" title="Which chapter 1 error does this explain?">push-while-borrowing error from chapter 1</span>, but now the mechanism is visible: the owner lives, the derived coordinate dangles.</p><p>A change to <code>buffer_ptr</code> makes the element address stale. The element coordinate depends on state the Vec controls, and push can change that state.</p></div>
+</div>
+
+<div class="node" id="nd-derived_sync">
+<div class="nch">The Approximation · 44</div>
+<h2>Why Derived Data Needs a Sync Strategy</h2>
+<div class="nctx">The element coordinate dangled because it was computed from internal state. This is a general pattern.</div>
+<div class="pr"><p>The element coordinate is derived data. The address <code>buffer_ptr + index * sizeof(T)</code> is computed from the Vec's internal state. When that state changes, the derived value becomes stale. A formula <code>a = f(b)</code> creates a dependency: <code>a</code> becomes stale if <code>b</code> changes and no recomputation follows.</p><p>CPU caches, database indexes, element coordinates, and struct field dependencies are all instances of the same pattern. Two kinds of derived data appear in programs. Derived coordinates are addresses computed from internal state. Derived values are fields whose values depend on another field. Both create invalidation problems.</p><p>A compiler managing coordinates needs a sync strategy: prevent the source from changing while derived data exists, or recompute derived data after every change. Recomputation requires knowing the dependency formula, which the compiler does not have for arbitrary user types. Prevention is the feasible option.</p></div>
+</div>
+
+<div class="node" id="nd-cant_distinguish">
+<div class="nch">The Approximation · 45</div>
+<h2>Why the Compiler Cannot Distinguish Safe Methods</h2>
+<div class="nctx">The compiler needs to block dangerous operations. Can it tell which methods are dangerous?</div>
+<div class="pr"><p><code>sort</code> takes exclusive access to a Vec and rearranges elements in place. <code>push</code> takes exclusive access and can reallocate the buffer. Whether <code>push</code> reallocates depends on runtime values: the current length, the current capacity, the allocator's behavior. <span class="ea-static" title="Whether push reallocates depends on runtime values. No algorithm can decide this for all programs.">Chapter 4 showed this is undecidable</span>. No static analysis can determine for all programs whether a particular call to <code>push</code> will reallocate.</p><p>The compiler cannot tell which exclusive-access methods restructure internal space and which merely rearrange it. The distinction depends on runtime state. The compiler blocks any method that takes exclusive access while an element coordinate exists. This is conservative — <code>sort</code> would be safe — but conservatism is the price of soundness.</p></div>
+</div>
+
+<div class="node" id="nd-borrowing_rule_deep">
+<div class="nch">The Approximation · 46</div>
+<h2>The Borrowing Rule</h2>
+<div class="nctx">The compiler blocks exclusive access while a coordinate exists. How long does a coordinate exist?</div>
+<div class="pr"><p>Three levels of structure shape the answer. Source text organizes names into a scope hierarchy. A name enters scope at its declaration and leaves when the enclosing block ends. The language's semantics operate above that hierarchy: function arguments carry data into nested scopes, return values carry it out, assignments move data between bindings. The RAM machine sits below both levels and has no scope structure at all.</p><p>Coordinate liveness is a data-flow property. A coordinate's last use can fall well before its name goes out of scope. The compiler tracks each coordinate from creation to last use on the control flow graph, the same tool chapter 3 used to detect access to reclaimed space. Rust calls this analysis <strong>non-lexical lifetimes</strong> (NLL). Before Rust 2018, the compiler used scope boundaries, which rejected valid programs unnecessarily.</p><div class="cb"><code><span class="k">let</span> r = &amp;v[<span class="n">0</span>];
+<span class="m">println!</span>(<span class="s">"{}"</span>, r);       <span class="c">// last use of r</span>
+v.<span class="m">push</span>(<span class="n">4</span>);              <span class="c">// allowed: r is no longer alive</span></code></div><div class="cb"><code><span class="k">let</span> r = &amp;v[<span class="n">0</span>];
+v.<span class="m">push</span>(<span class="n">4</span>);              <span class="c">// REJECTED: r is still alive</span>
+<span class="m">println!</span>(<span class="s">"{}"</span>, r);</code></div><p>The only difference is the order of the last two statements. In the first program, <code>r</code>'s last use is the <code>println!</code>, and <code>push</code> comes after. In the second, <code>push</code> falls inside <code>r</code>'s liveness range. The compiler rejects the second and accepts the first.</p><p>This generalizes to the full rule. A space can have many <span class="ea-static" title="What can each kind of coordinate do?">shared coordinates</span> or one exclusive coordinate at any point in the program. Code holding a shared coordinate can read. Methods requiring exclusive access are blocked, so shared coordinates coexist safely. Code holding an exclusive coordinate can call any method, so no other coordinate to the same space can be alive while it exists. This is the borrowing rule.</p></div>
+</div>
+
+<div class="node" id="nd-rule_every_type">
+<div class="nch">The Approximation · 47</div>
+<h2>Why the Borrowing Rule Applies to Every Type</h2>
+<div class="nctx">Vec manages heap space. But the rule applies to i32 too. Why?</div>
+<div class="pr"><p>An <code>i32</code> has no managed internal space. Two coordinates to the same <code>i32</code> cannot produce a dangling pointer because there is no internal space to restructure. The compiler could apply the borrowing rule only to types that manage internal allocations and leave simple types unconstrained.</p><p>Determining which types manage internal space requires analyzing field dependencies. A struct might hold a raw pointer to a heap allocation, or contain a field whose value depends on another field. Deciding whether a type has such dependencies is <span class="ea-static" title="A sound compiler never accepts unsafe code. A complete compiler never rejects safe code. No compiler can be both.">undecidable for the same reasons chapter 4 described</span>. The compiler applies the borrowing rule uniformly to every type.</p><div class="cb"><code>The compiler needs a sync strategy for derived data
+        │
+        ├── Derived from managed space
+        │    push changes buffer_ptr → element coordinate dangles
+        │
+        ├── Derived from struct fields
+        │    field a = f(field b) → changing b makes a stale
+        │
+        └── The compiler cannot distinguish these cases
+             → uniform rule: many shared or one exclusive</code></div><p>The uniform rule is a sync strategy for derived data in general. An element coordinate is derived from the Vec's buffer pointer. A struct field value can be derived from another field. A cache entry is derived from the data it caches. The compiler cannot know which types have these dependencies, so it prevents any source from changing while a coordinate derived from it exists.</p></div>
+</div>
+
+<div class="node" id="nd-ch1_and_rule">
+<div class="nch">The Approximation · 48</div>
+<h2>The Chapter 1 Programs and the Borrowing Rule</h2>
+<div class="nctx">The borrowing rule explained. Now see it applied to every rejected program from chapter 1.</div>
+<div class="pr"><p><strong>Push while borrowing.</strong> <code>r</code> is a shared coordinate to the first element. <code>push</code> requires exclusive access to <code>v</code>. A shared coordinate and an exclusive coordinate to overlapping space exist at the same time.</p><div class="cb"><code><span class="k">let mut</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+<span class="k">let</span> r = &amp;v[<span class="n">0</span>];
+v.<span class="m">push</span>(<span class="n">4</span>);
+<span class="m">println!</span>(<span class="s">"{}"</span>, r);</code></div><div class="er"><b>error[E0502]:</b> cannot borrow `v` as mutable because it is also borrowed as immutable</div><p><strong>Iterator invalidation.</strong> The <code>for</code> loop creates an iterator that holds a shared coordinate to <code>v</code> and a pointer into <code>v</code>'s heap buffer. <code>push</code> requires exclusive access. The push can reallocate the buffer while the iterator reads from the old one.</p><div class="cb"><code><span class="k">let mut</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+<span class="k">for</span> x <span class="k">in</span> &amp;v {
+    v.<span class="m">push</span>(*x);
+}</code></div><div class="er"><b>error[E0502]:</b> cannot borrow `v` as mutable because it is also borrowed as immutable</div><p><strong>Closure capturing.</strong> The closure captures <code>v</code> by exclusive coordinate because it calls <code>push</code>. <code>println!</code> requires a shared coordinate. The closure exists from creation to last use, and the <code>println!</code> falls within that range.</p><div class="cb"><code><span class="k">let mut</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+<span class="k">let</span> closure = || v.<span class="m">push</span>(<span class="n">4</span>);
+<span class="m">println!</span>(<span class="s">"{:?}"</span>, v);
+closure();</code></div><div class="er"><b>error[E0502]:</b> cannot borrow `v` as immutable because it is also borrowed as mutable</div><p><strong>Two exclusive coordinates.</strong> Two <code>&amp;mut</code> to the same <code>String</code>. Either one could call methods that restructure the internal buffer while the other depends on the old state.</p><div class="cb"><code><span class="k">let mut</span> s = <span class="m">String</span>::from(<span class="s">"hello"</span>);
+<span class="k">let</span> r1 = &amp;<span class="k">mut</span> s;
+<span class="k">let</span> r2 = &amp;<span class="k">mut</span> s;
+<span class="m">println!</span>(<span class="s">"{}, {}"</span>, r1, r2);</code></div><div class="er"><b>error[E0499]:</b> cannot borrow `s` as mutable more than once at a time</div><p>Each program maps to the same pattern: a coordinate exists while an operation that could invalidate it is attempted. The <span class="ea-static" title="The same borrowing rule prevents data races.">thread safety errors from chapter 1</span> follow from the same rule.</p></div>
+</div>
+
+<div class="node" id="nd-cpp_threads_rule">
+<div class="nch">The Approximation · 49</div>
+<h2>How C++ Handles Multiple Coordinates</h2>
+<div class="nctx">Rust enforces the borrowing rule at compile time. What does C++ do?</div>
+<div class="pr"><p>C++ has the same vocabulary of shared and exclusive access. <code>const T&amp;</code> grants read-only access. <code>T&amp;</code> grants read and write. C++ does not enforce the borrowing rule at compile time. The push-while-borrowing and iterator invalidation examples from chapter 1 compile in C++ without error and produce undefined behavior at runtime.</p><div class="cb"><code><span class="c">// C++ — compiles, undefined behavior</span>
+std::vector&lt;<span class="m">int</span>&gt; v = {<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>};
+<span class="m">int</span>&amp; r = v[<span class="n">0</span>];
+v.<span class="m">push_back</span>(<span class="n">4</span>);   <span class="c">// may reallocate</span>
+std::cout &lt;&lt; r;   <span class="c">// r may point to freed memory</span></code></div><p>The C++ standard says this is the programmer's responsibility. The compiler accepts the code. Whether the program crashes, prints garbage, or appears to work depends on the allocator's behavior at runtime.</p><p>Parallel execution introduces a separate, independent reason for the same rule. A <span class="ea-static" title="A data race occurs when two threads access the same memory, at least one writes, and no synchronization governs the access.">data race</span> requires parallel TIME, shared SPACE, and multiple COORDINATES where at least one writes. One thread reading an <code>i32</code> while another writes to it can produce a torn read, depending on the hardware. The <code>i32</code> has no managed internal space. Parallel access to the same space creates the danger regardless of whether any type manages internal allocations.</p><p>The borrowing rule prevents both dangers with the same mechanism. Shared coordinates allow parallel reads because no writer can change the state they depend on. An exclusive coordinate prevents parallel access by ensuring no other coordinate exists. The rule protects managed space from restructuring in sequential code and prevents data races when execution is parallel.</p><p>The approximation sometimes rejects valid code. The compiler's <span class="ea-static" title="The compiler tracks at the level of entire bindings, not individual fields or elements.">tracking granularity</span> creates false rejections, and Rust provides several ways to work around that conservatism.</p></div>
+</div>
+
+<div class="node" id="nd-compiler_granularity">
+<div class="nch">Practical Guidance · 50</div>
+<h2>What the Compiler Can Distinguish</h2>
+<div class="nctx">The borrowing rule is an approximation. Where does it lose precision?</div>
+<div class="pr"><p>The analysis tracks coordinates. The granularity of that tracking determines which simultaneous accesses the compiler can prove safe.</p><p><strong>Struct fields.</strong> <code>p.x</code> and <code>p.y</code> are distinct. The type declaration places them at distinct offsets, and field names are literal in source text. The compiler can prove that coordinates to <code>p.x</code> and coordinates to <code>p.y</code> point to disjoint space.</p><p><strong>Array elements with literal indices.</strong> <code>v[0]</code> and <code>v[1]</code> refer to different elements. The literal indices are visible in source text, so the compiler could distinguish them. Rust treats all index expressions as potentially overlapping. This is a design choice.</p><p><strong>Array elements with computed indices.</strong> <code>v[i]</code> and <code>v[j]</code> where <code>i</code> and <code>j</code> come from computation. Whether <code>i == j</code> depends on runtime values. Proving it requires solving the halting problem.</p><table><tr><th>Coordinates to</th><th>Distinguishable?</th><th>Why</th></tr><tr><td><code>p.x</code> vs <code>p.y</code></td><td>Yes</td><td>Field names literal in source</td></tr><tr><td><code>v[0]</code> vs <code>v[1]</code></td><td>Could be</td><td>Rust's design choice</td></tr><tr><td><code>v[i]</code> vs <code>v[j]</code></td><td>No</td><td>May require solving halting problem</td></tr></table><p>Branches and pointer aliasing share this structure. Whether <code>*p</code> and <code>*q</code> point to the same space depends on runtime values. The compiler assumes worst case for both. The compiler handles what source text <span class="ea-static" title="The compiler handles names and scope boundaries exactly. Data flow between scopes is where the approximation enters.">names</span>. Computed values belong to data flow, and data flow is where undecidability enters.</p></div>
+</div>
+
+<div class="node" id="nd-skip_decidable">
+<div class="nch">Practical Guidance · 51</div>
+<h2>Why Compilers Skip Decidable Cases</h2>
+<div class="nctx">Literal indices are decidable. Why does the compiler still reject them?</div>
+<div class="pr"><p>The literal index <code>v[0]</code> is decidable. So is a function call <code>pick(&amp;a, &amp;b, true)</code> where the argument is a constant. A human sees which branch executes. The compiler could too, using constant propagation and inlining.</p><p>General-purpose compilers favor predictability. Code that compiles when the argument is <code>true</code> fails when <code>true</code> becomes <code>some_function()</code>, and programmers cannot predict which expressions cross the decidability boundary. Identifying which expressions fall into decidable subsets is itself expensive, and coverage is narrow.</p><p>Specialized compilers do analyze decidable cases. Fortran compilers use polyhedral analysis for loop parallelization. ML frameworks require static tensor shapes. The techniques exist and work for specific domains.</p><p>Rust chose consistent approximate analysis. The compiler treats all index expressions and all branch conditions the same way. A program that compiles with a constant will still compile when that constant becomes a variable. <span class="ea-static" title="Predictability: code that compiles with a constant still compiles when it becomes a variable.">Where else</span> does the compiler lose information?</p></div>
+</div>
+
+<div class="node" id="nd-sigs_lose_field">
+<div class="nch">Practical Guidance · 52</div>
+<h2>Signatures Lose Field-Level Information</h2>
+<div class="nctx">The compiler distinguishes struct fields inside a body. What happens across a function call?</div>
+<div class="pr"><p>Inside a function body, the compiler sees field-level coordinate access. <code>&amp;d.field1</code> and <code>&amp;d.field2</code> point to disjoint space, and the compiler knows it.</p><div class="cb"><code><span class="k">let</span> r1 = &amp;d.field1;      <span class="c">// coordinates to d.field1</span>
+<span class="k">let</span> r2 = &amp;d.field2;      <span class="c">// coordinates to d.field2</span>
+                          <span class="c">// disjoint: yes</span></code></div><p>Across a function call, only the <span class="ea-static" title="Lifetime annotations declare which input a borrowed output connects to.">signature</span> is visible. A method that borrows <code>self</code> borrows the whole struct.</p><div class="cb"><code><span class="k">let</span> r1 = d.<span class="m">get_field1</span>(); <span class="c">// signature says: borrows d</span>
+<span class="k">let</span> r2 = d.<span class="m">get_field2</span>(); <span class="c">// signature says: borrows d</span>
+                          <span class="c">// disjoint: the compiler cannot tell</span></code></div><p>Signatures encode coordinate connections at struct granularity. Field-level information does not cross function boundaries. Types describe whole structs, and connections are encoded at the type level. The compiler sees two borrows of <code>d</code> where a human sees two borrows of disjoint fields.</p></div>
+</div>
+
+<div class="node" id="nd-escape_hatches">
+<div class="nch">Practical Guidance · 53</div>
+<h2>Escape Hatches</h2>
+<div class="nctx">The compiler rejected valid code. What are the options?</div>
+<div class="pr"><p>The <span class="ea-static" title="What does the rule actually say?">borrowing rule</span> is sound. It never accepts unsafe code. It sometimes rejects safe code. The <span class="ea-static" title="Rust chose soundness: the compiler never accepts unsafe code, but sometimes rejects code that is actually safe.">gap</span> between what is safe and what the compiler can prove safe creates a progression of responses, from least to most powerful.</p><p><strong>Restructure the code.</strong> Make the safety visible to the graph. Move the <code>drop</code> after the last use of the reference. Call a function that takes only the input the caller needs. The code was safe, but the signature did not carry enough information for the compiler to verify it. Restructuring makes the safety visible.</p><div class="cb"><code><span class="k">fn</span> <span class="m">pick</span>&lt;<span class="k">'a</span>&gt;(a: &amp;<span class="k">'a</span> [<span class="m">i32</span>], b: &amp;<span class="k">'a</span> [<span class="m">i32</span>], cond: <span class="m">bool</span>) -> &amp;<span class="k">'a</span> <span class="m">i32</span> {
+    <span class="k">if</span> cond { &amp;a[<span class="n">0</span>] } <span class="k">else</span> { &amp;b[<span class="n">0</span>] }
+}
+<span class="k">let</span> a = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+<span class="k">let</span> b = <span class="m">vec!</span>[<span class="n">4</span>, <span class="n">5</span>, <span class="n">6</span>];
+<span class="k">let</span> r = <span class="m">pick</span>(&amp;a, &amp;b, <span class="k">true</span>);
+<span class="m">drop</span>(b);                  <span class="c">// rejected: r might borrow b</span>
+<span class="m">println!</span>(<span class="s">"{}"</span>, r);</code></div><p>The caller knows <code>r</code> comes from <code>a</code> because the argument is <code>true</code>. The signature declares that <code>r</code> might borrow from either <code>a</code> or <code>b</code>. The compiler assumes <code>b</code> might be needed and rejects the <code>drop(b)</code> while <code>r</code> exists.</p><p><strong>Encode invariants in types.</strong> The compiler cannot prove that <code>v[0..n]</code> and <code>v[n..len]</code> are disjoint space. A human sees the disjointness immediately. One range ends where the other begins.</p><div class="cb"><code><span class="k">let</span> (left, right) = v.<span class="m">split_at_mut</span>(n);
+<span class="c">// left = v[0..n], right = v[n..len]</span>
+<span class="c">// disjoint by construction</span></code></div><p>Inside <code>split_at_mut</code>, an <code><span class="k">unsafe</span></code> block asserts what the compiler cannot verify. The function computes two slices that are disjoint by construction, and the return type encodes the disjointness. The caller receives a safe interface. The proof obligation moved from the compiler to the function author.</p><p><strong>Move verification to runtime.</strong> Static analysis faces undecidability because it must answer questions about all possible executions. At runtime, only one execution happens. Questions that were undecidable statically become trivial runtime checks.</p><table><tr><th>Rust</th><th>C++ equivalent</th><th>What it tracks</th></tr><tr><td><code>RefCell&lt;T&gt;</code></td><td>--</td><td>Active borrow count</td></tr><tr><td><code>Mutex&lt;T&gt;</code></td><td><code>std::mutex</code> + <code>T</code></td><td>Lock state</td></tr><tr><td><code>RwLock&lt;T&gt;</code></td><td><code>std::shared_mutex</code> + <code>T</code></td><td>Reader/writer count</td></tr><tr><td><code>Rc&lt;T&gt;</code></td><td><code>std::shared_ptr&lt;T&gt;</code></td><td>Reference count</td></tr><tr><td><code>Arc&lt;T&gt;</code></td><td><code>std::shared_ptr&lt;T&gt;</code> (atomic)</td><td>Reference count</td></tr></table><p><strong>Cyclic structures.</strong> Ownership is tree-shaped. Each value has one owner, forming a hierarchy. Cyclic structures do not fit. A doubly-linked list node has <code>prev</code> and <code>next</code> coordinates to the same neighbor. Both cannot own the neighbor. The options are reference counting (<code>Rc</code> + <code>RefCell</code>), arenas that use indices as coordinates, or manual management with <code><span class="k">unsafe</span></code>.</p></div>
+</div>
+
+<div class="node" id="nd-hints_space">
+<div class="nch">Practical Guidance · 54</div>
+<h2>Hints About Space</h2>
+<div class="nctx">The compiler rejected code. The problem is about SPACE.</div>
+<div class="pr"><p>The wrong binding owns the space, or earlier code <span class="ea-static" title="Byte-copying a String would duplicate the heap pointer, creating two owners for one allocation. Move-by-default prevents this.">moved</span> the space away. Two adjustments fix this.</p><p><strong>Duplication.</strong> Two sites need the same data. One takes ownership, the other still needs the value. <code>clone()</code> allocates new space and copies the data. Deriving <code>Copy</code> makes the compiler duplicate automatically for small stack types. <code>Rc</code> and <code>Arc</code> share the space and track owners with a reference count.</p><div class="cb"><code><span class="k">let</span> s = <span class="m">String</span>::from(<span class="s">"hello"</span>);
+<span class="k">let</span> t = s.<span class="m">clone</span>();           <span class="c">// new space, independent owner</span>
+<span class="m">consume</span>(s);
+<span class="m">println!</span>(<span class="s">"{}"</span>, t);           <span class="c">// t's space is still alive</span></code></div><p><strong>Ownership transfer.</strong> The space exists in the wrong place. A closure needs to own a value from the enclosing scope. A function needs to return data it created. <code>mem::replace</code> and <code>mem::take</code> transfer at an exclusive coordinate. They swap the contents and leave valid space behind.</p><div class="cb"><code><span class="k">fn</span> <span class="m">take_name</span>(person: &amp;<span class="k">mut</span> <span class="m">Person</span>) -> <span class="m">String</span> {
+    std::mem::<span class="m">take</span>(&amp;<span class="k">mut</span> person.name)  <span class="c">// extracts name, leaves String::new()</span>
+}
+
+<span class="k">let</span> s = <span class="m">String</span>::from(<span class="s">"hello"</span>);
+<span class="k">let</span> closure = <span class="k">move</span> || <span class="m">println!</span>(<span class="s">"{}"</span>, s);  <span class="c">// s moves into the closure</span></code></div></div>
+</div>
+
+<div class="node" id="nd-hints_time">
+<div class="nch">Practical Guidance · 55</div>
+<h2>Hints About Time</h2>
+<div class="nctx">The compiler rejected code. The problem is about TIME.</div>
+<div class="pr"><p>Coordinate lifetimes overlap when they should not, or the compiler cannot see when a coordinate's target space is reclaimed. Two adjustments fix this. Every hint adjusts one of the <span class="ea-static" title="Which dimension does each hint adjust?">three dimensions</span>.</p><p><strong>Reordering.</strong> The fix reorders operations so the first coordinate's lifetime ends before the second begins. Scoping with <code>{}</code> achieves the same result. Binding a temporary to a <code>let</code> extends its lifetime so coordinates to that space survive longer.</p><div class="cb"><code><span class="k">let mut</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+<span class="k">let</span> first = v[<span class="n">0</span>];         <span class="c">// read the value, coordinate ends</span>
+v.<span class="m">push</span>(<span class="n">4</span>);                <span class="c">// exclusive access, no conflict</span>
+<span class="m">println!</span>(<span class="s">"{}"</span>, first);    <span class="c">// first is a copy, no coordinate</span></code></div><p><strong>Scope declarations.</strong> The compiler cannot verify that a coordinate's lifetime fits inside its target space's lifetime because the relationship is invisible. Lifetime annotations make it explicit.</p><div class="cb"><code><span class="k">fn</span> <span class="m">first</span>&lt;<span class="k">'a</span>&gt;(list: &amp;<span class="k">'a</span> [<span class="m">i32</span>]) -> &amp;<span class="k">'a</span> <span class="m">i32</span> {
+    &amp;list[<span class="n">0</span>]
+}</code></div><p>The <code>'a</code> label on both the input and the output tells the compiler that the output coordinate points into the input's space. Adding <code>T: 'a</code> to a generic parameter and adding <code>'a: 'b</code> to declare containment are the same hint at different sites.</p></div>
+</div>
+
+<div class="node" id="nd-hints_coords">
+<div class="nch">Practical Guidance · 56</div>
+<h2>Hints About Coordinates</h2>
+<div class="nctx">The compiler rejected code. The problem is about COORDINATES.</div>
+<div class="pr"><p>The code requests the wrong kind of coordinate, or uses ownership where a coordinate would suffice. Three adjustments fix this.</p><p><strong>Borrowing.</strong> The code transfers ownership where a coordinate would suffice. Pass <code>&amp;</code> instead of consuming the value. The caller keeps ownership.</p><div class="cb"><code><span class="k">fn</span> <span class="m">print_len</span>(s: &amp;<span class="m">String</span>) {
+    <span class="m">println!</span>(<span class="s">"{}"</span>, s.<span class="m">len</span>());
+}
+<span class="k">let</span> s = <span class="m">String</span>::from(<span class="s">"hello"</span>);
+<span class="m">print_len</span>(&amp;s);                <span class="c">// coordinate to s, ownership stays</span>
+<span class="m">println!</span>(<span class="s">"{}"</span>, s);            <span class="c">// s still alive</span></code></div><p><strong>Partitioning.</strong> Two parts of the code need exclusive access to different parts of the same space. The compiler sees one coordinate to the whole and rejects the second. <code>split_at_mut</code> produces two exclusive coordinates to non-overlapping regions. Binding struct fields individually before a closure achieves the same at the field level.</p><div class="cb"><code><span class="k">let mut</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>, <span class="n">4</span>];
+<span class="k">let</span> (left, right) = v.<span class="m">split_at_mut</span>(<span class="n">2</span>);
+left[<span class="n">0</span>] = <span class="n">10</span>;
+right[<span class="n">0</span>] = <span class="n">30</span>;
+
+<span class="k">let</span> name = &amp;<span class="k">mut</span> person.name;
+<span class="k">let</span> age = &amp;<span class="k">mut</span> person.age;    <span class="c">// different field, no conflict</span></code></div><p><strong>Mutability upgrade.</strong> The code requests a <span class="ea-static" title="What can each kind of coordinate do?">shared coordinate</span> where it needs an exclusive one, or the binding lacks <code><span class="k">mut</span></code>. <code>.iter()</code> produces shared coordinates. <code>.iter_mut()</code> produces exclusive ones. Adding <code><span class="k">mut</span></code> to a binding, changing <code>&amp;</code> to <code>&amp;<span class="k">mut</span></code>, and using <code>.get_mut()</code> on a map are the same hint at different sites.</p><div class="cb"><code><span class="k">let mut</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+<span class="k">for</span> item <span class="k">in</span> v.<span class="m">iter_mut</span>() {    <span class="c">// exclusive coordinates to each element</span>
+    *item += <span class="n">1</span>;
+}</code></div><p>The seven hints across SPACE, TIME, and COORDINATES are reactive. The compiler rejected code, and the hint tells you which dimension to adjust. The <span class="ea-static" title="Data shape determines the pattern.">proactive counterpart</span> is structuring programs so the compiler accepts them from the start.</p></div>
+</div>
+
+<div class="node" id="nd-data_shape">
+<div class="nch">Linear Types · 57</div>
+<h2>How Data Shape Determines the Pattern</h2>
+<div class="nctx">Ownership forms a tree. Not all data fits a tree.</div>
+<div class="pr"><p>Ownership assigns a single parent to each value. Drop the parent, and the value goes with it. These edges form a hierarchy rooted at the call stack. A Vec owns its elements, a struct owns its fields. Data whose relationships fit this hierarchy needs no additional mechanism.</p><p>Not all data fits. Several nodes in a graph can reach the same value, and the edges between them do not form a hierarchy. A doubly linked list has back pointers that are non-tree edges by construction. A HashMap can develop shared values depending on what the program inserts. The type system's vocabulary is tree-shaped. Non-tree edges exceed what it can express, and the programmer must choose a representation.</p><p>The choice resolves friction along one or more of <span class="ea-static" title="What are the three dimensions of memory?">three dimensions</span>.</p><p><strong>Multiple paths, one owner (SPACE).</strong> Several edges reach the same node, and at most one can be the ownership edge. Node A and node C both connect to node B. A owns B. B's space is reclaimed when A drops, regardless of whether C still needs it.</p><p><strong>Coordinates across scopes (TIME).</strong> A coordinate from a longer-lived scope to a shorter-lived scope may outlive the space it reaches. The compiler ties the coordinate's validity to the owner's scope and rejects code where the coordinate might survive the owner.</p><p><strong>Multiple coordinates, aliasing conflicts (COORDINATES).</strong> Multiple paths to the same value mean multiple coordinates, and the aliasing rule restricts what those coordinates can do simultaneously. A simulation struct that owns both a particle array and a spatial grid indexing into it has no freeing question and no lifetime question, but reading the grid and writing the particles simultaneously is an aliasing conflict because both coordinates reach the same struct.</p><table><tr><th>Constraint</th><th>Relax it</th><th>Work around it</th></tr><tr><td>Single owner (SPACE)</td><td>Shared Ownership (Rc/Arc)</td><td>Clone &amp; Diverge</td></tr><tr><td>Scope-tied lifetime (TIME)</td><td><em>runtime tracking</em></td><td>Message Passing</td></tr><tr><td>Aliasing rule (COORDS)</td><td>Interior Mutability</td><td>Flatten &amp; Index</td></tr></table><p>Split &amp; Partition resolves a different kind of conflict. The data is disjoint, but the compiler's approximation treats it as one unit. Splitting proves disjointness without relaxing any constraint.</p></div>
+</div>
+
+<div class="node" id="nd-flatten_index">
+<div class="nch">Linear Types · 58</div>
+<h2>Flatten and Index</h2>
+<div class="nctx">Replace pointers with integers. Exit the coordinate system entirely.</div>
+<div class="pr"><p>Multiple paths to the same node require edges outside the ownership tree. A single collection owns all nodes, and those edges become indices: integers, freely copyable, with no lifetime tracking.</p><div class="cb"><code><span class="k">struct</span> <span class="m">Graph</span> {
+    nodes: <span class="m">Vec</span>&lt;<span class="m">NodeData</span>&gt;,
+    edges: <span class="m">Vec</span>&lt;(<span class="m">usize</span>, <span class="m">usize</span>)&gt;,
+}</code></div><p>The Vec owns the node data. Edges are pairs of indices. Adding an edge does not create a coordinate to any node. Removing a node invalidates indices, and the compiler cannot catch stale indices at compile time. Generational indices address this by pairing each index with a generation counter that increments when a slot is reused.</p><div class="cb"><code><span class="k">struct</span> <span class="m">NodeId</span> {
+    index: <span class="m">usize</span>,
+    generation: <span class="m">u64</span>,
+}
+
+<span class="k">struct</span> <span class="m">Arena</span>&lt;T&gt; {
+    entries: <span class="m">Vec</span>&lt;(<span class="m">u64</span>, <span class="m">Option</span>&lt;T&gt;)&gt;,  <span class="c">// (generation, data)</span>
+}</code></div><p>This is the only pattern that resolves all three dimensions simultaneously. The single collection centralizes SPACE in one allocation. All nodes live as long as the collection, making TIME uniform. Indices are Copy integers that the borrow checker does not track, so COORDINATES disappear entirely.</p><p>The Rust ecosystem converges on this pattern for anything graph-shaped. The <code>petgraph</code> crate, the <code>slotmap</code> crate, and most game engines use this approach. Index validity becomes the programmer's responsibility, or a runtime check with generational indices. <span class="ea-static" title="Flattening data into a single collection and using indices is restructuring that makes the access pattern visible to the compiler.">Escape hatch</span>: restructure the code.</p></div>
+</div>
+
+<div class="node" id="nd-shared_own">
+<div class="nch">Linear Types · 59</div>
+<h2>Shared Ownership</h2>
+<div class="nctx">Multiple handles share ownership. The value lives until the last one drops.</div>
+<div class="pr"><p>A value with several incoming edges has no single natural owner. Tying its lifetime to any one of them risks dropping it while others still hold a path. <code>Rc</code> and <code>Arc</code> let multiple handles share ownership, and the value lives until the last handle drops. <span class="ea-static" title="How does reference counting map to the framework?">Reference counting</span> replaces the single-owner constraint with a runtime counter.</p><div class="cb"><code><span class="k">use</span> std::rc::<span class="m">Rc</span>;
+
+<span class="k">let</span> config = <span class="m">Rc</span>::new(<span class="m">AppConfig</span>::load());
+<span class="k">let</span> service_a = <span class="m">ServiceA</span>::new(<span class="m">Rc</span>::clone(&amp;config));
+<span class="k">let</span> service_b = <span class="m">ServiceB</span>::new(<span class="m">Rc</span>::clone(&amp;config));
+<span class="c">// config lives until all three handles drop</span></code></div><p>The pattern works for DAGs and for immutable shared data where no single owner is natural. Cycles leak memory because each node in the cycle keeps the next alive. <code>Weak</code> breaks cycles by providing a non-owning handle that does not prevent deallocation.</p><p><code>Rc</code> hands out shared coordinates, so writing to the data requires interior mutability. <code>Rc&lt;RefCell&lt;T&gt;&gt;</code> combines shared ownership with runtime-checked mutation. <code>Rc</code> relaxes the single-owner constraint on SPACE, and <code>RefCell</code> relaxes the aliasing rule on COORDINATES. Together they handle both dimensions.</p><div class="cb"><code><span class="k">use</span> std::rc::<span class="m">Rc</span>;
+<span class="k">use</span> std::cell::<span class="m">RefCell</span>;
+
+<span class="k">let</span> shared = <span class="m">Rc</span>::new(<span class="m">RefCell</span>::new(<span class="m">Vec</span>::new()));
+<span class="k">let</span> handle = <span class="m">Rc</span>::clone(&amp;shared);
+handle.borrow_mut().push(<span class="n">42</span>);</code></div></div>
+</div>
+
+<div class="node" id="nd-interior_mut">
+<div class="nch">Linear Types · 60</div>
+<h2>Interior Mutability</h2>
+<div class="nctx">Shared coordinate plus mutation. The aliasing rule says no. These types say yes, at runtime.</div>
+<div class="pr"><p>The <span class="ea-static" title="What does the rule actually say?">aliasing rule</span> guarantees that no code writes to a struct's fields while shared coordinates to the struct exist. A struct's methods sometimes need to write during shared access. The guarantee and the requirement contradict.</p><div class="cb"><code><span class="c">// C++</span>
+<span class="k">class</span> <span class="m">Lookup</span> {
+    <span class="k">mutable</span> std::unordered_map&lt;<span class="m">int</span>, <span class="m">int</span>&gt; cache;
+<span class="k">public</span>:
+    <span class="m">int</span> get(<span class="m">int</span> key) <span class="k">const</span> {
+        <span class="k">if</span> (cache.count(key)) <span class="k">return</span> cache[key];
+        <span class="m">int</span> result = expensive(key);
+        cache[key] = result;
+        <span class="k">return</span> result;
+    }
+};</code></div><p>C++ exempts <code>mutable</code> fields from <code>const</code> checking. The C++ optimizer does not assume <code>const</code> prevents writes, so the keyword works. Rust cannot do the same. The Rust compiler uses the aliasing guarantee to tell LLVM that data at a shared coordinate will not change. LLVM caches values in registers and skips re-reading from memory. A keyword that silently permitted writes would send the write to memory while the register holds the old value, and the program would read stale data.</p><p><strong>UnsafeCell.</strong> The compiler primitive. The compiler recognizes any type containing an <code>UnsafeCell</code> and drops the no-write guarantee for that type's contents, so LLVM re-reads from memory on every access. Its <code>get</code> method returns a raw pointer. The caller must ensure no exclusive access overlaps with any other access.</p><div class="cb"><code><span class="k">use</span> std::cell::<span class="m">Cell</span>;
+
+<span class="k">let</span> counter = <span class="m">Cell</span>::new(<span class="n">0</span>);
+<span class="k">let</span> a = &amp;counter;
+<span class="k">let</span> b = &amp;counter;
+a.set(a.get() + <span class="n">1</span>);     <span class="c">// copies 0 out, computes 1, copies 1 in</span>
+b.set(b.get() + <span class="n">1</span>);     <span class="c">// copies 1 out, computes 2, copies 2 in</span>
+<span class="m">assert_eq!</span>(counter.get(), <span class="n">2</span>);</code></div><p><strong>Cell.</strong> Never exposes a coordinate to the stored data. <code>.get()</code> copies the value out, <code>.set()</code> overwrites it. No caller ever holds a coordinate to the interior, so no caller can observe the data changing during access. Works for types that support <code>mem_copy</code>.</p><div class="cb"><code><span class="k">use</span> std::cell::<span class="m">RefCell</span>;
+
+<span class="k">let</span> data = <span class="m">RefCell</span>::new(<span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>]);
+<span class="k">let</span> r1 = data.borrow();          <span class="c">// counter: 1</span>
+<span class="k">let</span> r2 = data.borrow();          <span class="c">// counter: 2</span>
+drop(r1);                         <span class="c">// counter: 1</span>
+drop(r2);                         <span class="c">// counter: 0</span>
+<span class="k">let mut</span> w = data.borrow_mut();   <span class="c">// counter: -1</span>
+w.push(<span class="n">4</span>);</code></div><p><strong>RefCell.</strong> Maintains a runtime borrow counter. <code>.borrow()</code> returns a shared guard, <code>.borrow_mut()</code> returns an exclusive guard. Multiple shared guards can coexist. An exclusive guard panics if any other guard exists. The <span class="ea-static" title="Whether a method changes internal layout depends on runtime values. The compiler cannot determine this statically.">same rule</span> the compiler checks at compile time, enforced at runtime.</p><div class="cb"><code><span class="c">// Mutex: same rule, across threads</span>
+<span class="k">use</span> std::sync::<span class="m">Mutex</span>;
+
+<span class="k">let</span> data = <span class="m">Mutex</span>::new(<span class="m">Vec</span>::new());
+<span class="k">let</span> guard = data.lock().unwrap();
+<span class="c">// guard holds exclusive access</span>
+<span class="c">// other threads block until guard drops</span></code></div><p><strong>Mutex and RwLock.</strong> The same rule enforced across threads. <code>Mutex</code> blocks the calling thread until the lock is free, then returns an exclusive guard. <code>RwLock</code> allows many shared guards or one exclusive guard. Rust's <code>Mutex</code> owns the data it protects, so code cannot access the data without acquiring the lock.</p></div>
+</div>
+
+<div class="node" id="nd-split_partition">
+<div class="nch">Linear Types · 61</div>
+<h2>Split and Partition</h2>
+<div class="nctx">The data is disjoint. Prove it to the compiler.</div>
+<div class="pr"><p>Two parts of the code need exclusive access to different parts of the same space. The compiler sees one coordinate to the whole and rejects the second. Splitting produces two coordinates to non-overlapping regions.</p><div class="cb"><code><span class="k">let mut</span> v = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>, <span class="n">4</span>, <span class="n">5</span>, <span class="n">6</span>];
+<span class="k">let</span> (left, right) = v.split_at_mut(<span class="n">3</span>);
+left[<span class="n">0</span>] = <span class="n">10</span>;
+right[<span class="n">0</span>] = <span class="n">40</span>;    <span class="c">// different region, no conflict</span></code></div><p>Struct fields split automatically. The compiler knows that <code>person.name</code> and <code>person.age</code> occupy disjoint space.</p><div class="cb"><code><span class="k">let</span> name = &amp;<span class="k">mut</span> person.name;
+<span class="k">let</span> age = &amp;<span class="k">mut</span> person.age;    <span class="c">// different field, compiler allows</span></code></div><p>This pattern resolves conflicts where the data is genuinely disjoint but the compiler's approximation treats it as one unit. Signatures encode coordinate connections at struct granularity, and field-level information does not cross function boundaries. Splitting provides the field-level information the compiler needs. Escape hatch: encode invariants in types.</p></div>
+</div>
+
+<div class="node" id="nd-clone_diverge">
+<div class="nch">Linear Types · 62</div>
+<h2>Clone and Diverge</h2>
+<div class="nctx">Duplicate the data. Eliminate sharing entirely.</div>
+<div class="pr"><p>Shared ownership and interior mutability add runtime overhead. Duplicating the data eliminates the sharing entirely and avoids both costs. Each copy is independent, and ownership is trivial because each binding owns its own space.</p><div class="cb"><code><span class="k">let</span> original = expensive_to_build_config();
+<span class="k">let</span> for_thread_a = original.clone();
+<span class="k">let</span> for_thread_b = original.clone();</code></div><p>Cloning trades memory and CPU time for simplicity. The copies diverge after creation, so changes to one do not affect the others. <span class="ea-static" title="Move by default prevents accidental duplication of managed types.">Move by default</span> prevents accidental duplication of managed types. Cloning is always explicit.</p><p>The <code>Cow</code> type (clone on write) defers the clone until mutation is needed.</p><div class="cb"><code><span class="k">use</span> std::borrow::<span class="m">Cow</span>;
+
+<span class="k">fn</span> <span class="m">process</span>(input: <span class="m">Cow</span>&lt;<span class="m">str</span>&gt;) -&gt; <span class="m">Cow</span>&lt;<span class="m">str</span>&gt; {
+    <span class="k">if</span> input.contains(<span class="s">"bad"</span>) {
+        <span class="m">Cow</span>::Owned(input.replace(<span class="s">"bad"</span>, <span class="s">"good"</span>))
+    } <span class="k">else</span> {
+        input    <span class="c">// no clone, original returned</span>
+    }
+}</code></div></div>
+</div>
+
+<div class="node" id="nd-msg_passing">
+<div class="nch">Linear Types · 63</div>
+<h2>Message Passing</h2>
+<div class="nctx">Threads share data by moving it. One owner at a time.</div>
+<div class="pr"><p>Threads that need to operate on the same data face an aliasing conflict that no compile-time pattern resolves across thread boundaries. Channels serialize access across time by <span class="ea-static" title="What happens to the original when ownership transfers?">moving data</span> from sender to receiver, so that at any moment one thread owns the data.</p><div class="cb"><code><span class="k">use</span> std::sync::<span class="m">mpsc</span>;
+
+<span class="k">let</span> (tx, rx) = <span class="m">mpsc</span>::channel();
+
+std::thread::spawn(<span class="k">move</span> || {
+    <span class="k">let</span> data = <span class="m">vec!</span>[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+    tx.send(data).unwrap();    <span class="c">// data moves to channel</span>
+    <span class="c">// data is invalid here</span>
+});
+
+<span class="k">let</span> received = rx.recv().unwrap();    <span class="c">// received owns the data</span></code></div><p>The pattern restructures the program around data flow. Threads send and receive owned values. No thread shares mutable state. Sending data moves ownership from the sender to the receiver, a <code>take</code> in the notation vocabulary. The sender's binding becomes invalid, and the receiver's binding becomes the owner.</p><p>Escape hatch: restructure the code.</p></div>
+</div>
+
+<div class="node" id="nd-ds_linearity">
+<div class="nch">Linear Types · 64</div>
+<h2>Data Structures Under Linearity</h2>
+<div class="nctx">Which pattern fits which data structure.</div>
+<div class="pr"><p>Each pattern suits different data structures. The table maps common structures to the conflicts they create and the patterns that resolve them.</p><table><tr><th>Data Structure</th><th>Conflict</th><th>Pattern</th></tr><tr><td>Singly linked list</td><td>Works, but Vec is faster</td><td>Flatten and Index</td></tr><tr><td>Doubly linked list</td><td>Back-pointers: two paths per node</td><td>Flatten and Index</td></tr><tr><td>Graph (adjacency)</td><td>Cycles, shared nodes, multiple paths</td><td>Flatten and Index</td></tr><tr><td>Tree with parent pointers</td><td>Parent pointer is a second path</td><td>Flatten and Index, or Weak</td></tr><tr><td>Cache / memoization</td><td>Mutation behind shared access</td><td>Interior Mutability</td></tr><tr><td>Observer / event system</td><td>Multiple observers coordinate to subject</td><td>Shared Ownership, or channels</td></tr><tr><td>Self-referential struct</td><td>Coordinate points to own field</td><td>Pin, or restructure</td></tr><tr><td>LRU cache</td><td>Hash map and recency list both reach same entry</td><td>Flatten and Index</td></tr></table><p>A singly linked list fits tree-shaped ownership, where each node owns the next. The borrow checker accepts it. The hardware punishes it. Linked list traversal scatters across memory, defeating cache prefetching. <code>Vec</code> stores elements contiguously, and modern CPUs process contiguous memory an order of magnitude faster than pointer-chased memory.</p><p>Self-referential structs are a special case. A struct that contains a coordinate to its own field cannot be moved, because moving changes the address of the field while the coordinate still holds the old address. <code>Pin</code> prevents the struct from moving. Most Rust programmers restructure the design to eliminate the self-reference. <span class="ea-static" title="A data race needs shared data, parallel access, and at least one writer. The borrowing rule eliminates the combination.">Threads</span> add one more dimension of complexity to every entry in this table.</p></div>
+</div>
+
+<div class="node" id="nd-algo_patterns">
+<div class="nch">Linear Types · 65</div>
+<h2>Algorithm Patterns Under Linearity</h2>
+<div class="nctx">Data structure patterns adjust SPACE and COORDINATES. Algorithm patterns adjust TIME.</div>
+<div class="pr"><p>The data structure patterns change how data is structured. Algorithm patterns change <em>when</em> operations happen so that coordinate lifetimes do not overlap. Five patterns appear repeatedly.</p><p><strong>Separate read and write passes.</strong> An algorithm that reads and modifies a collection in the same loop creates an aliasing conflict. Separating into a read pass that collects information and a write pass that applies changes avoids it.</p><div class="cb"><code><span class="c">// Read pass: shared coordinates</span>
+<span class="k">let</span> indices: <span class="m">Vec</span>&lt;<span class="m">usize</span>&gt; = data.iter()
+    .enumerate()
+    .filter(|(_, v)| v.should_update())
+    .map(|(i, _)| i)
+    .collect();
+
+<span class="c">// Write pass: exclusive coordinate</span>
+<span class="k">for</span> i <span class="k">in</span> indices {
+    data[i].update();
+}</code></div><p><strong>Build new collections.</strong> Functional-style transformations sidestep borrow conflicts by producing new owned collections. The iterator holds a shared coordinate to the input for the entire chain. Nothing mutates the input.</p><div class="cb"><code><span class="k">let</span> result: <span class="m">Vec</span>&lt;_&gt; = input.iter()
+    .filter(|x| x.is_valid())
+    .map(|x| x.transform())
+    .collect();</code></div><p><strong>Index-based graph traversal.</strong> Graph algorithms use indices to traverse while holding a shared coordinate to the graph. The algorithm's own state (visited set, queue, result list) lives in separate owned space.</p><div class="cb"><code><span class="k">fn</span> <span class="m">bfs</span>(graph: &amp;<span class="m">Graph</span>, start: <span class="m">NodeId</span>) -&gt; <span class="m">Vec</span>&lt;<span class="m">NodeId</span>&gt; {
+    <span class="k">let mut</span> visited = <span class="m">HashSet</span>::new();
+    <span class="k">let mut</span> queue = <span class="m">VecDeque</span>::new();
+    queue.push_back(start);
+    visited.insert(start);
+    <span class="k">while let</span> Some(node) = queue.pop_front() {
+        <span class="k">for</span> &amp;neighbor <span class="k">in</span> &amp;graph.edges[node.index] {
+            <span class="k">if</span> visited.insert(neighbor) {
+                queue.push_back(neighbor);
+            }
+        }
+    }
+    visited.into_iter().collect()
+}</code></div><p><strong>Drain and rebuild.</strong> <code>drain()</code> transfers ownership of each element from the collection to the loop body. The loop can move, modify, or drop each element without conflicting with the collection.</p><p><strong>Swap to extract.</strong> <code>mem::swap</code>, <code>mem::replace</code>, and <code>mem::take</code> extract a value at an exclusive coordinate while leaving valid space behind. The owner always owns something after the operation.</p><div class="cb"><code><span class="k">fn</span> <span class="m">rotate_name</span>(person: &amp;<span class="k">mut</span> <span class="m">Person</span>) -&gt; <span class="m">String</span> {
+    <span class="k">let</span> old = std::mem::take(&amp;<span class="k">mut</span> person.name);  <span class="c">// leaves String::new()</span>
+    person.name = <span class="m">format!</span>(<span class="s">"former_{}"</span>, old);
+    old
+}</code></div><p><span class="ea-static" title="How do you get two exclusive references to different parts?">Partitioning</span> works on the same principle: prove to the compiler that two accesses do not overlap.</p></div>
+</div>
+
+<div class="node" id="nd-hints_patterns">
+<div class="nch">Linear Types · 66</div>
+<h2>Hints and Patterns Correspond</h2>
+<div class="nctx">Hints are reactive. Patterns are proactive. Same adjustments.</div>
+<div class="pr"><p>The hints from the previous chapter are the reactive version of the patterns here. The compiler rejected your code, and the hint tells you which dimension to adjust. The patterns here are the proactive version. You are designing a program, and the pattern tells you how to structure it so the compiler accepts it from the start.</p><table><tr><th>Hint (reactive)</th><th>Pattern (proactive)</th><th>Dimension</th></tr><tr><td>Duplication</td><td>Clone &amp; Diverge</td><td>SPACE</td></tr><tr><td>Ownership Transfer</td><td>Message Passing</td><td>TIME</td></tr><tr><td>Reordering</td><td>Separate Read/Write Passes</td><td>TIME</td></tr><tr><td>Partitioning</td><td>Split &amp; Partition</td><td>COORDINATES</td></tr><tr><td>Mutability Upgrade</td><td>Interior Mutability</td><td>COORDINATES</td></tr></table><p>A programmer who internalizes the patterns will recognize the hints when the compiler suggests them, because both are adjustments along the same three axes.</p></div>
+</div>
+
+<div class="node" id="nd-when_unsafe">
+<div class="nch">Linear Types · 67</div>
+<h2>When to Reach for Unsafe</h2>
+<div class="nctx">The six patterns cover most programs. Unsafe serves the remainder.</div>
+<div class="pr"><p>The standard library uses <code>unsafe</code> internally for <code>Vec</code>, <code>HashMap</code>, <code>BTreeMap</code>, <code>String</code>, and many other types. The safe APIs that callers use are the product of the "encode invariants in types" <span class="ea-static" title="Four options when the compiler rejects valid code: restructure the program, encode invariants in types, move checks to runtime, or use unsafe.">escape hatch</span>, where <code>unsafe</code> internals expose a safe public interface.</p><p>Programs reach for <code>unsafe</code> when the safe patterns impose unacceptable performance costs, when a data structure's invariants are provably correct but inexpressible in the type system, at FFI boundaries where Rust's ownership model does not extend, and for intrusive data structures where nodes contain their own link pointers.</p><p>The programmer manually asserts the S×T×C invariants that no safe pattern can express. The assertion covers the same three dimensions the compiler checks in safe code. SPACE requires the allocation to be valid. TIME requires the access to happen while the space exists. COORDINATES requires the references to satisfy the aliasing rule.</p><p>The <code>unsafe</code> keyword marks these assertions as visible and searchable in the codebase, and the <code>miri</code> interpreter can check many of them at runtime during testing.</p></div>
+</div>
+
+
+</div>
+</body>
+</html>

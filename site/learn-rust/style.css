@@ -118,3 +118,23 @@
 .pr th{text-align:left;font-weight:500;padding:4px 8px;border-bottom:1px solid #111}
 .pr td{padding:4px 8px;border-bottom:1px solid #eee;vertical-align:top}
 .pr tr:last-child td{border-bottom:none}
+
+/* ═══ MOBILE ═══ */
+@media(max-width:768px){
+#side{display:none}
+.rh-wrap{display:block;height:auto}
+#main{height:auto;overflow:visible}
+#topbar{display:none}
+#doc{padding:12px 16px 120px}
+.node:hover{outline:none}
+.nch:hover{outline:none}
+.ea.on:hover,.ea.on.autohover{background:none}
+.ea.on:hover .tt,.ea.on.autohover .tt{display:none}
+.nt:hover{text-decoration:none}
+.nt.autohover{text-decoration:none}
+.nxt{display:none}
+.em,#fan-overlay,#fan-svg,#hoverline,#dir-indicator{display:none!important}
+.node.collapsed .pr,.node.collapsed .nctx,.node.collapsed .cw,.node.collapsed .co,.node.collapsed .cb,.node.collapsed .er{display:block}
+.node.collapsed .nt{font-size:14px;font-weight:500}
+.node.collapsed+.node{margin-top:16px;padding-top:14px}
+}

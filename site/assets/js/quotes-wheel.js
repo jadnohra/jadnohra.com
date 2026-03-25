@@ -28,8 +28,7 @@
     if (!container) return;
 
     try {
-      let resp = await fetch('./assets/data/quotes.json');
-      if (!resp.ok) resp = await fetch('/assets/data/quotes.json');
+      let resp = await fetch('/assets/data/quotes.json');
       data = await resp.json();
     } catch (e) {
       container.innerHTML = '<p style="color:#555;">Failed to load quotes.</p>';

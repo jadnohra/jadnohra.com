@@ -8,8 +8,7 @@
     if (!document.querySelector('[data-hover]')) return;
 
     try {
-      let resp = await fetch('./assets/data/lang-derived.json');
-      if (!resp.ok) resp = await fetch('/assets/data/lang-derived.json');
+      let resp = await fetch('/assets/data/lang-derived.json');
       data = await resp.json();
     } catch (e) {
       console.error('Failed to load lang-derived data:', e);

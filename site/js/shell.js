@@ -4,9 +4,9 @@
 (function () {
   var tabs = [
     { name: 'index', href: '/' },
-    { name: 'tech', href: '/tech.html' },
+    { name: 'tech', href: '/tech/' },
     { name: 'writing', href: '/writing/' },
-    { name: 'math-quotes', href: '/quotes.html' },
+    { name: 'math-quotes', href: '/quotes/' },
     { name: 'learn-rust', href: '/learn-rust/' },
     { name: 'music', href: '/music/' },
     { name: 'cv', href: '/cv/' }

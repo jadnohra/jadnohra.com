@@ -17,8 +17,7 @@
     if (!container) return;
 
     try {
-      let resp = await fetch('./assets/data/abstractor.json');
-      if (!resp.ok) resp = await fetch('/assets/data/abstractor.json');
+      let resp = await fetch('/assets/data/abstractor.json');
       data = await resp.json();
     } catch (e) {
       container.innerHTML = '<p style="color:#ef4444;">Failed to load data.</p>';

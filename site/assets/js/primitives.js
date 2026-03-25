@@ -8,8 +8,7 @@
     if (!container) return;
 
     try {
-      let resp = await fetch('./assets/data/primitives.json');
-      if (!resp.ok) resp = await fetch('/assets/data/primitives.json');
+      let resp = await fetch('/assets/data/primitives.json');
       data = await resp.json();
     } catch (e) {
       container.innerHTML = '<p style="color:#ef4444;">Failed to load primitives data.</p>';
