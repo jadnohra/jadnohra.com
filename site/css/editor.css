@@ -104,6 +104,19 @@ blockquote {
 .toc-item:hover { text-decoration: underline; }
 .toc-h3 { padding-left: 2ch; }
 
+@media (min-width: 1060px) {
+  .toc {
+    position: sticky;
+    top: 60px;
+    float: left;
+    width: 180px;
+    margin-left: -200px;
+    margin-bottom: 0;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+  }
+}
+
 /* Statusbar */
 .statusbar {
   position: fixed;
