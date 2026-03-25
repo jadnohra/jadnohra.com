@@ -106,12 +106,11 @@ blockquote {
 
 @media (min-width: 1060px) {
   .toc {
-    position: sticky;
+    position: fixed;
     top: 60px;
-    float: left;
+    left: 20px;
     width: 180px;
-    margin-left: -200px;
-    margin-bottom: 0;
+    margin: 0;
     max-height: calc(100vh - 80px);
     overflow-y: auto;
   }
