@@ -104,12 +104,12 @@ blockquote {
 .toc-item:hover { text-decoration: underline; }
 .toc-h3 { padding-left: 2ch; }
 
-@media (min-width: 1060px) {
+@media (min-width: 1160px) {
   .toc {
     position: fixed;
     top: 60px;
     left: 20px;
-    width: 180px;
+    width: 240px;
     margin: 0;
     max-height: calc(100vh - 80px);
     overflow-y: auto;
