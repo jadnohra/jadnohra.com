@@ -44,6 +44,17 @@
   var statusPath = parts.length > 0 ? parts.join(' / ') : 'index';
   var statusHtml = '<div class="statusbar"><span>jadnohra.com / ' + statusPath + '</span><span>UTF-8</span></div>';
 
+  // Inject favicon links into <head>
+  if (!document.querySelector('link[rel="icon"]')) {
+    var head = document.head;
+    head.insertAdjacentHTML('beforeend',
+      '<link rel="icon" type="image/x-icon" href="/favicon.ico">' +
+      '<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png">' +
+      '<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png">' +
+      '<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png">'
+    );
+  }
+
   // Inject at start of body (before content)
   var shell = document.createElement('div');
   shell.innerHTML = tabsHtml + crumbHtml;
