@@ -60,7 +60,7 @@
 .em.show{display:block}
 .em-head{padding:3px 8px 1px;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:#999}
 .em-list{padding:1px 0}
-.em-item{display:flex;align-items:center;gap:6px;padding:3px 8px;cursor:pointer;transition:background .06s}
+.em-item{display:flex;align-items:center;gap:6px;padding:3px 8px;cursor:pointer;transition:background .06s;pointer-events:auto}
 .em-item:hover{background:#eee}
 .em-item.active{background:none}
 .em-bar{display:none}
