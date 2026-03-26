@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn Rust (Interactive) — jadnohra.com</title>
+<meta name="description" content="Learn Rust interactively - a graph-based reader for the Rust course.">
+<meta property="og:title" content="Learn Rust — Derive the Borrow Checker, Don't Memorize It">
+<meta property="og:description" content="An interactive graph-based Rust course for C++ systems programmers. Ownership, borrowing, lifetimes — derived from first principles.">
+<meta property="og:url" content="https://jadnohra.com/learn-rust-2/">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/css/editor.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="learn-rust">
+
+<div id="dir-indicator"></div>
+<div class="em" id="em"></div>
+<div id="fan-overlay"></div>
+<svg id="fan-svg" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:210"></svg>
+<svg id="hoverline" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100"></svg>
+
+<div class="rh-wrap">
+  <div id="side">
+    <div class="side-head"><div class="side-logo">Learn Rust</div></div>
+    <div class="wlist" id="wl"></div>
+    <div id="sbun"><b id="sbn">1</b> deep · <span id="sbv">1</span> visited</div>
+  </div>
+
+  <div id="main">
+    <div id="topbar">
+      <div class="tbr">
+        <button class="tb" id="btn-col">Collapse all</button>
+        <button class="tb" id="btn-exp">Expand all</button>
+      </div>
+    </div>
+    <div id="doc"></div>
+    <noscript><div class="content"><p>This page requires JavaScript. <a href="full.html">Read the static version instead.</a></p></div></noscript>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="engine.js"></script>
+<script src="/js/shell.js"></script>
+</body>
+</html>

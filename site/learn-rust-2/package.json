@@ -1,0 +1,10 @@
+{
+  "name": "learn-rust-2-build",
+  "private": true,
+  "scripts": {
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "marked": "^15.0.0"
+  }
+}
