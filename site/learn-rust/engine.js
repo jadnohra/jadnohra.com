@@ -23,6 +23,7 @@ var $dir=document.getElementById('dir-indicator');
 var $wl=document.getElementById('wl');
 
 // ═══ HELPERS ═══
+function isDark(){return document.documentElement.getAttribute('data-theme')==='dark'}
 
 // ═══ MOUSE TRACKING ═══
 if(!isMobile) document.addEventListener('mousemove',function(e){
@@ -71,7 +72,7 @@ function drawConnLine(el1,el2){
   var sx=r1.left,sy=r1.top+r1.height/2,tx=r2.left,ty=r2.top+r2.height/2;
   var dy=Math.abs(ty-sy),cpx=Math.min(sx,tx)-50,dn=ty>sy;
   var d='M'+sx+' '+sy+' C'+cpx+' '+(dn?sy+dy*.35:sy-dy*.35)+' '+cpx+' '+(dn?ty-dy*.35:ty+dy*.35)+' '+tx+' '+ty;
-  $svg.innerHTML='<path d="'+d+'" fill="none" stroke="#111" stroke-width="1" stroke-linecap="round"/>';
+  $svg.innerHTML='<path d="'+d+'" fill="none" stroke="'+(isDark()?'#ddd':'#111')+'" stroke-width="1" stroke-linecap="round"/>';
 }
 
 // ═══ ANCHOR HOVER/CLICK ═══
@@ -230,11 +231,11 @@ function drawFanLines(sel){
   var h='',n=fanConns.length;if(!n)return;
   if(fanSettled){
     var wpad=20,wy1=fanOY-6,wy2=fanOY+6,farX=fanFlipped?fanCX-6:fanCX+fanCW+6;
-    h+='<polygon points="'+fanOX+','+wy1+' '+farX+','+(fanCY-wpad)+' '+farX+','+(fanCY+fanCH+wpad)+' '+fanOX+','+wy2+'" fill="rgba(0,0,0,.02)" stroke="rgba(0,0,0,.06)" stroke-width="1"/>';
+    h+='<polygon points="'+fanOX+','+wy1+' '+farX+','+(fanCY-wpad)+' '+farX+','+(fanCY+fanCH+wpad)+' '+fanOX+','+wy2+'" fill="'+(isDark()?'rgba(255,255,255,.03)':'rgba(0,0,0,.02)')+'" stroke="'+(isDark()?'rgba(255,255,255,.08)':'rgba(0,0,0,.06)')+'" stroke-width="1"/>';
   }
   fanConns.forEach(function(c,i){var on=i===sel;
-    h+='<path d="M'+fanOX+' '+fanOY+' Q'+c.bx+' '+c.by+' '+c.tx+' '+c.ty+'" fill="none" stroke="'+(on?'#111':'rgba(0,0,0,.12)')+'" stroke-width="'+(on?1.5:1)+'" stroke-linecap="round"/>'});
-  h+='<circle cx="'+fanOX+'" cy="'+fanOY+'" r="2" fill="#111"/>';
+    h+='<path d="M'+fanOX+' '+fanOY+' Q'+c.bx+' '+c.by+' '+c.tx+' '+c.ty+'" fill="none" stroke="'+(on?(isDark()?'#ddd':'#111'):(isDark()?'rgba(255,255,255,.15)':'rgba(0,0,0,.12)'))+'" stroke-width="'+(on?1.5:1)+'" stroke-linecap="round"/>'});
+  h+='<circle cx="'+fanOX+'" cy="'+fanOY+'" r="2" fill="'+(isDark()?'#ddd':'#111')+'"/>';
   $fanSvg.innerHTML=h;
 }
 
@@ -548,3 +549,22 @@ document.querySelectorAll('.ea[data-t]').forEach(function(a){
 renderWalkList();
 // Mobile: expand all nodes, disable title click collapse
 if(isMobile){document.querySelectorAll('.node.collapsed').forEach(function(n){n.classList.remove('collapsed')})}
+
+// ═══ DARK MODE TOGGLE ═══
+(function(){
+  var saved=localStorage.getItem('lr-theme');
+  if(saved==='dark') document.documentElement.setAttribute('data-theme','dark');
+  var btn=document.getElementById('btn-theme');
+  if(!btn)return;
+  btn.textContent=isDark()?'Light':'Dark';
+  btn.addEventListener('click',function(){
+    var dark=!isDark();
+    if(dark) document.documentElement.setAttribute('data-theme','dark');
+    else document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('lr-theme',dark?'dark':'light');
+    btn.textContent=dark?'Light':'Dark';
+    renderWalkList();
+    $svg.innerHTML='';
+    $fanSvg.innerHTML='';
+  });
+})()

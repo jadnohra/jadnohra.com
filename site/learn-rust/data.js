@@ -1,6 +1,6 @@
 // ═══ GRAYSCALE PALETTE ═══
 // Position-based gray: light (#bbb) at start → dark (#333) at end
-function gc(d){var t=Math.min(d/66,1);var v=Math.round(187-(187-51)*t);return[v,v,v]}
+function gc(d){var t=Math.min(d/66,1);if(document.documentElement.getAttribute('data-theme')==='dark'){var v=Math.round(85+(204-85)*t);return[v,v,v]}var v=Math.round(187-(187-51)*t);return[v,v,v]}
 function rgb(c){return'rgb('+c.join(',')+')'}
 
 // ═══ REGISTRIES ═══

@@ -138,3 +138,95 @@
 .node.collapsed .nt{font-size:14px;font-weight:500}
 .node.collapsed+.node{margin-top:16px;padding-top:14px}
 }
+
+/* ═══ DARK THEME ═══ */
+[data-theme="dark"] body{background:#111;color:#ddd}
+[data-theme="dark"] a{color:#ddd}
+[data-theme="dark"] a:hover{color:#fff}
+[data-theme="dark"] hr{border-top-color:#333}
+[data-theme="dark"] pre{border-color:#333}
+[data-theme="dark"] code{border-color:#333}
+[data-theme="dark"] blockquote{border-left-color:#444;color:#999}
+[data-theme="dark"] p:hover,[data-theme="dark"] h2:hover,[data-theme="dark"] h3:hover{outline-color:#555}
+[data-theme="dark"] th,[data-theme="dark"] td{border-color:#333}
+[data-theme="dark"] .tabs{border-bottom-color:#333}
+[data-theme="dark"] .tab{color:#999;border-right-color:#333}
+[data-theme="dark"] .tab:hover{color:#ddd}
+[data-theme="dark"] .tab.active{color:#ddd;border-bottom-color:#ddd}
+[data-theme="dark"] .breadcrumb{border-bottom-color:#222;color:#999}
+[data-theme="dark"] .toc{border-color:#333}
+[data-theme="dark"] .toc-title{color:#999}
+[data-theme="dark"] .toc-item{color:#ddd}
+[data-theme="dark"] .statusbar{background:#111;border-top-color:#333;color:#555}
+
+/* Sidebar */
+[data-theme="dark"] #side{background:#1a1a1a;border-right-color:#333}
+[data-theme="dark"] .side-logo{color:#ddd}
+[data-theme="dark"] .wt{color:#999}
+[data-theme="dark"] .wt:hover{color:#ddd}
+[data-theme="dark"] .wt.on{color:#ddd;border-bottom-color:#ddd}
+[data-theme="dark"] .ubtn{background:#1a1a1a;border-color:#333;color:#ddd}
+[data-theme="dark"] .ubtn:hover{border-color:#ddd}
+[data-theme="dark"] .wlc{color:#999}
+[data-theme="dark"] .wlcd{border-color:#666}
+[data-theme="dark"] .wln{color:#ddd}
+[data-theme="dark"] .wln.unv{color:#999}
+[data-theme="dark"] .wlnd{border-color:#666}
+[data-theme="dark"] .wln.vis .wlnd,[data-theme="dark"] .wln.cur .wlnd{background:#ddd;border-color:#ddd}
+[data-theme="dark"] .wlnn{color:#555}
+[data-theme="dark"] #sbun{border-top-color:#333;color:#999}
+[data-theme="dark"] #sbun b{color:#ddd}
+
+/* Main + topbar */
+[data-theme="dark"] #main{background:#111}
+[data-theme="dark"] #topbar{background:#1a1a1a;border-bottom-color:#333}
+[data-theme="dark"] .tb{color:#999}
+[data-theme="dark"] .tb:hover{color:#ddd}
+
+/* Nodes */
+[data-theme="dark"] .node:hover{outline-color:#555}
+[data-theme="dark"] .node+.node{border-top-color:#333}
+[data-theme="dark"] .nch{color:#999}
+[data-theme="dark"] .nchd{border-color:#666}
+[data-theme="dark"] .nch:hover{outline-color:#555}
+[data-theme="dark"] .nt:hover{color:#fff}
+[data-theme="dark"] .nt.autohover{color:#fff}
+
+/* Edge menu */
+[data-theme="dark"] .em{background:#1a1a1a;border-color:#333}
+[data-theme="dark"] .em-head{color:#777}
+[data-theme="dark"] .em-item:hover{background:#222}
+[data-theme="dark"] .em-q{color:#ddd}
+[data-theme="dark"] .em-sep{background:#333}
+[data-theme="dark"] .nctx{border-bottom-color:#333}
+[data-theme="dark"] .pr code{border-color:#333}
+[data-theme="dark"] .cb{border-color:#333;background:#1a1a1a}
+[data-theme="dark"] .cb code{color:#ddd}
+[data-theme="dark"] .cb .k{color:#b388ff}
+[data-theme="dark"] .cb .c{color:#777;font-style:italic}
+[data-theme="dark"] .cb .s{color:#66bb6a}
+[data-theme="dark"] .cb .n{color:#ffab40}
+[data-theme="dark"] .cb .m{color:#64b5f6}
+[data-theme="dark"] .er{border-left-color:#ef5350;color:#ef5350;background:#1a1a1a}
+[data-theme="dark"] .co{border-left-color:#444}
+[data-theme="dark"] .col{color:#999}
+
+/* Edge anchors */
+[data-theme="dark"] .ea.on:hover,[data-theme="dark"] .ea.on.autohover{color:#fff;background:#333}
+[data-theme="dark"] .tt{background:#1a1a1a;border-color:#333}
+
+/* Target glow */
+[data-theme="dark"] .node.target-glow{outline-color:#ddd}
+[data-theme="dark"] .node.target-glow .nt{color:#fff}
+@keyframes pulseGlowDark{0%{outline-color:#ddd}50%{outline-color:#444}100%{outline-color:transparent}}
+[data-theme="dark"] .node.target-glow{animation:pulseGlowDark .8s ease-out forwards}
+
+/* Direction indicator */
+[data-theme="dark"] #dir-indicator{background:#1a1a1a;border-color:#333;color:#ddd}
+
+/* Next link */
+[data-theme="dark"] .nxt:hover,[data-theme="dark"] .nxt.autohover{color:#fff}
+
+/* Tables */
+[data-theme="dark"] .pr th{border-bottom-color:#ddd}
+[data-theme="dark"] .pr td{border-bottom-color:#222}
